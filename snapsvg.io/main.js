@@ -29,8 +29,11 @@ function main(){
 		s = Snap("#svg");
 	}
 	
+	// 1
 	s.attr({width:500,height:300});
 	
+	// 2
+	// 원 생성
 	var bigCircle = s.circle(150, 150, 100);
 	
 	bigCircle.attr({
@@ -39,15 +42,117 @@ function main(){
 		strokeWidth: 5
 	});
 	
-	// Now lets create another small circle:
+	// 3
+	// 다른 원 생성
 	var smallCircle = s.circle(100, 150, 70);
 	
-	// group을 생성하고 새로 생성한 원과 함께 append함
+	// 4
+	// group을 생성하고 새로 생성한 또 다른 원과 함께 append함
 	var discs = s.group(smallCircle, s.circle(200, 150, 70));
 	
+	// 5
+	// group 속성 변경
+	discs.attr({
+		fill: "#fff"
+	});
 	
+	// 6
+	// 큰 원의 mask로 group el을 지정
+	bigCircle.attr({
+		mask: discs
+	});
 	
+	// 7
+	// 작은원 애니메이션 (- )마스크 계속 유지됨)
+	smallCircle.animate({r: 50}, 1000);
 	
+	// 8
+	// group 내 두번째 작은원을 애니메이션
+	discs.select("circle:nth-child(2)").animate({r: 50}, 1000);
+	
+	// 9
+	// Now lets create pattern
+	var p = s.path("M10-5-10,15M15,0,0,15M0-5-20,15")
+		.attr({
+			fill: "none",
+			stroke: "#bada55",
+			strokeWidth: 5
+		});
+
+	// 10
+	// To create pattern,
+	// just specify dimensions in pattern method:
+	p = p.pattern(0, 0, 10, 10);
+	// Then use it as a fill on big circle
+	bigCircle.attr({
+		fill: p
+	});
+	
+	/*
+	// 11
+	// We could also grab pattern from SVG
+	// already embedded into our page
+	// pattern 재사용 (확인되지 않아 주석 처리함)
+	discs.attr({
+		fill: Snap("#pattern")
+	});
+	*/
+	
+	// 12
+	// Lets change fill of circles to gradient
+	// This string means relative radial gradient
+	// from white to black
+	discs.attr({fill: "r()#fff-#000"});
+	// Note that you have two gradients for each circle
+	
+	// 13
+	// Note that you have two gradients for each circle
+	// If we want them to share one gradient,
+	// we need to use absolute gradient with capital R
+	discs.attr({fill: "R(150, 150, 100)#fff-#000"});
+	
+	// 14.
+	// Of course we could animate color as well
+	p.select("path").animate({stroke: "#f00"}, 1000);
+	
+	/*
+	// 15.
+	// Now lets load external SVG file:
+	Snap.load("mascot.svg", function (f) {
+		// Note that we traversre and change attr before SVG
+		// is even added to the page
+		f.select("polygon[fill='#09B39C']").attr({fill: "#bada55"});
+		g = f.select("g");
+		s.append(g);
+		// Making croc draggable. Go ahead drag it around!
+		g.drag();
+		// Obviously drag could take event handlers too
+		// Looks like our croc is made from more than one polygon...
+	});
+	*/
+	
+	// 아래 텍스트 확인 안됨
+	
+	// 17.
+	// Writing text as simple as:
+	// HTML DOM 상의 CSS font-size의 영향을 받음
+	s.text(200, 200, "Snap.svg")
+	  .attr({
+		"font-size": "10px"
+	  });
+	
+	// 18.
+	// Provide an array of strings (or arrays), to generate tspans
+	var t = s.text(300, 220, ["Snap", ".", "svg"])
+	  .attr({
+		"font-size": "20px"
+	  });
+	  
+	t.selectAll("tspan:nth-child(3)")
+	  .attr({
+		fill: "#900",
+		"font-size": "20px"
+	  });
 	
 	
 	
