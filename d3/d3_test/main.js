@@ -1,10 +1,14 @@
 ﻿
 
-var w = 300, h = 200;
+var w = 300, h = 150;
 
 var container = d3.select("#container");
 
-function newSvg(title) {
+function newSvg(title, width, height) {
+
+    w = width || 300;
+    h = height || 150;
+
 	var svg = container.append("svg")
 	.attr({ width: w, height: h })
 	.style("border", "1px dashed black");
@@ -251,11 +255,112 @@ function test05(title) {
 test06("16. Dynamic SVG Coordinate Space");
 
 function test06(title) {
-	
+    var data = [
+        { "x_axis": 10, "y_axis": 10, "height": 20, "width":20, "color" : "green" },
+        { "x_axis": 160, "y_axis": 40, "height": 20, "width": 20, "color": "purple" },
+        { "x_axis": 70, "y_axis": 70, "height": 20, "width": 20, "color": "red" }
+    ];
 
+    var svg = newSvg(title, 150, 100);
+    var rect = svg.selectAll("rect")
+        .data(data).enter().append("rect");
+
+    var attr = rect.attr("x", function (d) { return d.x_axis; })
+        .attr("y", function (d) { return d.y_axis; })
+        .attr("height", function (d) { return d.height; })
+        .attr("width", function (d) { return d.width; })
+        .style("fill", function (d) { return d.color; });
+
+    // 현재 두번째 purple 사각형은 viewport 범위 밖에 위치하고 있다.
+
+    // D3.js Scales
+    var initialScaleData = [0, 1000, 3000, 2000, 5000, 4000, 7000, 6000, 9000, 8000, 10000];
+    var scale = d3.scale.linear()
+        .domain([0, 10000])
+        .range([0, 100]);
+
+    out("scale : ", scale(10));
+    out("max : ", d3.max(initialScaleData));
+    out("min : ", d3.min(initialScaleData));
+
+    var newScaledData = [];
+    for (var i = 0; i < initialScaleData.length; i++) {
+        newScaledData[i] = scale(initialScaleData[i]);
+    }
+    out("scaled data : ", newScaledData);
 };
 
+/*
+The D3.js scales are:
 
+- Identity: a special kind of linear scale, 1:1, good for pixel values. input == output
+- Linear: transforms one value in the domain interval into a value in the range interval
+- Power and Logarithmic scales: sqrt, pow, log – used for exponentially increasing values
+- Quantize and Quantile scales: for discrete sets of unique possible values for inputs or outputs
+- Ordinal: for non quantitative scales, like names, categories, etc
+*/
 
+test07("17. D3.js Scale Linear");
 
+function test07(title) {
+    var data = [
+        { "x_axis": 10, "y_axis": 10, "height": 20, "width": 20, "color": "green" },
+        { "x_axis": 160, "y_axis": 40, "height": 20, "width": 20, "color": "purple" },
+        { "x_axis": 70, "y_axis": 70, "height": 20, "width": 20, "color": "red" }
+    ];
 
+    var svg = newSvg(title, 150, 100);
+    var rect = svg.selectAll("rect")
+        .data(data).enter().append("rect");
+
+    // 현재 두번째 purple 사각형은 viewport 범위 밖에 위치하고 있다.
+    // scale 조정으로 모든 객체를 화면에 보이도록 수정한다.
+
+    // max : x_axis + width
+    var scale = d3.scale.linear()
+        .domain([0, 180])
+        .range([0, w]);
+
+    var attr = rect.attr("x", function (d) { return scale(d.x_axis); })
+        .attr("y", function (d) { return d.y_axis; })
+        .attr("height", function (d) { return d.height; })
+        .attr("width", function (d) { return scale(d.width); })
+        .style("fill", function (d) { return d.color; });
+
+}
+
+test08("18. SVG Group Element and D3.js");
+
+function test08(title){
+    var circleData = [
+        { "cx": 20, "cy": 20, "radius": 20, "color" : "green" },
+        { "cx": 70, "cy": 70, "radius": 20, "color" : "purple" }
+    ];
+    
+    var rectangleData = [
+        { "rx": 110, "ry": 110, "height": 30, "width": 30, "color": "blue" },
+        { "rx": 160, "ry": 160, "height": 30, "width": 30, "color": "red" }
+    ];
+
+    var svg = newSvg(title);
+
+    var circleGroup = svg.append("g").attr("transform", "translate(80,0)");
+    var circles = circleGroup.selectAll("circle")
+        .data(circleData)
+        .enter()
+        .append("circle").attr("id", function (d) { return "id_"+d.cx});
+
+    circles.attr("cx", function (d) { return d.cx; })
+        .attr("cy", function (d) { return d.cy; })
+        .attr("r", function (d) { return d.radius; })
+        .style("fill", function (d) { return d.color; });
+
+    var newGroup = svg.append("g");
+
+    //circles = d3.selectAll("circle").
+    //newGroup.insert("div", ":first-child");
+
+    var id_20 = svg.select("#id_20");
+
+    newGroup.append("#id_20");
+}
