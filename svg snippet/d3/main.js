@@ -1,4 +1,9 @@
-﻿
+﻿/*
+http://svgjs.com/
+http://svgjs.com/test/
+*/
+
+var startTime = (new Date()).getTime();
 
 var w = 300, h = 150;
 
@@ -9,42 +14,42 @@ function newSvg(title, width, height) {
     w = width || 300;
     h = height || 150;
 
-	var svg = container.append("svg")
+    var svg = container.append("svg")
 	.attr({ width: w, height: h })
 	.style("border", "1px dashed black");
 
-	if (!title) return svg;
-	svg.append("text").text(title)
+    if (!title) return svg;
+    svg.append("text").text(title)
 		.attr("y", 20);
 
-	return svg;
+    return svg;
 }
 
 
-// test 01
+// test 01 : 그리기
 test01("part 2. 10.Creating SVG Elements Based on Data");
 function test01(title) {
-	var svg = newSvg(title);
+    var svg = newSvg(title);
 
-	var data = [40, 20, 10];
-	var circles = svg.selectAll("circle")
+    var data = [40, 20, 10];
+    var circles = svg.selectAll("circle")
 		.data(data)
 		.enter()
 		.append("circle");
 
-	circles.attr({ cx: w / 2, cy: h / 2 })
+    circles.attr({ cx: w / 2, cy: h / 2 })
 		.attr("r", function (d) {
-			return d;
+		    return d;
 		})
 		.style("fill", function (d, i) {
-			if (d == 40) {
-				color = "green";
-			} else if (d == 20) {
-				color = "popule"
-			} else {
-				color = "red"
-			}
-			return color;
+		    if (d == 40) {
+		        color = "green";
+		    } else if (d == 20) {
+		        color = "popule"
+		    } else {
+		        color = "red"
+		    }
+		    return color;
 		});
 };
 
@@ -53,32 +58,32 @@ function test01(title) {
 // test 02
 test02("part 2. 11.Using the SVG Coordinate Space");
 function test02(title) {
-	var svg = newSvg(title);
+    var svg = newSvg(title);
 
-	var data = [30, 70, 110];
-	var circles = svg.selectAll("circle")
+    var data = [30, 70, 110];
+    var circles = svg.selectAll("circle")
 		.data(data)
 		.enter()
 		.append("circle");
 
-	circles.attr("cx", function (d) {
-		return d;
-	})
+    circles.attr("cx", function (d) {
+        return d;
+    })
 		.attr("cy", function (d) {
-			return d;
+		    return d;
 		})
 		.attr("r", function (d) {
-			return 20;
+		    return 20;
 		})
 		.style("fill", function (d, i) {
-			if (d == 30) {
-				color = "green";
-			} else if (d == 70) {
-				color = "popule"
-			} else {
-				color = "red"
-			}
-			return color;
+		    if (d == 30) {
+		        color = "green";
+		    } else if (d == 70) {
+		        color = "popule"
+		    } else {
+		        color = "red"
+		    }
+		    return color;
 		});
 };
 
@@ -87,27 +92,27 @@ function test02(title) {
 // test 03
 test03("part 2. 12.Data Structures D3.js Accepts");
 function test03(title) {
-	var svg = newSvg(title);
+    var svg = newSvg(title);
 
-	var data = [30, 70, 110];
-	var text = svg.selectAll("text")
+    var data = [30, 70, 110];
+    var text = svg.selectAll("text")
 		.data(data)
 		.enter()
 		.append("text");
 
-	// enter() 실행으로 인해 현재 text는 생로 생성되는 2개의 text element 만을 가지고 있다.
-	// 첫째항목까지 text를 적용하려면 다시 select해야 한다.
+    // enter() 실행으로 인해 현재 text는 생로 생성되는 2개의 text element 만을 가지고 있다.
+    // 첫째항목까지 text를 적용하려면 다시 select해야 한다.
 
-	//text = svg.selectAll("text")
+    //text = svg.selectAll("text")
 
-	text.text(function (d, i) {
-		return "i = " + i + ", d = " + d;
-	})
+    text.text(function (d, i) {
+        return "i = " + i + ", d = " + d;
+    })
 	.attr("x", function (d, i) {
-		return 50;
+	    return 50;
 	})
 	.attr("y", function (d, i) {
-		return (i + 1) * 20;
+	    return (i + 1) * 20;
 	});
 };
 
@@ -149,16 +154,16 @@ test04("part 2. 15.SVG Paths and D3.js");
 */
 
 function test04(title) {
-	var svg = new newSvg(title);
+    var svg = new newSvg(title);
 
-	svg.append("circle").attr({ cx: 25, cy: 55, r: 25 }).style("fill", "purple");
-	svg.append("rect").attr({ x: 50, y: 30, width: 50, height: 50 }).style("fill", "green");
-	svg.append("ellipse").attr({ cx: 115, cy: 55, rx: 15, ry: 25 }).style("fill", "red");
-	svg.append("line").attr({ x1: 130, y1: 55, x2: 155, y2: 55 }).style({ "stroke": "gray", "stroke-width": 5 });
+    svg.append("circle").attr({ cx: 25, cy: 55, r: 25 }).style("fill", "purple");
+    svg.append("rect").attr({ x: 50, y: 30, width: 50, height: 50 }).style("fill", "green");
+    svg.append("ellipse").attr({ cx: 115, cy: 55, rx: 15, ry: 25 }).style("fill", "red");
+    svg.append("line").attr({ x1: 130, y1: 55, x2: 155, y2: 55 }).style({ "stroke": "gray", "stroke-width": 5 });
 
-	svg.append("polyline").attr("points", "05,100 15,100 15,110 25,110 25,120 35,120")
+    svg.append("polyline").attr("points", "05,100 15,100 15,110 25,110 25,120 35,120")
 		.style({ "stroke": "blue", "stroke-width": 2, "fill": "none" });
-	svg.append("polygon").attr("points", "55,110 65,90 75,110")
+    svg.append("polygon").attr("points", "55,110 65,90 75,110")
 		.style({ "stroke": "blue", "stroke-width": 2, "fill": "yellow" });
 };
 
@@ -201,19 +206,19 @@ Z(z): none            // closepath
 */
 
 function test05(title) {
-	var svg = new newSvg(title);
+    var svg = new newSvg(title);
 
-	// 아래 두가지 표기 모두 맞음
-	// M10,25L10,75L60,75L10,25
-	// M 10 25 L 10 75 L 60 75 L 10 25
+    // 아래 두가지 표기 모두 맞음
+    // M10,25L10,75L60,75L10,25
+    // M 10 25 L 10 75 L 60 75 L 10 25
 
-	// path 1
-	svg.append("path").attr("d", "M 10 25 L 10 75 L 60 75 L 10 25")
+    // path 1
+    svg.append("path").attr("d", "M 10 25 L 10 75 L 60 75 L 10 25")
 		.style({ "stroke": "red", "stroke-width": 2, "fill": "none" });
 
-	// path 2
+    // path 2
 
-	/*
+    /*
 	// D3.js Path Data Generators
 
 	d3.svg.line - create a new line generator
@@ -227,26 +232,26 @@ function test05(title) {
 	d3.svg.diagonal.radial - create a new radial diagonal generator
 	*/
 
-	var data = [
+    var data = [
 		{ x: 100, y: 35 }, { x: 120, y: 50 }, { x: 140, y: 40 },
 		{ x: 160, y: 70 }, { x: 180, y: 35 }, { x: 200, y: 90 }
-	];
+    ];
 
-	var lineFunction = d3.svg.line()
+    var lineFunction = d3.svg.line()
 		.x(function (d) { return d.x; })
 		.y(function (d) { return d.y; })
 		.interpolate("linear");
-	/*
+    /*
 	* d3.js가 제공하는 interpolate 11가지 type
 	linear, step-before, step-after, basis, basis-open, basis-closed, 
 	bundle, cardinal, cardinal - open, cardinal - closed, monotone
 	*/
 
-	var pathData = lineFunction(data);
-	svg.append("path").attr("d", pathData)
+    var pathData = lineFunction(data);
+    svg.append("path").attr("d", pathData)
 		.style({ "stroke": "red", "stroke-width": 2, "fill": "none" });
 
-	/* 생성된 결과
+    /* 생성된 결과
 	<path style="stroke: rgb(255, 0, 0); stroke-width: 2px; fill: none;"
 		d="M100,35L120,50L140,40L160,70L180,35L200,90"></path>
 	*/
@@ -256,7 +261,7 @@ test06("16. Dynamic SVG Coordinate Space");
 
 function test06(title) {
     var data = [
-        { "x_axis": 10, "y_axis": 10, "height": 20, "width":20, "color" : "green" },
+        { "x_axis": 10, "y_axis": 10, "height": 20, "width": 20, "color": "green" },
         { "x_axis": 160, "y_axis": 40, "height": 20, "width": 20, "color": "purple" },
         { "x_axis": 70, "y_axis": 70, "height": 20, "width": 20, "color": "red" }
     ];
@@ -331,15 +336,10 @@ function test07(title) {
 
 test08("18. SVG Group Element and D3.js");
 
-function test08(title){
+function test08(title) {
     var circleData = [
-        { "cx": 20, "cy": 20, "radius": 20, "color" : "green" },
-        { "cx": 70, "cy": 70, "radius": 20, "color" : "purple" }
-    ];
-    
-    var rectangleData = [
-        { "rx": 110, "ry": 110, "height": 30, "width": 30, "color": "blue" },
-        { "rx": 160, "ry": 160, "height": 30, "width": 30, "color": "red" }
+        { "cx": 20, "cy": 20, "radius": 20, "color": "green" },
+        { "cx": 70, "cy": 70, "radius": 20, "color": "purple" }
     ];
 
     var svg = newSvg(title);
@@ -348,7 +348,7 @@ function test08(title){
     var circles = circleGroup.selectAll("circle")
         .data(circleData)
         .enter()
-        .append("circle").attr("id", function (d) { return "id_"+d.cx});
+        .append("circle").attr("id", function (d) { return "id_" + d.cx });
 
     circles.attr("cx", function (d) { return d.cx; })
         .attr("cy", function (d) { return d.cy; })
@@ -356,11 +356,105 @@ function test08(title){
         .style("fill", function (d) { return d.color; });
 
     var newGroup = svg.append("g");
-
-    //circles = d3.selectAll("circle").
-    //newGroup.insert("div", ":first-child");
-
+    //newGroup.insert("svg:#id_20", ":first-child");
+    
     var id_20 = svg.select("#id_20");
 
-    newGroup.append("#id_20");
+    // group을 이동 시키는 방법을 못찾겠음
+    //newGroup.append("circle #id_20");
+
+    //********************************************
+
+    // jquery를 이용하여 parent group을 이동 시킴
+    $(newGroup[0]).append($(id_20[0]))
+    newGroup.attr("transform", "translate(80,0)");
+
+    //********************************************
 }
+
+
+test09("19. SVG Text Element");
+
+function test09(title) {
+    //<text x="20" y="20" font-family="sans-serif" font-size="20px" fill="red">Hello!</text>
+    var svg = newSvg(title);
+    var text = svg.append("text")
+        .attr({
+            x:40, y:40
+        })
+        .style({
+            "font-family":"sans-serif",
+            "font-size":"20px",
+            "fill":"red"
+        })
+        .text("Hello!");
+
+    text.attr("text-anchor", "middle");
+
+    var circleData = [
+       { "cx": 20, "cy": 20, "radius": 20, "color": "green" },
+       { "cx": 70, "cy": 70, "radius": 20, "color": "purple" }
+    ];
+
+    //var circleGroup = svg.append("g").attr("transform", "translate(80,40)");
+    var circles = svg.selectAll("circle")
+        .data(circleData)
+        .enter()
+        .append("circle").attr("id", function (d) { return "id_" + d.cx });
+
+    circles.attr("cx", function (d) { return d.cx; })
+        .attr("cy", function (d) { return d.cy; })
+        .attr("r", function (d) { return d.radius; })
+        .style("fill", function (d) { return d.color; });
+
+    var g = svg.append("g").attr("transform", "translate(80,40)");
+    $(g[0]).append(circles[0]);
+
+    var text = g.selectAll("text")
+        .data(circleData)
+        .enter()
+        .append("text");
+    
+    text.attr("x", function (d) { return d.cx; })
+        .attr("y", function (d) { return d.cy; })
+        .style({
+            "font-family": "sans-serif",
+            "font-size": "20px",
+            "fill": "red"
+        })
+        .text(function (d) { return "( " + d.cx + ", " + d.cy + " )"; });
+    
+}
+
+test10("20. D3.js Axes");
+
+function test10(title) {
+    var axisScale = d3.scale.linear()
+        .domain([0, w])
+        .range([0, 200]);
+
+    var xAxis = d3.svg.axis()
+        .scale(axisScale);
+
+    out(typeof ("xAxis : ", xAxis));
+
+    var svg = newSvg(title);
+    var xAxisGroup = svg.append("g").call(xAxis)
+        .attr("transform", "translate(0, 50)");
+}
+
+
+
+var endTime = (new Date()).getTime() - startTime;
+out("endTime : ", endTime);
+
+
+
+
+
+
+
+
+
+
+
