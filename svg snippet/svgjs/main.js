@@ -74,40 +74,95 @@ function test01(title) {
     });
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+////////////////////////////////////////////
 
 // test 02
-test02("part 2. 11.Using the SVG Coordinate Space");
+test02("viewbox를 이용한 확대");
+
+////////////////////////////////////////////
+
 function test02(title) {
-    //svg = newSvg(title);
+    svg = newSvg(title);
+    var group = svg.last();
+
+    // jquery를 이용하여 접근할 수도 있다.
+    //var ar = $(svg.node).find("g");
+    var text = group.plain("도형을 클릭하세요").move(20, 20);
+
+    var rect1 = group.rect(100, 100).fill('#F00').move(0, 10);
+    
+    rect1.on("click", function () {
+        var b = this.bbox();
+        //out("click : ", b, this.rbox());
+
+        var o;
+        var zoom = this.doc().viewbox().zoom;
+        if(zoom == 1){
+            o = {x:b.x, y:b.y, width:b.width, height:b.height};
+        } else {
+            o = { x: 0, y: 0, width: w, height: h };
+        }
+
+       var box = this.doc().viewbox(o)
+       //out(box, zoom);
+    });
 };
-
-
 
 // test 03
-test03("part 2. 12.Data Structures D3.js Accepts");
+test03("scale을 이용한 확대");
 function test03(title) {
-    
+    svg = newSvg(title);
+    var group = svg.last();
+
+    // jquery를 이용하여 접근할 수도 있다.
+    //var ar = $(svg.node).find("g");
+
+    //var rect = group.rect(100, 100).animate().fill('#f03').move(100, 100);
+    var text = group.plain("도형을 클릭하세요").move(20, 20);
+
+    var rect1 = group.rect(100, 100).fill('#F00').move(0, 10);
+    var rect2 = group.rect(100, 100).fill('#0F0').move(150, 50);
+
+    rect1.on("click", function () {
+        var b = this.bbox();
+        out("click : ", b, this.rbox());
+
+        var sx = group.trans.scaleX;
+        var sy = group.trans.scaleY;
+
+        if (sx == 1) {
+            sx = 1.5;
+        }else{
+            sx = 1;
+        }
+        var multi = sx;
+        group.animate().scale(multi);
+    });
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // test 04
 test04("part 2. 15.SVG Paths and D3.js");
