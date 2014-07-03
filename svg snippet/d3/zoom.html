@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>d3.js 라이브러리 test</title>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	
+    <style>
+        body, div{font-size:0;}
+        svg {
+            font-size: 12px;color:#ff6a00;
+        }
+    </style>
+</head>
+<body>
+
+	<!--
+	<svg width="50" height="50">
+		<circle cx="25" cy="25" r="25" fill="purple" />
+	</svg>
+	-->
+	<div id="container" style="
+	position: absolute;
+    left: 20px;
+    top: 20px;"></div>
+
+    <script>
+
+        var width = 500, height = 300, k = 80;
+
+        var container = d3.select("#container");
+        container.append("p").style("font-size", "12px").text("Canvas");
+        
+        canvas = container.append("canvas")
+            .attr({ width: width, height: height })
+            .style("border", "1px dashed black")
+
+        //canvas.style("fontSize", "12px");
+        //canvas.append("text").text("title").attr("x", 20).attr("y", 20);
+
+        !function () {
+
+            var x = d3.scale.linear()
+            .domain([0, width])
+            .range([0, width]);
+
+            var y = d3.scale.linear()
+                .domain([0, height])
+                .range([0, height]);
+
+            var zoom = d3.behavior.zoom()
+                .x(x)
+                .y(y)
+                .size([width, height])
+                .on("zoom", zoomed_canvas);
+
+            var context = canvas.node().getContext("2d");
+            context.fillStyle = "#ccc";
+            context.strokeStyle = "#fff";
+
+            function zoomed_canvas() {
+                context.fillRect(0, 0, width, height);
+                context.lineWidth = 4 * zoom.scale();
+
+                // x방향
+                var d = x.domain();
+                var x0 = Math.floor(d[0] / k) * k;
+                var x1 = Math.ceil(d[1] / k) * k;
+
+                for (d; x0 <= x1; x0 += k) {
+                    context.beginPath();
+                    context.moveTo(x(x0), 0);
+                    context.lineTo(x(x0), height);
+                    context.stroke();
+                }
+
+                // y방향
+                var d = y.domain();
+                var y0 = Math.floor(d[0] / k) * k;
+                var y1 = Math.ceil(d[1] / k) * k;
+
+                for (d; y0 <= y1; y0 += k) {
+                    context.beginPath();
+                    context.moveTo(0, y(y0));
+                    context.lineTo(width, y(y0));
+                    context.stroke();
+                }
+            }
+
+            var random = d3.random.normal(0, width);
+            function jump_canvas() {
+                canvas.transition()
+                    .duration(5000)
+                    .call(zoom.translate([random(), random()]).event)
+                    .each("end", jump_canvas);
+            }
+
+            canvas.call(zoom.event);
+            jump_canvas();
+        }();
+        
+
+        //--------------------------------------------------------
+
+        container.append("p").style("font-size", "12px").text("SVG");
+        
+        svg = container.append("svg")
+            .attr({ width: width, height: height })
+            .style("border", "1px dashed black")
+
+        g = svg.append("g");
+
+        //canvas.style("fontSize", "12px");
+        //canvas.append("text").text("title").attr("x", 20).attr("y", 20);
+
+        !function () {
+            var x = d3.scale.linear()
+            .domain([0, width])
+            .range([0, width]);
+
+            var y = d3.scale.linear()
+                .domain([0, height])
+                .range([0, height]);
+
+            var zoom = d3.behavior.zoom()
+                        .x(x)
+                        .y(y)
+                        .size([width, height])
+                        .on("zoom", zoomed_SVG);
+
+
+
+
+            draw();
+            function draw() {
+                var data = [];
+
+                // x방향
+                var dx = x.domain();
+                var x0 = Math.floor(dx[0] / k) * k;
+                var x1 = Math.ceil(dx[1] / k) * k;
+
+                // y방향
+                var dy = y.domain();
+                var y0 = Math.floor(dy[0] / k) * k;
+                var y1 = Math.ceil(dy[1] / k) * k;
+
+                // x방향
+                for (dx; x0 <= x1; x0 += k) {
+                    // y방향
+                    for (dy; y0 <= y1; y0 += k) {
+                        data.push({
+                            x: x0, y: y0
+                        });
+                    }
+                    y0 = 0;
+                }
+                console.log(data);
+
+                rects = g.selectAll("rect")
+                    .data(data)
+                    .enter()
+                    .append("rect");
+
+                rects.attr({
+                    x: function (d) { return d.x; },
+                    y: function (d) { return d.y },
+                    width: function (d) { return 60; },
+                    height: function (d) { return 60; }
+                }).style("fill", "green");
+            }
+
+
+
+
+
+
+
+
+
+            function zoomed_SVG() {
+                //console.log("zoomed_SVG : ", zoom.scale());
+
+                var s = zoom.scale();
+                var x = zoom.translate()[0]*s;
+                var y = zoom.translate()[1]*s;
+                var r = 0//90 * (1 - s);
+                g.attr("transform", "translate(" + x + ", " + y + ") scale(" + s + ") rotate("+r+")");
+
+            }
+
+            var random = d3.random.normal(0, width);
+            function jump_SVG() {
+
+                g.transition()
+                    .duration(1000)
+                    .call(zoom.translate([0, 0]).event)
+                    .call(zoom.scale(1).event)
+                    //.each("end", jump_SVG);
+
+                target = null;
+            }
+
+            //g.call(zoom.event);
+            //jump_SVG();
+
+            var target;
+            rects.on("mousedown", function () {
+                if (target) {
+                    jump_SVG();
+                    return;
+                }
+
+                var rect = d3.select(this);
+                var x = rect.attr("x");
+                var y = rect.attr("y");
+                var w = rect.attr("width");
+                var h = rect.attr("height");
+
+                var sx = width/w;
+                var sy = height/h;
+                var s = Math.min(sx, sy);
+
+                target = rect;
+                console.log("s:", x, y, s);
+
+                g.transition()
+                    .duration(1000)
+                    .call(zoom.translate([-x, -y]).event)
+                    .call(zoom.scale(s).event)
+                    //.each("end", jump_SVG);
+            });
+        }();
+        
+
+
+
+    </script>
+
+</body>
+</html>

@@ -3,6 +3,10 @@ http://svgjs.com/
 http://svgjs.com/test/
 */
 
+function out() {
+    console.log.apply(window.console, arguments);
+}
+
 var startTime = (new Date()).getTime();
 
 var w = 300, h = 150;
@@ -370,6 +374,26 @@ function test08(title) {
     newGroup.attr("transform", "translate(80,0)");
 
     //********************************************
+
+    circles.on("mousedown", animate);
+    /*
+    function animate() {
+        d3.select(this).transition()
+            .duration(1000)
+            .attr("cx", 10)
+            .transition()
+            .delay(1000)
+            .attr("cx", 140);
+    };
+    */
+    function animate() {
+        newGroup.transition()
+            .duration(1000)
+            .attr("transform", "scale("+2+")")
+            .transition()
+            .delay(1000)
+            .attr("transform", "scale(" +1+ ")")
+    };
 }
 
 

@@ -114,7 +114,7 @@ ScaleMode.prototype = {
 		if(!o) return this;
 
 		for (var prop in o) {
-			console.log(prop, o[prop]);
+			//console.log(prop, o[prop]);
 			var propName = "_" + prop;
 			if (propName in this) {
 				var num = this._getNumber(o[prop]);

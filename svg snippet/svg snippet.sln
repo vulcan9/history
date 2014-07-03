@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Web
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E1F32EAC-EE8F-4CE2-BCA7-C5D24D477549}"
 EndProject
@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "d3", "d3", "{843A2828-750B-
 	ProjectSection(SolutionItems) = preProject
 		d3\index.html = d3\index.html
 		d3\main.js = d3\main.js
-		..\d3\d3_test\out.js = ..\d3\d3_test\out.js
+		d3\zoom.html = d3\zoom.html
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "snap.svg", "snap.svg", "{0F89EBC4-3413-4211-808B-1B1ADEF4792E}"
@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "svgjs", "svgjs", "{AE95A626
 	ProjectSection(SolutionItems) = preProject
 		svgjs\index.html = svgjs\index.html
 		svgjs\main.js = svgjs\main.js
+		svgjs\zoom.html = svgjs\zoom.html
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E5200750-7018-43EC-8422-C3A2B96DE3C5}"
@@ -36,6 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E5200750-701
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_unit", "_unit", "{65CD2493-498E-443A-817F-2F4B1CFBD619}"
 	ProjectSection(SolutionItems) = preProject
+		_unit\out.js = _unit\out.js
 		_unit\ScaleMode.js = _unit\ScaleMode.js
 	EndProjectSection
 EndProject

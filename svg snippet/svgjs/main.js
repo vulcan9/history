@@ -141,7 +141,7 @@ function test03(title) {
             sx = 1;
         }
         var multi = sx;
-        group.animate().scale(multi);
+        group.animate(100).scale(multi);
     });
 };
 
@@ -155,7 +155,7 @@ test04("scale 조정, 위치 조정 (화면 꽉참)");
 function test04(title) {
 	svg = newSvg(title);
 	var group = svg.last();
-
+	return;
 	// jquery를 이용하여 접근할 수도 있다.
 	//var ar = $(svg.node).find("g");
 
@@ -179,9 +179,20 @@ function test04(title) {
 
 	rect2.on("click", function () {
 		
+	    var r2 = this.bbox();
+	    out("click : ", r2);
+
+
+
+	    return;
+
+
+
+
+
 		out("click : ", source, compare);
 		var scale = scaleMode.scale();
-		out("scale : ", scale, scaleMode.scaleMode());
+		//out("scale : ", scale, scaleMode.scaleMode());
 
 		if (scale != 1) {
 			scale = 1;
@@ -199,7 +210,7 @@ function test04(title) {
 
 		var tx = compare.x + (compare.width - tw) / 2;
 		var ty = compare.y + (compare.height - th) / 2;
-
+        /*
 		this.animate().move(tx, ty).during(function (pos, morph) {
 			var box = this.bbox();
 			var tw = box.width;
@@ -211,6 +222,11 @@ function test04(title) {
 			var sx = this.trans.scaleX;
 			var sy = this.trans.scaleY;
 			this.scale(scale);
+		});
+        */
+		this.animate().move(tx, ty).scale(scale).after(function () {
+		    var box = this.bbox();
+		    out("end : ", box);
 		});
 	});
 };
