@@ -77,7 +77,7 @@ function test01(title) {
 ////////////////////////////////////////////
 
 // test 02
-test02("viewbox를 이용한 확대");
+test02("Zoom : viewbox를 이용한 확대");
 
 ////////////////////////////////////////////
 
@@ -108,8 +108,13 @@ function test02(title) {
     });
 };
 
+////////////////////////////////////////////
+
 // test 03
-test03("scale을 이용한 확대");
+test03("Zoom : scale을 이용한 확대");
+
+////////////////////////////////////////////
+
 function test03(title) {
     svg = newSvg(title);
     var group = svg.last();
@@ -140,32 +145,97 @@ function test03(title) {
     });
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+////////////////////////////////////////////
 
 // test 04
-test04("part 2. 15.SVG Paths and D3.js");
+test04("scale 조정, 위치 조정 (화면 꽉참)");
+
+////////////////////////////////////////////
+
+function test04(title) {
+	svg = newSvg(title);
+	var group = svg.last();
+
+	// jquery를 이용하여 접근할 수도 있다.
+	//var ar = $(svg.node).find("g");
+
+	//var rect = group.rect(100, 100).animate().fill('#f03').move(100, 100);
+	
+	var rect1 = group.rect(250, 100).fill('none')
+            .attr({ "stroke": "#000", "stroke-width": 1 }).move(20, 20);
+	var rect2 = group.rect(50, 50).fill('#0F0')
+            .attr({ "stroke": "#00F", "stroke-width": 5 }).move(150, 10);
+
+
+	var compare = rect1.bbox();
+	var source = rect2.bbox();
+
+	var scaleMode = new ScaleMode({
+		sourceWidth: source.width,
+		sourceHeight: source.height,
+		compareWidth: compare.width,
+		compareHeight: compare.height
+	});
+
+	rect2.on("click", function () {
+		
+		out("click : ", source, compare);
+		var scale = scaleMode.scale();
+		out("scale : ", scale, scaleMode.scaleMode());
+
+		if (scale != 1) {
+			scale = 1;
+			scaleMode.scale(1);
+		} else {
+			scaleMode.scale(ScaleMode.SCALE_WINDOW);
+			scale = scaleMode.scale();
+		}
+
+		
+
+		out("--> scale : ", scale, scaleMode.scaleMode());
+		var tw = scale * source.width;
+		var th = scale * source.height;
+
+		var tx = compare.x + (compare.width - tw) / 2;
+		var ty = compare.y + (compare.height - th) / 2;
+
+		this.animate().move(tx, ty).during(function (pos, morph) {
+			var box = this.bbox();
+			var tw = box.width;
+			var th = box.height;
+			//var tx = compare.x + (compare.width - tw) / 2;
+			//var ty = compare.y + (compare.height - th) / 2;
+
+			//var s = scale + (scale - 1) * pos
+			var sx = this.trans.scaleX;
+			var sy = this.trans.scaleY;
+			this.scale(scale);
+		});
+	});
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 - circle : cx, cy, r
@@ -189,9 +259,7 @@ test04("part 2. 15.SVG Paths and D3.js");
     points="05,30 15,10 25,30" />
 */
 
-function test04(title) {
 
-};
 
 // test 05
 test05("15. SVG Path Example");
