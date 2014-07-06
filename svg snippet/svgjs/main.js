@@ -52,7 +52,7 @@ function newSvg(title, width, height) {
 // var nestedSVG = svg.nested();
 
 
-test01("클릭 이벤트, Animation, 색상 비교");
+test01("01. 클릭 이벤트, Animation, 색상 비교");
 
 function test01(title) {
     svg = newSvg(title);
@@ -77,7 +77,7 @@ function test01(title) {
 ////////////////////////////////////////////
 
 // test 02
-test02("Zoom : viewbox를 이용한 확대");
+test02("02. Zoom : viewbox를 이용한 확대");
 
 ////////////////////////////////////////////
 
@@ -111,7 +111,7 @@ function test02(title) {
 ////////////////////////////////////////////
 
 // test 03
-test03("Zoom : scale을 이용한 확대");
+test03("03. Zoom : scale을 이용한 확대");
 
 ////////////////////////////////////////////
 
@@ -148,12 +148,54 @@ function test03(title) {
 ////////////////////////////////////////////
 
 // test 04
-test04("scale 조정, 위치 조정 (화면 꽉참)");
+test04("04. scale 조정, 위치 조정 (화면 꽉참)");
 
 ////////////////////////////////////////////
 
 function test04(title) {
-	svg = newSvg(title);
+
+    w = 900;
+    h = 400;
+
+    //--------------------------------
+    // SVG
+    //--------------------------------
+
+    if (SVG.supported) {
+        var svg = SVG("container").fixSubPixelOffset().size(w, h)
+            .style("margin-bottom", "10px");
+    } else {
+        alert('SVG not supported');
+        return;
+    }
+
+    // Group 테두리
+    var group = svg.group();
+    var rect = group.rect(w - 1, h - 1)
+            .attr({ "stroke": "#000", "stroke-width": 1, "fill": "white" })
+            .x(0.5).y(0.5);
+
+    // 타이틀 : text를 삽입하는 방법은 두가지가 있음
+    //var text = group.text(title).move(0, 0);
+    var text = group.plain(title).move(0, 0);
+
+    //--------------------------------
+    // Group Container
+    //--------------------------------
+
+    var contentGroup = createGroup(svg);
+
+
+    function createGroup(parentGroup) {
+        var group = parentGroup.group();
+        return g;
+    }
+
+
+
+
+
+
 	var group = svg.last();
 	return;
 	// jquery를 이용하여 접근할 수도 있다.
