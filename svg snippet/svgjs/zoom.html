@@ -81,6 +81,9 @@
         var viewport;
         var padding = 10;
 
+        // 현재 포커싱 받는 객체(group)
+        var currentFocus;
+
         !function () {
 
             //--------------------------------
@@ -108,6 +111,7 @@
 
             viewport.on("mousedown", function (e) {
                 if (e.defaultPrevented) return;
+                e.preventDefault();
                 out("# viewport 클릭");
                 focus(this);
             });
@@ -128,7 +132,7 @@
             // Group Container 2
             //--------------------------------
 
-            var group = createGroup(viewport, 160, 160).translate(400, 200);
+            var group = createGroup(viewport, 160, 160).translate(400, 200).rotate(45);
             var rect = createElement(group, "rect").fill("#FF0").size(100, 100);
             var rect = createElement(group, "rect").fill("#F00").move(100, 100);
 
@@ -136,7 +140,7 @@
             // Group Container 3
             //--------------------------------
 
-            var group = createGroup(viewport, 160, 100).translate(300, 100);
+            var group = createGroup(viewport, 160, 100).translate(300, 100).rotate(45);
             var rect = createElement(group, "rect").fill("#FF0").size(100, 100);
             var rect = createElement(group, "rect").fill("#F00").move(100, 100);
 
@@ -188,41 +192,17 @@
             //--------------------------------
 
             var currentScale = 1;
-            var currentFocus;
 
             function focus(instance) {
-                //out(instance.node);
-                out(instance);
+                
+                //out(instance);
+                var group = getFocusGroup(instance);
 
-                var group;
-                var rollback = true;
-
-                if (instance == svg) {
-                    group = instance.first();
-                    
-                }else if (instance.hasClass("viewport")) {
-                    out("// svg (viewport인 경우)");
-                    group = instance;
-                    
-                } else {
-                    if (instance.hasClass("gArea")) {
-                        out("// group인 경우");
-                        group = instance;
-                        
-                    } else if (instance.parent.hasClass("gArea")) {
-                        out("// element인 경우");
-                        group = instance.parent;
-                        rollback = false;
-
-                    } else {
-                        throw "# FOCUS 예외";
-                        return;
-                    }
-                }
-
+                var rollback = (group != instance.parent);
                 if (rollback) {
-                    initZoom();
+                    // 원상태로 되돌리기
                     currentFocus = viewport;
+                    initZoom();
                     return;
                 }
 
@@ -239,23 +219,48 @@
                     compareHeight: h - padding*2
                 });
 
-                out("viewport.scale : ", viewport.trans.scaleX);
-                //var scale = scaleMode.scale();
-                //out("scale을 계산한다.", scale);
+                // scale을 계산한다.
                 scaleMode.scale(ScaleMode.SCALE_WINDOW);
                 var scale = scaleMode.scale();
-                out("--> scale : ", scale);
+                out("scale : ", scale);
+
+                // Rotate
+                var rotation = group.trans.rotation;
 
                 // Center
-
-
-                //group영역을 넘쳐난 컨텐츠를 가진 경우 확대시 화면에 포함되지 않음
-
                 var pos = getPosition(group, scale);
                 out("position을 계산한다.", pos, source);
-                zoom(scale, pos.x, pos.y);
+
+                // zoom 적용
+                zoom(scale, pos.x, pos.y, rotation);
             }
 
+            function getFocusGroup(instance) {
+                var group;
+
+                if (instance == svg) {
+                    group = instance.first();
+
+                } else if (instance.hasClass("viewport")) {
+                    out("// svg (viewport인 경우)");
+                    group = instance;
+
+                } else {
+                    if (instance.hasClass("gArea")) {
+                        out("// group인 경우");
+                        group = instance;
+
+                    } else if (instance.parent.hasClass("gArea")) {
+                        out("// element인 경우");
+                        group = instance.parent;
+
+                    } else {
+                        throw "# FOCUS 예외";
+                        return;
+                    }
+                }
+                return group;
+            }
         }();
 
         //--------------------------------
@@ -270,6 +275,7 @@
 
             if (config_fixedBoundary) {
                 // background 크기(Paper 영역) 기준으로 계산
+                // group영역을 넘쳐난 컨텐츠를 가진 경우 확대시 화면에 포함되지 않음
                 var box = group.first().bbox();
             } else {
                 // group 전체가 차지하는 크기 기준으로 계산할때
@@ -327,7 +333,8 @@
             var scale = 1;
             var x = -padding;
             var y = -padding;
-            zoom(1, x, y);
+            var rotation = 0;
+            zoom(1, x, y, rotation);
         }
 
         var _fx;
@@ -338,29 +345,84 @@
         // http://easings.net/
         */
 
-        function zoom(scale, x, y) {
+        function zoom(scale, x, y, rotation) {
             if (_fx) {
                 _fx.stop();
             }
 
+            var duration = 1000;
             if (viewport.trans.scaleX == 1 || !config_rollbackEffect) {
-                _fx = viewport.animate(1000, SVG.easing.backOut);
 
-                _fx.scale(scale).translate(-x, -y).after(function () {
-                    out("end : ", scale);
-                    _fx = null;
-                });
+                /* 확인된 코드 (rotate 수정 필요)
+                _fx = viewport.animate(duration, SVG.easing.backOut);
+                _fx.scale(scale).translate(-x, -y).rotate(-rotation).after(endEffect);
+                */
+
+
+
+
+                /*
+                c = svg.rect().size(160, 150).fill("#0F0").style("opacity", 0.2);
+                var cx = 160 / 2, cy = 150 / 2;
+                c.transform({
+                    rotation: 45,
+                    cx: -300, cy: -100
+                }).move(292, -454);
+                */
+
+
+                
+                var g = viewport.get(2);
+                out("G : ", g);
+                var k = g.bbox();
+                out("K : ", k, g.x());
+                /*
+                // rotation, scale 중심점을 현재 group의 center로 설정한다.
+                scale = 1;
+                var cx = k.cx, cy = k.cy;
+                var r = g.trans.rotation;
+                _fx = viewport.animate()
+                    .rotate(-r, cx, cy).during(function (pos, morph) {
+                        //var s = (scale + scale * pos) / 2;
+                        //viewport.scale(s);
+                    })
+
+
+                    */
+
+                ?????????????
+                _fx = viewport.animate(duration, SVG.easing.backOut);
+                _fx.scale(scale).translate(-x+100, -y+100).rotate(-rotation).after(endEffect);
+
+
+
+
+
+
+
+
+
+
+
+
 
             } else {
-                _fx = viewport.animate(1000, SVG.easing.backInOut);
+                // 초기 상태로 복귀한 후 Zoom 적용
+                _fx = viewport.animate(duration, SVG.easing.backInOut);
 
-                _fx.scale(1).translate(padding, padding).after(function () {
-                    _fx = viewport.animate(1000, SVG.easing.backOut);
-                    _fx.scale(scale).translate(-x, -y).after(function () {
-                        out("end : ", scale);
-                        _fx = null;
-                    });
+                _fx.scale(1).translate(padding, padding).rotate(-rotation).after(function () {
+                    _fx.stop();
+                    _fx = viewport.animate(duration, SVG.easing.backOut);
+                    _fx.scale(scale).translate(-x, -y).after(endEffect);
                 });
+            }
+
+            function endEffect() {
+                // 중복 실행 방지되도록 수정
+                _fx.stop();
+
+                out("endEffect : ", scale);
+                _fx = null;
             }
         }
 
@@ -368,12 +430,74 @@
         // Drag 화면이동 기능
         //--------------------------------
 
+        b = svg.rect().size(100, 100).fill("#0FF").style("opacity", 0.2).rotate(45, 10, 10);
+        out("b : ",b.bbox());
+        //b.rotate(45, 0, 0);
+        //b.move(100, 0);
 
+        //--------------------------------
+        // Rotation된 화면 표시
+        //--------------------------------
 
+        a = svg.rect().size(100, 100).fill("#F00").style("opacity", 0.2);
+        a.rotate(45, 0, 0)//.move(25,0);
 
+        /*
+        // http://belouder.blog.me/40163175484
+        // http://blog.jidolstar.com/463
 
+                              | 1 3 5 |   | a c e |   | Sx Tx dx |
+        matrix[1,2,3,4,5,6] = | 2 4 6 | = | b d f | = | Ty Sy dy |
+                              | 0 0 1 |   | 0 0 1 |   | 0  0   1 |
+        
+        // rotate인 경우
+        | cos -sin 0 |
+        | sin  cos 0 |
+        |   0    0 1 |
 
+        // 중심점 이동->회전->확대/축소를 적용
+        [ sx * cosθ,  sx * sinθ, -cx * sx * cosθ - cy * sx * sinθ], 
+        [-sy * sinθ,  sy * cosθ,  cx * sy * sinθ + cy * sy * cosθ], 
+        [          0,           0,                                  1]
+        
 
+        이동      회전         확대/축소
+        | 1 0 -cx |  cos sin 0 | sx  0 0 |
+        | 0 1 -cy | -sin cos 0 |  0 sy 0 |
+        | 0 0 1   |    0   0 1 |  0  0 1 |
+        ==>
+        |  cos sin -cx | sx  0 0 |
+        | -sin cos -cy |  0 sy 0 |
+        |    0   0   1 |  0  0 1 |
+        ==>
+        |  cos*sx sin*sy -cx |
+        | -sin*sx cos*sy -cy |
+        |       0      0   1 |
+
+        */
+        //a.transform({matrix:"1,0,0,1,0,0"})
+
+        var r = 45 / 180 * Math.PI;
+        //a.transform({ matrix: "1,0,0,1,10,0" })
+        var cos = Math.cos(r);
+        var sin = Math.sin(r);
+        var sx = sy = 1;
+        var cx = cy = 10;
+        /*
+        a.transform({
+            a: (sx * cos), c: (sx * sin), e: (-cx * sx * cos - cy * sx * sin),
+            b: (-sy * sin), d: (sy * cos), f: (cx * sy * sin + cy * sy * cos)
+        });
+        
+        a.transform({
+            a: (sx * cos), c: (sy * sin), e: (-cx * sx * cos + cy * sy * sin),
+            b: (-sx * sin), d: (sy * cos), f: (-cx * sx * sin - cy * sy * cos)
+        });
+        */
+        a.transform({
+            rotation: 45,
+            cx:cx, cy:cy
+        });
 
 
 
