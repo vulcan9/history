@@ -76,7 +76,7 @@
             console.log.apply(console, arguments);
         }
 
-        var w = 600, h = 400;
+        var w = 700, h = 500;
         var svg;
         var viewport;
         var padding = 10;
@@ -133,16 +133,20 @@
             //--------------------------------
 
             var group = createGroup(viewport, 160, 160).translate(400, 200).rotate(45);
-            var rect = createElement(group, "rect").fill("#FF0").size(100, 100);
-            var rect = createElement(group, "rect").fill("#F00").move(100, 100);
+            var rect = createElement(group, "rect").fill("#FF0").size(80, 80);
+            var rect = createElement(group, "rect").fill("#F00").size(80, 80).move(80, 80);
+
+svg.add(group.first().clone().fill("#F00").style("opacity", 0.2).translate(400 + padding, 200 + padding)).style({"pointer-events": "none"});
 
             //--------------------------------
             // Group Container 3
             //--------------------------------
 
-            var group = createGroup(viewport, 160, 100).translate(300, 100).rotate(45);
-            var rect = createElement(group, "rect").fill("#FF0").size(100, 100);
-            var rect = createElement(group, "rect").fill("#F00").move(100, 100);
+            var group = createGroup(viewport, 160, 100).translate(300, 100).rotate(30);
+            var rect = createElement(group, "rect").fill("#FF0").size(80, 50);
+            var rect = createElement(group, "rect").fill("#F00").size(80, 50).move(80, 50);
+
+svg.add(group.first().clone().fill("#FF0").style("opacity", 0.2).translate(300 + padding, 100 + padding)).style({ "pointer-events": "none" });
 
             ///////////////////////////////////
             // Function
@@ -202,7 +206,7 @@
                 if (rollback) {
                     // 원상태로 되돌리기
                     currentFocus = viewport;
-                    initZoom();
+                    initZoom(group);
                     return;
                 }
 
@@ -232,7 +236,7 @@
                 out("position을 계산한다.", pos, source);
 
                 // zoom 적용
-                zoom(scale, pos.x, pos.y, rotation);
+                zoom(group, scale, pos.x, pos.y, rotation);
             }
 
             function getFocusGroup(instance) {
@@ -328,13 +332,13 @@
         // scale = 1로 되돌린 후 다시 zomm 효과를 적용할지 여부
         var config_rollbackEffect = false;
 
-        function initZoom() {
+        function initZoom(group) {
             //if (viewport.trans.scaleX == 1) return;
             var scale = 1;
             var x = -padding;
             var y = -padding;
             var rotation = 0;
-            zoom(1, x, y, rotation);
+            zoom(group, 1, x, y, rotation);
         }
 
         var _fx;
@@ -345,64 +349,244 @@
         // http://easings.net/
         */
 
-        function zoom(scale, x, y, rotation) {
+
+
+
+
+        //_fx = viewport.animate(100, SVG.easing.backOut);
+        //_fx.rotate(0, 0, 0);
+
+
+
+
+        function zoom(group, scale, x, y, rotation) {
             if (_fx) {
                 _fx.stop();
             }
 
             var duration = 1000;
             if (viewport.trans.scaleX == 1 || !config_rollbackEffect) {
-
+                
                 /* 확인된 코드 (rotate 수정 필요)
                 _fx = viewport.animate(duration, SVG.easing.backOut);
-                _fx.scale(scale).translate(-x, -y).rotate(-rotation).after(endEffect);
-                */
+                _fx.rotate(-rotation).scale(scale).translate(-x, -y).after(endEffect);
+                //*/
+                
 
+                var box = group.bbox();
+                var cx = box.cx, cy = box.cy;
+                
+                var vBox = viewport.bbox();
+                var vcx = vBox.cx, vcy = vBox.cy;
 
+                out(cx, cy, vcx, vcy);
+                viewport.circle(6).fill("#000").center(cx, cy);
+                // 중심점 이동하여 회전
+                //viewport.rotate(-rotation, cx + padding, cy + padding)
 
 
                 /*
-                c = svg.rect().size(160, 150).fill("#0F0").style("opacity", 0.2);
-                var cx = 160 / 2, cy = 150 / 2;
-                c.transform({
-                    rotation: 45,
-                    cx: -300, cy: -100
-                }).move(292, -454);
+                원하는 중심으로 좌표축을 이동 --> 회전시키고 --> 다시 원래의 좌표축으로
+                * [-이동] --> [회전] --> [이동] 인 행렬식으로는 다음과 같이 나타남
+
+                [회전]        [-이동]        [회전][-이동]
+                | cos -sin 0 || 1 0 -cx |    | cos -sin -cx*cos+cy*sin |
+                | sin  cos 0 || 0 1 -cy | =  | sin  cos -cx*sin-cy*cos |
+                |   0    0 1 || 0 0   1 |    |   0    0              1 |
+
+                [이동]    [회전][-이동]
+                | 1 0 cx || cos -sin -cx*cos+cy*sin |   | cos  -sin  -cx*cos+cy*sin + cx |
+                | 0 1 cy || sin  cos -cx*sin-cy*cos | = | sin   cos  -cx*sin-cy*cos + cy |
+                | 0 0  1 ||   0    0              1 |   |   0     0                    1 |
+                */
+                
+                _fx = viewport.animate(duration, SVG.easing.backOut);
+
+
+                var r = -rotation / 180 * Math.PI;
+                var cos = Math.cos(r);
+                var sin = Math.sin(r);
+                var cx = cx + padding;
+                var cy = cy + padding;
+                var sx = sy = scale;
+
+                /*
+                .transform({
+                    a: cos,
+                    b: sin,
+                    c: -sin,
+                    d: cos,
+                    e: -cx*cos+cy*sin+cx,
+                    f: -cx*sin-cy*cos+cy
+                })
+                */
+                
+                /*
+                // 특정위치를 중심으로하는  확대,회전 --> 연산 순서에 주의한다 (변환의 순서에 따라 변환 결과가 다르다.)
+                // 순서는 [ x0 y0 1 ] 벡터에 가까운 행렬부터 곱한다고 생각하면 된다
+
+                원하는 중심으로 좌표축을 (확대전 scale 적용된 만큼)이동 --> 확대, 회전 시키고 --> 다시 원래의 좌표축으로 (확대후 scale 적용된 만큼) 이동
+                * [-이동] --> [확대] --> [회전] --> [이동] 인 행렬식으로는 다음과 같이 나타남
+
+                // [특정위치를 중심으로하는 확대, 회전] = 
+                //     [이동]    [회전]        [확대]     [-이동]     * [좌표]
+                |x1|   | 1 0 cx || cos -sin 0 || sx  0 0 || 1 0 -cx |   |x0|
+                |y1| = | 0 1 cy || sin  cos 0 ||  0 sy 0 || 0 1 -cy | * |y0|
+                | 1|   | 0 0  1 ||   0    0 1 ||  0  0 1 || 0 0   1 |   | 1|
+                ----  ----------------------------------------------  -----
+                http://aslike.egloos.com/viewer/2898232
+                http://blog.naver.com/jjoheejea/150166157777
+
+
+                [확대]     [-이동]       [확대][-이동]
+                | sx  0 0 || 1 0 -cx |   | sx  0 -sx*cx |
+                |  0 sy 0 || 0 1 -cy | = |  0 sy -sy*cy |
+                |  0  0 1 || 0 0   1 |   |  0  0      1 |
+
+                [회전]        [확대][-이동]      [회전][확대][-이동]
+                | cos -sin 0 || sx  0 -sx*cx |   | sx*cos  -sy*sin  cos*(-sx*cx)-sin*(-sy*cy) = SX |
+                | sin  cos 0 ||  0 sy -sy*cy | = | sx*sin   sy*cos  sin*(-sx*cx)+cos*(-sy*cy) = SY |
+                |   0    0 1 ||  0  0      1 |   |      0        0                          1      |
+
+                [이동]    [회전][확대][-이동]       [이동][회전][확대][-이동]
+                | 1 0 cx*sx = CX || sx*cos  -sy*sin  SX |   | sx*cos  -sy*sin  SX+CX | 
+                | 0 1 cy*sy = CY || sx*sin   sy*cos  SY | = | sx*sin   sy*cos  SY+CY |
+                | 0 0  1 ||      0        0  1  |   |      0        0      1 |
+                
+                //scale 적용 - 연산 다시 해야함
+                //var sx = sy = 1;
+                _fx.transform({
+                    a: sx * cos,
+                    b: sx * sin,
+                    c: sy * (-sin),
+                    d: sy * cos,
+                    e: cos*(-sx*cx)-sin*(-sy*cy) + cx*sx,
+                    f: sin*(-sx*cx)+cos*(-sy*cy) + cy*sy
+                })
                 */
 
+                /*
+                // 특정위치를 중심으로하는  확대,회전 --> 연산 순서에 주의한다 (변환의 순서에 따라 변환 결과가 다르다.)
+                // 순서는 [ x0 y0 1 ] 벡터에 가까운 행렬부터 곱한다고 생각하면 된다
+
+                확대 --> 원하는 중심으로 좌표축을 (scale 적용된 만큼)이동 --> 회전 --> 다시 원래의 좌표축으로 (scale 적용된 만큼) 이동
+                * [확대] --> [-이동] --> [회전] --> [이동] 인 행렬식으로는 다음과 같이 나타남
+
+                // [특정위치를 중심으로하는 확대, 회전] = 
+                //     [이동]       [회전]        [-이동]       [확대]          * [좌표]
+                |x1|   | 1 0 cx*sx || cos -sin 0 || 1 0 -cx*sx || sx  0 0 |   |x0|
+                |y1| = | 0 1 cy*sy || sin  cos 0 || 0 1 -cy*sy ||  0 sy 0 | * |y0|
+                | 1|   | 0 0     1 ||   0    0 1 || 0 0      1 ||  0  0 1 |   | 1|
+                ----  ----------------------------------------------  -----
+                http://aslike.egloos.com/viewer/2898232
+                http://blog.naver.com/jjoheejea/150166157777
+
+
+                [-이동]       [확대]        [-이동][확대]
+                | 1 0 -cx*sx || sx  0 0 |   | sx  0 -cx*sx |
+                | 0 1 -cy*sy ||  0 sy 0 | = |  0 sy -cy*sy |
+                | 0 0      1 ||  0  0 1 |   |  0  0      1 |
+
+                [회전]        [-이동][확대]      [회전][-이동][확대]
+                | cos -sin 0 || sx  0 -sx*cx |   | sx*cos  -sy*sin  cos*(-sx*cx)-sin*(-sy*cy) = SX |
+                | sin  cos 0 ||  0 sy -sy*cy | = | sx*sin   sy*cos  sin*(-sx*cx)+cos*(-sy*cy) = SY |
+                |   0    0 1 ||  0  0      1 |   |      0        0                          1      |
+
+                [이동]            [회전][-이동][확대]       [이동][회전][-이동][확대]
+                | 1 0 cx*sx = CX || sx*cos  -sy*sin  SX |   | sx*cos  -sy*sin  SX+CX | 
+                | 0 1 cy*sy = CY || sx*sin   sy*cos  SY | = | sx*sin   sy*cos  SY+CY |
+                | 0 0          1 ||      0        0   1 |   |      0        0      1 |
+                
+                */
+
+                //scale 적용 - 연산 다시 해야함
+                //var sx = sy = 1;
+                _fx.transform({
+                    a: sx * cos,
+                    b: sx * sin,
+                    c: sy * (-sin),
+                    d: sy * cos,
+                    e: cos * (-sx * cx) - sin * (-sy * cy) + cx * sx,
+                    f: sin * (-sx * cx) + cos * (-sy * cy) + cy * sy
+                })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                //c = currentFocus.bbox()
+                //viewport.rotate(20, c.cx, c.cy)
+                //viewport.circle(6).fill("#000").center(c.cx, c.cy);
+
+                return;
+
+                //return;
+
+                _fx = viewport.animate(duration, SVG.easing.backOut)
+                //_fx.scale(scale).translate(-x, -y).rotate(-rotation, cx + 10, cy + 10).after(endEffect);
+                .rotate(-rotation, cx, cy)
+                .translate(-cx, -cy)
+
+                var last = viewport.last()
+                if(last.type == "ellipse"){
+                    last.remove();
+                }
+
+                //out(group == viewport);
+
+                //viewport.rotate(-45, 480, 280)
+                if (currentFocus != viewport) {
+                    viewport.circle(6).fill("#000").center(cx, cy);
+                } else {
+                    //viewport.circle(6).fill("#F00").center(cx, cy);
+                }
+                
+                /*
 
                 
-            	var g = viewport.get(2);
-            	var k = g.bbox();
-            	out("G : ", g, k);
-
-            	var cx = k.cx, cy = k.cy;
-
-            	/*
-                // rotation, scale 중심점을 현재 group의 center로 설정한다.
-                scale = 1;
-                
-                var r = g.trans.rotation;
-                _fx = viewport.animate()
-                    .rotate(-r, cx, cy).during(function (pos, morph) {
-                        //var s = (scale + scale * pos) / 2;
-                        //viewport.scale(s);
-                    })
-
-
-                    */
             	
             	//함수의 호출 순서는 변환에 영향을 준다
             	//가령, 이동 후에 회전을 하고 싶다고 한다면
             	//rotate() 함수를 먼저 호출하고 그 이후에 translate() 함수를 호출한다
-            	
-            	//
+
+            	var r = rotation / 180 * Math.PI;
+                //a.transform({ matrix: "1,0,0,1,10,0" })
+            	var cos = Math.cos(r);
+            	var sin = Math.sin(r);
+
+            	out(cx, cy, group.node, viewport.node);
                 _fx = viewport.animate(duration, SVG.easing.backOut);
-                _fx.rotate(-rotation, cx, cy).after(function () {
+
+                _fx.translate(x, y).scale(scale).rotate(-rotation, cx, cy).translate(-x, -y).after(function () {
                 	endEffect();
                 });
 
-				/*
+				
                 var cx:int = target.width/2;
                 var cy:int = target.height/2;
                 var a:int = 15;
@@ -450,8 +634,8 @@
         // Drag 화면이동 기능
         //--------------------------------
 
-        b = svg.rect().size(100, 100).fill("#0FF").style("opacity", 0.2).rotate(45, 10, 10);
-        out("b : ",b.bbox());
+        //b = svg.rect().size(100, 100).fill("#0FF").style("opacity", 0.2).rotate(45, 10, 10);
+        //out("b : ",b.bbox());
         //b.rotate(45, 0, 0);
         //b.move(100, 0);
 
@@ -459,8 +643,8 @@
         // Rotation된 화면 표시
         //--------------------------------
 
-        a = svg.rect().size(100, 100).fill("#F00").style("opacity", 0.2);
-        a.rotate(45, 0, 0)//.move(25,0);
+        //a = svg.rect().size(100, 100).fill("#F00").style("opacity", 0.2);
+        //a.rotate(45, 0, 0)//.move(25,0);
 
         /*
         // http://belouder.blog.me/40163175484
@@ -498,12 +682,15 @@
         */
         //a.transform({matrix:"1,0,0,1,0,0"})
 
+        /*
         var r = 45 / 180 * Math.PI;
         //a.transform({ matrix: "1,0,0,1,10,0" })
         var cos = Math.cos(r);
         var sin = Math.sin(r);
         var sx = sy = 1;
         var cx = cy = 10;
+        */
+
         /*
         a.transform({
             a: (sx * cos), c: (sx * sin), e: (-cx * sx * cos - cy * sx * sin),
@@ -515,10 +702,6 @@
             b: (-sx * sin), d: (sy * cos), f: (-cx * sx * sin - cy * sy * cos)
         });
         */
-        a.transform({
-            rotation: 45,
-            cx:cx, cy:cy
-        });
 
 
 
