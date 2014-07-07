@@ -372,14 +372,16 @@
 
 
                 
-                var g = viewport.get(2);
-                out("G : ", g);
-                var k = g.bbox();
-                out("K : ", k, g.x());
-                /*
+            	var g = viewport.get(2);
+            	var k = g.bbox();
+            	out("G : ", g, k);
+
+            	var cx = k.cx, cy = k.cy;
+
+            	/*
                 // rotation, scale 중심점을 현재 group의 center로 설정한다.
                 scale = 1;
-                var cx = k.cx, cy = k.cy;
+                
                 var r = g.trans.rotation;
                 _fx = viewport.animate()
                     .rotate(-r, cx, cy).during(function (pos, morph) {
@@ -389,12 +391,30 @@
 
 
                     */
-
-                ?????????????
+            	
+            	//함수의 호출 순서는 변환에 영향을 준다
+            	//가령, 이동 후에 회전을 하고 싶다고 한다면
+            	//rotate() 함수를 먼저 호출하고 그 이후에 translate() 함수를 호출한다
+            	
+            	//
                 _fx = viewport.animate(duration, SVG.easing.backOut);
-                _fx.scale(scale).translate(-x+100, -y+100).rotate(-rotation).after(endEffect);
+                _fx.rotate(-rotation, cx, cy).after(function () {
+                	endEffect();
+                });
 
+				/*
+                var cx:int = target.width/2;
+                var cy:int = target.height/2;
+                var a:int = 15;
+                var m:Matrix = event.target.transform.matrix;
+                var p:Point = m.transformPoint(new Point(cx, cy));
+                m.translate(-p.x, -p.y);
+                m.rotate(a*(Math.PI/180));
+                m.translate(p.x, p.y);
+                target.transform.matrix = m;
 
+                이 소스는 target의 가운데(x, y)를 중심으로 회전하는 코드다. 
+				*/
 
 
 
@@ -446,9 +466,10 @@
         // http://belouder.blog.me/40163175484
         // http://blog.jidolstar.com/463
 
-                              | 1 3 5 |   | a c e |   | Sx Tx dx |
-        matrix[1,2,3,4,5,6] = | 2 4 6 | = | b d f | = | Ty Sy dy |
-                              | 0 0 1 |   | 0 0 1 |   | 0  0   1 |
+		matrix[1,2,3,4,5,6] ==>
+         | x1 |   | 1 3 5 || x |   | a c e || x |   | Sx Tx dx || x |
+         | y1 | = | 2 4 6 || y | = | b d f || y | = | Ty Sy dy || y |
+         |  1 |   | 0 0 1 || 1 |   | 0 0 1 || 1 |   | 0  0   1 || 1 |
         
         // rotate인 경우
         | cos -sin 0 |

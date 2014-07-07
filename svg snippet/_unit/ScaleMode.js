@@ -224,7 +224,8 @@ ScaleMode.prototype = {
 	_type_window: function () {
 		var scale_h = this._type_horizontal();
 		var scale_v = this._type_vertical();
-		var scale = Math.min(scale_h, scale_v);
+		//var scale = Math.min(scale_h, scale_v);
+		var scale = (scale_h > scale_v)? scale_v : scale_h;
 
 		this._scaleMode = ScaleMode.SCALE_WINDOW;
 		return scale;
