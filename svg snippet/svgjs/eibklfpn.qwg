@@ -156,68 +156,61 @@
         	// 회전 전 위치
         	//svg.add(group.first().clone().fill("#FF0").style("opacity", 0.2).translate(300 + padding, 100 + padding)).style({ "pointer-events": "none" });
 
-            ///////////////////////////////////
+            //*************************
             // 초기 화면 설정
-            ///////////////////////////////////
+
+            //currentFocus = viewport;
 
             // currentFocus값을 설정하기 위해 한번 turn 한다.
             currentScale = 1;
-            //currentFocus = viewport;
             focus(viewport.get(2));
 
+            //*************************
+
+            ///////////////////////////////////
+            // Function
+            ///////////////////////////////////
+
+            function createGroup(parentGroup, w, h) {
+                var group = parentGroup.group().addClass("gArea")
+
+                // 기본 크기 표시
+                //group.rect().fill("none")
+                group.rect().addClass("background")
+                    //.stroke({ color: '#f06', width: 1, opacity: 0.5 })
+                    //.size(w-1, h-1).move(0.5, 0.5);
+                    .size(w, h);
+
+                group.on("mousedown", function (e) {
+                    if (e.defaultPrevented) return;
+                    e.preventDefault();
+                    out("# parent Group 클릭");
+                    focus(this);
+                });
+
+                return group;
+            }
+            
+            // var rect = createElement(g, "rect");
+            function createElement(parent, type) {
+                var el = parent[type]().size(50, 50).fill("#F00");
+                
+                el.on("mousedown", function (e) {
+                    e.preventDefault();
+                    out("# Element 클릭");
+                    focus(this);
+                });
+
+                //el.draggable()
+                return el;
+            }
+            
+            // var use = group.use(createSymbol("rect"))
+            function createSymbol(type) {
+                var el = svg.defs()[type](50, 50).fill("#f09");
+                return el;
+            }
         }();
-
-        ///////////////////////////////////
-        //
-        // Element 관련
-        //
-        ///////////////////////////////////
-
-        function createGroup(parentGroup, w, h) {
-            var group = parentGroup.group().addClass("gArea")
-
-            // 기본 크기 표시
-            //group.rect().fill("none")
-            group.rect().addClass("background")
-                //.stroke({ color: '#f06', width: 1, opacity: 0.5 })
-                //.size(w-1, h-1).move(0.5, 0.5);
-                .size(w, h);
-
-            group.on("mousedown", function (e) {
-                if (e.defaultPrevented) return;
-                e.preventDefault();
-                out("# parent Group 클릭");
-                focus(this);
-            });
-
-            return group;
-        }
-
-        // var rect = createElement(g, "rect");
-        function createElement(parent, type) {
-            var el = parent[type]().size(50, 50).fill("#F00");
-
-            el.on("mousedown", function (e) {
-                e.preventDefault();
-                out("# Element 클릭");
-                focus(this);
-            });
-
-            //el.draggable()
-            return el;
-        }
-
-        // var use = group.use(createSymbol("rect"))
-        function createSymbol(type) {
-            var el = svg.defs()[type](50, 50).fill("#f09");
-            return el;
-        }
-
-        ///////////////////////////////////
-        //
-        // 화면 전환 관련
-        //
-        ///////////////////////////////////
 
         //--------------------------------
         // FOCUS
@@ -536,12 +529,6 @@
         // 중심점 이동하여 회전
         //viewport.circle(1).fill("#000").center(cx, cy);
         */
-
-        ///////////////////////////////////
-        //
-        // 마우스 이벤트 관련
-        //
-        ///////////////////////////////////
 
         //--------------------------------
         // Drag 화면이동 기능
