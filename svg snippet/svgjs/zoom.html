@@ -32,12 +32,14 @@
                     opacity: 0.2;
                 }
             g.gArea .background {
-                opacity: 0.5;
-                fill: #999;
+                opacity: 0;
+                fill: none;
+                stroke: #00c1ff;
+                stroke-width: 1px;
             }
 
                 g.gArea .background:hover {
-                    opacity: 1;
+                    opacity: 0.5;
                 }
 
         text {
@@ -81,7 +83,7 @@
             console.log.apply(console, arguments);
         }
 
-        var w = 700, h = 500;
+        var w = 1500, h = 1000;
         var svg;
         var viewport;
         var padding = 10;
@@ -93,6 +95,9 @@
 
         // 현재 Scale 값
         var currentScale = 1;
+
+        // focus 동작 무시
+        var ignoreFocus = false;
 
         !function () {
 
@@ -108,10 +113,12 @@
             svg = SVG("container").fixSubPixelOffset().size(w, h)
                 //.style("margin-bottom", "10px");
 
-            svg.on("mousedown", function (e) {
-                if (e.defaultPrevented) return;
-                out("# svg 클릭");
-                focus(this);
+            // 마우스 이벤트
+            screenMouse(svg, {
+                click: function () {
+                    out("# svg 클릭");
+                    focus(this);
+                }
             });
 
             viewport = svg.group().addClass("viewport")
@@ -120,7 +127,64 @@
                 .size(w - padding * 2, h - padding * 2);
 
             // 마우스 이벤트
-            screenMouse();
+            var moveFx = null;
+            screenMouse(viewport, {
+                click: function () {
+                    out("# viewport 클릭");
+                    focus(this);
+                },
+                move: function (e, dx, dy) {
+                    if (currentFocus == viewport) return;
+                    //out(dx, dy);
+                    
+                    /*
+                    // viewport.dmove(dx, dy);
+                    // transform으로 이동 시켜야함
+
+                    [이동]
+                    |1 0 cx|| a c e |   | a c e+dx |
+                    |0 1 cy|| b d f | = | b d f+dy |
+                    |0 0  1|| 0 0 1 |   | 0 0    1 |
+                    */
+                    var m = viewport.trans;
+                    moveFx = viewport.transform({
+                        a: m.a,
+                        b: m.b,
+                        c: m.c,
+                        d: m.d,
+                        e: m.e + dx,
+                        f: m.f + dy
+                    });
+                    
+                },
+                /*
+                down: function (e) {
+
+                    if (moveFx) {
+                        ignoreFocus = true;
+                        moveFx.stop();
+                        moveFx = null;
+                    }
+                },
+                up: function (e, tx, ty) {
+                    if (currentFocus == viewport) return;
+
+                    if(tx == 0 && ty == 0) return;
+                    // tx, ty :  총 이동량
+                    out(tx, ty);
+                    var tension = 3;
+                    var m = viewport.trans;
+                    moveFx = viewport.animate(1000, SVG.easing.quadOut).transform({
+                        a: m.a,
+                        b: m.b,
+                        c: m.c,
+                        d: m.d,
+                        e: m.e + tx * tension,
+                        f: m.f + ty * tension
+                    });
+                }
+                */
+            });
 
             // group 이동 방법
             //var rect = svg.rect().size(100, 100).fill("#FF0");
@@ -149,7 +213,7 @@
             // Group Container 3
             //--------------------------------
 
-            var group = createGroup(viewport, 260, 200).translate(200, 100).rotate(1280);
+            var group = createGroup(viewport, 260, 200).translate(200, 100).rotate(90);
             var rect = createElement(group, "rect").fill("#FF0").size(80, 50);
             var rect = createElement(group, "rect").fill("#F00").size(80, 50).move(80, 50);
 
@@ -183,12 +247,15 @@
                 //.size(w-1, h-1).move(0.5, 0.5);
                 .size(w, h);
 
-            group.on("mousedown", function (e) {
-                if (e.defaultPrevented) return;
-                e.preventDefault();
-                out("# parent Group 클릭");
-                focus(this);
+            /*
+            // 마우스 이벤트
+            screenMouse(group, {
+                click: function () {
+                    out("# group 클릭");
+                    focus(this);
+                }
             });
+            */
 
             return group;
         }
@@ -197,10 +264,12 @@
         function createElement(parent, type) {
             var el = parent[type]().size(50, 50).fill("#F00");
 
-            el.on("mousedown", function (e) {
-                e.preventDefault();
-                out("# Element 클릭");
-                focus(this);
+            // 마우스 이벤트
+            screenMouse(el, {
+                click: function () {
+                    out("# Element 클릭");
+                    focus(this);
+                }
             });
 
             //el.draggable()
@@ -224,6 +293,10 @@
         //--------------------------------
 
         function focus(instance) {
+            if (ignoreFocus) {
+                ignoreFocus = false;
+                return;
+            }
 
             //out(instance);
             var group = getFocusGroup(instance);
@@ -353,8 +426,8 @@
         var config_rollbackEffect = false;
 
         var config_duration = 1000;
-        var config_easing = SVG.easing.backInOut;
-        //var config_easing = SVG.easing.backOut;
+        //var config_easing = SVG.easing.backInOut;
+        var config_easing = SVG.easing.cubicOut;
 
         function zoom(group, scale, after) {
 
@@ -548,53 +621,94 @@
         //--------------------------------
 
         // mouse move로 인정되는 이동 민감도
-        var movesensitive = 10;
+        var moveSensitive = 10;
+        var currentMouseTarget = null;
 
-        function screenMouse() {
-            viewport.on("mousedown", function (e) {
+        // eventObj : {down, start, move, up, click} 콜백 함수
+        function screenMouse(instance, eventObj) {
+            
+            if(!eventObj) return;
+            var cnt = 0;
+            for(var p in eventObj){
+                ++cnt;
+            }
+            if(cnt == 0) return;
+
+            instance.on("mousedown", function (e) {
                 if (e.defaultPrevented) return;
                 e.preventDefault();
+
+                if (currentMouseTarget) {
+                    currentMouseTarget.off("mousemove", onMousemove);
+                    currentMouseTarget.off("mouseup", onMouseup);
+                }
+                currentMouseTarget = this;
 
                 //out("# viewport 클릭");
                 //focus(this);
                 var isMoveCounter = 0;
-
+                
                 out("// TODO : 화면 밖에서 mouseup한 경우도 체크 해야함");
 
                 this.on("mousemove", onMousemove);
                 this.on("mouseup", onMouseup);
 
+                if (eventObj.down) eventObj.down.apply(instance, [e]);
+
                 var self = this;
+                var startX = startY = oldX = oldY = 0;
+                // 총이동량
+                var tx = ty = 0;
+
                 function onMousemove(e) {
                     if (e.defaultPrevented) return;
                     e.preventDefault();
 
                     ++isMoveCounter;
-                    if (isMoveCounter < 10) {
+                    if (isMoveCounter < moveSensitive) {
                         return;
                     }
-                    out("moveing : ", isMoveCounter);
+
+                    if (isMoveCounter == moveSensitive) {
+                        if (eventObj.start) eventObj.start.apply(instance, [e]);
+                        startX = oldX = e.clientX;
+                        startY = oldY = e.clientY;
+                    }
+
+                    var dx = e.clientX - oldX;
+                    var dy = e.clientY - oldY;
+
+                    if (eventObj.move) eventObj.move.apply(instance, [e, dx, dy]);
+                    //out("moveing : ", isMoveCounter);
+
+                    oldX = e.clientX;
+                    oldY = e.clientY;
                 }
+
                 function onMouseup(e) {
                     if (e.defaultPrevented) return;
                     e.preventDefault();
 
-                    if (isMoveCounter < 10) {
-                        out("# viewport 클릭");
-                        focus(this);
+                    var tx = (startX == 0)? 0 : e.clientX - startX;
+                    var ty = (startY == 0)? 0 : e.clientY - startY;
+                    if (eventObj.up) eventObj.up.apply(instance, [e, tx, ty]);
+
+                    if (isMoveCounter < moveSensitive) {
+                        if (eventObj.click) eventObj.click.apply(instance, [e]);
                     }
                     
                     isMoveCounter = 0;
                     self.off("mousemove", onMousemove);
                     self.off("mouseup", onMouseup);
+
+                    currentMouseTarget = null;
                 }
             });
 
             
         }
-
-
-
+        
+        
 
     </script>
 </body>
