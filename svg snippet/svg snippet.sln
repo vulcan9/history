@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Web
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E1F32EAC-EE8F-4CE2-BCA7-C5D24D477549}"
 EndProject
@@ -20,7 +20,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "snap.svg", "snap.svg", "{0F
 		snap.svg\1.js = snap.svg\1.js
 		snap.svg\2.html = snap.svg\2.html
 		snap.svg\2.js = snap.svg\2.js
-		snap.svg\Dreaming_tux.svg = snap.svg\Dreaming_tux.svg
 		snap.svg\snap.svg.js = snap.svg\snap.svg.js
 	EndProjectSection
 EndProject

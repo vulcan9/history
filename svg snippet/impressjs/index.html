@@ -121,10 +121,217 @@
 			line-height: 1.5;
 		}
 
+        /* 활성/비활성 슬라이드 표시 */
+        .impress-enabled .step {
+            margin: 0;
+            opacity: 0.3;
+            -webkit-transition: opacity 1s;
+            -moz-transition: opacity 1s;
+            -ms-transition: opacity 1s;
+            -o-transition: opacity 1s;
+            transition: opacity 1s;
+        }
+        .impress-enabled .step.active {opacity: 1;}
+
+        /* Slide 표현 */
+        .slide {
+            display: block;
+            width: 900px;
+            height: 700px;
+            padding: 40px 60px;
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, .3);
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+            color: rgb(102, 102, 102);
+            text-shadow: 0 2px 2px rgba(0, 0, 0, .1);
+            font-family: 'Open Sans', Arial, sans-serif;
+            font-size: 30px;
+            line-height: 36px;
+            letter-spacing: -1px;
+        }
+        .slide q {display: block;font-size: 50px;line-height: 72px;margin-top: 100px;}
+        .slide q strong {white-space: nowrap;}
 
 
+        /*///////////////////////////////
+		// Animation
+		///////////////////////////////*/
 
+        /*
+            transform이 가능하도록 하기위해 'inline-block'으로 지정
+            각 Step에 도달한 후 실행됨 (0.5s duration)
+        */
+
+        #ing {width: 500px;}
+        #ing b {
+            display: inline-block;
+            -webkit-transition: 0.5s;
+            -moz-transition: 0.5s;
+            -ms-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+        }
+
+        #ing.present .positioning {
+            -webkit-transform: translateY(-10px);
+            -moz-transform: translateY(-10px);
+            -ms-transform: translateY(-10px);
+            -o-transform: translateY(-10px);
+            transform: translateY(-10px);
+        }
+
+        #ing.present .rotating {
+            -webkit-transform: rotate(-10deg);
+            -moz-transform: rotate(-10deg);
+            -ms-transform: rotate(-10deg);
+            -o-transform: rotate(-10deg);
+            transform: rotate(-10deg);
+            -webkit-transition-delay: 0.25s;
+            -moz-transition-delay: 0.25s;
+            -ms-transition-delay: 0.25s;
+            -o-transition-delay: 0.25s;
+            transition-delay: 0.25s;
+        }
+
+        #ing.present .scaling {
+            -webkit-transform: scale(0.7);
+            -moz-transform: scale(0.7);
+            -ms-transform: scale(0.7);
+            -o-transform: scale(0.7);
+            transform: scale(0.7);
+            -webkit-transition-delay: 0.5s;
+            -moz-transition-delay: 0.5s;
+            -ms-transition-delay: 0.5s;
+            -o-transition-delay: 0.5s;
+            transition-delay: 0.5s;
+        }
+
+        /* 이미지 소스 */
+        #source {
+            width: 700px;
+            padding-bottom: 300px;
+            /* Yoda Icon :: Pixel Art from Star Wars http://www.pixeljoint.com/pixelart/1423.htm */
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARgAAAEYCAMAAACwUBm+AAAAAXNSR0IArs4c6QAAAKtQTFRFsAAAvbWSLUUrLEQqY1s8UYJMqJ1vNTEgOiIdIzYhjIFVLhsXZ6lgSEIsP2U8JhcCVzMsSXZEgXdOO145XJdWOl03LzAYMk4vSXNExr+hwcuxRTs1Qmk+RW9Am49eFRANQz4pUoNMQWc+OSMDTz0wLBsCNVMxa2NBOyUDUoNNSnlEWo9VRGxAVzYFl6tXCggHbLNmMUIcHhwTXkk5f3VNRT8wUT8xAAAACQocRBWFFwAAAAF0Uk5TAEDm2GYAAAPCSURBVHja7d3JctNAFIZRMwRCCGEmzPM8z/D+T8bu/ptbXXJFdij5fMt2Wuo+2UgqxVmtttq5WVotLzBgwIABAwYMGDCn0qVqbo69psPqVpWx+1XG5iaavF8wYMCAAQMGDBgwi4DJ6Y6qkxB1HNlcN3a92gbR5P2CAQMGDBgwYMCAWSxMlrU+UY5yu2l9okfV4bAxUVbf7TJnAwMGDBgwYMCAAbMLMHeqbGR82Zy+VR1Ht81nVca6R+UdTLaU24Ruzd3qM/e4yjnAgAEDBgwYMGDA7AJMd1l/3NRdVGcj3eX/2WEhCmDGxnM7yqygu8XIPjJj8iN/MGDAgAEDBgwYMAuDGb8q0RGlLCHLv1t9qDKWn3vdNHVuEI6HPaxO9Jo3GDBgwIABAwYMmIXBdC9ShGgMk+XnkXUeuGcsP/e1+lhNnZsL/G5Vs3OAAQMGDBgwYMCAWSxMR3SzOmraG5atdy9wZKzb+vg16qyqe2FltbnAgAEDBgwYMGDALAxmTJSuN3WA76rnVca6GTnemGN1WoEBAwYMGDBgwIBZGMxUomy4+xO899V4LAg5Xnc2MGDAgAEDBgwYMGA218Wq+2K1LDqvY9xZu8zN8fICdM6btYABAwYMGDBgwIABMzfH0+pGU5afze2tXebmeAfVz+p8BQYMGDBgwIABAwbMPBzZ+oWmfJrln1273FhkbHzee9WWbw7AgAEDBgwYMGDALAKm43hcdctKgblcPamOhuXnXlY5Xs6bsW4FGyQCAwYMGDBgwIABswiYMceZKgvMo+h8mrHLTdn676rj+FEFoTtHd8MwOxEYMGDAgAEDBgyYRcBM5UhXqiymW3R3c9ARhWO/OmjqfjVZy+xEYMCAAQMGDBgwYBYG073OnCV0RFNhMhaOa9WfKmOB6XjHMN1tQmaAAQMGDBgwYMCA2VWY7vXjz1U4croAzgPztwIDBgwYMGDAgAEDZhswh035NBw59Dww3RgYMGDAgAEDBgwYMJuD6f4tXT7NUqfCdBvZLkxXdgQGDBgwYMCAAQNmt2DGj8WzwAfV/w7T/aq7mxwwYMCAAQMGDBgwuwqTOo7uTwTngflSzQ3TdaJvAwEDBgwYMGDAgAED5gSvgbyo5oHZ4Pc+gwEDBgwYMGDAgAEzhOm+5G0qTGaAAQMGDBgwYMCAAXNaMOcnls3tNwWm+zRzp54NDBgwYMCAAQMGDJh5YNL36k1TLuGvVq+qnKMbS5n7tulT9asCAwYMGDBgwIABA2ZumKuztLnjgQEDBgwYMGDAgNl5mH/4/ltKA6vBNAAAAABJRU5ErkJggg==);
+            background-position: bottom right;
+            background-repeat: no-repeat;
+        }
+        #source q {font-size: 60px;}
+
+        /*---------------------------
+		// 기타
+		---------------------------*/
+
+        /*
+            And the "it's in 3D" step again brings some 3D typography - just for fun.
+            
+            Because we want to position <span> elements in 3D we set transform-style to
+            `preserve-3d` on the paragraph.
+            It is not needed by webkit browsers, but it is in Firefox. It's hard to say
+            which behaviour is correct as 3D transforms spec is not very clear about it.
+        */
+        #its-in-3d p {
+            -webkit-transform-style: preserve-3d;
+            -moz-transform-style: preserve-3d; /* Y U need this Firefox?! */
+            -ms-transform-style: preserve-3d;
+            -o-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+        }
+
+        /*
+    Below we position each word separately along Z axis and we want it to transition
+    to default position in 0.5s when the step gets `present` class.
+
+    Quite a simple idea, but lot's of styles and prefixes.
+        */
+        #its-in-3d span,
+        #its-in-3d b {
+            display: inline-block;
+            -webkit-transform: translateZ(40px);
+            -moz-transform: translateZ(40px);
+            -ms-transform: translateZ(40px);
+            -o-transform: translateZ(40px);
+            transform: translateZ(40px);
+            -webkit-transition: 0.5s;
+            -moz-transition: 0.5s;
+            -ms-transition: 0.5s;
+            -o-transition: 0.5s;
+            transition: 0.5s;
+        }
+
+        #its-in-3d .have {
+            -webkit-transform: translateZ(-40px);
+            -moz-transform: translateZ(-40px);
+            -ms-transform: translateZ(-40px);
+            -o-transform: translateZ(-40px);
+            transform: translateZ(-40px);
+        }
+
+        #its-in-3d .you {
+            -webkit-transform: translateZ(20px);
+            -moz-transform: translateZ(20px);
+            -ms-transform: translateZ(20px);
+            -o-transform: translateZ(20px);
+            transform: translateZ(20px);
+        }
+
+        #its-in-3d .noticed {
+            -webkit-transform: translateZ(-40px);
+            -moz-transform: translateZ(-40px);
+            -ms-transform: translateZ(-40px);
+            -o-transform: translateZ(-40px);
+            transform: translateZ(-40px);
+        }
+
+        #its-in-3d .its {
+            -webkit-transform: translateZ(60px);
+            -moz-transform: translateZ(60px);
+            -ms-transform: translateZ(60px);
+            -o-transform: translateZ(60px);
+            transform: translateZ(60px);
+        }
+
+        #its-in-3d .in {
+            -webkit-transform: translateZ(-10px);
+            -moz-transform: translateZ(-10px);
+            -ms-transform: translateZ(-10px);
+            -o-transform: translateZ(-10px);
+            transform: translateZ(-10px);
+        }
+
+        #its-in-3d .footnote {
+            font-size: 32px;
+            -webkit-transform: translateZ(-10px);
+            -moz-transform: translateZ(-10px);
+            -ms-transform: translateZ(-10px);
+            -o-transform: translateZ(-10px);
+            transform: translateZ(-10px);
+        }
+
+        #its-in-3d.present span,
+        #its-in-3d.present b {
+            -webkit-transform: translateZ(0px);
+            -moz-transform: translateZ(0px);
+            -ms-transform: translateZ(0px);
+            -o-transform: translateZ(0px);
+            transform: translateZ(0px);
+        }
+        /*
+    The last step is an overview.
+    There is no content in it, so we make sure it's not visible because we want
+    to be able to click on other steps.*/
+        #overview {display: none;}
     </style>
+
+    <style>
+
+        /*///////////////////////////////
+		// Hint
+		///////////////////////////////*/
+        
+    </style>
+
+    <!--<link href="sample/impress-demo.css" rel="stylesheet" />-->
 </head>
 
 <!--
@@ -164,9 +371,131 @@
 			<q>Aren't you just <b>bored</b> with all those slides-based presentations?</q>
 		</div>
 
+
+        <!--
+            Element의 ID는 URL의 식별자로 사용되지만 필수 사항은 아니다.
+            ID 가 정의되지 않으면 기본값으로 step-N 형식의 값ㅇ 기본으로 사용된다. (N은 슬라이드 넘버)
+            아래의 경우  "step-2" 가 될것이고 step 가 활성화 될때 URL의 hash 부분은 "#/step-2"가 된다.
+            "#step-2"를 이용하여 각 슬라이드를 직접적으로 링크로 접근할 수 있다.
+            링크로 사용하는 경우 "#/step-2" 대신 "#step-2"를 사용하는 것을 추천한다. (id-based 링크)
+        -->
+        <div class="step slide" data-x="0" data-y="-1500">
+            <q>Don't you think that presentations given <strong>in modern browsers</strong> shouldn't <strong>copy the limits</strong> of 'classic' slide decks?</q>
+        </div>
+        
+        <div class="step slide" data-x="1000" data-y="-1500">
+            <q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q>
+        </div>
+
+        <!--
+            scale : data-scale="4" 로 설정되었다. 
+            이는 다른  element에 비해 4배 더 확대되어 있다는 뜻이다.
+        -->
+        <div id="title" class="step" data-x="0" data-y="0" data-scale="4">
+            <span class="try">then you should try</span>
+            <h1>impress.js<sup>*</sup></h1>
+            <span class="footnote"><sup>*</sup> no rhyme intended</span>
+        </div>
+
+        <!-- rotation : data-rotate="90" 시계방향으로 90도 회전됨 -->
+        <div id="its" class="step" data-x="850" data-y="3000" data-rotate="90" data-scale="5">
+            <p>
+                It's a <strong>presentation tool</strong> <br />
+                inspired by the idea behind <a href="http://prezi.com">prezi.com</a> <br />
+                and based on the <strong>power of CSS3 transforms and transitions</strong> in modern browsers.
+            </p>
+        </div>
+
+        <div id="big" class="step" data-x="3500" data-y="2100" data-rotate="180" data-scale="6">
+            <p>visualize your <b>big</b> <span class="thoughts">thoughts</span></p>
+        </div>
+
+        <!-- data-z 값 설정으로 3차원 표현이 가능해진다. -->
+        <div id="tiny" class="step" data-x="2825" data-y="2325" data-z="-3000" data-rotate="300" data-scale="1">
+            <p>and <b>tiny</b> ideas</p>
+        </div>
+
+        <!-- step 후 Animation 설정 -->
+        <div id="ing" class="step" data-x="3500" data-y="-850" data-rotate="270" data-scale="6">
+            <p>by <b class="positioning">positioning</b>, <b class="rotating">rotating</b> and <b class="scaling">scaling</b> them on an infinite canvas</p>
+        </div>
+
+        <!--
+            이미지를 불러올 수 있고 링크를 걸수 있다.
+            hash를 이용해 step을 링크 걸 수 있고, 외부 링크도 역시 가능하다.
+        -->
+        <div id="source" class="step" data-x="6300" data-y="2000" data-rotate="20" data-scale="4">
+            <p>want to know more?</p>
+            <q><a href="http://localhost/history/svg%20snippet/impressjs/#/ing">use the source</a>, Luke!</q>
+        </div>
+        
+        <div id="one-more-thing" class="step" data-x="6000" data-y="4000" data-scale="2">
+            <p>one more thing...</p>
+        </div>
+
+        <!-- rotate 3D : data-rotate-x, data-rotate-y, data-rotate-z -->
+        <div id="its-in-3d" class="step" data-x="6200" data-y="4300" data-z="-100" data-rotate-x="-40" data-rotate-y="10" data-scale="2">
+            <p><span class="have">have</span> <span class="you">you</span> <span class="noticed">noticed</span> <span class="its">it's</span> <span class="in">in</span> <b>3D<sup>*</sup></b>?</p>
+            <span class="footnote">* beat that, prezi ;)</span>
+        </div>
+
+
+
+
+        <!--
+            * data-x, data-y, data-z : default value is 0
+            * data-rotate-x, data-rotate-y, data-rotate-z, data-rotate : default value is 0
+            * data-scale : default value is 1
+            CSS transfrom docs: https://developer.mozilla.org/en/CSS/transform
+
+             전체 화면 보기
+        -->
+        <div id="overview" class="step" data-x="3000" data-y="1500" data-scale="10"></div>
+
+        <!-- 외부 SVG 삽입 -->
+        <div class="step" data-x="0" data-y="0" data-scale="1">
+            <object type="image/svg+xml" data="./Dreaming_tux.svg">
+                <img src="./Dreaming_tux.svg" />
+            </object>
+        </div>
+
+
+
+
+
+
 	</div>
 
 
+    <!--
+        현재 step이 활성화 되었을때 active 클래스가 추가된다.
+        앞뒤 순서를 알려주기 위해서는 past, present, future 클래스가 각각 배정됨
+    -->
+
+    <!--
+        body Element에는 "impress-on-"+stepID 클래스가 추가된다.
+        이들 클래스들은 아래 hint 기능을 위해 쓰인다.
+        처음 방문한 사람들에게 사용방법을 알려주기 위해 메세지 보여줌
+    
+    <div class="hint">
+        <p>Use a spacebar or arrow keys to navigate</p>
+    </div>
+    <script>
+        if ("ontouchstart" in document.documentElement) {
+            document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+        }
+    </script>
+    -->
+
+
+
+
+
+
+
+
+
+    <!--
 	<section>
 		<h1>section 요소 사용</h1>
 		section 요소 각각의 내용을 따로 DB에 저장할 수 있는 작은 부분이 되어야함.<br>
@@ -174,7 +503,7 @@
 		article요소는 배포가능 문서의 독립적인 부분, section은 배포가능한 독립적인 부분이 아님.<br>
 		div는 스타일링과 스크립팅을 위해 요소를 묶는 역할.<br>
 	</section>
-
+    -->
 
 	<script src="./impress.js"></script>
 	<script>impress().init();</script>
