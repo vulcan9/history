@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>문서 구조 샘플</title>
+
+	<!--구글웹폰트 : https://www.google.com/fonts#UsePlace:use/Collection:Maven+Pro:400,900
+	<link href='http://fonts.googleapis.com/css?family=Maven+Pro:400,900' rel='stylesheet' type='text/css'>
+	-->
+
+	<style>
+		@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+		.NanumGothic {
+			font-family: 'Nanum Gothic', sans-serif;
+		}
+	</style>
+	<link href="./basic.css" rel="stylesheet" />
+
+
+</head>
+
+<body>
+
+
+	<div class="root">
+
+		<div class="document">
+			<!-- 외부 파일로 로드할때 (foreignObject 태그가 안먹히는 것 같다.)
+			<object type="image/svg+xml" data="./document.svg" style="width: 100%; height: 100%;">
+				<img src="./document.svg" />
+			</object>
+			-->
+
+			<svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+				 xmlns:xlink="http://www.w3.org/1999/xlink"
+				 style="left: 0px; top: 0px;">
+				<style>
+					
+					g {pointer-events: bounding-box;}
+					g.viewport .background {
+						opacity: 0.1;
+						fill: #777;
+					}
+					g.viewport .background:hover {opacity: 0.2;}
+					g.gArea .background {
+						opacity: 0;
+						fill: none;
+						stroke: #00c1ff;
+						stroke-width: 1px;
+					}
+					g.gArea .background:hover {opacity: 0.5;}
+					text {pointer-events: none;}
+					rect {
+						/*fill: #b6ff00;*/
+						stroke-width: 1px;
+						cursor: pointer;
+						opacity: 0.5;
+					}
+					rect:hover {opacity: 1;}
+				</style>
+
+				<g id="SvgjsG1006" class="viewport">
+					<rect id="SvgjsRect1007" width="100%" height="100%" class="background"></rect>
+					<g id="SvgjsG1008" class="gArea" transform="translate(50 50)">
+						<rect id="SvgjsRect1009" width="299" height="199" class="background"></rect>
+						<rect id="SvgjsRect1010" width="100" height="100" fill="#ffff00"></rect>
+						<rect id="SvgjsRect1011" width="50" height="50" fill="#ff0000" x="100" y="100"></rect>
+					</g>
+					<g id="SvgjsG1012" class="gArea" transform="rotate(45 480 280) translate(400 200)">
+						<rect id="SvgjsRect1013" width="160" height="160" class="background"></rect>
+						<rect id="SvgjsRect1014" width="80" height="80" fill="#ffff00"></rect>
+						<rect id="SvgjsRect1015" width="80" height="80" fill="#ff0000" x="80" y="80"></rect>
+					</g>
+					<g id="SvgjsG1016" class="gArea" transform="rotate(90 330 200) translate(200 100)">
+						<rect id="SvgjsRect1017" width="260" height="200" class="background"></rect>
+						<rect id="SvgjsRect1018" width="80" height="50" fill="#ffff00"></rect>
+						<rect id="SvgjsRect1019" width="80" height="50" fill="#ff0000" x="80" y="50"></rect>
+					</g>
+				</g>
+
+				<foreignObject width="100%" height="100%" style="color:#232323;font-size:32px;text-align:left;" min-width="72" min-height="94" dirty="true" measured-width="313" measured-height="94" x="0" y="0">
+					<div style="line-height: 1; overflow: hidden; width: 313px; height: 94px; font-family: 'Maven Pro'">
+						<p>작업내역</p>작업내역 TEXT text
+					</div>
+				</foreignObject>
+			</svg>
+
+
+
+
+
+
+
+
+
+
+
+		</div>
+
+	</div>
+
+
+
+	<!--doc_content.svg-->
+	텍스트  <b>TEXT text</b> TEXT text
+
+	<div style="font-size: 32px;">  
+	    NanumGothic 작업내역 TEXT text<br />
+	    th quick brown fox jumps over the lazy dog <br/>
+	    무궁화꽃이 <b>피었</b>습니다.  </div>
+</body>
+
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
