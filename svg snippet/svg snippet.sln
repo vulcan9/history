@@ -58,6 +58,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ex", "ex", "{724E394C-F7B3-
 	ProjectSection(SolutionItems) = preProject
 		ex\basic.css = ex\basic.css
 		ex\doc_content.svg = ex\doc_content.svg
+		ex\document.svg = ex\document.svg
 		ex\index.html = ex\index.html
 	EndProjectSection
 EndProject
