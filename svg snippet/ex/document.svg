@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" 
-	xmlns:xlink="http://www.w3.org/1999/xlink" 
-	style="left: 0px; top: 0px;">
+	xmlns:xlink="http://www.w3.org/1999/xlink">
 <style>
         svg {
             font-size: 12px;
@@ -62,10 +61,14 @@
 		</g>
 	</g>
 
-	 <foreignObject width="100%" height="100%" style="color:#232323;font-size:72px;text-align:left;" min-width="72" min-height="94" dirty="true" measured-width="313" measured-height="94" x="0" y="0">​
-		<div style="line-height: 1; overflow: hidden; width: 313px; height: 94px;">​
-			<p>작업내역</p>​
+	 <foreignObject width="100%" height="100%" style="color:#232323;font-size:72px;text-align:left;" 
+					min-width="72" min-height="94" dirty="true" measured-width="313" measured-height="94" x="0" y="0">​
+		<!--
+		 <div xmlns="http://www.w3.org/1999/xhtml" 
+			 style="width: 313px; height: 94px;font-family:'NanumGothic'">​
+			<p>작업내역 TEXT</p>​
 		</div>​
+		-->
      </foreignObject>
 
 
