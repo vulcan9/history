@@ -64,6 +64,8 @@ svg {
 	font-size: 12px;
 	border: 1px dashed #000;
 	background: #ddd;
+    width:100%;
+    height:100%;
 }
 
 
