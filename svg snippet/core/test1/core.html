@@ -24,18 +24,22 @@
 
 
 
+
+
+
+	<script src="src/svg.js"></script>
     <script src="./core.js"></script>
     <script>
 		var api = ext("u-screen")
-		api.init();
-		api.goto("overview");
+			api.init();
 	</script>
 
 
     <div style="position:fixed">
         <ul>
-            <li><a href="javascript:api.prev()">prev</a></li>
-            <li><a href="javascript:api.next()">next</a></li>
+            <li><a href="#/step-1">step-1</a></li>
+            <li><a href="#/step-2">step-2</a></li>
+            <li><a href="javascript:api.goto()">step-3</a></li>
         </ul>
     </div>
 </body>

@@ -59,31 +59,40 @@
     // 매개 변수로 표준 CSS 속성 이름을 받아 내부적으로 실행하여
     // 브라우저에서 사용할 수 있는 유효한 prefixed version의 이름을 반환하는 
 	// 함수를 리턴해줌
-    // The code is heavily inspired by Modernizr http://www.modernizr.com/
+	// The code is heavily inspired by Modernizr http://www.modernizr.com/
+	/*
 	var pfx = (function () {
 
 	    var style = document.createElement('dummy').style;
 	    var prefixes = 'Webkit Moz O ms Khtml'.split(' ');
 	    var memory = {};
 
-	    return function (prop) {
-	        if (typeof memory[prop] === "undefined") {
-	            var ucProp = prop.charAt(0).toUpperCase() + prop.substr(1);
-	            var props = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
-
-	            memory[prop] = null;
-	            for (var i in props) {
-	                if (style[props[i]] !== undefined) {
-	                    memory[prop] = props[i];
-	                    break;
-	                }
-	            }
-	        }
-
-	        return memory[prop];
-	    };
+	    return 
 
 	})();
+	*/
+
+	function pfx(prop) {
+		var dummy = document.createElement('dummy');
+		var style = dummy.style;
+		var prefixes = 'Webkit Moz O ms Khtml'.split(' ');
+		var memory = {};
+
+		if (typeof memory[prop] === "undefined") {
+			var ucProp = prop.charAt(0).toUpperCase() + prop.substr(1);
+			var props = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
+
+			memory[prop] = null;
+			for (var i in props) {
+				if (style[props[i]] !== undefined) {
+					memory[prop] = props[i];
+					break;
+				}
+			}
+		}
+		dummy = null;
+		return memory[prop];
+	};
 
     //-------------------------
     // Transition

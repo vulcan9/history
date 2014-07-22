@@ -75,39 +75,28 @@
 .u-viewport{
 	position:relative;
 	/*border: 1px dotted red;*/
+	width: 0px;
+	height: 0px;
 }
 .u-canvas{
 	position:absolute;
 	display:inline-block;
 	/*border: 1px dotted blue;*/
+	width: 3500px;
+	height: 3500px;
 }
-
-
-
-
-
+.u-svg{
+	position: absolute;
+	background:rgba(255,255,255,0.2);
+	/*라인표시
+	border: 1px dotted red;
+	left:-1px;
+	top:-1px;
+	*/
+}
 .u-document {
 }
 
-		/* 기본 표현 모형 */
-		.step {
-			position: relative;
-			width: 900px;
-			padding: 40px;
-			margin: 20px auto;
-
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			-ms-box-sizing: border-box;
-			-o-box-sizing: border-box;
-			box-sizing: border-box;
-
-			font-family: 'PT Serif', georgia, serif;
-			font-size: 48px;
-			line-height: 1.5;
-
-            border: 1px dashed red;
-		}
 
 
 
@@ -122,3 +111,38 @@
 
 
 
+
+
+        g {
+            pointer-events: bounding-box;
+        }
+            g.viewport .background {
+                opacity: 1;
+                fill: #777;
+            }
+                g.viewport .background:hover {
+                    opacity: 1;
+                }
+            g.gArea .background {
+                opacity: 1;
+                fill: none;
+                stroke: #00c1ff;
+                stroke-width: 1px;
+            }
+
+                g.gArea .background:hover {
+                    opacity: 1;
+                }
+
+        text {
+            pointer-events: none;
+        }
+        rect {
+            /*fill: #b6ff00;*/
+            stroke-width: 1px;
+            cursor: pointer;
+            opacity: 1;
+        }
+            rect:hover {
+                opacity: 1;
+            }
