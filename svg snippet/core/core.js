@@ -104,7 +104,7 @@ function checkSupport() {
 // 임의의 데이터로 구성해 본다.
 
 var documents = [
-	'<div id="overview" class="step" data-x="3000" data-y="1500" data-scale="10"></div>',
+	'<div id="overview" class="step" data-x="-3000" data-y="-1500" data-scale="10"></div>',
 	'<div id="bored" class="step slide" data-x="-1000" data-y="-1500"><q>Arent you just <b>bored</b> with all those slides-based presentations?</q></div>',
 	'<div class="step slide" data-x="0" data-y="-1500"><q>Dont you think that presentations given <strong>in modern browsers</strong> shouldnt <strong>copy the limits</strong> of classic slide decks?</q></div>',
 	'<div class="step slide" data-x="-4000" data-y="-4500" data-scale="2"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>'
@@ -223,9 +223,6 @@ var documents = [
     		// canvas
     		css(this.canvas, rootStyles);
 
-
-
-
     		//-------------------------
     		// canvas DOM 생성 (documents 데이터)
     		//-------------------------
@@ -308,7 +305,7 @@ var documents = [
 
     		initialized = true;
     		var api = API["impress-root-" + this.screenID];
-    		triggerEvent(this.viewport, "impress:init", { api: api)};
+    		this.triggerEvent(this.viewport, "impress:init", { api: api });
 
     		//-------------------------
     		// 윈도우 리사이징
@@ -544,6 +541,14 @@ var documents = [
     		}
 
     		return scale;
+    	},
+
+        // `triggerEvent` builds a custom DOM event with given `eventName` and `detail` data
+        // and triggers it on element given as `el`.
+    	triggerEvent: function (el, eventName, detail) {
+    	    var event = document.createEvent("CustomEvent");
+    	    event.initCustomEvent(eventName, true, true, detail);
+    	    el.dispatchEvent(event);
     	},
 
 
