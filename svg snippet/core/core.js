@@ -3,117 +3,68 @@ function out() {
 	console.log.apply(console, arguments);
 }
 
-//-------------------------
-// CSS
-//-------------------------
-
-// element에 props Object의 값으로 style을 설정한다.
-// 모든 속성 이름은 pfx 함수를 통해 버전에 따른 올바른 접두어를 사용할수 있도록 바뀐다.
-function css(el, props) {
-	var key, pkey;
-	for (key in props) {
-		if (props.hasOwnProperty(key)) {
-			pkey = pfx(key);
-			if (pkey !== null) {
-				el.style[pkey] = props[key];
-			}
-		}
-	}
-	return el;
-};
-
-// 매개 변수로 표준 CSS 속성 이름을 받아 내부적으로 실행하여
-// 브라우저에서 사용할 수 있는 유효한 prefixed version의 이름을 반환하는 
-// 함수를 리턴해줌
-// The code is heavily inspired by Modernizr http://www.modernizr.com/
-function pfx(prop) {
-	var dummy = document.createElement('dummy');
-	var style = dummy.style;
-	var prefixes = 'Webkit Moz O ms Khtml'.split(' ');
-	var memory = {};
-
-	if (typeof memory[prop] === "undefined") {
-		var ucProp = prop.charAt(0).toUpperCase() + prop.substr(1);
-		var props = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
-
-		memory[prop] = null;
-		for (var i in props) {
-			if (style[props[i]] !== undefined) {
-				memory[prop] = props[i];
-				break;
-			}
-		}
-	}
-	dummy = null;
-	return memory[prop];
-};
-
-//-------------------------
-// Transition
-//-------------------------
-
-function translate(t) {
-	return " translate3d(" + t.x + "px," + t.y + "px," + t.z + "px) ";
-};
-
-// By default the rotations are in X Y Z order that can be reverted by passing `true` as second parameter.
-function rotate(r, revert) {
-	var rX = " rotateX(" + r.x + "deg) ";
-	var rY = " rotateY(" + r.y + "deg) ";
-	var rZ = " rotateZ(" + r.z + "deg) ";
-
-	return revert ? rZ + rY + rX : rX + rY + rZ;
-};
-
-function scale(s) {
-	return " scale(" + s + ") ";
-};
-
-// `perspective` builds a perspective transform string for given data.
-function perspective(p) {
-	return " perspective(" + p + "px) ";
-};
-
-//===============================================================
-// CHECK SUPPORT
-//===============================================================
-					  
-function checkSupport() {
-	var ua = navigator.userAgent.toLowerCase();
-
-	// browser should support CSS 3D transtorms 
-	var support = (pfx("perspective") !== null) &&
-					// classList, dataset HTML5 API가 지원되는지 확인
-					(document.body.classList) && (document.body.dataset) &&
-
-					// but some mobile devices need to be blacklisted,
-					// because their CSS 3D support or hardware is not
-					// good enough to run impress.js properly, sorry...
-					(ua.search(/(iphone)|(ipod)|(android)/) === -1);
-	return support;
-}
-
 //===============================================================
 // CORE
 //===============================================================
 
-
-
-
-
-// 임의의 데이터로 구성해 본다.
-
-var documents = [
-	'<div id="overview" class="step" data-x="-3000" data-y="-1500" data-scale="10"></div>',
-	'<div id="bored" class="step slide" data-x="-1000" data-y="-1500"><q>Arent you just <b>bored</b> with all those slides-based presentations?</q></div>',
-	'<div class="step slide" data-x="0" data-y="-1500"><q>Dont you think that presentations given <strong>in modern browsers</strong> shouldnt <strong>copy the limits</strong> of classic slide decks?</q></div>',
-	'<div class="step slide" data-x="-4000" data-y="-4500" data-scale="2"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>'
-];
-
-
-
-
 (function ( document, window ) {
+
+	//-------------------------
+	// CHECK SUPPORT
+	//-------------------------
+
+	function checkSupport() {
+		var ua = navigator.userAgent.toLowerCase();
+
+		// browser should support CSS 3D transtorms 
+		var support = (pfx("perspective") !== null) &&
+						// classList, dataset HTML5 API가 지원되는지 확인
+						(document.body.classList) && (document.body.dataset) &&
+
+						// but some mobile devices need to be blacklisted,
+						// because their CSS 3D support or hardware is not
+						// good enough to run impress.js properly, sorry...
+						(ua.search(/(iphone)|(ipod)|(android)/) === -1);
+		return support;
+	}
+	
+	(function addResizeEvent() {
+		var self = this;
+		var _resizing = false;
+		var _watchResizingID = -1;
+		$(window).on("resize", function () {
+			if (_watchResizingID != -1) {
+				clearTimeout(_watchResizingID);
+				_watchResizingID = -1;
+			}
+
+			_watchResizingID = setTimeout(function () {
+				clearTimeout(_watchResizingID);
+				_watchResizingID = -1;
+
+				// fixed : "resize" 이름으로 이벤트를 trigger하면
+				// resize 이벤트가 계속해서 dispatch 됨
+				// (resize 이벤트가 버블링 되는것 같음)
+				
+				// viewContainer에서 resized 이벤트 발송
+				$(window).trigger("resizedWindow");
+			}, 500);
+		});
+	})();
+
+	//-------------------------
+	// META 태그
+	//-------------------------
+
+	// <meta> Tag: 모바일 디바이스를 위해 viewport 세팅
+	function setMetaTag() {
+		var meta = document.querySelector("meta[name='viewport']") || document.createElement("meta");
+		meta.content = "width=device-width, minimum-scale=1, maximum-scale=1, user-scalable=no";
+		if (meta.parentNode !== document.head) {
+			meta.name = 'viewport';
+			document.head.appendChild(meta);
+		}
+	}
 
     function ext(screenID) {
 
@@ -127,15 +78,17 @@ var documents = [
     		alert("Not Support CSS");
     	}
 
+    	// META 태그
+    	setMetaTag();
+
     	//-------------------------
     	// 인스턴스
     	//-------------------------
 
         // screen element ID
-    	this.screenID = screenID || "u-screen";
+    	this.screenID = screenID;
+    	this.initialized = false;
     	out("# API SCREEN ID : ", screenID);
-
-        this.initialized = false;
     }
 
     ext.prototype = {
@@ -145,26 +98,47 @@ var documents = [
     	//document: null,
 		
     	// steps 데이터 (transition 정보를 저장)
-    	stepsData: {},
+    	__stepsData: {},
+		// step (document) 목록
+		steps: null,
 
     	// 현재 활성화 상태의 (active step) element
     	activeStep: null,
     	// current state (position, rotation and scale) of the presentation
     	currentState: null,
-    	
-    	init: function () {
 
-    		if (this.initialized) return;
+    	// trasition 설정값
+    	config: null,
+    	// trasition (default) 설정값
+    	defaults: {
+    		width: 1024,
+    		height: 768,
+    		maxScale: 1,
+    		minScale: 0,
+    		perspective: 1000,
+    		transitionDuration: 1000
+    	},
 
-    		//-------------------------
-    		// DOM 구조 설정
-    		//-------------------------
+    	// scale factor of the browser window
+    	windowScale: null,
+
+    	//////////////////////////////////////////////////////
+    	// INIT
+    	//////////////////////////////////////////////////////
+
+    	///////////////////////////
+    	// DOM 구조 생성
+    	///////////////////////////
+
+    	createDOM: function(){
 
     		// DOM screen
     		var $screen = $("#" + this.screenID)
 				.addClass("u-screen");
     		this.screen = $screen[0];
-            
+
+    		$screen.empty();
+
     		// DOM viewport
     		var $viewport = $("<div>")
 				.attr("id", "u-viewport")
@@ -180,7 +154,62 @@ var documents = [
     		this.canvas = $canvas[0];
 
     		out("# DOM : ", this.screen);
+    	},
 
+    	///////////////////////////
+    	// 데이터대로 Content DOM을 생성
+    	///////////////////////////
+
+    	resetContent: function (documents) {
+
+    		//-------------------------
+    		// canvas DOM 생성 (documents 데이터)
+    		//-------------------------
+			
+    		// "canvas" element로 모두 생성. (wrap steps)
+    		var len = documents.length;
+    		var html = "";
+    		for (var i = 0; i < len; ++i) {
+    			html += documents[i];
+    		}
+    		this.canvas.innerHTML = html;
+
+    		//-------------------------
+    		// canvas DOM Style
+    		//-------------------------
+
+    		this.steps = this._getStepList(this.canvas);
+    		//this.steps.forEach(this.initStep);
+
+    		var self = this;
+    		this.steps.forEach.apply(
+				this.steps, [function () {
+					self._initStep.apply(self, arguments);
+				}]);
+    	},
+
+    	// data: step 노드(DIV)가 기술된 HTML 목록
+    	_documentData: null,
+
+    	// data : documentData 세팅
+    	init: function (data) {
+
+    		if (this.initialized) {
+    			// data가 있으면 다시 세팅함
+    			if (this.documentData == data) {
+    				//return;
+    			}
+
+    			this.initialized = false;
+    		}
+    		this._documentData = data;
+    		
+    		//-------------------------
+    		// DOM 구조 설정
+    		//-------------------------
+
+    		this.createDOM();
+    		
     		//-------------------------
     		// 설정값(congig) 초기화 설정
     		//-------------------------
@@ -200,7 +229,14 @@ var documents = [
     		// scale factor 계산하기
     		var win = this.screen;
     		this.windowScale = this._computeScreenScale(win, this.config);
-    		out("this.windowScale : ", this.windowScale);
+    		//out("this.windowScale : ", this.windowScale);
+
+    		// currentState 초기화
+    		this.currentState = {
+    			translate: { x: 0, y: 0, z: 0 },
+    			rotate: { x: 0, y: 0, z: 0 },
+    			scale: 1
+    		};
 
     		//-------------------------
     		// 화면 업데이트
@@ -224,146 +260,111 @@ var documents = [
     		css(this.canvas, rootStyles);
 
     		//-------------------------
-    		// canvas DOM 생성 (documents 데이터)
+    		// 데이터 적용
     		//-------------------------
 
-    		// "canvas" element로 모두 생성. (wrap steps)
-    		var len = documents.length;
-    		var html = "";
-    		for (var i = 0; i < len; ++i){
-    			html += documents[i];
+    		var isReset = (!this._documentData || this._documentData.length < 1);
+    		if (!isReset) this.resetContent(this._documentData);
+
+    		//-------------------------
+    		// 이벤트 리스너 설정
+    		//-------------------------
+
+    		this.initialized = true;
+            this.createEventListener();
+
+    		//-------------------------
+    		// 초기화 종료 이벤트
+    		//-------------------------
+
+            triggerEvent(this.viewport, "impress:init", { api: _getAPI(this.screenID) });
+
+            if (isReset) return;
+
+    		// START 
+    		// by selecting step defined in url or first step of the presentation
+            var step = "overview";// || steps[0];
+            this.goto(this._getElementFromHash() || step, 0);
+    	},
+
+    	// data- attribute에 설정된 data로 step element를 초기화 시키고 style을 수정한다.
+    	_initStep: function (el, idx) {
+
+    		// 아이디는 꼭 설정되어져 있어야함
+    		// id가 설정되어 있지 않으면 "step-N"으로 설정해 준다.
+    		if (!el.id) {
+    			el.id = "step-" + (idx + 1);
     		}
-    		this.canvas.innerHTML = html;
 
     		//-------------------------
-    		// canvas DOM Style
+    		// transition 데이터 구성
     		//-------------------------
-    		var self = this;
-    		var childNodes = arrayify(this.canvas.childNodes);
-    		//childNodes.forEach(initStep);
-    		childNodes.forEach.apply(
-				childNodes, [function () {
-					initStep.apply(self, arguments);
-				}]);
 
-    		// data- attribute에 설정된 data로 step element를 초기화 시키고 style을 수정한다.
-    		var self = this;
-    		function initStep(el, idx) {
-
-    			// transition 데이터 구성
-    			var data = el.dataset;
-    			var step_data = {
-    				translate: {
-    					x: toNumber(data.x),
-    					y: toNumber(data.y),
-    					z: toNumber(data.z)
-    				},
-    				rotate: {
-    					x: toNumber(data.rotateX),
-    					y: toNumber(data.rotateY),
-    					z: toNumber(data.rotateZ || data.rotate)
-    				},
-    				scale: toNumber(data.scale, 1),
-    				el: el
-    			};
-
-    			// id가 설정되어 있지 않으면 "step-N"으로 설정해 준다.
-    			if (!el.id) {
-    				el.id = "step-" + (idx + 1);
-    			}
-
-    			console.log("// impress-ID 로 된 stepsData key를 수정");
-
-    			// stepsData에 기록해 놓음
-    			this.stepsData["impress-" + el.id] = step_data;
-
-    			// element에 CSS 적용
-    			css(el, {
-    				position: "absolute",
-    				transform: "translate(-50%,-50%)" +
-                               translate(step_data.translate) +
-                               rotate(step_data.rotate) +
-                               scale(step_data.scale),
-    				transformStyle: "preserve-3d"
-    			});
+    		var data = el.dataset;
+    		var step_data = {
+    			translate: {
+    				x: toNumber(data.x),
+    				y: toNumber(data.y),
+    				z: toNumber(data.z)
+    			},
+    			rotate: {
+    				x: toNumber(data.rotateX),
+    				y: toNumber(data.rotateY),
+    				z: toNumber(data.rotateZ || data.rotate)
+    			},
+    			scale: toNumber(data.scale, 1),
+    			el: el
     		};
 
-    		//-------------------------
-    		// currentState 초기화
-    		//-------------------------
-
-    		// set a default initial state of the canvas
-    		this.currentState = {
-    			translate: { x: 0, y: 0, z: 0 },
-    			rotate: { x: 0, y: 0, z: 0 },
-    			scale: 1
-    		};
+    		// stepsData에 기록해 놓음
+    		this._setStepData(el.id, step_data);
 
     		//-------------------------
-    		// 초기화 종료
+    		// element에 CSS 적용
     		//-------------------------
 
-    		initialized = true;
-    		var api = API["impress-root-" + this.screenID];
-    		this.triggerEvent(this.viewport, "impress:init", { api: api });
+    		css(el, {
+    			position: "absolute",
+    			transform: "translate(-50%,-50%)" +
+						   translate(step_data.translate) +
+						   rotate(step_data.rotate) +
+						   scale(step_data.scale),
+    			transformStyle: "preserve-3d"
+    		});
 
     		//-------------------------
-    		// 윈도우 리사이징
+    		// 형식에 맞는 문서 모양을 지정함
     		//-------------------------
 
-            window.addEventListener(
-				"resize",
-				throttle(function () {
-						// 현재 활성화 문서에서 goto를 통해 화면 업데이트 실행
-						this.goto();
-					}, 250, this),
-				false
-			);
-
+    		el.classList.add("u-document");
     	},
 
-    	// trasition 설정값
-    	config: null,
-    	// trasition (default) 설정값
-    	defaults: {
-    		width: 1024,
-    		height: 768,
-    		maxScale: 1,
-    		minScale: 0,
-    		perspective: 1000,
-    		transitionDuration: 1000
+		// canvas내에 있는 step Node의 목록을 리턴
+    	_getStepList: function (canvas) {
+    		var documentList = arrayify(canvas.childNodes);
+    		return documentList;
     	},
 
-    	// scale factor of the browser window
-    	windowScale:null,
-		
+    	_getStepData: function (elementID) {
+    		return this.__stepsData["impress-" + elementID];
+    	},
+    	_setStepData: function (elementID, stepData) {
+    		this.__stepsData["impress-" + elementID] = stepData;
+    	},
+
+    	//////////////////////////////////////////////////////
+    	// GOTO
+    	//////////////////////////////////////////////////////
+
     	// used to reset timeout for `impress:stepenter` event
-    	stepEnterTimeout: null,
-		
-    	// parameter에 해당하는 step element 를 반환한다.
-    	// number 이면 index로 찾는다.
-    	// string 이면 id 로 찾는다
-    	// DOM element 이면 올바른 step element 인지 확인 후 리턴
-    	_getStep: function (step) {
-			/*
-    		if (typeof step === "number") {
-    			step = step < 0 ? steps[steps.length + step] : steps[step];
-    		} else if (typeof step === "string") {
-    			step = byId(step);
-    		}
-    		return (step && step.id && stepsData["impress-" + step.id]) ? step : null;
-			*/
-    		if (typeof step === "string") {
-    			step = document.getElementById(step);
-    		}
-    		return (step && step.id && this.stepsData["impress-" + step.id]) ? step : null;
-    	},
+    	_stepEnterTimeout: null,
 
     	// el : index (number), id (string) or element (dom Element)
     	// duration : second (optionally)
     	goto: function (el, duration) {
 
-    		if (!initialized || !(el = this._getStep(el))) {
+    		el = this._getStep(el);
+    		if (!this.initialized || !(el)) {
     			return false;
     		}
 
@@ -374,21 +375,21 @@ var documents = [
     		// canvas state
     		//-------------------------
 
-    		var step = this.stepsData["impress-" + el.id];
-
+    		var stepData = this._getStepData(el.id);
+    		
     		// compute target state of the canvas based on given step
     		var target = {
     			rotate: {
-    				x: -step.rotate.x,
-    				y: -step.rotate.y,
-    				z: -step.rotate.z
+    				x: -stepData.rotate.x,
+    				y: -stepData.rotate.y,
+    				z: -stepData.rotate.z
     			},
     			translate: {
-    				x: -step.translate.x,
-    				y: -step.translate.y,
-    				z: -step.translate.z
+    				x: -stepData.translate.x,
+    				y: -stepData.translate.y,
+    				z: -stepData.translate.z
     			},
-    			scale: 1 / step.scale
+    			scale: 1 / stepData.scale
     		};
 
     		//-------------------------
@@ -410,7 +411,8 @@ var documents = [
     		// 같은 step 이 다시 선택된 상태 이더라도 windowScale을 다시 계산한다.
     		// (woindow 창 크기 조정에 의해 발생될 가능성이 있기 때문에)
     		if (el === this.activeStep) {
-    			this.windowScale = this._computeWindowScale(this.config);
+    			var win = this.screen;
+    			this.windowScale = this._computeScreenScale(win, this.config);
     		}
 
     		var targetScale = target.scale * this.windowScale;
@@ -419,13 +421,11 @@ var documents = [
     		// onStepLeave 이벤트
     		//-------------------------
 
-			/*
     		// trigger leave of currently active element (if it's not the same step again)
     		if (this.activeStep && this.activeStep !== el) {
-    			onStepLeave(this.activeStep);
+    			this._onStepLeave(this.activeStep);
     		}
-			*/
-
+			
     		//-------------------------
     		// transition 적용 - viewport, canvas
     		//-------------------------
@@ -469,13 +469,16 @@ var documents = [
     		}
 
     		//-------------------------
-    		// 기록
+    		// 변경 내용 기록
     		//-------------------------
 
     		// store current state
     		this.currentState = target;
-    		this.activeStep = el;
 
+    		// activeStep 변경
+    		this._stepChanged(el);
+    		this.activeStep = el;
+    		
     		//-------------------------
     		// onStepEnter 이벤트
     		//-------------------------
@@ -485,44 +488,68 @@ var documents = [
     		// If you want learn something interesting and see how it was done with `transitionend` go back to
     		// version 0.5.2 of impress.js: http://github.com/bartaz/impress.js/blob/0.5.2/js/impress.js
 
-			/*
     		// 2개의 transition 종료 시점에 이벤트 발생시킴
-    		window.clearTimeout(this.stepEnterTimeout);
-    		this.stepEnterTimeout = window.setTimeout(function () {
-    			onStepEnter(this.activeStep);
-    		}, duration + delay);
-			*/
+    		window.clearTimeout(this._stepEnterTimeout);
 
+    		var self = this;
+    		this._stepEnterTimeout = window.setTimeout(function () {
+    			self._onStepEnter(self.activeStep);
+    		}, duration + delay);
+			
     		return el;
     	},
+
+    	// parameter에 해당하는 step element 를 반환한다.
+    	// number 이면 index로 찾는다.
+    	// string 이면 id 로 찾는다
+    	// DOM element 이면 올바른 step element 인지 확인 후 리턴
+    	_getStep: function (step) {
+    		if (typeof step === "number") {
+    			var list = this.steps;
+    			step = step < 0 ? list[list.length + step] : list[step];
+    		} else if (typeof step === "string") {
+    			step = document.getElementById(step);
+    		}
+
+    		var stepData = this._getStepData(step.id);
+    		return (step && step.id && stepData) ? step : null;
+    	},
 		
+    	_stepChanged: function(el){
+    		// 활성화 step 정보 수정
+    		if (this.activeStep) {
+    			this.activeStep.classList.remove("active");
+    			this.screen.classList.remove("impress-on-" + this.activeStep.id);
+    		}
+    		el.classList.add("active");
+    		this.screen.classList.add("impress-on-" + el.id);
+    	},
+
     	///////////////////////////
     	// prev, next
     	///////////////////////////
 
-    	// `prev` API function goes to previous step (in document order)
+    	// goes to previous step (in document order)
     	prev: function () {
-    		var steps = arrayify(this.canvas.childNodes);
-
-    		var prev = steps.indexOf(this.activeStep) - 1;
-    		prev = prev >= 0 ? steps[prev] : steps[steps.length - 1];
+    		var list = this.steps;
+    		var prev = list.indexOf(this.activeStep) - 1;
+    		prev = prev >= 0 ? list[prev] : list[list.length - 1];
 
     		return this.goto(prev);
     	},
 
-		// `next` API function goes to next step (in document order)
+		// goes to next step (in document order)
     	next: function () {
-    		var steps = arrayify(this.canvas.childNodes);
-
-    		var next = steps.indexOf(this.activeStep) + 1;
-			next = next < steps.length ? steps[next] : steps[0];
+    		var list = this.steps;
+    		var next = list.indexOf(this.activeStep) + 1;
+    		next = next < list.length ? list[next] : list[0];
 
 			return this.goto(next);
 		},
 
-    	//===============================================================
+    	///////////////////////////
     	// scale
-    	//===============================================================
+    	///////////////////////////
 
     	// scale factor : 설정된 값과 window 크기 사이에서 scale factor을 연산
     	_computeScreenScale: function (canvas, config) {
@@ -543,38 +570,277 @@ var documents = [
     		return scale;
     	},
 
-        // `triggerEvent` builds a custom DOM event with given `eventName` and `detail` data
-        // and triggers it on element given as `el`.
-    	triggerEvent: function (el, eventName, detail) {
-    	    var event = document.createEvent("CustomEvent");
-    	    event.initCustomEvent(eventName, true, true, detail);
-    	    el.dispatchEvent(event);
+    	//////////////////////////////////////////////////////
+    	// STEP EVENTS - 2가지
+    	//////////////////////////////////////////////////////
+
+    	// impress:stepleave : step is left (다음 step의 transition이 시작될때).
+    	// impress:stepenter : step이 screen에 보여질때 (이전 step으로부터 transition이 끝났을때)
+
+    	// reference to last entered step
+    	_lastEntered: null,
+
+    	_onStepLeave: function (step) {
+    		if (this._lastEntered === step) {
+    			out("* Event #impress:stepleave");
+    			triggerEvent(step, "impress:stepleave");
+    			this._lastEntered = null;
+    		}
     	},
 
+    	// step이 활성화(entered)될때 호출됨
+    	// 이벤트는 lastEntered 와 다를때만 trigger됨.
+    	_onStepEnter: function (step) {
+    		if (this._lastEntered !== step) {
+    			out("* Event #impress:stepenter");
+    			triggerEvent(step, "impress:stepenter");
 
+    			// hash 변경
+    			// `#/step-id` is used instead of `#step-id` to prevent default browser scrolling to element in hash.
+    			// And it has to be set after animation finishes, because in Chrome it makes transtion laggy.
+    			// BUG: http://code.google.com/p/chromium/issues/detail?id=62820
 
+    			window.location.hash = this.__lastHash = "#/" + step.id;
 
+    			this._lastEntered = step;
+    		}
+    	},
+		
+    	//////////////////////////////////////////////////////
+    	// 윈도우 이벤트
+    	//////////////////////////////////////////////////////
 
+    	removeEventListener: function () {
+    		$(window).off("resizedWindow", $.proxy(this.__onResize, this));
 
+    		$(window).off("keydown", $.proxy(this.__onKeydown, this));
+    		$(window).off("keyup", $.proxy(this.__onKeyup, this));
 
+    		this.listener_click();
+    		this.listener_touch();
 
+    		$(window).off("hashchange", $.proxy(this.__onHashchange, this));
+    	},
 
+    	createEventListener: function () {
+    		this.removeEventListener();
 
+    		$(window).on("resizedWindow", $.proxy(this.__onResize, this));
 
+    		$(window).on("keydown", $.proxy(this.__onKeydown, this));
+    		$(window).on("keyup", $.proxy(this.__onKeyup, this));
 
+    		this.listener_click();
+    		this.listener_touch();
+
+    		$(window).on("hashchange", $.proxy(this.__onHashchange, this));
+    	},
+
+    	//-------------------------
+    	// 리사이징 이벤트
+    	//-------------------------
+
+    	__onResize: function () {
+    		// 현재 활성화 문서에서 goto를 통해 화면 업데이트 실행
+    		this.goto(this.activeStep);
+    	},
+
+    	//-------------------------
+    	// KEY 이벤트
+    	//-------------------------
+
+    	// 9:tab, 
+    	// 32:space, 33:pg up, 34:pg down, 
+    	// 37:left, 38:up, 39:right, 40:down
+
+    	// Prevent default keydown action when one of supported key is pressed.
+    	__onKeydown: function (event) {
+    		var key = event.keyCode;
+    		if (key === 9 || (key >= 32 && key <= 34) || (key >= 37 && key <= 40)) {
+    			event.preventDefault();
+    		}
+    		//out("__onKeydown", key);
+    	},
+
+    	__onKeyup: function (event) {
+    		var key = event.keyCode;
+    		if (key === 9 || (key >= 32 && key <= 34) || (key >= 37 && key <= 40)) {
+    			switch (event.keyCode) {
+    				case 33: // pg up
+    				case 37: // left
+    				case 38: // up
+    					this.prev();
+    					break;
+    				case 9:  // tab
+    				case 32: // space
+    				case 34: // pg down
+    				case 39: // right
+    				case 40: // down
+    					this.next();
+    					break;
+    			}
+    			event.preventDefault();
+    		}
+    		//out("__onKeyup", key);
+    	},
+
+    	//-------------------------
+    	// HASH 이벤트
+    	//-------------------------
+
+    	// last hash detected
+    	__lastHash: null,
+    	__onHashchange: function () {
+
+    		// When the step is entered hash in the location is updated
+    		// (just few lines above from here), so the hash change is 
+    		// triggered and we would call `goto` again on the same element.
+
+    		// To avoid this we store last entered hash and compare.
+    		if (window.location.hash !== this.__lastHash) {
+    			this.goto(this._getElementFromHash());
+    		}
+    		//out("__onHashchange", this.__lastHash);
+    	},
+
+    	// returns an element located by id from hash part of window location.
+    	_getElementFromHash: function () {
+    		// get id from url # by removing `#` or `#/` from the beginning,
+    		// so both "fallback" `#slide-id` and "enhanced" `#/slide-id` will work
+    		var id = window.location.hash.replace(/^#\/?/, "");
+    		return document.getElementById(id);
+    	},
+
+    	///////////////////////////
+    	// Click 이벤트
+    	///////////////////////////
+
+    	listener_click: function(){
+
+    		out("ssssssssssssssssssssssssssssssssssssssss");
+
+    		var self = this;
+    		this.screen.addEventListener("click", function (event) {
+    			var target = event.target;
+    			// find closest step element that is not active
+    			while (true) {
+    				if (target === document.documentElement) break;
+
+    				//-------------------------
+    				// 바로 윗단계로 이동
+    				//-------------------------
+
+    				if (target === self.screen) {
+    					var success = link_up(self.activeStep);
+    					if (success) event.preventDefault();
+    					return;
+    				}
+
+    				//-------------------------
+    				// step 링크를 클릭한 경우
+    				//-------------------------
+
+    				if (target.tagName === "A") {
+    					// #/ID 인 경우는 hash에 의한 일반 링크이므로 
+    					// 여기에서는 #ID로 링크건 경우만 처리
+    					var href = target.getAttribute("href");
+    					if (href && href[0] === '#' && href[1] !== '/') {
+    						var success = link_id(href);
+    						if (success) {
+    							event.stopImmediatePropagation();
+    							event.preventDefault();
+    						}
+    					}
+    					return;
+    				}
+
+    				//-------------------------
+    				// step elements를 클릭한 경우
+    				//-------------------------
+
+    				if (target.classList.contains("active")) break;
+    				if (target.classList.contains("u-document")) break;
+    				target = target.parentNode;
+    			}
+    			
+    			var success = link_element(target);
+    			if (success) event.preventDefault();
+
+    		}, false);
+
+    		function link_id(hash) {
+    			var id = document.getElementById(hash.slice(1));
+    			var success = self.goto(id);
+    			return success;
+    		}
+
+    		function link_up(hash) {
+    			out("# TODO : 한단계 위 문서로 포커싱을 이동 시킨다.");
+    			var success = self.goto("overview");
+    			return success;
+    		}
+
+    		function link_element(el) {
+    			var success = self.goto(el);
+    			return success;
+    		}
+    	},
+		
+    	//-------------------------
+    	// Touch 이벤트
+    	//-------------------------
+
+    	// touch handler to detect taps on the left and right side of the screen
+    	// based on awesome work of @hakimel: https://github.com/hakimel/reveal.js
+    	listener_touch: function () {
+
+    		var self = this;
+    		document.addEventListener("touchstart", function (event) {
+    			if (event.touches.length === 1) {
+    				var x = event.touches[0].clientX;
+    				var width = window.innerWidth * 0.3;
+    				var success = null;
+
+    				if (x < width) {
+    					success = self.prev();
+    				} else if (x > window.innerWidth - width) {
+    					success = self.next();
+    				}
+
+    				if (success) {
+    					event.preventDefault();
+    				}
+    			}
+    		}, false);
+
+    	}
     };
 
 	//===============================================================
-	// API
+	// API 인스턴스
 	//===============================================================
 
     var API = {};
+    function _getAPI(screenID) {
+		var api = API["impress-root-" + screenID];
+		return api;
+	}
 
-    // 이미 초기화된 screen가 있으면 바로 API를 리턴한다.
+    function _setAPI(screenID, api) {
+		API["impress-root-" + screenID] = api;
+	}
+
     window.ext = function (screenID) {
 
+    	screenID = screenID || "u-screen";
+
+    	// 이미 초기화된 screen가 있으면 바로 API를 리턴한다.
+    	var api = _getAPI(screenID);
+    	if (api) return api;
+
+		// api 객체 생성
     	var instance = new ext(screenID);
-        var api = {
+        api = {
             init: factory(instance.init),
             goto: factory(instance.goto),
             next: factory(instance.next),
@@ -590,23 +856,134 @@ var documents = [
 		//**********************************
 		// 테스트용으로 노출시킴
 
-        window.app = instance;
+        window.__app__ = instance;
 
     	//**********************************
 
-        API["impress-root-" + screenID] = api;
+        _setAPI(screenID, api);
         return api;
     };
+
+	//===============================================================
+	// HELPER
+	//===============================================================
+
+	// 숫자화 (fallback : 숫자 변환 실패시 반환값)
+    function toNumber(numeric, fallback) {
+    	return isNaN(numeric) ? (fallback || 0) : Number(numeric);
+    };
+
+	// `arraify` takes an array-like object and turns it into real Array to make all the Array.prototype goodness available.
+    function arrayify(a) {
+    	return [].slice.call(a);
+    };
+
+	/*
+	// 중첩 실행되지 않도록delaytime 후에 함수 호출
+	// http://remysharp.com/2010/07/21/throttling-function-calls/
+    function throttle(fn, delay, context) {
+    	var timer = null;
+    	return function () {
+    		context = context || this;
+    		var args = arguments;
+
+    		clearTimeout(timer);
+    		timer = setTimeout(function () {
+    			fn.apply(context, args);
+    		}, delay);
+    	};
+    };
+	*/
+
+	//-------------------------
+	// CSS
+	//-------------------------
+
+	// element에 props Object의 값으로 style을 설정한다.
+	// 모든 속성 이름은 pfx 함수를 통해 버전에 따른 올바른 접두어를 사용할수 있도록 바뀐다.
+    function css(el, props) {
+    	var key, pkey;
+    	for (key in props) {
+    		if (props.hasOwnProperty(key)) {
+    			pkey = pfx(key);
+    			if (pkey !== null) {
+    				el.style[pkey] = props[key];
+    			}
+    		}
+    	}
+    	return el;
+    };
+
+	// 매개 변수로 표준 CSS 속성 이름을 받아 내부적으로 실행하여
+	// 브라우저에서 사용할 수 있는 유효한 prefixed version의 이름을 반환하는 
+	// 함수를 리턴해줌
+	// The code is heavily inspired by Modernizr http://www.modernizr.com/
+    function pfx(prop) {
+    	var dummy = document.createElement('dummy');
+    	var style = dummy.style;
+    	var prefixes = 'Webkit Moz O ms Khtml'.split(' ');
+    	var memory = {};
+
+    	if (typeof memory[prop] === "undefined") {
+    		var ucProp = prop.charAt(0).toUpperCase() + prop.substr(1);
+    		var props = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
+
+    		memory[prop] = null;
+    		for (var i in props) {
+    			if (style[props[i]] !== undefined) {
+    				memory[prop] = props[i];
+    				break;
+    			}
+    		}
+    	}
+    	dummy = null;
+    	return memory[prop];
+    };
+
+	//-------------------------
+	// Transition
+	//-------------------------
+
+    function translate(t) {
+    	return " translate3d(" + t.x + "px," + t.y + "px," + t.z + "px) ";
+    };
+
+	// By default the rotations are in X Y Z order that can be reverted by passing `true` as second parameter.
+    function rotate(r, revert) {
+    	var rX = " rotateX(" + r.x + "deg) ";
+    	var rY = " rotateY(" + r.y + "deg) ";
+    	var rZ = " rotateZ(" + r.z + "deg) ";
+
+    	return revert ? rZ + rY + rX : rX + rY + rZ;
+    };
+
+    function scale(s) {
+    	return " scale(" + s + ") ";
+    };
+
+	// `perspective` builds a perspective transform string for given data.
+    function perspective(p) {
+    	return " perspective(" + p + "px) ";
+    };
+
+	//-------------------------
+	// 이벤트
+	//-------------------------
+
+	// `triggerEvent` builds a custom DOM event with given `eventName` and `detail` data
+	// and triggers it on element given as `el`.
+    function triggerEvent(el, eventName, detail) {
+    	var event = document.createEvent("CustomEvent");
+    	event.initCustomEvent(eventName, true, true, detail);
+    	el.dispatchEvent(event);
+    }
 
 })(document, window);
 
 
 
-// TODO : scale factor 계산하기
-
 // TODO : HASH
 
-// TODO : Transition 기능
 
 
 
@@ -626,46 +1003,6 @@ var documents = [
 
 
 
-
-
-
-
-
-//===============================================================
-// HELPER
-//===============================================================
-
-// 숫자화 (fallback : 숫자 변환 실패시 반환값)
-function toNumber(numeric, fallback) {
-	return isNaN(numeric) ? (fallback || 0) : Number(numeric);
-};
-
-// `arraify` takes an array-like object and turns it into real Array to make all the Array.prototype goodness available.
-function arrayify(a) {
-	return [].slice.call(a);
-};
-
-
-// 중첩 실행되지 않도록delaytime 후에 함수 호출
-// http://remysharp.com/2010/07/21/throttling-function-calls/
-function throttle(fn, delay, context) {
-	var timer = null;
-	return function () {
-		context = context || this;
-		var args = arguments;
-
-		clearTimeout(timer);
-		timer = setTimeout(function () {
-			fn.apply(context, args);
-		}, delay);
-	};
-};
-
-
-
-//-------------------------
-// DOM
-//-------------------------
 
 
 
