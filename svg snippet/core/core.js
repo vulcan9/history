@@ -5,6 +5,26 @@ function out() {
 
 (function ( document, window ) {
 
+    ////////////////////////////////////////////////////////
+    //
+    // Version
+    //
+    ////////////////////////////////////////////////////////
+
+    // 버전 기록
+    var Version = {
+        version:     "0.0.1",
+        copyright:   "ⓒ pdi1066@naver.com",
+        modify:      "20140724",
+
+        getInfo: function () {
+            return "* Hi-story Engine Version." + " "
+                     + Version.version + " "
+                     + Version.copyright + " "
+                     + "(" + Version.modify + ")";
+        }
+    };
+    
 	//-------------------------
 	// CHECK SUPPORT
 	//-------------------------
@@ -68,11 +88,13 @@ function out() {
 
     ////////////////////////////////////////////////////////
     //
-    // CORE - netalk
+    // CORE - Space
     //
     ////////////////////////////////////////////////////////
 
-	function netalk(screenID) {
+	function Space(screenID) {
+
+	    console.log(Version.getInfo());
 
     	//-------------------------
     	// support 브라우져 체크
@@ -97,7 +119,7 @@ function out() {
     	out("# API SCREEN ID : ", screenID);
     }
 
-	netalk.prototype = {
+	Space.prototype = {
     	screen: null,
     	viewport:null,
     	canvas: null,
@@ -236,10 +258,13 @@ function out() {
     		triggerEvent(this.viewport, "impress:init", { api: API(this.screenID) });
     		if (isReset) return;
 
-    		// START 
+    	    //-------------------------
+    	    // START 
+    	    //-------------------------
+
     		// by selecting step defined in url or first step of the presentation
             var step = "overview";// || steps[0];
-            this.goto(this._getElementFromHash() || step, 0);
+            this.goto(this._getElementFromHash() || step, 500);
     	},
 
         ///////////////////////////
@@ -840,7 +865,7 @@ function out() {
         __API["impress-root-" + screenID] = value;
     }
 
-    window.netalk = function (screenID) {
+    window.Space = function (screenID) {
 
     	screenID = screenID || "u-screen";
 
@@ -849,7 +874,7 @@ function out() {
     	if (api) return api;
 
 		// api 객체 생성
-    	var instance = new netalk(screenID);
+    	var instance = new Space(screenID);
         api = {
             init: factory(instance.init),
             goto: factory(instance.goto),
