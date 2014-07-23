@@ -114,7 +114,7 @@
 
 .u-canvas #overview { display: none }
 /*
-.impress-on-overview .u-document {
+.active-overview .u-document {
     opacity: 1;
     cursor: pointer;
 }

@@ -31,20 +31,13 @@
 		var documents = [
 			'<div id="overview" data-x="-3000" data-y="-1500" data-scale="10"></div>',
 			'<div id="bored" data-x="-1000" data-y="-1500"><q>Arent you <a href="#bored2">use the source</a>just <b>bored</b> with all those slides-based presentations?</q></div>',
-			'<div id="bored2"data-x="0" data-y="-1500" data-rotate="-40"><q>Dont you think <a href="#bored">use the source</a>that presentations given <strong>in modern browsers</strong> shouldnt <strong>copy the limits</strong> of classic slide decks?</q></div>',
+			'<div id="bored2"data-x="0" data-y="-1500" data-rotate="-45"><q>Dont you think <a href="#bored">use the source</a>that presentations given <strong>in modern browsers</strong> shouldnt <strong>copy the limits</strong> of classic slide decks?</q></div>',
 			'<div data-x="-4000" data-y="-4500" data-scale="2"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>'
 		];
 
-		var api = ext("u-screen")
+		var api = window.netalk("u-screen");
 		api.init(documents);
-		api.init(documents);
-		api.init(documents);
-		api.init(documents);
-		api.init(documents);
-		api.init(documents);
-
-		// 해쉬 기능 추가 후에는 실행할 필요 없음
-		//api.goto("overview");
+		
 	</script>
 
 

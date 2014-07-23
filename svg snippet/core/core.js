@@ -3,10 +3,6 @@ function out() {
 	console.log.apply(console, arguments);
 }
 
-//===============================================================
-// CORE
-//===============================================================
-
 (function ( document, window ) {
 
 	//-------------------------
@@ -27,7 +23,11 @@ function out() {
 						(ua.search(/(iphone)|(ipod)|(android)/) === -1);
 		return support;
 	}
-	
+
+    //-------------------------
+    // window Resize Event
+    //-------------------------
+
 	(function addResizeEvent() {
 		var self = this;
 		var _resizing = false;
@@ -66,7 +66,13 @@ function out() {
 		}
 	}
 
-    function ext(screenID) {
+    ////////////////////////////////////////////////////////
+    //
+    // CORE - netalk
+    //
+    ////////////////////////////////////////////////////////
+
+	function netalk(screenID) {
 
     	//-------------------------
     	// support 브라우져 체크
@@ -91,15 +97,22 @@ function out() {
     	out("# API SCREEN ID : ", screenID);
     }
 
-    ext.prototype = {
+	netalk.prototype = {
     	screen: null,
     	viewport:null,
     	canvas: null,
-    	//document: null,
-		
+    	
     	// steps 데이터 (transition 정보를 저장)
     	__stepsData: {},
-		// step (document) 목록
+    	stepData: function (elementID, value) {
+    	    //GET
+    	    if (value === undefined) return this.__stepsData["impress-" + elementID];
+
+    	    // SET
+    	    this.__stepsData["impress-" + elementID] = value;
+    	},
+
+		// step (DOM) 목록
 		steps: null,
 
     	// 현재 활성화 상태의 (active step) element
@@ -126,68 +139,6 @@ function out() {
     	// INIT
     	//////////////////////////////////////////////////////
 
-    	///////////////////////////
-    	// DOM 구조 생성
-    	///////////////////////////
-
-    	createDOM: function(){
-
-    		// DOM screen
-    		var $screen = $("#" + this.screenID)
-				.addClass("u-screen");
-    		this.screen = $screen[0];
-
-    		$screen.empty();
-
-    		// DOM viewport
-    		var $viewport = $("<div>")
-				.attr("id", "u-viewport")
-				.addClass("u-viewport");
-    		$screen.append($viewport);
-    		this.viewport = $viewport[0];
-
-    		// DOM cnvas
-    		var $canvas = $("<div>")
-				.attr("id", "u-canvas")
-				.addClass("u-canvas");
-    		$viewport.append($canvas);
-    		this.canvas = $canvas[0];
-
-    		out("# DOM : ", this.screen);
-    	},
-
-    	///////////////////////////
-    	// 데이터대로 Content DOM을 생성
-    	///////////////////////////
-
-    	resetContent: function (documents) {
-
-    		//-------------------------
-    		// canvas DOM 생성 (documents 데이터)
-    		//-------------------------
-			
-    		// "canvas" element로 모두 생성. (wrap steps)
-    		var len = documents.length;
-    		var html = "";
-    		for (var i = 0; i < len; ++i) {
-    			html += documents[i];
-    		}
-    		this.canvas.innerHTML = html;
-
-    		//-------------------------
-    		// canvas DOM Style
-    		//-------------------------
-
-    		this.steps = this._getStepList(this.canvas);
-    		//this.steps.forEach(this.initStep);
-
-    		var self = this;
-    		this.steps.forEach.apply(
-				this.steps, [function () {
-					self._initStep.apply(self, arguments);
-				}]);
-    	},
-
     	// data: step 노드(DIV)가 기술된 HTML 목록
     	_documentData: null,
 
@@ -208,7 +159,7 @@ function out() {
     		// DOM 구조 설정
     		//-------------------------
 
-    		this.createDOM();
+    		this._createDOM();
     		
     		//-------------------------
     		// 설정값(congig) 초기화 설정
@@ -263,23 +214,27 @@ function out() {
     		// 데이터 적용
     		//-------------------------
 
-    		var isReset = (!this._documentData || this._documentData.length < 1);
-    		if (!isReset) this.resetContent(this._documentData);
+    		this._resetContent(this._documentData);
 
     		//-------------------------
     		// 이벤트 리스너 설정
     		//-------------------------
 
     		this.initialized = true;
-            this.createEventListener();
+    		var isReset = (!this._documentData || this._documentData.length < 1);
 
+    		if (isReset) {
+    		    this.removeEventListener();
+    		} else {
+    		    this.createEventListener();
+    		}
+    		
     		//-------------------------
     		// 초기화 종료 이벤트
     		//-------------------------
 
-            triggerEvent(this.viewport, "impress:init", { api: _getAPI(this.screenID) });
-
-            if (isReset) return;
+    		triggerEvent(this.viewport, "impress:init", { api: API(this.screenID) });
+    		if (isReset) return;
 
     		// START 
     		// by selecting step defined in url or first step of the presentation
@@ -287,15 +242,88 @@ function out() {
             this.goto(this._getElementFromHash() || step, 0);
     	},
 
+        ///////////////////////////
+        // DOM 구조 생성
+        ///////////////////////////
+
+    	_createDOM: function () {
+
+    	    // DOM screen
+    	    var $screen = $("#" + this.screenID)
+				.addClass("u-screen");
+    	    this.screen = $screen[0];
+
+    	    $screen.empty();
+
+    	    // DOM viewport
+    	    var $viewport = $("<div>")
+				.attr("id", "u-viewport")
+				.addClass("u-viewport");
+    	    $screen.append($viewport);
+    	    this.viewport = $viewport[0];
+
+    	    // DOM cnvas
+    	    var $canvas = $("<div>")
+				.attr("id", "u-canvas")
+				.addClass("u-canvas");
+    	    $viewport.append($canvas);
+    	    this.canvas = $canvas[0];
+
+    	    //out("# DOM : ", this.screen);
+    	},
+
+        ///////////////////////////
+        // 데이터대로 Content DOM을 생성
+        ///////////////////////////
+
+    	_resetContent: function (documentData) {
+
+    	    if (!documentData || documentData.length < 1) {
+    	        this.steps = null;
+    	        this.__stepsData = {};
+    	        return;
+    	    }
+
+    	    //-------------------------
+    	    // canvas DOM 생성 (documents 데이터)
+    	    //-------------------------
+
+    	    // "canvas" element로 모두 생성. (wrap steps)
+    	    var len = documentData.length;
+    	    var html = "";
+    	    for (var i = 0; i < len; ++i) {
+    	        html += documentData[i];
+    	    }
+    	    this.canvas.innerHTML = html;
+
+    	    //-------------------------
+    	    // canvas DOM Style
+    	    //-------------------------
+
+    	    this.steps = this._getStepList(this.canvas);
+    	    //this.steps.forEach(this.initStep);
+
+    	    var self = this;
+    	    this.steps.forEach.apply(this.steps, [function () {
+    	        self._initializeStep.apply(self, arguments);
+    	    }]);
+    	},
+
+        // canvas내에 있는 step Node의 목록을 리턴
+    	_getStepList: function (canvas) {
+    	    var documentList = arrayify(canvas.childNodes);
+    	    return documentList;
+    	},
+
     	// data- attribute에 설정된 data로 step element를 초기화 시키고 style을 수정한다.
-    	_initStep: function (el, idx) {
+    	_initializeStep: function (el, idx) {
 
     		// 아이디는 꼭 설정되어져 있어야함
-    		// id가 설정되어 있지 않으면 "step-N"으로 설정해 준다.
+    		// id가 설정되어 있지 않으면 고유 UID 설정해 준다.
     		if (!el.id) {
-    			el.id = "step-" + (idx + 1);
+    		    el.id = createUID();
     		}
-
+    		
     		//-------------------------
     		// transition 데이터 구성
     		//-------------------------
@@ -317,7 +345,7 @@ function out() {
     		};
 
     		// stepsData에 기록해 놓음
-    		this._setStepData(el.id, step_data);
+    		this.stepData(el.id, step_data);
 
     		//-------------------------
     		// element에 CSS 적용
@@ -337,19 +365,6 @@ function out() {
     		//-------------------------
 
     		el.classList.add("u-document");
-    	},
-
-		// canvas내에 있는 step Node의 목록을 리턴
-    	_getStepList: function (canvas) {
-    		var documentList = arrayify(canvas.childNodes);
-    		return documentList;
-    	},
-
-    	_getStepData: function (elementID) {
-    		return this.__stepsData["impress-" + elementID];
-    	},
-    	_setStepData: function (elementID, stepData) {
-    		this.__stepsData["impress-" + elementID] = stepData;
     	},
 
     	//////////////////////////////////////////////////////
@@ -375,21 +390,21 @@ function out() {
     		// canvas state
     		//-------------------------
 
-    		var stepData = this._getStepData(el.id);
+    		var data = this.stepData(el.id);
     		
     		// compute target state of the canvas based on given step
     		var target = {
     			rotate: {
-    				x: -stepData.rotate.x,
-    				y: -stepData.rotate.y,
-    				z: -stepData.rotate.z
+    			    x: -data.rotate.x,
+    			    y: -data.rotate.y,
+    			    z: -data.rotate.z
     			},
     			translate: {
-    				x: -stepData.translate.x,
-    				y: -stepData.translate.y,
-    				z: -stepData.translate.z
+    			    x: -data.translate.x,
+    			    y: -data.translate.y,
+    			    z: -data.translate.z
     			},
-    			scale: 1 / stepData.scale
+    			scale: 1 / data.scale
     		};
 
     		//-------------------------
@@ -511,18 +526,18 @@ function out() {
     			step = document.getElementById(step);
     		}
 
-    		var stepData = this._getStepData(step.id);
-    		return (step && step.id && stepData) ? step : null;
+    		var data = this.stepData(step.id);
+    		return (step && step.id && data) ? step : null;
     	},
 		
     	_stepChanged: function(el){
     		// 활성화 step 정보 수정
     		if (this.activeStep) {
     			this.activeStep.classList.remove("active");
-    			this.screen.classList.remove("impress-on-" + this.activeStep.id);
+    			this.screen.classList.remove("active-" + this.activeStep.id);
     		}
     		el.classList.add("active");
-    		this.screen.classList.add("impress-on-" + el.id);
+    		this.screen.classList.add("active-" + el.id);
     	},
 
     	///////////////////////////
@@ -552,8 +567,8 @@ function out() {
     	///////////////////////////
 
     	// scale factor : 설정된 값과 window 크기 사이에서 scale factor을 연산
-    	_computeScreenScale: function (canvas, config) {
-    		var $win = $(canvas);
+    	_computeScreenScale: function (screen, config) {
+    	    var $win = $(screen);
     		var wScale = $win.width() / config.width;
     		var hScale = $win.height() / config.height;
 
@@ -616,8 +631,8 @@ function out() {
     		$(window).off("keydown", $.proxy(this.__onKeydown, this));
     		$(window).off("keyup", $.proxy(this.__onKeyup, this));
 
-    		this.listener_click();
-    		this.listener_touch();
+    		$(this.screen).off("click", $.proxy(this.__onClick, this));
+    		$(document).off("touchstart", $.proxy(this.__onTouch, this));
 
     		$(window).off("hashchange", $.proxy(this.__onHashchange, this));
     	},
@@ -630,8 +645,8 @@ function out() {
     		$(window).on("keydown", $.proxy(this.__onKeydown, this));
     		$(window).on("keyup", $.proxy(this.__onKeyup, this));
 
-    		this.listener_click();
-    		this.listener_touch();
+    		$(this.screen).on("click", $.proxy(this.__onClick, this));
+    		$(document).on("touchstart", $.proxy(this.__onTouch, this));
 
     		$(window).on("hashchange", $.proxy(this.__onHashchange, this));
     	},
@@ -690,12 +705,11 @@ function out() {
 
     	// last hash detected
     	__lastHash: null,
+
+        // When the step is entered hash in the location is updated
+        // (just few lines above from here), so the hash change is 
+        // triggered and we would call `goto` again on the same element.
     	__onHashchange: function () {
-
-    		// When the step is entered hash in the location is updated
-    		// (just few lines above from here), so the hash change is 
-    		// triggered and we would call `goto` again on the same element.
-
     		// To avoid this we store last entered hash and compare.
     		if (window.location.hash !== this.__lastHash) {
     			this.goto(this._getElementFromHash());
@@ -703,10 +717,10 @@ function out() {
     		//out("__onHashchange", this.__lastHash);
     	},
 
-    	// returns an element located by id from hash part of window location.
+        // returns an element located by id from hash part of window location.
+        // get id from url # by removing `#` or `#/` from the beginning,
+        // so both "fallback" `#slide-id` and "enhanced" `#/slide-id` will work
     	_getElementFromHash: function () {
-    		// get id from url # by removing `#` or `#/` from the beginning,
-    		// so both "fallback" `#slide-id` and "enhanced" `#/slide-id` will work
     		var id = window.location.hash.replace(/^#\/?/, "");
     		return document.getElementById(id);
     	},
@@ -715,73 +729,71 @@ function out() {
     	// Click 이벤트
     	///////////////////////////
 
-    	listener_click: function(){
+    	__onClick: function(event){
 
-    		out("ssssssssssssssssssssssssssssssssssssssss");
+    	    var target = event.target;
+    	    // find closest step element that is not active
+    	    while (true) {
+    	        if (target === document.documentElement) return;
 
-    		var self = this;
-    		this.screen.addEventListener("click", function (event) {
-    			var target = event.target;
-    			// find closest step element that is not active
-    			while (true) {
-    				if (target === document.documentElement) break;
+    	        //-------------------------
+    	        // 바로 윗단계로 이동
+    	        //-------------------------
 
-    				//-------------------------
-    				// 바로 윗단계로 이동
-    				//-------------------------
+    	        if (target === this.screen) {
+    	            var success = link_up.apply(this, [this.activeStep]);
+    	            if (success) event.preventDefault();
+    	            return;
+    	        }
 
-    				if (target === self.screen) {
-    					var success = link_up(self.activeStep);
-    					if (success) event.preventDefault();
-    					return;
-    				}
+    	        //-------------------------
+    	        // step 링크를 클릭한 경우
+    	        //-------------------------
 
-    				//-------------------------
-    				// step 링크를 클릭한 경우
-    				//-------------------------
+    	        if (target.tagName === "A") {
+    	            // #/ID 인 경우는 hash에 의한 일반 링크이므로 
+    	            // 여기에서는 #ID로 링크건 경우만 처리
+    	            var href = target.getAttribute("href");
+    	            if (href && href[0] === '#' && href[1] !== '/') {
+    	                var success = link_id.apply(this, [href]);
+    	                if (success) {
+    	                    event.stopImmediatePropagation();
+    	                    event.preventDefault();
+    	                }
+    	            }
+    	            return;
+    	        }
 
-    				if (target.tagName === "A") {
-    					// #/ID 인 경우는 hash에 의한 일반 링크이므로 
-    					// 여기에서는 #ID로 링크건 경우만 처리
-    					var href = target.getAttribute("href");
-    					if (href && href[0] === '#' && href[1] !== '/') {
-    						var success = link_id(href);
-    						if (success) {
-    							event.stopImmediatePropagation();
-    							event.preventDefault();
-    						}
-    					}
-    					return;
-    				}
+    	        //-------------------------
+    	        // step elements를 클릭한 경우
+    	        //-------------------------
 
-    				//-------------------------
-    				// step elements를 클릭한 경우
-    				//-------------------------
+    	        if (target.classList.contains("active")) break;
+    	        if (target.classList.contains("u-document")) break;
+    	        target = target.parentNode;
+    	    }
 
-    				if (target.classList.contains("active")) break;
-    				if (target.classList.contains("u-document")) break;
-    				target = target.parentNode;
-    			}
-    			
-    			var success = link_element(target);
-    			if (success) event.preventDefault();
+    	    var success = link_element.apply(this, [target]);
+    	    if (success) event.preventDefault();
 
-    		}, false);
+    	    //-------------------------
+    	    // 링크 함수
+    	    //-------------------------
 
     		function link_id(hash) {
     			var id = document.getElementById(hash.slice(1));
-    			var success = self.goto(id);
+    			var success = this.goto(id);
     			return success;
     		}
 
     		function link_up(hash) {
     			out("# TODO : 한단계 위 문서로 포커싱을 이동 시킨다.");
-    			var success = self.goto("overview");
+    			var success = this.goto("overview");
     			return success;
     		}
 
     		function link_element(el) {
-    			var success = self.goto(el);
+    			var success = this.goto(el);
     			return success;
     		}
     	},
@@ -792,54 +804,52 @@ function out() {
 
     	// touch handler to detect taps on the left and right side of the screen
     	// based on awesome work of @hakimel: https://github.com/hakimel/reveal.js
-    	listener_touch: function () {
+    	__onTouch: function (event) {
 
-    		var self = this;
-    		document.addEventListener("touchstart", function (event) {
-    			if (event.touches.length === 1) {
-    				var x = event.touches[0].clientX;
-    				var width = window.innerWidth * 0.3;
-    				var success = null;
+    	    if (event.touches.length === 1) {
+    	        var x = event.touches[0].clientX;
+    	        var width = window.innerWidth * 0.3;
+    	        var success = null;
 
-    				if (x < width) {
-    					success = self.prev();
-    				} else if (x > window.innerWidth - width) {
-    					success = self.next();
-    				}
+    	        if (x < width) {
+    	            success = this.prev();
+    	        } else if (x > window.innerWidth - width) {
+    	            success = this.next();
+    	        }
 
-    				if (success) {
-    					event.preventDefault();
-    				}
-    			}
-    		}, false);
-
+    	        if (success) {
+    	            event.preventDefault();
+    	        }
+    	    }
     	}
     };
 
-	//===============================================================
-	// API 인스턴스
-	//===============================================================
+    ////////////////////////////////////////////////////////
+    //
+    // API 인스턴스
+    //
+    ////////////////////////////////////////////////////////
 
-    var API = {};
-    function _getAPI(screenID) {
-		var api = API["impress-root-" + screenID];
-		return api;
-	}
+    var __API = {};
+    function API(screenID, value) {
+        // GET
+        if (value === undefined) {
+            return __API["impress-root-" + screenID];
+        }
+        // SET
+        __API["impress-root-" + screenID] = value;
+    }
 
-    function _setAPI(screenID, api) {
-		API["impress-root-" + screenID] = api;
-	}
-
-    window.ext = function (screenID) {
+    window.netalk = function (screenID) {
 
     	screenID = screenID || "u-screen";
 
     	// 이미 초기화된 screen가 있으면 바로 API를 리턴한다.
-    	var api = _getAPI(screenID);
+    	var api = API(screenID);
     	if (api) return api;
 
 		// api 객체 생성
-    	var instance = new ext(screenID);
+    	var instance = new netalk(screenID);
         api = {
             init: factory(instance.init),
             goto: factory(instance.goto),
@@ -855,18 +865,18 @@ function out() {
 
 		//**********************************
 		// 테스트용으로 노출시킴
-
-        window.__app__ = instance;
-
+        // window.__app__ = instance;
     	//**********************************
 
-        _setAPI(screenID, api);
+        API(screenID, api);
         return api;
     };
 
-	//===============================================================
-	// HELPER
-	//===============================================================
+    ////////////////////////////////////////////////////////
+    //
+    // Utility 함수
+    //
+    ////////////////////////////////////////////////////////
 
 	// 숫자화 (fallback : 숫자 변환 실패시 반환값)
     function toNumber(numeric, fallback) {
@@ -895,6 +905,17 @@ function out() {
     };
 	*/
 
+    // uid 생성
+    function createUID() {
+        var uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+        var uid = uid.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+
+        return uid;
+    }
+    
 	//-------------------------
 	// CSS
 	//-------------------------
@@ -979,11 +1000,6 @@ function out() {
     }
 
 })(document, window);
-
-
-
-// TODO : HASH
-
 
 
 
