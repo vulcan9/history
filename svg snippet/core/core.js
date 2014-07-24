@@ -18,7 +18,7 @@ function out() {
         modify:      "20140724",
 
         getInfo: function () {
-            return "* Hi-story Engine Version." + " "
+        	return "* Space Version." + " "
                      + Version.version + " "
                      + Version.copyright + " "
                      + "(" + Version.modify + ")";
@@ -124,7 +124,7 @@ function out() {
     	viewport:null,
     	canvas: null,
     	
-    	// steps 데이터 (transition 정보를 저장)
+    	// 각 step의 설정 데이터 (transition 정보를 저장)
     	__stepsData: {},
     	stepData: function (elementID, value) {
     	    //GET
@@ -263,7 +263,7 @@ function out() {
     	    //-------------------------
 
     		// by selecting step defined in url or first step of the presentation
-            var step = "overview";// || steps[0];
+            var step = "overview" || this.steps[0];
             this.goto(this._getElementFromHash() || step, 500);
     	},
 
@@ -550,6 +550,7 @@ function out() {
     		} else if (typeof step === "string") {
     			step = document.getElementById(step);
     		}
+    		if (!step) return null;
 
     		var data = this.stepData(step.id);
     		return (step && step.id && data) ? step : null;
