@@ -25,25 +25,6 @@ function out() {
         }
     };
     
-	//-------------------------
-	// CHECK SUPPORT
-	//-------------------------
-
-	function checkSupport() {
-		var ua = navigator.userAgent.toLowerCase();
-
-		// browser should support CSS 3D transtorms 
-		var support = (pfx("perspective") !== null) &&
-						// classList, dataset HTML5 API가 지원되는지 확인
-						(document.body.classList) && (document.body.dataset) &&
-
-						// but some mobile devices need to be blacklisted,
-						// because their CSS 3D support or hardware is not
-						// good enough to run impress.js properly, sorry...
-						(ua.search(/(iphone)|(ipod)|(android)/) === -1);
-		return support;
-	}
-
     //-------------------------
     // window Resize Event
     //-------------------------
@@ -100,7 +81,7 @@ function out() {
     	// support 브라우져 체크
     	//-------------------------
 
-    	var impressSupported = checkSupport();
+    	var impressSupported = this.checkSupport();
     	
     	if (!impressSupported) {
     		alert("Not Support CSS");
@@ -148,8 +129,8 @@ function out() {
     	defaults: {
     		width: 1024,
     		height: 768,
-    		maxScale: 1,
-    		minScale: 0,
+    		maxScale: 50,
+    		minScale: 0.01,
     		perspective: 1000,
     		transitionDuration: 1000
     	},
@@ -191,12 +172,12 @@ function out() {
     		var rootData = this.viewport.dataset;
     		var defaults = this.defaults;
     		this.config = {
-    			width:              toNumber(rootData.width, defaults.width),
-    			height:             toNumber(rootData.height, defaults.height),
-    			maxScale:           toNumber(rootData.maxScale, defaults.maxScale),
-    			minScale:           toNumber(rootData.minScale, defaults.minScale),
-    			perspective:        toNumber(rootData.perspective, defaults.perspective),
-    			transitionDuration: toNumber(rootData.transitionDuration, defaults.transitionDuration)
+    			width:              this.toNumber(rootData.width, defaults.width),
+    			height:             this.toNumber(rootData.height, defaults.height),
+    			maxScale:           this.toNumber(rootData.maxScale, defaults.maxScale),
+    			minScale:           this.toNumber(rootData.minScale, defaults.minScale),
+    			perspective:        this.toNumber(rootData.perspective, defaults.perspective),
+    			transitionDuration: this.toNumber(rootData.transitionDuration, defaults.transitionDuration)
     		};
 
     		// scale factor 계산하기
@@ -222,15 +203,15 @@ function out() {
     			transition:      "all 0s ease-in-out",
     			transformStyle:  "preserve-3d"
     		};
-    		css(this.viewport, rootStyles);
-    		css(this.viewport, {
+    		this.css(this.viewport, rootStyles);
+    		this.css(this.viewport, {
     			top:       "50%",
     			left:      "50%",
-    			transform: perspective(this.config.perspective / this.windowScale) + scale(this.windowScale)
+    			transform: this.perspectiveCSS(this.config.perspective / this.windowScale) + this.scaleCSS(this.windowScale)
     		});
 
     		// canvas
-    		css(this.canvas, rootStyles);
+    		this.css(this.canvas, rootStyles);
 
     		//-------------------------
     		// 데이터 적용
@@ -255,7 +236,7 @@ function out() {
     		// 초기화 종료 이벤트
     		//-------------------------
 
-    		triggerEvent(this.viewport, "impress:init", { api: API(this.screenID) });
+    		this.triggerEvent(this.viewport, "impress:init", { api: API(this.screenID) });
     		if (isReset) return;
 
     	    //-------------------------
@@ -336,7 +317,7 @@ function out() {
 
         // canvas내에 있는 step Node의 목록을 리턴
     	_getStepList: function (canvas) {
-    	    var documentList = arrayify(canvas.childNodes);
+    		var documentList = this.arrayify(canvas.childNodes);
     	    return documentList;
     	},
 
@@ -346,7 +327,7 @@ function out() {
     		// 아이디는 꼭 설정되어져 있어야함
     		// id가 설정되어 있지 않으면 고유 UID 설정해 준다.
     		if (!el.id) {
-    		    el.id = createUID();
+    			el.id = this.createUID();
     		}
     		
     		//-------------------------
@@ -356,16 +337,16 @@ function out() {
     		var data = el.dataset;
     		var step_data = {
     			translate: {
-    				x: toNumber(data.x),
-    				y: toNumber(data.y),
-    				z: toNumber(data.z)
+    				x: this.toNumber(data.x),
+    				y: this.toNumber(data.y),
+    				z: this.toNumber(data.z)
     			},
     			rotate: {
-    				x: toNumber(data.rotateX),
-    				y: toNumber(data.rotateY),
-    				z: toNumber(data.rotateZ || data.rotate)
+    				x: this.toNumber(data.rotateX),
+    				y: this.toNumber(data.rotateY),
+    				z: this.toNumber(data.rotateZ || data.rotate)
     			},
-    			scale: toNumber(data.scale, 1),
+    			scale: this.toNumber(data.scale, 1),
     			el: el
     		};
 
@@ -376,12 +357,12 @@ function out() {
     		// element에 CSS 적용
     		//-------------------------
 
-    		css(el, {
+    		this.css(el, {
     			position: "absolute",
     			transform: "translate(-50%,-50%)" +
-						   translate(step_data.translate) +
-						   rotate(step_data.rotate) +
-						   scale(step_data.scale),
+						   this.translateCSS(step_data.translate) +
+						   this.rotateCSS(step_data.rotate) +
+						   this.scaleCSS(step_data.scale),
     			transformStyle: "preserve-3d"
     		});
 
@@ -441,7 +422,7 @@ function out() {
     		// zoom out 경우 : scaling down 후(delay) move, rotate 를 시도한다.
     		var zoomin = target.scale >= this.currentState.scale;
 
-    		duration = toNumber(duration, this.config.transitionDuration);
+    		duration = this.toNumber(duration, this.config.transitionDuration);
     		var delay = (duration / 2);
 
     		//-------------------------
@@ -475,16 +456,16 @@ function out() {
     		// root와 canvas는 각각 다른 delay 시간을 가지고 개별적으로 transition이 시작된다. (자연스러운 효과를 위한것임)
     		// 때문에 두개의 transition이 언제 끝났는지알 필요가 있다.
 
-    		css(this.viewport, {
+    		this.css(this.viewport, {
     			// to keep the perspective look similar for different scales
     			// we need to 'scale' the perspective, too
-    			transform: perspective(this.config.perspective / targetScale) + scale(targetScale),
+    			transform: this.perspectiveCSS(this.config.perspective / targetScale) + this.scaleCSS(targetScale),
     			transitionDuration: duration + "ms",
     			transitionDelay: (zoomin ? delay : 0) + "ms"
     		});
 
-    		css(this.canvas, {
-    			transform: rotate(target.rotate, true) + translate(target.translate),
+    		this.css(this.canvas, {
+    			transform: this.rotateCSS(target.rotate, true) + this.translateCSS(target.translate),
     			transitionDuration: duration + "ms",
     			transitionDelay: (zoomin ? 0 : delay) + "ms"
     		});
@@ -593,7 +574,8 @@ function out() {
     	///////////////////////////
 
     	// scale factor : 설정된 값과 window 크기 사이에서 scale factor을 연산
-    	_computeScreenScale: function (screen, config) {
+		_computeScreenScale: function (screen, config) {
+
     	    var $win = $(screen);
     		var wScale = $win.width() / config.width;
     		var hScale = $win.height() / config.height;
@@ -608,12 +590,160 @@ function out() {
     			scale = config.minScale;
     		}
 
-    		return scale;
+			return scale;
     	},
 
-    	//////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////
+		//
+		// Utility 함수
+		//
+		////////////////////////////////////////////////////////
+
+		// 숫자화 (fallback : 숫자 변환 실패시 반환값)
+		toNumber: function (numeric, fallback) {
+			return isNaN(numeric) ? (fallback || 0) : Number(numeric);
+		},
+
+		// `arraify` takes an array-like object and turns it into real Array to make all the Array.prototype goodness available.
+		arrayify: function (a) {
+			return [].slice.call(a);
+		},
+
+		/*
+		// 중첩 실행되지 않도록delaytime 후에 함수 호출
+		// http://remysharp.com/2010/07/21/throttling-function-calls/
+		function throttle(fn, delay, context) {
+			var timer = null;
+			return function () {
+				context = context || this;
+				var args = arguments;
+		
+				clearTimeout(timer);
+				timer = setTimeout(function () {
+					fn.apply(context, args);
+				}, delay);
+			};
+		};
+		*/
+
+		// uid 생성
+		createUID: function () {
+			var uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+			var uid = uid.replace(/[xy]/g, function (c) {
+				var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+				return v.toString(16);
+			});
+
+			return uid;
+		},
+		
+		//-------------------------
+		// CHECK SUPPORT
+		//-------------------------
+
+		checkSupport: function () {
+			var ua = navigator.userAgent.toLowerCase();
+
+			// browser should support CSS 3D transtorms 
+			var support = (this.pfx("perspective") !== null) &&
+							// classList, dataset HTML5 API가 지원되는지 확인
+							(document.body.classList) && (document.body.dataset) &&
+
+							// but some mobile devices need to be blacklisted,
+							// because their CSS 3D support or hardware is not
+							// good enough to run impress.js properly, sorry...
+							(ua.search(/(iphone)|(ipod)|(android)/) === -1);
+			return support;
+		},
+
+		//-------------------------
+		// CSS
+		//-------------------------
+
+		// element에 props Object의 값으로 style을 설정한다.
+		// 모든 속성 이름은 pfx 함수를 통해 버전에 따른 올바른 접두어를 사용할수 있도록 바뀐다.
+		css: function (el, props) {
+			var key, pkey;
+			for (key in props) {
+				if (props.hasOwnProperty(key)) {
+					pkey = this.pfx(key);
+					if (pkey !== null) {
+						el.style[pkey] = props[key];
+					}
+				}
+			}
+			return el;
+		},
+
+		// 매개 변수로 표준 CSS 속성 이름을 받아 내부적으로 실행하여
+		// 브라우저에서 사용할 수 있는 유효한 prefixed version의 이름을 반환하는 
+		// 함수를 리턴해줌
+		// The code is heavily inspired by Modernizr http://www.modernizr.com/
+		pfx: function (prop) {
+			var dummy = document.createElement('dummy');
+			var style = dummy.style;
+			var prefixes = 'Webkit Moz O ms Khtml'.split(' ');
+			var memory = {};
+
+			if (typeof memory[prop] === "undefined") {
+				var ucProp = prop.charAt(0).toUpperCase() + prop.substr(1);
+				var props = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
+
+				memory[prop] = null;
+				for (var i in props) {
+					if (style[props[i]] !== undefined) {
+						memory[prop] = props[i];
+						break;
+					}
+				}
+			}
+			dummy = null;
+			return memory[prop];
+		},
+
+		//-------------------------
+		// Transition
+		//-------------------------
+
+		translateCSS: function (t) {
+			return " translate3d(" + t.x + "px," + t.y + "px," + t.z + "px) ";
+		},
+
+		// By default the rotations are in X Y Z order that can be reverted by passing `true` as second parameter.
+		rotateCSS: function (r, revert) {
+			var rX = " rotateX(" + r.x + "deg) ";
+			var rY = " rotateY(" + r.y + "deg) ";
+			var rZ = " rotateZ(" + r.z + "deg) ";
+
+			return revert ? rZ + rY + rX : rX + rY + rZ;
+		},
+
+		scaleCSS: function (s) {
+			return " scale(" + s + ") ";
+		},
+
+		// `perspective` builds a perspective transform string for given data.
+		perspectiveCSS: function (p) {
+			return " perspective(" + p + "px) ";
+		},
+
+		////////////////////////////////////////////////////////
+		//
+		// 이벤트
+		//
+		////////////////////////////////////////////////////////
+
+		// `triggerEvent` builds a custom DOM event with given `eventName` and `detail` data
+		// and triggers it on element given as `el`.
+		triggerEvent: function (el, eventName, detail) {
+			var event = document.createEvent("CustomEvent");
+			event.initCustomEvent(eventName, true, true, detail);
+			el.dispatchEvent(event);
+		},
+		
+    	///////////////////////////
     	// STEP EVENTS - 2가지
-    	//////////////////////////////////////////////////////
+    	///////////////////////////
 
     	// impress:stepleave : step is left (다음 step의 transition이 시작될때).
     	// impress:stepenter : step이 screen에 보여질때 (이전 step으로부터 transition이 끝났을때)
@@ -624,7 +754,7 @@ function out() {
     	_onStepLeave: function (step) {
     		if (this._lastEntered === step) {
     			out("* Event #impress:stepleave");
-    			triggerEvent(step, "impress:stepleave");
+    			this.triggerEvent(step, "impress:stepleave");
     			this._lastEntered = null;
     		}
     	},
@@ -634,7 +764,7 @@ function out() {
     	_onStepEnter: function (step) {
     		if (this._lastEntered !== step) {
     			out("* Event #impress:stepenter");
-    			triggerEvent(step, "impress:stepenter");
+    			this.triggerEvent(step, "impress:stepenter");
 
     			// hash 변경
     			// `#/step-id` is used instead of `#step-id` to prevent default browser scrolling to element in hash.
@@ -647,9 +777,9 @@ function out() {
     		}
     	},
 		
-    	//////////////////////////////////////////////////////
+		///////////////////////////
     	// 윈도우 이벤트
-    	//////////////////////////////////////////////////////
+		///////////////////////////
 
     	removeEventListener: function () {
     		$(window).off("resizedWindow", $.proxy(this.__onResize, this));
@@ -848,6 +978,10 @@ function out() {
     	        }
     	    }
     	}
+
+		///////////////////////////
+		// END PROTOTYPE
+		///////////////////////////
     };
 
     ////////////////////////////////////////////////////////
@@ -866,6 +1000,45 @@ function out() {
         __API["impress-root-" + screenID] = value;
     }
 
+	//-------------------------
+	// 기능 확장때 사용하기 위해 함수 원형 참조
+	//-------------------------
+
+    window._Space = Space;
+	/*
+	// case 01 : 다음과 같이 확장시킴
+    window._Space.prototype.aaa = function () {
+    	out("aaa");
+    }
+	
+	// case 02 : Space 객체 상속인 경우
+    var _superClass = window._Space;
+    var _super_prototype = _superClass.prototype;
+    ExtendedViewer.prototype = $.extend({}, _super_prototype, getProto());
+    window._Space = ExtendedViewer;
+
+    function ExtendedViewer() {
+    	_superClass.apply(this, arguments);
+    }
+
+    function getProto() {
+    	return {
+    		method: function () {
+    			out("New Method");
+    		},
+    		init: function (data) {
+    			out("Override");
+    			//window._Space
+    			_super_prototype.init.apply(this, arguments);
+    		}
+    	}
+    }
+	*/
+
+	//-------------------------
+	// API 캡슐화
+	//-------------------------
+
     window.Space = function (screenID) {
 
     	screenID = screenID || "u-screen";
@@ -875,8 +1048,11 @@ function out() {
     	if (api) return api;
 
 		// api 객체 생성
-    	var instance = new Space(screenID);
-        api = {
+    	var instance = new window._Space(screenID);
+    	api = {
+    		// 테스트용으로 노출시킴
+    		app: instance,
+
             init: factory(instance.init),
             goto: factory(instance.goto),
             next: factory(instance.next),
@@ -889,197 +1065,13 @@ function out() {
             }
         }
 
-		//**********************************
-		// 테스트용으로 노출시킴
-        // window.__app__ = instance;
-    	//**********************************
-
+		// 생성된 api는 등록해 놓음
         API(screenID, api);
         return api;
     };
 
-    ////////////////////////////////////////////////////////
-    //
-    // Utility 함수
-    //
-    ////////////////////////////////////////////////////////
-
-	// 숫자화 (fallback : 숫자 변환 실패시 반환값)
-    function toNumber(numeric, fallback) {
-    	return isNaN(numeric) ? (fallback || 0) : Number(numeric);
-    };
-
-	// `arraify` takes an array-like object and turns it into real Array to make all the Array.prototype goodness available.
-    function arrayify(a) {
-    	return [].slice.call(a);
-    };
-
-	/*
-	// 중첩 실행되지 않도록delaytime 후에 함수 호출
-	// http://remysharp.com/2010/07/21/throttling-function-calls/
-    function throttle(fn, delay, context) {
-    	var timer = null;
-    	return function () {
-    		context = context || this;
-    		var args = arguments;
-
-    		clearTimeout(timer);
-    		timer = setTimeout(function () {
-    			fn.apply(context, args);
-    		}, delay);
-    	};
-    };
-	*/
-
-    // uid 생성
-    function createUID() {
-        var uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-        var uid = uid.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-
-        return uid;
-    }
-    
-	//-------------------------
-	// CSS
-	//-------------------------
-
-	// element에 props Object의 값으로 style을 설정한다.
-	// 모든 속성 이름은 pfx 함수를 통해 버전에 따른 올바른 접두어를 사용할수 있도록 바뀐다.
-    function css(el, props) {
-    	var key, pkey;
-    	for (key in props) {
-    		if (props.hasOwnProperty(key)) {
-    			pkey = pfx(key);
-    			if (pkey !== null) {
-    				el.style[pkey] = props[key];
-    			}
-    		}
-    	}
-    	return el;
-    };
-
-	// 매개 변수로 표준 CSS 속성 이름을 받아 내부적으로 실행하여
-	// 브라우저에서 사용할 수 있는 유효한 prefixed version의 이름을 반환하는 
-	// 함수를 리턴해줌
-	// The code is heavily inspired by Modernizr http://www.modernizr.com/
-    function pfx(prop) {
-    	var dummy = document.createElement('dummy');
-    	var style = dummy.style;
-    	var prefixes = 'Webkit Moz O ms Khtml'.split(' ');
-    	var memory = {};
-
-    	if (typeof memory[prop] === "undefined") {
-    		var ucProp = prop.charAt(0).toUpperCase() + prop.substr(1);
-    		var props = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
-
-    		memory[prop] = null;
-    		for (var i in props) {
-    			if (style[props[i]] !== undefined) {
-    				memory[prop] = props[i];
-    				break;
-    			}
-    		}
-    	}
-    	dummy = null;
-    	return memory[prop];
-    };
-
-	//-------------------------
-	// Transition
-	//-------------------------
-
-    function translate(t) {
-    	return " translate3d(" + t.x + "px," + t.y + "px," + t.z + "px) ";
-    };
-
-	// By default the rotations are in X Y Z order that can be reverted by passing `true` as second parameter.
-    function rotate(r, revert) {
-    	var rX = " rotateX(" + r.x + "deg) ";
-    	var rY = " rotateY(" + r.y + "deg) ";
-    	var rZ = " rotateZ(" + r.z + "deg) ";
-
-    	return revert ? rZ + rY + rX : rX + rY + rZ;
-    };
-
-    function scale(s) {
-    	return " scale(" + s + ") ";
-    };
-
-	// `perspective` builds a perspective transform string for given data.
-    function perspective(p) {
-    	return " perspective(" + p + "px) ";
-    };
-
-	//-------------------------
-	// 이벤트
-	//-------------------------
-
-	// `triggerEvent` builds a custom DOM event with given `eventName` and `detail` data
-	// and triggers it on element given as `el`.
-    function triggerEvent(el, eventName, detail) {
-    	var event = document.createEvent("CustomEvent");
-    	event.initCustomEvent(eventName, true, true, detail);
-    	el.dispatchEvent(event);
-    }
 
 })(document, window);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

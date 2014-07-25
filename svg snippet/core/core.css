@@ -95,7 +95,8 @@
 
 	position: relative;
 	padding: 40px;
-	margin: 20px 20px;
+	/*양쪽 margin은 화면 중앙위치 계산에 영향을 준다.*/
+	margin: 20px auto;
 
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
