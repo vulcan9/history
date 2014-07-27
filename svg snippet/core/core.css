@@ -64,6 +64,11 @@
 			box-sizing: border-box;
 		}
 
+
+/*
+screen에 적용된 padding값에 의해 50% 계산치와  실제계산 값과 오차가 발생할 수 있다.
+50% --> px Ehsms px --> 50% 변환시 위치를 보정해줘야 한다.
+*/
 .u-screen{
 	position:fixed;
 	padding: 10px;
@@ -97,13 +102,13 @@
 	padding: 40px;
 	/*양쪽 margin은 화면 중앙위치 계산에 영향을 준다.*/
 	margin: 20px auto;
-
+    /*
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-ms-box-sizing: border-box;
 	-o-box-sizing: border-box;
 	box-sizing: border-box;
-
+    */
 	font-family: 'Nanum Gothic', 'PT Serif', georgia, serif;
 	font-size: 18px;
 	line-height: 1.5;

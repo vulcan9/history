@@ -15,6 +15,14 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
     <link href="core.css" rel="stylesheet" />
+
+    <script>
+
+        function out() {
+            console.log.apply(console, arguments);
+        }
+
+    </script>
 </head>
 
 <body>
@@ -77,6 +85,12 @@
 		// 임의의 데이터로 구성해 본다.
 		// 이 데이터 목록은 원본 데이터에서 적당히 추출된 데이터들이다.
 
+        function go(hash) {
+            out("TODO : document는 이동되나 Hash 까지는 이동되지 않음");
+            api.init(documents1);
+            api.goto("#board");
+        }
+
 		// TODO : 1차 Depth 사이의 문서들을 어떻게 구분해서 버퍼 기능을 구현할 것인가가 문제점
 		// - 사각 아이콘 및 제목 표시 후 클릭시 확대(확장)되는 형식으로 UX 처리?
 		// - 선 문서 작성 후 삽입 위치 결정(?)
@@ -88,7 +102,7 @@
 
 			'<div id="center" data-scale="1" data-x="0" data-y="0" style="background:red;"></div>',
 
-			'<div id="b" data-scale="10" data-x="-10000" data-y="-15000"><q>Arent you <a href="#bored2">use the source</a>just <b>bored</b> with all those slides-based presentations?</q><p><a href="javascript:api.init(documents1);">기획문서 보러 가볼까? <img></a></p></div>',
+			'<div id="b" data-scale="10" data-x="-10000" data-y="-15000"><q>Arent you <a href="#bored2">use the source</a>just <b>bored</b> with all those slides-based presentations?</q><p><a href="javascript:go()">기획문서 보러 가볼까? <img></a></p></div>',
 			'<div id="a" data-scale="10" data-x="0" data-y="-15000" data-rotate="-45"><q>Dont you think that presentations given <strong>in modern browsers</strong> shouldnt <strong>copy the limits</strong> of classic slide decks?</q><p><a href="#b">use the source</a></p> <br><div style="width: 299px; height: 299px; border: 10px solid red; position: relative; pointer-events:none;"><object type="image/svg+xml" data="./doc_content.svg" style="width: 100%; height: 100%;"><img src="./doc_content.svg" /></object></div></div>',
 			'<div data-scale="10" data-x="-40000" data-y="-45000"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q><p><a href="javascript:api.init(documents1);">기획문서 보러 가볼까?</a></p></div>'
 		];
@@ -130,8 +144,8 @@
 
 		var api = window.Space("u-screen");
 		var app = api.app;
-		api.init(documents);
-		//api.init(documents1);
+		//api.init(documents);
+		api.init(documents1);
 
 		// 설정
 		app.fixedScale = false;
@@ -159,7 +173,10 @@
 		}
 
 		function change_dragable(event) {
-			var value = event.target.value;
+		    var value = $(event.target).prop("checked");
+		    out(value);
+		    app.setDragable(value);
+		    app.update();
 		}
 		
 	</script>

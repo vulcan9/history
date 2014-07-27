@@ -1,8 +1,4 @@
 ﻿
-function out() {
-	console.log.apply(console, arguments);
-}
-
 (function ( document, window ) {
 
     ////////////////////////////////////////////////////////
@@ -73,6 +69,8 @@ function out() {
     //
     ////////////////////////////////////////////////////////
 
+	var DEFAULT_DURATION = 500;
+
 	function Space(screenID) {
 
 	    console.log(Version.getInfo());
@@ -132,7 +130,7 @@ function out() {
     		maxScale: 50,
     		minScale: 0.01,
     		perspective: 1000,
-    		transitionDuration: 1000
+    		transitionDuration: DEFAULT_DURATION
     	},
 
     	// scale factor of the browser window
@@ -150,10 +148,7 @@ function out() {
 
     		if (this.initialized) {
     			// data가 있으면 다시 세팅함
-    			if (this.documentData == data) {
-    				//return;
-    			}
-
+    			if (this._documentData === data) return;
     			this.initialized = false;
     		}
     		this._documentData = data;
@@ -204,12 +199,11 @@ function out() {
     			transformStyle:  "preserve-3d"
     		};
     		this.css(this.viewport, rootStyles);
+    		this.setPosition(true);
     		this.css(this.viewport, {
-    			top:       "50%",
-    			left:      "50%",
     			transform: this.perspectiveCSS(this.config.perspective / this.windowScale) + this.scaleCSS(this.windowScale)
     		});
-
+    		
     		// canvas
     		this.css(this.canvas, rootStyles);
 
@@ -244,8 +238,46 @@ function out() {
     	    //-------------------------
 
     		// by selecting step defined in url or first step of the presentation
-            var step = "overview" || this.steps[0];
-            this.goto(this._getElementFromHash() || step, 500);
+    	    //var step = hash || this._getElementFromHash() || "overview" || this.steps[0];
+    		var step = this._getElementFromHash() || "overview" || this.steps[0];
+            this.goto( step, DEFAULT_DURATION);
+
+            return this;
+    	},
+    	
+	    //-------------------------
+	    // 위치 설정 
+	    //-------------------------
+
+        // center 맞춤으로 CSS가 설정되어 있는지 (50%)
+    	_isCenterPosition: false,
+
+	    // 주의 : screen에 적용된 padding값에 의해 50% 계산치와  실제계산 값과 오차가 발생할 수 있다.
+	    // 중앙 : setPosition(true)
+	    // 위치 : setPosition(100, 100)
+    	setPosition: function (isCenter) {
+
+    	    if (arguments.length === 1) {
+    	        var isCenter = arguments[0];
+    	        if (isCenter === true) {
+    	            // true, false로 설정하여 50%, 50%로 설정함
+    	            this.css(this.viewport, { left: "50%", top: "50%" });
+    	            this._isCenterPosition = true;
+    	        }
+    	        return;
+    	    }
+
+    	    if (arguments.length === 2) {
+    	        var x = arguments[0];
+    	        var y = arguments[1];
+
+    	        // 직접 px 값으로 설정함
+    	        this.css(this.viewport, { left: x + "px", top: y + "px" });
+    	        this._isCenterPosition = false;
+    	        return;
+    	    }
+
+    	    throw new Error("# [setPosition] 메서드가 잘못 사용되었습니다.");
     	},
 
         ///////////////////////////
@@ -455,6 +487,9 @@ function out() {
     		// canvas : translate, rotation 제어
     		// root와 canvas는 각각 다른 delay 시간을 가지고 개별적으로 transition이 시작된다. (자연스러운 효과를 위한것임)
     		// 때문에 두개의 transition이 언제 끝났는지알 필요가 있다.
+
+    	    // 드래그 기능 추가에 의해 항상 center일수만은 없으므로 체크 해줌
+    		this.setPosition(true);
 
     		this.css(this.viewport, {
     			// to keep the perspective look similar for different scales
@@ -886,7 +921,7 @@ function out() {
     	///////////////////////////
 
     	__onClick: function(event){
-
+    	    out("click");
     	    var target = event.target;
     	    // find closest step element that is not active
     	    while (true) {
