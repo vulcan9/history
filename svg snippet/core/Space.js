@@ -494,7 +494,7 @@
     		this.css(this.viewport, {
     			// to keep the perspective look similar for different scales
     			// we need to 'scale' the perspective, too
-    			transform: this.perspectiveCSS(this.config.perspective / targetScale) + this.scaleCSS(targetScale),
+    		    transform: this.perspectiveCSS(this.config.perspective / targetScale) + this.scaleCSS(targetScale) + this.translateCSS({ x: 0, y: 0, z: 0 }),
     			transitionDuration: duration + "ms",
     			transitionDelay: (zoomin ? delay : 0) + "ms"
     		});

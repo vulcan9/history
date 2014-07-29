@@ -1,9 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2013 for Web
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E1F32EAC-EE8F-4CE2-BCA7-C5D24D477549}"
+	ProjectSection(SolutionItems) = preProject
+		core\core.css = core\core.css
+		core\core.html = core\core.html
+		core\doc_content.svg = core\doc_content.svg
+		core\ExtendSpace.js = core\ExtendSpace.js
+		core\jquery-2.1.0.js = core\jquery-2.1.0.js
+		core\jquery.pep.js = core\jquery.pep.js
+		core\release.txt = core\release.txt
+		core\ScaleMode.js = core\ScaleMode.js
+		core\Space.js = core\Space.js
+		core\test.js = core\test.js
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "d3", "d3", "{843A2828-750B-4DAD-9019-8D4A82FE1D09}"
 	ProjectSection(SolutionItems) = preProject
@@ -79,6 +91,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{A3CD3639-C
 		core\core.html = core\core.html
 		core\doc_content.svg = core\doc_content.svg
 		core\ExtendSpace.js = core\ExtendSpace.js
+		core\jquery-2.1.0.js = core\jquery-2.1.0.js
+		core\jquery.pep.js = core\jquery.pep.js
 		core\release.txt = core\release.txt
 		core\ScaleMode.js = core\ScaleMode.js
 		core\Space.js = core\Space.js
