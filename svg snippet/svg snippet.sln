@@ -92,6 +92,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "core", "core", "{A3CD3639-C
 		core\doc_content.svg = core\doc_content.svg
 		core\ExtendSpace.js = core\ExtendSpace.js
 		core\jquery-2.1.0.js = core\jquery-2.1.0.js
+		core\jquery.kinetic.js = core\jquery.kinetic.js
 		core\jquery.pep.js = core\jquery.pep.js
 		core\release.txt = core\release.txt
 		core\ScaleMode.js = core\ScaleMode.js

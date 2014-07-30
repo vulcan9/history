@@ -410,13 +410,13 @@
                 if (!this._isMoved) {
                     this._isMoved = true;
 
+                    /*
                     // transition 없는 이동
                     this.css(this.viewport, {
                         transitionDuration: "0ms",
                         transitionDelay: "0ms"
                     });
 
-                    /*
                     $(this.viewport).pep({
                         hardwareAccelerate: false,
                         multiplier: 1.5
@@ -441,6 +441,7 @@
 
                 out("__onMouseUp");
                 //$.pep.unbind($(this.viewport));
+                this._ease();
             },
 
             __onClick: function (event) {
@@ -456,11 +457,67 @@
 
             _move: function (dx, dy) {
 
-                out("translate 값 찾기");
-
-
                 // $(this.viewport)[0].style["transform"] => "perspective(2173.913043478261px) scale(0.46) translate3d(0px, 0px, 0px)"
                 // 위 문자열에서 각 항목의 값을 추출한다. (값이 없는 경우는 default 값 적용)
+                // perspective(2000px) scale(0.5) translate3d(983px, -53px, 0px)
+                var cssString = $(this.viewport)[0].style["transform"];
+                
+                // 메서드 구분 : \b(scale)+\([\w,-\d\s\.]*?\)
+                var perspective = this._parseTransform(cssString, "perspective");
+                var scale = this._parseTransform(cssString, "scale");
+                var translate3d = this._parseTransform(cssString, "translate3d");
+
+                //out("*perspective : ", perspective);
+                //out("*scale : ", scale);
+                //out("*translate3d : ", translate3d);
+
+                // 이동값 적용
+                perspective = perspective ? perspective[0] : this.config.perspective;
+                perspective = this.toNumber(perspective);
+
+                var scale = scale ? scale[0] : this.config.scale;
+                scale = this.toNumber(scale);
+
+                var tx = translate3d ? translate3d[0] : 0;
+                var ty = translate3d ? translate3d[1] : 0;
+                var tz = translate3d ? translate3d[2] : 0;
+
+                tx = this.toNumber(tx) + dx / scale;
+                ty = this.toNumber(ty) + dy / scale;
+                tz = this.toNumber(tz);// + dz;
+
+                this.css(this.viewport, {
+                    transform: this.perspectiveCSS(perspective)
+                                + this.scaleCSS(scale)
+                                + this.translateCSS({
+                                    x: tx,
+                                    y: ty,
+                                    z: tz
+                                }),
+                    transitionDuration: 0 + "ms",
+                    transitionDelay: 0 + "ms"
+                });
+            },
+
+    	    // transform CSS 값 String을 파싱하여 값을 얻는다.
+            _parseTransform: function (cssString, name) {
+                var value = "[\\w,-\\d\\s\\.]*?";
+                var pattern = "\\b(" + name + ")+\\(" + value + "\\)";
+
+                var reg = new RegExp(pattern);
+                var item = cssString.match(reg, "i");
+                if (!item[0]) return;
+
+                var num = /[-]?\d+(?:\.\d*)?/g;
+                var valueAr = item[0].substring(item[0].indexOf("(")).match(num);
+                return valueAr;
+            },
+
+            _ease: function () {
+
+                out("translate velocity : ");
+
+
                 // this.currentState값은 사용하지 않는다.
 
                 // https://github.com/briangonzalez/jquery.pep.js
@@ -481,80 +538,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                var targetScale = this.currentState.scale;
-
-                var tx = this.currentState.translate.x - dx;
-                var ty = this.currentState.translate.y - dy;
-                var tz = this.currentState.translate.z;
-
-                this.css(this.viewport, {
-                    transform: this.perspectiveCSS(this.config.perspective / targetScale)
-                                + this.scaleCSS(targetScale)
-                                + this.translateCSS({
-                                    x: -tx,
-                                    y: -ty,
-                                    z: -tz
-                                }),
-                    transitionDuration: 0 + "ms",
-                    transitionDelay: 0 + "ms"
-                });
-
-                this.currentState.translate.x = tx;
-                this.currentState.translate.y = ty;
-                this.currentState.translate.z = tz;
-            },
-
-    	    // $(this.viewport).css("transform") => "matrix3d(0.525, 0, 0, 0, 0, 0.525, 0, 0, 0, 0, 1, -0.0005250000000000001, 0, 0, 0, 1)"
-    	   
-            /*
-            matrixString: function ($el) {
-
-                var validMatrix = function(o){
-                    return !( !o || o === 'none' || o.indexOf('matrix') < 0  );
-                };
-
-                var matrix = "matrix(1, 0, 0, 1, 0, 0)";
-
-                if ( validMatrix( $el.css('-webkit-transform') ) )
-                    matrix = $el.css('-webkit-transform');
-
-                if ( validMatrix( $el.css('-moz-transform') ) )
-                    matrix = $el.css('-moz-transform');
-
-                if ( validMatrix( $el.css('-ms-transform') ) )
-                    matrix = $el.css('-ms-transform');
-
-                if ( validMatrix( $el.css('-o-transform') ) )
-                    matrix = $el.css('-o-transform');
-
-                if ( validMatrix( $el.css('transform') ) )
-                    matrix = $el.css('transform');
-
-                return matrix;
-            },
-            */
+            }
 
     		///////////////////////////
     		// END PROTOTYPE
