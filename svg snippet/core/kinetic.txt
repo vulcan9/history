@@ -1,0 +1,599 @@
+/**
+* Provides requestAnimationFrame in a cross browser way.
+* http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+*/
+
+if (!window.requestAnimationFrame)
+{
+	window.requestAnimationFrame = (function (){
+
+		return window.webkitRequestAnimationFrame ||
+			window.mozRequestAnimationFrame ||
+			window.oRequestAnimationFrame ||
+			window.msRequestAnimationFrame ||
+			function (callback, element){
+				// callback : function FrameRequestCallback
+				// element : DOMElement Element
+				window.setTimeout(callback, 1000/60);
+			};
+	}());
+}
+
+
+this.xpos: null,
+this.prevXPos: false,
+this.ypos: null,
+this.prevYPos: false,
+
+this.throttleFPS: 60
+this.throttleTimeout: 1000/this.throttleFPS,
+
+
+// 감속 정도
+	this.slowdown: 0.96,
+
+// 최대 감지 거리
+	this.maxvelocity: 40,
+
+// FPS 적용할때 마지막 업데이트 시간
+	this.lastMove: null
+
+// 감속 적용할지 여부
+	this.decelerate: true
+
+// 마우스 DOWN
+
+	this.velocity = this.velocityY = 0;
+	this.prevXPos = this.prevYPos = 0;
+
+	this.xpos = clientX;
+	this.ypos = clientY;
+
+// 마우스 MOVE
+
+	/* FPS 적용할때
+	if (!this.lastMove || new Date() > new Date(this.lastMove.getTime() + this.throttleTimeout)){
+		this.lastMove = new Date();
+	}
+	*/
+
+	this.decelerate = false;
+	this.velocity = this.velocityY = 0;
+
+        this.prevXPos = this.xpos;
+        this.prevYPos = this.ypos;
+        this.xpos = clientX;
+        this.ypos = clientY;
+
+	// 일반 MOVE 이동량
+	this.velocity = this._capVelocity(this.prevXPos - this.xpos, this.maxvelocity);
+	this.velocityY = this._capVelocity(this.prevYPos - this.ypos, this.maxvelocity);
+
+    
+// 마우스 UP할때 호출
+
+	this.decelerate = true;
+	this.velocity = this._capVelocity(this.prevXPos - this.xpos, this.maxvelocity);
+	this.velocityY = this._capVelocity(this.prevYPos - this.ypos, this.maxvelocity);
+
+	// Kinetic 시작
+
+	if (Math.abs(this.velocity) > 0){
+		this.velocity = this.decelerate ? this._decelerateVelocity(this.velocity, this.slowdown) : this.velocity;
+	}
+	if (Math.abs(this.velocityY) > 0){
+		this.velocityY = this.decelerate ? this._decelerateVelocity(this.velocityY, this.slowdown) : this.velocityY;
+	}
+
+	
+	// 정지(종료)
+	if (Math.abs(this.velocity) <= 0 && Math.abs(this.velocityY) <= 0)
+	{
+		this.velocity = 0;
+		this.velocityY = 0;
+		this.decelerate = false;
+		return;
+	}
+
+	// 업데이트
+	//if (!this.autoMoving) {
+		//this.autoMoving = true;
+		window.requestAnimationFrame(function (){
+			//self.autoMoving = false;
+			self._move();
+		});
+	//}
+
+
+
+
+this._decelerateVelocity = function (velocity, slowdown){
+	if(Math.abs(velocity) < 0.5){
+		velocity = 0;
+		return;
+	}
+
+	velocity = velocity * slowdown;
+	return velocity;
+
+	//return Math.floor(Math.abs(velocity)) === 0 ? 0 : velocity * slowdown; // reduce slowdown
+};
+
+this._capVelocity = function (velocity, max){
+	var newVelocity = velocity;
+	if (velocity > max) newVelocity = max;
+	if (velocity < -max) newVelocity = -max;
+	return newVelocity;
+};
+
+
+
+
+
+
+
+
+
+===============================================================================================
+
+		// Number of mouse movements to keep in the history to calculate velocity.
+		private static const EVENT_HISTORY_LENGTH:int = 5;
+		
+		// Minimum velocity needed to start a throw gesture, in inches per second.
+		private static const MIN_START_VELOCITY_IPS:Number = 0.8;
+		
+		// Maximum velocity of throw effect, in inches per second.
+		private static const MAX_THROW_VELOCITY_IPS:Number = 10.0;
+		
+		// 드래그 하는 동안 초당 업데이트 횟수
+		private static const MAX_DRAG_RATE:Number = 30;
+		
+		// Weights to use when calculating velocity, giving the last velocity more of a weight than the previous ones.
+		private static const VELOCITY_WEIGHTS:Vector.<Number> = Vector.<Number>([1,1.33,1.66,2]);
+		
+		public function TouchScrollHelper(scroller:MScroller)
+		{
+			mouseEventCoordinatesHistory = new Vector.<Point>(EVENT_HISTORY_LENGTH);
+			mouseEventTimeHistory = new Vector.<int>(EVENT_HISTORY_LENGTH);
+		}
+		
+		// scrollSlop - 드래그 인지 최소값
+		public var scrollSlop:Number;
+		
+		// 마우스 다운 지점
+		private var mouseDownedPoint:Point;
+		
+		// slop에 의해 일어나는 실제 스크롤 지점
+		/*
+		This is different from mouseDownedPoint 
+		because the user may mousedown on one point, but a scroll isn't recognized until they move more than the slop.  
+		Because of this, we don't want the delta scrolled to be calculated from the mouseDowned point 
+		because that would look jerky the first time a scroll occurred.
+		*/
+		private var scrollGestureAnchorPoint:Point;
+		
+		// 드래그중 최근 delta 좌표
+		private var mostRecentDragDeltaX:Number;
+		private var mostRecentDragDeltaY:Number;
+		// 드래그중 최근 시간
+		private var mostRecentDragTime:Number;
+		
+		private var dragTimer:Timer = null;
+		
+		// Indicates that the mouse coordinates have changed and the next dragTimer invokation needs to do a scroll.
+		private var dragScrollPending:Boolean = false;
+		
+		private var startTime:Number;
+		
+		// velocity 계산에 필요함
+		private var mouseEventCoordinatesHistory:Vector.<Point>;
+		private var mouseEventTimeHistory:Vector.<int>;
+
+		// mouseEventCoordinatesHistory 아이템 개수
+		// Length of items in the mouseEventCoordinatesHistory and 
+		// timeHistory Vectors since a circular buffer is used to conserve points.
+		private var mouseEventLength:Number = 0;
+
+		// 스크롤 중인지 여부
+		private var isScrolling:Boolean;
+		
+
+
+		// MouseEvent.MOUSE_DOWN
+		public function startScrollWatch(event:Event):void
+		{
+			startTime = getTimer();
+			
+			if (!isScrolling){
+				mouseDownedPoint = new Point(mouseEvent.stageX, mouseEvent.stageY);
+			}
+			
+			// if we were already scrolling, continue scrolling
+			if (isScrolling){
+				scrollGestureAnchorPoint = new Point(mouseEvent.stageX, mouseEvent.stageY);
+				mouseDownedPoint = new Point(mouseEvent.stageX, mouseEvent.stageY);
+			}
+			
+			// reset circular buffer index/length
+			mouseEventLength = 0;
+			addMouseEventHistory(mouseEvent.stageX, mouseEvent.stageY, getTimer());       
+		}
+		
+
+
+		// Adds the time and mouse coordinates
+		private function addMouseEventHistory(stageX:Number, stageY:Number, time:Number):Point
+		{
+			// calculate dx, dy
+			var dx:Number = stageX - mouseDownedPoint.x;
+			var dy:Number = stageY - mouseDownedPoint.y;
+			
+			var currentPoint:Point;
+			var currentIndex:int = (mouseEventLength % EVENT_HISTORY_LENGTH);
+			if (mouseEventCoordinatesHistory[currentIndex])
+			{
+				currentPoint = mouseEventCoordinatesHistory[currentIndex];
+				currentPoint.x = dx;
+				currentPoint.y = dy;
+			}
+			else
+			{
+				currentPoint = new Point(dx, dy);
+				mouseEventCoordinatesHistory[currentIndex] = currentPoint;
+			}
+			
+			// add time history as well
+			mouseEventTimeHistory[currentIndex] = getTimer() - startTime;
+			
+			// increment current length if appropriate
+			mouseEventLength ++;
+		}
+
+		// MouseEvent.MOUSE_MOVE
+		private function sbRoot_mouseMoveHandler(event:MouseEvent):void
+		{
+			var mouseDownedDifference:Point = new Point(event.stageX - mouseDownedPoint.x, event.stageY - mouseDownedPoint.y);   
+			
+			if (!isScrolling)
+			{
+				// diagonal case
+				var maxAxisDistance:Number = Math.max(Math.abs(mouseDownedDifference.x),Math.abs(mouseDownedDifference.y));
+				if (maxAxisDistance >= scrollSlop)
+				{
+					var scrollAnchorDiffX:int;
+					var scrollAnchorDiffY:int;
+					
+					// The anchor point is the point at which the line described by mouseDownedDifference
+					// intersects with the perimeter of the slop area.  The slop area is a square with sides
+					// of length scrollSlop*2. 
+					var normalizedDiff:Point = mouseDownedDifference.clone();
+					
+					// Use the ratio of scrollSlop to maxAxisDistance to determine the length of the line
+					// from the mouse down point to the anchor point.
+					var lineLength:Number = (scrollSlop / maxAxisDistance) * mouseDownedDifference.length;  
+					
+					// Normalize to create a line of that length with the same angle it had before.
+					normalizedDiff.normalize(lineLength);
+					
+					// 4 possibilities: top-right, top-left, bottom-right, bottom-left
+					scrollAnchorDiffX = Math.round(normalizedDiff.x);
+					scrollAnchorDiffY = Math.round(normalizedDiff.y);
+					
+					scrollGestureAnchorPoint = new Point(mouseDownedPoint.x + scrollAnchorDiffX, mouseDownedPoint.y + scrollAnchorDiffY);
+				}
+			}
+			
+			// if we are scrolling (even if we just started scrolling)
+			if (isScrolling)
+			{
+				
+				// calculate the delta
+				var dx:Number = event.stageX - scrollGestureAnchorPoint.x;
+				var dy:Number = event.stageY - scrollGestureAnchorPoint.y;
+				
+				if (!dragTimer)
+				{
+					dragTimer = new Timer(1000/MAX_DRAG_RATE, 0);
+					dragTimer.addEventListener(TimerEvent.TIMER, dragTimerHandler);
+				}
+				
+				if (!dragTimer.running)
+				{
+					// The drag timer is not running, so we record the event and scroll
+					// the content immediately.
+					addMouseEventHistory(event.stageX, event.stageY, getTimer());
+					scroller.performDrag(dx, dy);
+					
+
+					// If event thinning is not enabled, we never start the timer so all subsequent
+					// move event will continue to be handled right in this function.
+					if (MScroller.dragEventThinning)
+					{
+						dragTimer.start();
+						
+						// No additional mouse events received yet, so no scrolling pending.
+						dragScrollPending = false;
+					}
+				}
+				else
+				{
+					mostRecentDragDeltaX = dx;
+					mostRecentDragDeltaY = dy;
+					mostRecentDragTime = getTimer();
+					dragScrollPending = true;
+				}
+			}
+		}
+		
+		private function dragTimerHandler(event:TimerEvent):void
+		{
+			if (dragScrollPending)
+			{
+				dragScrollPending = false;
+
+				// A scroll is pending, so record the mouse deltas and scroll the content. 
+				addMouseEventHistory(
+					mostRecentDragDeltaX + scrollGestureAnchorPoint.x,
+					mostRecentDragDeltaY + scrollGestureAnchorPoint.y, mostRecentDragTime);
+			}
+			else
+			{
+				// The timer elapsed with no mouse events, so we'll
+				// just turn the timer off for now.  It will get turned
+				// back on if another mouse event comes in.
+				dragTimer.stop();
+			}
+		}
+		
+		// MouseEvent.MOUSE_UP
+		private function sbRoot_mouseUpHandler(event:Event):void
+		{
+			if (!isScrolling) return;
+			
+			if (dragTimer)
+			{
+				if (dragScrollPending)
+				{
+					// A scroll is pending, so record the mouse deltas and scroll the content.
+					addMouseEventHistory(
+						mostRecentDragDeltaX + scrollGestureAnchorPoint.x,
+						mostRecentDragDeltaY + scrollGestureAnchorPoint.y, mostRecentDragTime);
+				}
+				
+				// The drag gesture is over, so we no longer need the timer.
+				dragTimer.stop();
+				dragTimer.removeEventListener(TimerEvent.TIMER, dragTimerHandler);
+				dragTimer = null;
+			}
+			
+			if (event is MouseEvent)
+				addMouseEventHistory(MouseEvent(event).stageX, MouseEvent(event).stageY, getTimer());
+			
+			// decide about throw
+			
+			var currentTime:Number = getTimer();
+			
+			// calculate average time b/w events and see if the last two (mouseMove and this mouseUp) 
+			// were far apart.  If they were, then don't do anything if the velocity of them is small.
+			var averageDt:Number = 0;
+			var len:int = (mouseEventLength > EVENT_HISTORY_LENGTH ? EVENT_HISTORY_LENGTH : mouseEventLength);
+			
+			// if haven't wrapped around, then startIndex = 0.  If we've wrapped around, 
+			// then startIndex = mouseEventLength % EVENT_HISTORY_LENGTH.  The equation 
+			// below handles both of those cases
+			const startIndex:int = ((mouseEventLength - len) % EVENT_HISTORY_LENGTH);
+			const endIndex:int = ((mouseEventLength - 1) % EVENT_HISTORY_LENGTH);
+			
+			// gauranteed to have 2 mouse events b/c atleast a mousedown and a mousemove 
+			// because if there was no mousemove, we definitely would not be scrolling and 
+			// would have exited this function earlier
+			var currentIndex:int = startIndex;
+			while (currentIndex != endIndex)
+			{
+				// calculate nextIndex here so we can use it in the calculations
+				var nextIndex:int = ((currentIndex + 1) % EVENT_HISTORY_LENGTH);
+				
+				averageDt += mouseEventTimeHistory[nextIndex] - mouseEventTimeHistory[currentIndex];
+				currentIndex = nextIndex;
+			}
+			averageDt /= len-1;
+			
+			var minVelocityPixels:Number = MIN_START_VELOCITY_IPS * MScroller.effectiveScreenDPI / 1000;
+			
+			// calculate the velocity using a weighted average
+			var throwVelocity:Point = calculateThrowVelocity();
+			
+			// Also calculate the effective velocity for the final 100ms of the drag.
+			var finalDragVel:Point = calculateFinalDragVelocity(100);
+			
+			if (throwVelocity.length <= minVelocityPixels)
+			{
+				throwVelocity.x = 0;
+				throwVelocity.y = 0;
+			}
+			
+			// If the gesture appears to have slowed or stopped prior to the mouse up, 
+			// then force the velocity to zero.
+			// Compare the final 100ms of the drag to the minimum value. 
+			if ( finalDragVel.length <= minVelocityPixels)
+			{
+				throwVelocity.x = 0;
+				throwVelocity.y = 0;
+			}
+		}
+		
+		private function calculateThrowVelocity():Point
+		{
+			var len:int = (mouseEventLength > EVENT_HISTORY_LENGTH ? EVENT_HISTORY_LENGTH : mouseEventLength);
+			
+			// we are guarenteed to have 2 items here b/c of mouseDown and a mouseMove
+			
+			// if haven't wrapped around, then startIndex = 0.  If we've wrapped around, 
+			// then startIndex = mouseEventLength % EVENT_HISTORY_LENGTH.  The equation 
+			// below handles both of those cases
+			const startIndex:int = ((mouseEventLength - len) % EVENT_HISTORY_LENGTH);
+			const endIndex:int = ((mouseEventLength - 1) % EVENT_HISTORY_LENGTH);
+			
+			// variables to store a running average
+			var weightedSumX:Number = 0;
+			var weightedSumY:Number = 0;
+			var totalWeight:Number = 0;
+			
+			var currentIndex:int = startIndex;
+			var i:int = 0;
+			while (currentIndex != endIndex)
+			{
+				// calculate nextIndex early so we can re-use it for these calculations
+				var nextIndex:int = ((currentIndex + 1) % EVENT_HISTORY_LENGTH);
+				
+				// Get dx, dy, and dt
+				var dt:Number = mouseEventTimeHistory[nextIndex] - mouseEventTimeHistory[currentIndex];
+				var dx:Number = mouseEventCoordinatesHistory[nextIndex].x - mouseEventCoordinatesHistory[currentIndex].x;
+				var dy:Number = mouseEventCoordinatesHistory[nextIndex].y - mouseEventCoordinatesHistory[currentIndex].y;
+				
+				if (dt != 0)
+				{
+					// calculate a weighted sum for velocities
+					weightedSumX += (dx/dt) * VELOCITY_WEIGHTS[i];
+					weightedSumY += (dy/dt) * VELOCITY_WEIGHTS[i];
+					totalWeight += VELOCITY_WEIGHTS[i];
+				}
+				
+				currentIndex = nextIndex;
+				i++;
+			}
+			
+			if (totalWeight == 0)
+				return new Point(0,0);
+			
+			// Limit the velocity to an absolute maximum
+			var maxPixelsPerMS:Number = MAX_THROW_VELOCITY_IPS * MScroller.effectiveScreenDPI / 1000;
+			var velX:Number = Math.min(maxPixelsPerMS,Math.max(-maxPixelsPerMS,weightedSumX/totalWeight));
+			var velY:Number = Math.min(maxPixelsPerMS,Math.max(-maxPixelsPerMS,weightedSumY/totalWeight));
+			
+			return new Point(velX,velY);
+		}
+		
+		private function calculateFinalDragVelocity(time:Number):Point
+		{
+			// This function is similar to calculateThrowVelocity with the 
+			// following differences:
+			// 1) It iterates backwards through the mouse events.
+			// 2) It stops when the specified amount of time is accounted for.
+			// 3) It calculates the velocities from the overall deltas with no
+			//    weighting or averaging. 
+			
+			// Find the range of mouse events to consider
+			var len:int = (mouseEventLength > EVENT_HISTORY_LENGTH ? EVENT_HISTORY_LENGTH : mouseEventLength);
+			const startIndex:int = ((mouseEventLength - len) % EVENT_HISTORY_LENGTH);
+			const endIndex:int = ((mouseEventLength - 1) % EVENT_HISTORY_LENGTH);
+			
+			// We're going to start at the last event of the drag and iterate backward toward the first.
+			var currentIndex:int = endIndex;
+			
+			var dt:Number = 0;
+			var dx:Number = 0;
+			var dy:Number = 0;
+			
+			// Loop until we've accounted for the desired amount of time or run out of events. 
+			while (time > 0 && currentIndex != startIndex)
+			{
+				// Find the index of the previous event
+				var previousIndex:int = currentIndex - 1;
+				if (previousIndex < 0)
+					previousIndex += EVENT_HISTORY_LENGTH; 
+				
+				// Calculate time and position deltas between the two events
+				var _dt:Number = mouseEventTimeHistory[currentIndex] - mouseEventTimeHistory[previousIndex];
+				var _dx:Number = mouseEventCoordinatesHistory[currentIndex].x - mouseEventCoordinatesHistory[previousIndex].x;
+				var _dy:Number = mouseEventCoordinatesHistory[currentIndex].y - mouseEventCoordinatesHistory[previousIndex].y;
+				
+				// If the deltas exceed our desired time range, interpolate by scaling them
+				if (_dt > time)
+				{
+					var interpFraction:Number = time/_dt;
+					_dx *= interpFraction; 
+					_dy *= interpFraction;
+					_dt = time;
+				}
+				
+				// Subtract the current time delta from the overall desired time range 
+				time -= _dt;
+				
+				// Accumulate the deltas
+				dt += _dt;
+				dx += _dx;
+				dy += _dy;
+				
+				// Go to the previous event in the drag
+				currentIndex = previousIndex;
+			}
+			
+			if (dt == 0)
+				return new Point(0,0);
+			
+			// Create the point representing the velocity values.
+			return new Point(dx/dt,dy/dt);
+		}
+		
+		
+	}
+	
+	////////////////////////////////
+	// End
+	////////////////////////////////
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
