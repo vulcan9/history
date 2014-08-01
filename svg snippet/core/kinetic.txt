@@ -205,28 +205,28 @@ this._capVelocity = function (velocity, max){
 			startTime = getTimer();
 			
 			if (!isScrolling){
-				mouseDownedPoint = new Point(mouseEvent.stageX, mouseEvent.stageY);
+				mouseDownedPoint = new Point(mouseEvent.clientX, mouseEvent.clientY);
 			}
 			
 			// if we were already scrolling, continue scrolling
 			if (isScrolling){
-				scrollGestureAnchorPoint = new Point(mouseEvent.stageX, mouseEvent.stageY);
-				mouseDownedPoint = new Point(mouseEvent.stageX, mouseEvent.stageY);
+				scrollGestureAnchorPoint = new Point(mouseEvent.clientX, mouseEvent.clientY);
+				mouseDownedPoint = new Point(mouseEvent.clientX, mouseEvent.clientY);
 			}
 			
 			// reset circular buffer index/length
 			mouseEventLength = 0;
-			addMouseEventHistory(mouseEvent.stageX, mouseEvent.stageY, getTimer());       
+			addMouseEventHistory(mouseEvent.clientX, mouseEvent.clientY, getTimer());       
 		}
 		
 
 
 		// Adds the time and mouse coordinates
-		private function addMouseEventHistory(stageX:Number, stageY:Number, time:Number):Point
+		private function addMouseEventHistory(clientX:Number, clientY:Number, time:Number):Point
 		{
 			// calculate dx, dy
-			var dx:Number = stageX - mouseDownedPoint.x;
-			var dy:Number = stageY - mouseDownedPoint.y;
+			var dx:Number = clientX - mouseDownedPoint.x;
+			var dy:Number = clientY - mouseDownedPoint.y;
 			
 			var currentPoint:Point;
 			var currentIndex:int = (mouseEventLength % EVENT_HISTORY_LENGTH);
@@ -252,7 +252,7 @@ this._capVelocity = function (velocity, max){
 		// MouseEvent.MOUSE_MOVE
 		private function sbRoot_mouseMoveHandler(event:MouseEvent):void
 		{
-			var mouseDownedDifference:Point = new Point(event.stageX - mouseDownedPoint.x, event.stageY - mouseDownedPoint.y);   
+			var mouseDownedDifference:Point = new Point(event.clientX - mouseDownedPoint.x, event.clientY - mouseDownedPoint.y);   
 			
 			if (!isScrolling)
 			{
@@ -288,8 +288,8 @@ this._capVelocity = function (velocity, max){
 			{
 				
 				// calculate the delta
-				var dx:Number = event.stageX - scrollGestureAnchorPoint.x;
-				var dy:Number = event.stageY - scrollGestureAnchorPoint.y;
+				var dx:Number = event.clientX - scrollGestureAnchorPoint.x;
+				var dy:Number = event.clientY - scrollGestureAnchorPoint.y;
 				
 				if (!dragTimer)
 				{
@@ -301,7 +301,7 @@ this._capVelocity = function (velocity, max){
 				{
 					// The drag timer is not running, so we record the event and scroll
 					// the content immediately.
-					addMouseEventHistory(event.stageX, event.stageY, getTimer());
+					addMouseEventHistory(event.clientX, event.clientY, getTimer());
 					scroller.performDrag(dx, dy);
 					
 
@@ -358,6 +358,8 @@ this._capVelocity = function (velocity, max){
 					addMouseEventHistory(
 						mostRecentDragDeltaX + scrollGestureAnchorPoint.x,
 						mostRecentDragDeltaY + scrollGestureAnchorPoint.y, mostRecentDragTime);
+
+					scroller.performDrag(mostRecentDragDeltaX, mostRecentDragDeltaY);
 				}
 				
 				// The drag gesture is over, so we no longer need the timer.
@@ -367,7 +369,7 @@ this._capVelocity = function (velocity, max){
 			}
 			
 			if (event is MouseEvent)
-				addMouseEventHistory(MouseEvent(event).stageX, MouseEvent(event).stageY, getTimer());
+				addMouseEventHistory(MouseEvent(event).clientX, MouseEvent(event).clientY, getTimer());
 			
 			// decide about throw
 			
