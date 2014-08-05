@@ -69,7 +69,7 @@
     //
     ////////////////////////////////////////////////////////
 
-	var DEFAULT_DURATION = 500;
+	var DEFAULT_DURATION = 1000;
 
 	function Space(screenID) {
 
@@ -103,6 +103,8 @@
     	viewport:null,
     	canvas: null,
     	
+    	defaultDuration: DEFAULT_DURATION,
+
     	// 각 step의 설정 데이터 (transition 정보를 저장)
     	__stepsData: {},
     	stepData: function (elementID, value) {
@@ -195,17 +197,29 @@
     		var rootStyles = {
     			position:        "absolute",
     			transformOrigin: "top left",
-    			transition:      "all 0s ease-in-out",
     			transformStyle:  "preserve-3d"
     		};
+
+            // Moving (drag)
+    		this.css(this.trans, rootStyles);
+    		this.css(this.trans, {
+    		    transition: "cubic-bezier(0.190, 1.000, 0.220, 1.000)",
+    		    transform: this.translateCSS({ x: 0, y: 0, z: 0 })
+    		});
+
+    		// scaling, perspective
     		this.css(this.viewport, rootStyles);
     		this.setPosition(true);
     		this.css(this.viewport, {
+    		    transition: "all 0s ease-in-out",
     			transform: this.perspectiveCSS(this.config.perspective / this.windowScale) + this.scaleCSS(this.windowScale)
     		});
     		
-    		// canvas
+    		// rotate, positioning
     		this.css(this.canvas, rootStyles);
+    		this.css(this.canvas, {
+    		    transition: "all 0s ease-in-out"
+    		});
 
     		//-------------------------
     		// 데이터 적용
@@ -240,7 +254,7 @@
     		// by selecting step defined in url or first step of the presentation
     	    //var step = hash || this._getElementFromHash() || "overview" || this.steps[0];
     		var step = this._getElementFromHash() || "overview" || this.steps[0];
-            this.goto( step, DEFAULT_DURATION);
+    		this.goto(step, this.defaultDuration);
 
             return this;
     	},
@@ -261,7 +275,7 @@
     	        var isCenter = arguments[0];
     	        if (isCenter === true) {
     	            // true, false로 설정하여 50%, 50%로 설정함
-    	            this.css(this.viewport, { left: "50%", top: "50%" });
+    	            this.css(this.trans, { left: "50%", top: "50%" });
     	            this._isCenterPosition = true;
     	        }
     	        return;
@@ -272,7 +286,7 @@
     	        var y = arguments[1];
 
     	        // 직접 px 값으로 설정함
-    	        this.css(this.viewport, { left: x + "px", top: y + "px" });
+    	        this.css(this.trans, { left: x + "px", top: y + "px" });
     	        this._isCenterPosition = false;
     	        return;
     	    }
@@ -293,11 +307,18 @@
 
     	    $screen.empty();
 
+    	    // DOM trans
+    	    var $trans = $("<div>")
+				.attr("id", "u-trans")
+				.addClass("u-trans");
+    	    $screen.append($trans);
+    	    this.trans = $trans[0];
+
     	    // DOM viewport
     	    var $viewport = $("<div>")
 				.attr("id", "u-viewport")
 				.addClass("u-viewport");
-    	    $screen.append($viewport);
+    	    $trans.append($viewport);
     	    this.viewport = $viewport[0];
 
     	    // DOM cnvas
@@ -494,7 +515,7 @@
     		this.css(this.viewport, {
     			// to keep the perspective look similar for different scales
     			// we need to 'scale' the perspective, too
-    		    transform: this.perspectiveCSS(this.config.perspective / targetScale) + this.scaleCSS(targetScale) + this.translateCSS({ x: 0, y: 0, z: 0 }),
+    		    transform: this.perspectiveCSS(this.config.perspective / targetScale) + this.scaleCSS(targetScale),
     			transitionDuration: duration + "ms",
     			transitionDelay: (zoomin ? delay : 0) + "ms"
     		});
@@ -741,7 +762,10 @@
 		//-------------------------
 
 		translateCSS: function (t) {
-			return " translate3d(" + t.x + "px," + t.y + "px," + t.z + "px) ";
+		    return " translate3d(" +
+                parseInt(t.x, 10) + "px," +
+                parseInt(t.y, 10) + "px," +
+                parseInt(t.z, 10) + "px) ";
 		},
 
 		// By default the rotations are in X Y Z order that can be reverted by passing `true` as second parameter.
@@ -759,7 +783,7 @@
 
 		// `perspective` builds a perspective transform string for given data.
 		perspectiveCSS: function (p) {
-			return " perspective(" + p + "px) ";
+			return " perspective(" + parseInt(p,10) + "px) ";
 		},
 
 		////////////////////////////////////////////////////////
@@ -786,11 +810,16 @@
     	// reference to last entered step
     	_lastEntered: null,
 
+        // goto Animation 중인지 여부
+    	_isGotoPlaying: false,
+
     	_onStepLeave: function (step) {
     		if (this._lastEntered === step) {
     			out("* Event #impress:stepleave");
     			this.triggerEvent(step, "impress:stepleave");
+
     			this._lastEntered = null;
+    			this._isGotoPlaying = true;
     		}
     	},
 
@@ -809,6 +838,7 @@
     			window.location.hash = this.__lastHash = "#/" + step.id;
 
     			this._lastEntered = step;
+    			this._isGotoPlaying = false;
     		}
     	},
 		

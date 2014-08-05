@@ -86,6 +86,7 @@
 
 	<script src="ScaleMode.js"></script>
 	<script src="./Space.js"></script>
+    <script src="./pep.js"></script>
 	<script src="./ExtendSpace.js"></script>
 	<script>
 		// 임의의 데이터로 구성해 본다.
@@ -155,7 +156,10 @@
 
 		// 설정
 		app.fixedScale = false;
+		$("#fixedScale").prop("checked", false);
+
 		app.setDragable(true);
+		$("#dragable").prop("checked", true);
 
 		// 화면
 		$("#fixedScaleNum").val(app.windowScale);

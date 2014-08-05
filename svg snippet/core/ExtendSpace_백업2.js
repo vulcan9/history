@@ -1,4 +1,5 @@
 ﻿
+/*
 //  requestAnimationFrame();
 //    requestAnimationFrame Polyfill
 //    More info:
@@ -18,6 +19,7 @@ if (!window.requestAnimationFrame) {
 			};
     }());
 }
+*/
 
 (function ( document, window ) {
 
@@ -341,6 +343,9 @@ if (!window.requestAnimationFrame) {
             //
     	    //////////////////////////////////////////////////////
 
+    	    // $.pep.unbind($(this.viewport));
+    	    // $(this.viewport).pep();
+
     	    //-------------------------
     	    // 드래그 기능 조정
     	    //-------------------------
@@ -351,7 +356,6 @@ if (!window.requestAnimationFrame) {
                 if (this.__dragable == value) return;
                 this.__dragable = value;
 
-                /*
                 $(this.screen).off("mousedown", $.proxy(this.__onMouseDown, this));
                 if (value) {
                     $(this.screen).on("mousedown", $.proxy(this.__onMouseDown, this));
@@ -359,15 +363,17 @@ if (!window.requestAnimationFrame) {
 
                 // 마우스 드래그 방지, selection 방지
                 this.setSelectable(value);
+
+                /*
+                if (value) {
+                    $(this.viewport).pep({
+                        hardwareAccelerate: false,
+                        multiplier: 1.5
+                    });
+                }else{
+                    $.pep.unbind($(this.viewport));
+                }
                 */
-
-
-                드래그 마우스 이벤트 - pep.js를 적용 한다.
-                - left, top이 50%로 설정되어 있어 현재 기능이 정상은 아님
-                (space.js 278라인)
-                - __click 메서드 오버라이딩되어 현재 막아놓음
-
-                var pepObj = new K(this.trans);
             },
 
     	    //-------------------------
@@ -537,411 +543,134 @@ if (!window.requestAnimationFrame) {
             }
             */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     	    //////////////////////////////////////////////////////
     	    //
     	    // 드래그 마우스 이벤트 - pep 적용
     	    //
     	    //////////////////////////////////////////////////////
 
-    	    _cssAnimationsSupport: false,
-    	    _initializedDrag: false,
+            _sx: 0, _sy: 0,
+            _tx: 0, _ty: 0,
+            _isMoved: false,
 
-            _initializeDrag: function () {
-                if (this._initializedDrag) return;
-                this._initializedDrag = true;
-                
-                // IE Mouse Event (Win8)
-                if (this.isPointerEventCompatible()) this.applyMSDefaults();
-
-                this._cssAnimationsSupport = this.cssAnimationsSupported();
-                //this.CSSEaseHash = this.getCSSEaseHash();
-
-                this.scale = 1;
-                this.started = false;
-
-                // init----------------
-
-                this.$el = $(this.trans);
-
-                this.disableSelect();
-
-                // place the object, if necessary.
-                this.placeObject();
-
-                // event 저장
-                this.ev = {};
-                // positions 저장
-                //this.pos = {};
+    	    // velocityQueue
+            resetVelocityQueue: function () {
+                this.velocityQueue = new Array(5);
             },
-            
-            cssAnimationsSupported: function () {
-                var animation = false,
-                    elm = document.createElement('div'),
-                    animationstring = 'animation',
-                    keyframeprefix = '',
-                    domPrefixes = 'Webkit Moz O ms Khtml'.split(' '),
-                    pfx = '';
-
-                if (elm.style.animationName) { animation = true; }
-                if (animation === false) {
-                    for (var i = 0; i < domPrefixes.length; i++) {
-                        if (elm.style[domPrefixes[i] + 'AnimationName'] !== undefined) {
-                            pfx = domPrefixes[i];
-                            animationstring = pfx + 'Animation';
-                            keyframeprefix = '-' + pfx.toLowerCase() + '-';
-                            animation = true;
-                            break;
-                        }
-                    }
-                }
-                return animation;
-            },
-
-    	    //-----------------------------------
-    	    // IE Mouse Event (Win8)
-    	    //-----------------------------------
-            
-    	    // touch Win8 device
-            isPointerEventCompatible: function () {
-                return ("MSPointerEvent" in window);
-            },
-
-            applyMSDefaults: function (first_argument) {
-                this.$el.css({
-                    '-ms-touch-action': 'none',
-                    'touch-action': 'none',
-                    '-ms-scroll-chaining': 'none',
-                    '-ms-scroll-limit': '0 0 0 0'
-                });
-            },
-
-    	    //-----------------------------------
-    	    // disable Select
-    	    //-----------------------------------
-
-    	    //  to not be selected user drags over text areas
-    	    /*
-            none : 사용자는 모든 요소의 content를 선택할 수 없다.
-            text : 사용자는 text를 선택할 수 있다.
-            toggle : 사용자는 toggle를 선택할 수 있다.
-            element : 사용자는 한 번에 한 요소가 선택할 수 있다.
-            elements : 사용자는 한 번에 하나 이상의 요소를 선택할 수 있다.
-            all : 사용자는 전체 내용을 선택할 수 있다.
-            */
-            disableSelect: function () {
-                this.$el.css({
-                    '-webkit-touch-callout': 'none',
-                    '-webkit-user-select': 'none',
-                    '-khtml-user-select': 'none',
-                    '-moz-user-select': 'none',
-                    '-ms-user-select': 'none',
-                    'user-select': 'none'
-                });
-            },
-
-    	    //-----------------------------------
-    	    // placeObject
-    	    //-----------------------------------
-
-            //_objectPlaced: false,
-            placeObject: function () {
-
-                //if (this._objectPlaced) return;
-                //this._objectPlaced = true;
-
-                this.offset = (this.hasNonBodyRelative()) ? this.$el.position() : this.$el.offset();
-
-                // better to leave absolute position alone if it already has one.
-                if (parseInt(this.$el.css('left'), 10)) this.offset.left = this.$el.css('left');
-                if (parseInt(this.$el.css('top'), 10)) this.offset.top = this.$el.css('top');
-
-                this.$el.css({
-                    position: 'absolute',
-                    top: this.offset.top,
-                    left: this.offset.left
-                });
-            },
-
-    	    // returns true if any parent other than the body has relative positioning
-            hasNonBodyRelative: function () {
-                var $relativeElement = this.$el.parents().filter(function () {
-                    var $this = $(this);
-                    return $this.is('body') || $this.css('position') === 'relative';
-                });
-                return $relativeElement.length > 1;
-            },
-
-    	    /////////////////////////////////////
-    	    // MOVE 이벤트 리스너
-    	    /////////////////////////////////////
 
             __onMouseDown: function (e) {
 
                 // 오른쪽 마우스 눌림
                 if (e.which === 3) return;
 
-                this._initializeDrag();
+                // goto 이동 중임
+                //if (this._gotoPlaying) return;
 
                 $(document).on("mousemove", $.proxy(this.__onMouseMove, this));
                 $(document).on("mouseup", $.proxy(this.__onMouseUp, this));
 
+
+                // 현재 상태에서 멈춤
+
+                //var cssObj = this.getTransformCSS(this.viewport);
+                //out("cssObj : ", cssObj);
+
+                /*
+                if (this._isEasingPlay) {
+                    this._isEasingPlay = false;
+                }
+                */
+
+
+
+
+                this._isMoved = false;
+                this._sx = this._tx = e.pageX;
+                this._sy = this._ty = e.pageY;
+
+                // DOWN 이벤트
+                out("______________________");
+                out("__onMouseDown");
+
+
+                this.resetVelocityQueue();
+
+
+
+
+                clearTimeout(this.restTimeout);
+                this.resetCSS();
+
                 // 드래그 방지
                 e.preventDefault();
-
-                this.onStart(e);
             },
 
     	    // 마우스 움직임 중인 경우는 그냥 이동
     	    // 마우스 Up인 경우 속도를 계산하여 kinetic Animation을 실행한다.
 
             __onMouseMove: function (e) {
-                this.onMove(e);
+                
+                //------------
+                // velocity 계산을 위해 데이터 저장 (last in, first out queue)
+                //------------
+
+                this.addToLIFO({ time: e.timeStamp, x: e.pageX, y: e.pageY });
+
+                //-------------------------
+                // 처음 움직임 - position 설정 모드 전환 (50% --> px)
+                //-------------------------
+
+                // 이동 거리
+                var dx = e.pageX - this._tx;
+                var dy = e.pageY - this._ty;
+
+                if (!this._isMoved) {
+                    this._isMoved = true;
+                    // out("TODO : 거리 계산으로 start event 시점 다시 할것.");
+                    return;
+                }
+
+                //-------------------------
+                // MOVE 이벤트 위치 설정 
+                //-------------------------
+
+                this._move(dx, dy);
+
+                this._tx = e.pageX;
+                this._ty = e.pageY;
+                out("__onMouseMove");
+            },
+
+    	    // a Last-In/First-Out array of the 5 most recent velocity points
+            addToLIFO: function (val) {
+                var arr = this.velocityQueue;
+                arr = arr.slice(1, arr.length);
+                arr.push(val);
+                this.velocityQueue = arr;
             },
 
             __onMouseUp: function (e) {
                 $(document).off("mousemove", $.proxy(this.__onMouseMove, this));
                 $(document).off("mouseup", $.proxy(this.__onMouseUp, this));
 
-                this.onStop(e);
-            },
+                out("__onMouseUp : ", this._isMoved);
+                this.resetCSS();
 
-    	    /////////////////////////////////////
-    	    // Start
-    	    /////////////////////////////////////
-
-            startX: 0, startY: 0,
-
-            onStart: function (ev) {
-
-                // only continue chugging if our start event is a valid move event.
-                if (this.isValidMoveEvent(ev) == false) return;
-
-                // 오른쪽 마우스 눌림
-                if (ev.which === 3) return;
-
-                //------------
-                // 이벤트 실행
-                //------------
-
-                // IE10 Hack. Me not happy.
-                if (this.isPointerEventCompatible() && ev.preventManipulation) ev.preventManipulation();
-
-                // 이벤트 일반화
-                ev = this.normalizeEvent(ev);
-                //out({ type: 'event', event: ev.type });
-
-                //------------
-                // initiate event.
-                //------------
-
-                var isPrevented = this.options.initiate.call(this, ev, this);
-                if (isPrevented) return;
-
-                // 컨테이너와의 위치 체크
-                this.placeObject();
-
-                // hardware accelerate 체크
-                this.hardwareAccelerate();
-
-                //------------
-                // 리셋
-                //------------
-
-                clearTimeout(this.restTimeout);
-
-                // animation CSS 초기화
-                if (this._cssAnimationsSupport) {
-                    this.$el.css(this.getCSSEaseHash(true));
+                if (this._isMoved) {
+                    this._ease();
+                    //this.revert();
+                } else {
+                    // reset
+                    
                 }
-
-                // 초기 위치 offset, touch/click event 저장.
-                this.startX = this.ev.x = ev.x;
-                this.startY = this.ev.y = ev.y;
-                this.moveEvent = ev;
-
-                // transform을 사용하지 않을때
-                //this.initialPosition = this.initialPosition || this.$el.position();
-
+                
+                // reset the velocity queue
                 this.resetVelocityQueue();
-
-                // 드래그 방지
-                ev.preventDefault();
-
-                //------------
-                // 애니메이션
-                //------------
-
-                var self = this;
-                this.active = true;
-
-                (function watchMoveLoop() {
-                    if (!self.active) return;
-                    self.handleMove();
-                    requestAnimationFrame(watchMoveLoop);
-                })();
             },
-
-    	    // returns true if we're on a non-touch device -- or --
-    	    // if the event is **single** touch event on a touch device
-            isValidMoveEvent: function (ev) {
-                return (
-                    !this.isTouch(ev) ||
-                    (this.isTouch(ev) && ev.originalEvent && ev.originalEvent.touches && ev.originalEvent.touches.length === 1)
-                );
-            },
-
-            resetVelocityQueue: function () {
-                this.velocityQueue = new Array(5);
-            },
-
-    	    //-----------------------------------
-    	    // hardwareAccelerate
-    	    //-----------------------------------
-
-            _hardwareAccelerated: false,
-
-    	    // CSS3 hardware acceleration 추가
-            hardwareAccelerate: function () {
-                if (this.options.hardwareAccelerate == false) return;
-                if (this._hardwareAccelerated == false) return;
-                this._hardwareAccelerated = true;
-
-                this.$el.css({
-                    '-webkit-perspective': 1000,
-                    'perspective': 1000,
-                    '-webkit-backface-visibility': 'hidden',
-                    'backface-visibility': 'hidden'
-                });
-            },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    	    // 실제 move 동작은 requestAnimationFrame을 이용한다.
-            onMove: function (e) {
-                //this.moveEvent = e;
-                out("onMove");
-            },
-            onStop: function (e) {
-                //this.handleStop(e);
-                out("onStop");
-            },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
             // 오버라이딩
             __onClick: function (event) {
-                return;
                 if (!this._isMoved) out("__onClick : 실행");
                 if(this._isGotoPlaying) out("__onClick : GOTO 이동중");
                 if (this._isEasingPlay) out("Easeing 중임", this._isEasingPlay);
@@ -950,18 +679,68 @@ if (!window.requestAnimationFrame) {
                 // UP 이벤트만 실행
                 if (this._isMoved) {
                     this._isMoved = false;
+                    //this._ease();
+                    //this.resetVelocityQueue();
                     return;
                 }
+
+                //this._isEasingPlay = false;
+                //out("Easing : 종료");
+
+                /*
+                if (this._isEasingPlay){
+                    out("TODO: 드래그인 경우 실행하지 않음.");
+                    this._isEasingPlay = false;
+                    out("Easing : 종료");
+                    return;
+                }
+                if (this._isGotoPlaying) {
+                    out("TODO: GOTO인 경우 실행하지 않음.");
+                    return;
+                }
+                */
 
                 // super()
                 this._super("__onClick", arguments);
             },
 
+            /*
+            revert: function () {
+
+                var dx = this._tx - this._sx;
+                var dy = this._ty - this._sy;
+                var dz = 0;
+
+                var vel = this.velocity();
+                out("translate velocity : ", vel);
+
+                var cssObj = this.getTransformCSS(this.viewport);
+                cssObj.tx -= dx / cssObj.scale;
+                cssObj.ty -= dy / cssObj.scale;
+                cssObj.tz -= dz / cssObj.scale;
+
+                this.css(this.viewport, {
+                    transform: this.perspectiveCSS(cssObj.perspective)
+                                + this.scaleCSS(cssObj.scale)
+                                + this.translateCSS({
+                                    x: cssObj.tx,
+                                    y: cssObj.ty,
+                                    z: cssObj.tz
+                                })
+                });
+            },
+            */
+
     	    /////////////////////////////////////
     	    // move
     	    /////////////////////////////////////
 
-            ss_move: function (dx, dy) {
+    	    // this.trans
+    	    // rotateZ(45deg) rotateY(0deg) rotateX(0deg) translate3d(-1000px, 0px, 0px);
+
+            //---------------------------------------------
+
+            _move: function (dx, dy) {
 
                 var target = this.trans;
                 var cssObj = this.getTransformCSS(target);
@@ -988,7 +767,7 @@ if (!window.requestAnimationFrame) {
                 $(target).css({ left: x, top: y });
             },
 
-            sss_getTransformCSS: function (target) {
+            getTransformCSS: function (target) {
 
                 // $(this.viewport)[0].style["transform"] => "perspective(2173.913043478261px) scale(0.46) translate3d(0px, 0px, 0px)"
                 // 위 문자열에서 각 항목의 값을 추출한다. (값이 없는 경우는 default 값 적용)
@@ -1018,7 +797,7 @@ if (!window.requestAnimationFrame) {
             },
 
     	    // transform CSS 값 String을 파싱하여 값을 얻는다.
-            sss__parseTransform: function (cssString, name) {
+            _parseTransform: function (cssString, name) {
                 var value = "[\\w,-\\d\\s\\.]*?";
                 var pattern = "\\b(" + name + ")+\\(" + value + "\\)";
 
@@ -1035,9 +814,9 @@ if (!window.requestAnimationFrame) {
     	    // ease
     	    /////////////////////////////////////
 
-            sss__isEasingPlay: false,
+            _isEasingPlay: false,
 
-            sss__ease: function () {
+            _ease: function () {
 
                 var target = this.trans;
                 // this.currentState값은 사용하지 않는다.
@@ -1094,7 +873,7 @@ if (!window.requestAnimationFrame) {
                 }, cssEaseDuration);
             },
             
-            sss_resetCSS: function () {
+            resetCSS: function () {
                 /*
                 var target = this.trans;
                 var cssEaseString = "ease-in-out";
@@ -1105,8 +884,8 @@ if (!window.requestAnimationFrame) {
             },
 
     	    // using the LIFO, calculate velocity and return velocity in each direction (x & y)
-            sss__velocityMultiplier: 5,
-            sss_velocity: function () {
+    	    _velocityMultiplier: 5,
+            velocity: function () {
                 var sumX = 0;
                 var sumY = 0;
                 var dt = 0;
