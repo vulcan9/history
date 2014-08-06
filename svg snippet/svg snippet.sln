@@ -50,8 +50,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E5200750-701
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_unit", "_unit", "{65CD2493-498E-443A-817F-2F4B1CFBD619}"
 	ProjectSection(SolutionItems) = preProject
+		..\zComponent\build.js = ..\zComponent\build.js
 		_unit\out.js = _unit\out.js
 		_unit\ScaleMode.js = _unit\ScaleMode.js
+		..\zComponent\ui.html = ..\zComponent\ui.html
+		..\zComponent\ui.js = ..\zComponent\ui.js
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "impressjs", "impressjs", "{8AD0172D-22BF-4EE6-9ED3-2463ED3AE174}"
