@@ -351,6 +351,7 @@ if (!window.requestAnimationFrame) {
                 // 이벤트 실행
                 //------------
 
+
                 // IE10 Hack. Me not happy.
                 if (this.isPointerEventCompatible() && ev.preventManipulation) ev.preventManipulation();
 
