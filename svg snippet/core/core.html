@@ -58,6 +58,10 @@
 			<li><a href="javascript:api.next()">PT모드(프리제테이션 실행)</a></li>
 			<li><a href="javascript:api.next()">문서 편집 모드(현재 문서 편집)</a></li>
 		</ul>
+        <br>
+        <ul>
+            <li>현재 포커싱된 scale을 기준으로 depth 1 상위는 alpha=0.1, depth 1 하위는 alpha=0.2, 나머지는 hidden</li>
+        </ul>
 	</div>
 
 
@@ -86,6 +90,7 @@
 
 	<script src="ScaleMode.js"></script>
 	<script src="./Space.js"></script>
+    <script src="./pep.js"></script>
 	<script src="./ExtendSpace.js"></script>
 	<script>
 		// 임의의 데이터로 구성해 본다.
@@ -155,7 +160,10 @@
 
 		// 설정
 		app.fixedScale = false;
+		$("#fixedScale").prop("checked", false);
+
 		app.setDragable(true);
+		$("#dragable").prop("checked", true);
 
 		// 화면
 		$("#fixedScaleNum").val(app.windowScale);

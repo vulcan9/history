@@ -69,7 +69,7 @@
     //
     ////////////////////////////////////////////////////////
 
-	var DEFAULT_DURATION = 500;
+	var DEFAULT_DURATION = 1000;
 
 	function Space(screenID) {
 
@@ -103,14 +103,16 @@
     	viewport:null,
     	canvas: null,
     	
+    	defaultDuration: DEFAULT_DURATION,
+
     	// 각 step의 설정 데이터 (transition 정보를 저장)
     	__stepsData: {},
     	stepData: function (elementID, value) {
     	    //GET
-    	    if (value === undefined) return this.__stepsData["impress-" + elementID];
+    	    if (value === undefined) return this.__stepsData["space-" + elementID];
 
     	    // SET
-    	    this.__stepsData["impress-" + elementID] = value;
+    	    this.__stepsData["space-" + elementID] = value;
     	},
 
 		// step (DOM) 목록
@@ -195,17 +197,29 @@
     		var rootStyles = {
     			position:        "absolute",
     			transformOrigin: "top left",
-    			transition:      "all 0s ease-in-out",
     			transformStyle:  "preserve-3d"
     		};
+
+            // Moving (drag)
+    		this.css(this.trans, rootStyles);
+    		this.css(this.trans, {
+    		    transition: "cubic-bezier(0.190, 1.000, 0.220, 1.000)",
+    		    transform: this.translateCSS({ x: 0, y: 0, z: 0 })
+    		});
+
+    		// scaling, perspective
     		this.css(this.viewport, rootStyles);
     		this.setPosition(true);
     		this.css(this.viewport, {
+    		    transition: "all 0s ease-in-out",
     			transform: this.perspectiveCSS(this.config.perspective / this.windowScale) + this.scaleCSS(this.windowScale)
     		});
     		
-    		// canvas
+    		// rotate, positioning
     		this.css(this.canvas, rootStyles);
+    		this.css(this.canvas, {
+    		    transition: "all 0s ease-in-out"
+    		});
 
     		//-------------------------
     		// 데이터 적용
@@ -230,7 +244,7 @@
     		// 초기화 종료 이벤트
     		//-------------------------
 
-    		this.triggerEvent(this.viewport, "impress:init", { api: API(this.screenID) });
+    		this.triggerEvent(this.viewport, "space:init", { api: API(this.screenID) });
     		if (isReset) return;
 
     	    //-------------------------
@@ -240,7 +254,7 @@
     		// by selecting step defined in url or first step of the presentation
     	    //var step = hash || this._getElementFromHash() || "overview" || this.steps[0];
     		var step = this._getElementFromHash() || "overview" || this.steps[0];
-            this.goto( step, DEFAULT_DURATION);
+    		this.goto(step, this.defaultDuration);
 
             return this;
     	},
@@ -261,7 +275,7 @@
     	        var isCenter = arguments[0];
     	        if (isCenter === true) {
     	            // true, false로 설정하여 50%, 50%로 설정함
-    	            this.css(this.viewport, { left: "50%", top: "50%" });
+    	            this.css(this.trans, { left: "50%", top: "50%" });
     	            this._isCenterPosition = true;
     	        }
     	        return;
@@ -272,7 +286,7 @@
     	        var y = arguments[1];
 
     	        // 직접 px 값으로 설정함
-    	        this.css(this.viewport, { left: x + "px", top: y + "px" });
+    	        this.css(this.trans, { left: x + "px", top: y + "px" });
     	        this._isCenterPosition = false;
     	        return;
     	    }
@@ -293,11 +307,18 @@
 
     	    $screen.empty();
 
+    	    // DOM trans
+    	    var $trans = $("<div>")
+				.attr("id", "u-trans")
+				.addClass("u-trans");
+    	    $screen.append($trans);
+    	    this.trans = $trans[0];
+
     	    // DOM viewport
     	    var $viewport = $("<div>")
 				.attr("id", "u-viewport")
 				.addClass("u-viewport");
-    	    $screen.append($viewport);
+    	    $trans.append($viewport);
     	    this.viewport = $viewport[0];
 
     	    // DOM cnvas
@@ -409,7 +430,7 @@
     	// GOTO
     	//////////////////////////////////////////////////////
 
-    	// used to reset timeout for `impress:stepenter` event
+    	// used to reset timeout for `space:stepenter` event
     	_stepEnterTimeout: null,
 
     	// el : index (number), id (string) or element (dom Element)
@@ -494,7 +515,7 @@
     		this.css(this.viewport, {
     			// to keep the perspective look similar for different scales
     			// we need to 'scale' the perspective, too
-    		    transform: this.perspectiveCSS(this.config.perspective / targetScale) + this.scaleCSS(targetScale) + this.translateCSS({ x: 0, y: 0, z: 0 }),
+    		    transform: this.perspectiveCSS(this.config.perspective / targetScale) + this.scaleCSS(targetScale),
     			transitionDuration: duration + "ms",
     			transitionDelay: (zoomin ? delay : 0) + "ms"
     		});
@@ -511,7 +532,7 @@
 
     		// If there is no change in scale or no change in rotation and translation, it means there was actually
     		// no delay - because there was no transition on `root` or `canvas` elements.
-    		// We want to trigger `impress:stepenter` event in the correct moment, so here we compare the current
+    		// We want to trigger `space:stepenter` event in the correct moment, so here we compare the current
     		// and target values to check if delay should be taken into account.
     		//
     		// I know that this `if` statement looks scary, but it's pretty simple when you know what is going on
@@ -539,7 +560,7 @@
     		// onStepEnter 이벤트
     		//-------------------------
 
-    		// And here is where we trigger `impress:stepenter` event.
+    		// And here is where we trigger `space:stepenter` event.
     		// We simply set up a timeout to fire it taking transition duration (and possible delay) into account.
     		// If you want learn something interesting and see how it was done with `transitionend` go back to
     		// version 0.5.2 of impress.js: http://github.com/bartaz/impress.js/blob/0.5.2/js/impress.js
@@ -741,7 +762,10 @@
 		//-------------------------
 
 		translateCSS: function (t) {
-			return " translate3d(" + t.x + "px," + t.y + "px," + t.z + "px) ";
+		    return " translate3d(" +
+                parseInt(t.x, 10) + "px," +
+                parseInt(t.y, 10) + "px," +
+                parseInt(t.z, 10) + "px) ";
 		},
 
 		// By default the rotations are in X Y Z order that can be reverted by passing `true` as second parameter.
@@ -759,7 +783,7 @@
 
 		// `perspective` builds a perspective transform string for given data.
 		perspectiveCSS: function (p) {
-			return " perspective(" + p + "px) ";
+			return " perspective(" + parseInt(p,10) + "px) ";
 		},
 
 		////////////////////////////////////////////////////////
@@ -780,17 +804,22 @@
     	// STEP EVENTS - 2가지
     	///////////////////////////
 
-    	// impress:stepleave : step is left (다음 step의 transition이 시작될때).
-    	// impress:stepenter : step이 screen에 보여질때 (이전 step으로부터 transition이 끝났을때)
+    	// space:stepleave : step is left (다음 step의 transition이 시작될때).
+    	// space:stepenter : step이 screen에 보여질때 (이전 step으로부터 transition이 끝났을때)
 
     	// reference to last entered step
     	_lastEntered: null,
 
+        // goto Animation 중인지 여부
+    	_isGotoPlaying: false,
+
     	_onStepLeave: function (step) {
     		if (this._lastEntered === step) {
-    			out("* Event #impress:stepleave");
-    			this.triggerEvent(step, "impress:stepleave");
+    			out("* Event #space:stepleave");
+    			this.triggerEvent(step, "space:stepleave");
+
     			this._lastEntered = null;
+    			this._isGotoPlaying = true;
     		}
     	},
 
@@ -798,8 +827,8 @@
     	// 이벤트는 lastEntered 와 다를때만 trigger됨.
     	_onStepEnter: function (step) {
     		if (this._lastEntered !== step) {
-    			out("* Event #impress:stepenter");
-    			this.triggerEvent(step, "impress:stepenter");
+    			out("* Event #space:stepenter");
+    			this.triggerEvent(step, "space:stepenter");
 
     			// hash 변경
     			// `#/step-id` is used instead of `#step-id` to prevent default browser scrolling to element in hash.
@@ -809,24 +838,13 @@
     			window.location.hash = this.__lastHash = "#/" + step.id;
 
     			this._lastEntered = step;
+    			this._isGotoPlaying = false;
     		}
     	},
 		
 		///////////////////////////
     	// 윈도우 이벤트
 		///////////////////////////
-
-    	removeEventListener: function () {
-    		$(window).off("resizedWindow", $.proxy(this.__onResize, this));
-
-    		$(window).off("keydown", $.proxy(this.__onKeydown, this));
-    		$(window).off("keyup", $.proxy(this.__onKeyup, this));
-
-    		$(this.screen).off("click", $.proxy(this.__onClick, this));
-    		$(document).off("touchstart", $.proxy(this.__onTouch, this));
-
-    		$(window).off("hashchange", $.proxy(this.__onHashchange, this));
-    	},
 
     	createEventListener: function () {
     		this.removeEventListener();
@@ -840,6 +858,18 @@
     		$(document).on("touchstart", $.proxy(this.__onTouch, this));
 
     		$(window).on("hashchange", $.proxy(this.__onHashchange, this));
+    	},
+
+    	removeEventListener: function () {
+    	    $(window).off("resizedWindow", $.proxy(this.__onResize, this));
+
+    	    $(window).off("keydown", $.proxy(this.__onKeydown, this));
+    	    $(window).off("keyup", $.proxy(this.__onKeyup, this));
+
+    	    $(this.screen).off("click", $.proxy(this.__onClick, this));
+    	    $(document).off("touchstart", $.proxy(this.__onTouch, this));
+
+    	    $(window).off("hashchange", $.proxy(this.__onHashchange, this));
     	},
 
     	//-------------------------
@@ -1029,10 +1059,10 @@
     function API(screenID, value) {
         // GET
         if (value === undefined) {
-            return __API["impress-root-" + screenID];
+            return __API["space-root-" + screenID];
         }
         // SET
-        __API["impress-root-" + screenID] = value;
+        __API["space-root-" + screenID] = value;
     }
 
 	//-------------------------
