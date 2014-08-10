@@ -26,7 +26,16 @@ Angular.js 어플리케이션에서 anchor의 해쉬 사용
 http://blog.outsider.ne.kr/982
 
 /*
-[sublime : legacy]
+[sublime : legacy] 
+
+* themeDemo
+- https://sublime.wbond.net/packages/Dayle%20Rees%20Color%20Schemes
+- http://daylerees.github.io/
+
+* liveload
+- http://demun.tistory.com/2345
+- <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+
 {
     "color_scheme": "Packages/Dayle Rees Color Schemes/sublime/legacy.tmTheme",
     "fade_fold_buttons": false,
@@ -41,7 +50,7 @@ http://blog.outsider.ne.kr/982
         "Vintage"
     ],
     "soda_classic_tabs": false,
-    "soda_folder_icons": true,
+    "soda_folder_icons": false,
     "tab_size": 4,
     "theme": "Soda Dark.sublime-theme",
     "translate_tabs_to_spaces": true

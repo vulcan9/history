@@ -1,9 +1,5 @@
 <!DOCTYPE html>
-
-<!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--><html lang="en" class="no-js" ng-controller="CommonController"><!--<![endif]-->
+<html lang="en" ng-controller="AppController">
 
 <head>
 
@@ -20,22 +16,21 @@
   -->
   <link rel="stylesheet" href="css/app.css"/>
 
-  <!--http://cdnjs.com/-->
-  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js"></script>
+  <!--http://cdnjs.com/
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js"></script> 
+  -->
+
   <!--
   꼭 필요한 필수 CSS는 위와 같이 고정해서 붙이고, 
   일부 페이지마다 필요한 CSS은 아래와 같이 컨트롤러에서 설정해서 로드한다. (IE8 에서도 정상동작)
   http://plnkr.co/edit/KzjIMN
   -->
-  
   <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" />
 
 </head>
 
 
 <body>
-
-
 
     
       <div>
