@@ -25,7 +25,7 @@ define([
 					{
 						// requireJS.config의 paths에 등록해놓고 사용해도 됨
 						// directives: ['version']
-						directives: [_PATH.DIRECTIVE  + 'd_version'], 
+						directives: [_PATH.DIRECTIVE  + 'version'], 
 						services: [], 
 						filters: [_PATH.FILTER + 'reverse']
 					}
@@ -39,7 +39,7 @@ define([
 					'./templates/view2.html', 
 					'./js/controllers/second', 
 					{
-						directives: ['./js/directives/d_version'], 
+						directives: ['./js/directives/version'], 
 						services: ['./js/services/tester'], 
 						filters: []
 					}
@@ -51,22 +51,21 @@ define([
 			$routeProvider.when(
 				'/grid', 
 				routeConfig.config(
-					'../templates/grid.html', 
-					'controllers/grid'
+					'./templates/grid.html', 
+					'./js/controllers/grid'
 				)
 			);
 			*/
 			
-			/*
 			//admin 경로 설정
 			$routeProvider.when(
 				'/admin', 
 				routeConfig.config(
-					'../templates/admin.html', 
-					'controllers/third'
+					'./templates/admin.html', 
+					'./js/controllers/AdminController'
 				)
 			); 
-			*/
+			
 
 			//기본 경로 설정
 			$routeProvider.otherwise({redirectTo:'/view1'});

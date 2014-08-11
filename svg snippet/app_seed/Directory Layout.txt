@@ -88,6 +88,12 @@ https://github.com/angular/angular-seed
 - 설정된 라우터 경로대로 view, controller 로드
 
 
+// 페이지 추가 절차
+ 1. Routes.js 에서 해쉬에 해당하는 경로 추가 후 template과 해당 controller 경로를 설정 한다.
+ 2. 또한, 필요한 directive, service, filter가 있다면 경로를 설정한다.
+ 3. template에는 controller가 기술되어 있다.
+ 4. controller를 작성한다.
+
 
 
 
