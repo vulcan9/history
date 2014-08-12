@@ -1,0 +1,38 @@
+﻿
+-----------------------------------------------------------------------------
+
+angular doc
+https://docs.angularjs.org/api
+https://docs.angularjs.org/tutorial
+https://docs.angularjs.org/guide
+
+ANGULARJS TUTORIAL
+http://johnlindquist.com/2012/04/04/angularjs_tutorial.html
+
+AngularJS TodoMVC Example
+https://github.com/tastejs/todomvc/tree/gh-pages/architecture-examples/angularjs
+http://mobicon.tistory.com/262
+http://www.youtube.com/watch?v=WuiHuZq_cg4&list=PL1w1q3fL4pmgqpzb-XhG7Clgi67d_OHXz
+
+-----------------------------------------------------------------------------
+
+
+
+- Bootstrap, Underscore를 이용하고, Angular Controller를 별도 .js로 분리한다 
+
+
+
+
+
+
+-----------------------------------------------------------------------------
+TODO :
+
+Single Page Applicatiion with Node and Angular
+http://mcchae.egloos.com/viewer/11103678
+http://scotch.io/tutorials/javascript/creating-a-single-page-todo-app-with-node-and-angular
+
+- Mongoose를 이용한 할일을 MongoDB에 저장
+- Express (MVC) framework를 이용
+- RESTful Node API 생성
+- 사용자 UI와 API를 접속하기 위하여 Angular 이용
