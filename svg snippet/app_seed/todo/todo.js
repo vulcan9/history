@@ -25,7 +25,7 @@ angular.module("app", [])
     
     $scope.addTodo = function(){
         var text = $scope.formTodoText;
-        console.log('text : ', text);
+        //console.log('text : ', text);
         $scope.todos.push(
             {text:text, done:false}
         );
