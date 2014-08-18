@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" ng-controller="AppController">
+
+<head>
+
+ <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>HI-STORY :: Document - Reporting - Presentation</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 
+  ///////////////////////////////////
+  // 부트스트랩 미리 로드
+  ///////////////////////////////////
+  -->
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+  <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요한) -->
+  <script src="//code.jquery.com/jquery.min.js"></script>
+
+  <!-- 모든 합쳐진 플러그인을 포함하거나 (아래) 필요한 각각의 파일들을 포함하세요-->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+  <!-- Respond.js 으로 IE8 에서 반응형 기능을 활성화하세요 (https://github.com/scottjehl/Respond)
+  <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
+  -->
+
+  <!-- 
+  ///////////////////////////////////
+  // CSS 선택 로드
+  ///////////////////////////////////
+  -->
+
+  <!--http://cdnjs.com/
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js"></script> 
+  <link rel="stylesheet" href="css/basic.css"/>
+  -->
+
+  <!--
+  꼭 필요한 필수 CSS는 위와 같이 고정해서 붙이고, 
+  일부 페이지마다 필요한 CSS은 아래와 같이 컨트롤러에서 설정해서 로드한다. (IE8 에서도 정상동작)
+  http://plnkr.co/edit/KzjIMN
+  -->
+  <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" />
+
+</head>
+
+
+<body>
+
+
+  
+  <div ng-view></div>
+
+
+
+
+
+
+
+      <!--$route service에 의해 template이 랜더링되는 공간
+      <hr>
+    <button ng-hide="isAdmin" ng-click="isAdmin=true;">Become admin</button>
+
+
+      <hr>
+      <div>
+        <a href="#/view1">view1</a>
+        <a href="#/view2">view2</a>
+        <a href="#/admin" ng-show="isAdmin">admin</a>
+    </div>
+      -->
+
+
+
+
+
+
+
+
+
+  <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+
+  <script data-main="js/main" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+
+</body>
+</html>
+
+
