@@ -47,7 +47,7 @@ define([], function () {
             restrict: 'EA',
 
             // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
-            template: '<span><span ng-transclude></span>version.{{version}}</span>',
+            template: '<span><span ng-transclude="true"></span> version {{version}}</span>',
             //templateUrl: _PATH.TEMPLATE + 'menu.html',
             
             // template을 추가할지 교체할지 
@@ -71,9 +71,7 @@ define([], function () {
                     =   :   부모 scope의 property와 디렉티브의 property를 data binding하여 부모 scope에 접근
                     @  :   디렉티브의 attribute value를 {{}}방식(interpolation)을 이용해 부모 scope에 접근
             */
-            scope: {
-                //
-            },
+            scope: false,
 
             terminal: false,
 
@@ -84,7 +82,7 @@ define([], function () {
 
             // 다른 디렉티브들과 통신하기 위한 역할을 하는 controller명칭을 정의.
             // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
-            controller: function($scope, $element, $attrs, $transclude) {
+            controller: function($scope, $element, $attrs, $transclude, $rootScope) {
                 $scope.version = '1.0.0';
                 console.log($scope);
             },
@@ -106,18 +104,29 @@ define([], function () {
                     }
                 }
             },
-            */
+             */
             
             // 2-way data binding을 위해 해당 디렉티브 DOM엘리먼트의 event  listener를 등록.
             // ( 디렉티브의 대부분의 로직을 여기에 선언하며 postLink()만 지원.)
             link: function (scope, el, attrs, controller) {
+
                 /*
                 scope.click = function(){
                     console.log(" * item에 해당하는 command를 호출! : ", this.item);
                 };
+                 */
+                
+                //scope.version = scope.version || '1.0.0';
+
+                /*
+                scope.$watch('version', function(newValue, oldValue) {
+                    el.text = 'version.' + scope.version;
+
+                   console.log("*", scope.version, el);
+                });
                 */
             }
-        }
+        };
 
         return directive;
     }];

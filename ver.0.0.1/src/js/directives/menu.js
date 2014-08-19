@@ -63,9 +63,7 @@ define([], function () {
                     =   :   부모 scope의 property와 디렉티브의 property를 data binding하여 부모 scope에 접근
                     @  :   디렉티브의 attribute value를 {{}}방식(interpolation)을 이용해 부모 scope에 접근
             */
-            scope: {
-                //
-            },
+            scope: true,
 
             terminal: false,
 
