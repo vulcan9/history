@@ -4,18 +4,16 @@
 console.log("# Application By Vulcan.");
 
 
-var _PATH_ROOT = '/history/ver.0.0.1/src/';
-var _PATH_ROOT_FOLDER = '';
-
+var _PATH_ROOT = './';
 var _PATH = {
-    CSS :                _PATH_ROOT_FOLDER + 'css/',
-    TEMPLATE :       _PATH_ROOT_FOLDER + 'templates/',
-    LIB :                  _PATH_ROOT_FOLDER + 'libs/',
+    CSS :                _PATH_ROOT + 'css/',
+    TEMPLATE :       _PATH_ROOT + 'templates/',
+    LIB :                  _PATH_ROOT + 'lib/',
     
-    JS :                    _PATH_ROOT_FOLDER + 'js/',
-    CONTROLLER :    _PATH_ROOT_FOLDER + 'js/controllers/',
-    DIRECTIVE :         _PATH_ROOT_FOLDER + 'js/directives/',
-    FILTER :              _PATH_ROOT_FOLDER + 'js/filters/'
+    JS :                    _PATH_ROOT + 'js/',
+    CONTROLLER :    _PATH_ROOT + 'js/controllers/',
+    DIRECTIVE :         _PATH_ROOT + 'js/directives/',
+    FILTER :              _PATH_ROOT + 'js/filters/'
 };
 
 /*
@@ -56,10 +54,15 @@ requirejs.config({
         'text':             _PATH.LIB + 'require/text',
         //'jquery':         _PATH.LIB + 'jquery/jquery',
         //'jquery-ui':     _PATH.LIB + 'jquery/jquery-ui-1.10.2.min',
-        'angular':       _PATH.LIB + 'angular/angular.1.2.9',
-        'angularRoute': _PATH.LIB + 'angular/angular-route.1.2.9',
+        'angular':       _PATH.LIB + 'angular/angular',
 
-        'Application':                 _PATH.JS + 'Application',
+        'lazyDirectives':   _PATH.JS + 'registers/lazy-directives',
+        'lazyServices':     _PATH.JS + 'registers/lazy-services', 
+        'lazyFilters':         _PATH.JS + 'registers/lazy-filters',
+
+        'RouteConfig':      _PATH.JS + 'RouteConfig',
+        'App':                 _PATH.JS + 'App',
+        'Routes':             _PATH.JS + 'Routes',
 
         // directive나 template 도 path를 등록하여 사용할 수 있음
         // 'version':'./js/directives/version',
@@ -76,12 +79,17 @@ requirejs.config({
             //deps:['jquery'],
             exports:'angular'
         },
-        'angularRoute':{
-            deps:['angular'],
-            exports:'angularRoute'
+        /*
+        'jquery-ui': {
+            deps: ['jquery'] 
         },
-
-        //'jquery-ui': {deps: ['jquery'] },
+        */
+        'App':{
+            deps:['angular', 'RouteConfig']
+        },
+        'Routes':{
+            deps:['angular']
+        }
     }
 });
 
@@ -93,12 +101,12 @@ requirejs( [
         'text', //미리 선언해둔 path, css나 html을 로드하기 위한 requireJS 플러그인
         //'jquery', //미리 선언해둔 path, jQuery는 AMD를 지원하기 때문에 이렇게 로드해도 jQuery 또는 $로 호출할 수 있다.
         //'jquery-ui',
-        'angular',
-        'angularRoute',
-        'Application'
+        'angular', 
+        'App', //App.js
+        'Routes' //Routes.js
     ],
     
-    function (text, angular, angularRoute, Application) {
+    function (text, angular) {
         //이 함수는 위에 명시된 모든 디펜던시들이 다 로드된 뒤에 호출된다.
         //주의해야할 것은, 디펜던시 로드 완료 시점이 페이지가 완전히 로드되기 전 일 수도 있다는 사실이다.
 
@@ -113,22 +121,12 @@ requirejs( [
             //-----------------------------------
             
             // - Returns the newly created injector for this app.
-            angular.bootstrap(document, ['Application']);
-        });
+            angular.bootstrap(document, ['App']);
 
-        ////////////////////////////////////////
-        // END
-        ////////////////////////////////////////
+        });
+ 
     }
 );
-
-
-
-
-
-
-
-
 
 
 

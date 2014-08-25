@@ -47,7 +47,7 @@ define([], function () {
             restrict: 'EA',
 
             // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
-            template: '<span><span ng-transclude="true"></span> version {{version}}</span>',
+            template: '<span><span ng-transclude></span> version {{version}}</span>',
             //templateUrl: _PATH.TEMPLATE + 'menu.html',
             
             // template을 추가할지 교체할지 
@@ -84,8 +84,15 @@ define([], function () {
             // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
             controller: function($scope, $element, $attrs, $transclude, $rootScope) {
                 $scope.version = '1.0.0';
-                console.log($scope);
+                console.log('scope : ', $scope);
+
+                //var childElement = $transclude();   //childScope 없이 그냥 호출
+                //$element.append( childElement );
             },
+
+            // 확인할 사항 : 
+            // compile function과 link function (이 둘을 함께 설정할 수는 없다고 한다. - ? -)
+            // http://blog.naver.com/jjoommnn/220020656133
 
             /*
             // compile단계에서는 아직 scope가 존재하지 않은 상태
@@ -104,28 +111,38 @@ define([], function () {
                     }
                 }
             },
-             */
+             //*/
             
+            //*
             // 2-way data binding을 위해 해당 디렉티브 DOM엘리먼트의 event  listener를 등록.
             // ( 디렉티브의 대부분의 로직을 여기에 선언하며 postLink()만 지원.)
-            link: function (scope, el, attrs, controller) {
+            link: function (scope, el, attrs, controller, transclude ) {
+                console.log('controller : ', controller);
 
-                /*
+                //var childScope = scope.$new();
+                //var childElement = transclude( childScope, function (clone){
+                //    el.append( clone );    
+                //} );   //childScope를 넣어서 호출
+                
+                
                 scope.click = function(){
                     console.log(" * item에 해당하는 command를 호출! : ", this.item);
                 };
-                 */
+                
                 
                 //scope.version = scope.version || '1.0.0';
 
-                /*
+                
                 scope.$watch('version', function(newValue, oldValue) {
-                    el.text = 'version.' + scope.version;
+                    //el.text ('version.' + scope.version);
+                    //el.empty();
 
-                   console.log("*", scope.version, el);
+                   console.log("*", scope.version, el, scope.message);
+                   
                 });
-                */
+                
             }
+            //*/
         };
 
         return directive;

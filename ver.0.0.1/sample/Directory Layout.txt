@@ -98,5 +98,12 @@ https://github.com/angular/angular-seed
 
 
 
+-----------------------------------------------------------------------------
 
+// X-editable (팝업 속성 편집 도구)
+http://vitalets.github.io/x-editable/
+http://vitalets.github.io/angular-xeditable/
 
+// 부트 스트랩 (BS3)
+http://getbootstrap.com/
+http://bootstrapk.com/BS3/
