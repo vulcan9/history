@@ -1,16 +1,30 @@
 
+// IE 7, 8
+if(typeof console === 'undefined' || typeof console.log === 'undefined'){
+    var console = {
+        log:function(){}
+    };
+}
 
+var out = window.out || function (){
+    if(!arguments || arguments.length < 1) return;
+    console.log.apply(window.console, arguments);
+}
 
 console.log("# Application By Vulcan.");
+
+////////////////////////////////////////
+// Global 속성
+////////////////////////////////////////
 
 
 var _PATH_ROOT = '/history/ver.0.0.1/src/';
 var _PATH_ROOT_FOLDER = '';
 
 var _PATH = {
-    CSS :                _PATH_ROOT_FOLDER + 'css/',
-    TEMPLATE :       _PATH_ROOT_FOLDER + 'templates/',
-    LIB :                  _PATH_ROOT_FOLDER + 'libs/',
+    CSS :                 _PATH_ROOT_FOLDER + 'css/',
+    TEMPLATE :        _PATH_ROOT_FOLDER + 'templates/',
+    LIB :                   _PATH_ROOT_FOLDER + 'libs/',
     
     JS :                    _PATH_ROOT_FOLDER + 'js/',
     CONTROLLER :    _PATH_ROOT_FOLDER + 'js/controllers/',
@@ -39,7 +53,6 @@ requirejs.config({
     */
     baseUrl : _PATH_ROOT,
 
-
     /*
     paths:  path는 baseUrl 아래에서 직접적으로 찾을 수 없는 모듈명들을 위해 경로를 매핑해주는 속성이다.
     "/"로 시작하거나 "http" 등으로 시작하지 않으면, 기본적으로는 baseUrl에 상대적으로 설정하게 된다.
@@ -53,18 +66,13 @@ requirejs.config({
     //뒤에 js 확장자는 생략한다.
     paths:{
         // text : HTML 데이터를 가져올때 text! 프리픽스를 붙여준다.
-        'text':             _PATH.LIB + 'require/text',
-        //'jquery':         _PATH.LIB + 'jquery/jquery',
-        //'jquery-ui':     _PATH.LIB + 'jquery/jquery-ui-1.10.2.min',
-        'angular':       _PATH.LIB + 'angular/angular.1.2.9',
-        'angularRoute': _PATH.LIB + 'angular/angular-route.1.2.9',
+        'text':                   _PATH.LIB + 'require/text',
+        //'jquery':            _PATH.LIB + 'jquery/jquery',
+        //'jquery-ui':        _PATH.LIB + 'jquery/jquery-ui-1.10.2.min',
+        'angular':             _PATH.LIB + 'angular/angular.1.2.9',
+        'angularRoute':     _PATH.LIB + 'angular/angular-route.1.2.9',
 
-        'Application':                 _PATH.JS + 'Application',
-
-        // directive나 template 도 path를 등록하여 사용할 수 있음
-        // 'version':'./js/directives/version',
-        // 'view1':'./templates/view1.html',
-        // 'c_App' : _PATH.CONTROLLER + 'c_App',
+        'Application':        _PATH.JS + 'Application'
     },
     
     /*
@@ -72,14 +80,8 @@ requirejs.config({
     참고 : http://gregfranko.com/blog/require-dot-js-2-dot-0-shim-configuration/
     */
     shim:{
-        'angular':{
-            //deps:['jquery'],
-            exports:'angular'
-        },
-        'angularRoute':{
-            deps:['angular'],
-            exports:'angularRoute'
-        },
+        'angular':{ exports:'angular' },
+        'angularRoute':{ deps:['angular'], exports:'angularRoute' }
 
         //'jquery-ui': {deps: ['jquery'] },
     }
@@ -99,21 +101,26 @@ requirejs( [
     ],
     
     function (text, angular, angularRoute, Application) {
-        //이 함수는 위에 명시된 모든 디펜던시들이 다 로드된 뒤에 호출된다.
-        //주의해야할 것은, 디펜던시 로드 완료 시점이 페이지가 완전히 로드되기 전 일 수도 있다는 사실이다.
+
+        //-----------------------------------
+        // Base URL
+        //-----------------------------------
+        
+        //$('head').append($('<base href="' + window.location.pathname + '" />'));
+        var head = document.getElementsByTagName('head');
+        var base = angular.element('<base href="' + window.location.pathname + '" />');
+        angular.element(head).append(base);
+
+        //-----------------------------------
+        // angular.bootstrap(element, [modules], [config]);
+        //-----------------------------------
+        
+        //이 부분은 위에 명시된 모든 디펜던시들이 다 로드된 뒤에 호출된다.
+        //(주의) 디펜던시 로드 완료 시점이 페이지가 완전히 로드되기 전 일수도 있다.
 
         //페이지가 완전히 로드된 뒤에 실행
         $(document).ready(function () {
- 
-            //위의 디펜던시 중 App이 포함된 app.js가 로드된 이후에 아래가 수행된다.
-            //임의로 앵귤러 부트스트래핑을 수행한다.
-            
-            //-----------------------------------
-            // angular.bootstrap(element, [modules], [config]);
-            //-----------------------------------
-            
-            // - Returns the newly created injector for this app.
-            angular.bootstrap(document, ['Application']);
+            var app = angular.bootstrap(document, ['Application']);
         });
 
         ////////////////////////////////////////

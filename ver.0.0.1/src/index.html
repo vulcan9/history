@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-controller="ApplicationController">
 
   <head>
 
@@ -36,33 +36,65 @@
     -->
 
     <!--
-      꼭 필요한 필수 CSS는 위와 같이 고정해서 붙이고, 
-      일부 페이지마다 필요한 CSS은 아래와 같이 컨트롤러에서 설정해서 로드한다. (IE8 에서도 정상동작)
-      http://plnkr.co/edit/KzjIMN
-    
-    <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" />
-    -->
-
-    
-
-    <!--
     <script src="./libs/angular/angular.1.2.9.js"></script>
     <script src="./libs/angular/angular-route.1.2.9.js"></script>
     
     <script type="text/javascript">
     angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
     </script>
-  -->
-    <script type="text/javascript">
-    $('head').append($('<base href="' + window.location.pathname + '" />'));
-    </script>
+    -->
+
+    <!--
+      일부 페이지마다 필요한 CSS은 컨트롤러에서 설정해서 로드 (IE8 에서도 정상동작)
+      http://plnkr.co/edit/KzjIMN
+    -->
+    <link rel="stylesheet" href="css/basic.css"/>
+    <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" />
+    
+
+    <script data-main="js/main" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+
   </head>
 
 
   <body>
 
 
-<div ng-controller="MainController">
+
+    <div>
+      <a href="#/admin">admin</a> |
+      <a href="#/login">login</a> |
+      <a href="#/tool">tool</a>
+    </div>
+
+    <hr />
+
+    
+    <div ng-view></div>
+
+
+
+  <hr />
+
+  <pre>$location.path() = {{$location.path()}}</pre>
+  <pre>$route.current.templateUrl = {{$route.current.templateUrl}}</pre>
+  <pre>$route.current.params = {{$route.current.params}}</pre>
+  <pre>$route.current.scope.name = {{$route.current.scope.name}}</pre>
+  <pre>$routeParams = {{$routeParams}}</pre>
+
+
+
+  
+    <!--[if lt IE 7]>
+    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+  </body>
+</html>
+
+
+<!--
+<div ng-controller='MainController'>
   Choose:
   <a href="#/Book/Moby">Moby</a> |
   <a href="#/Book/Moby/ch/1">Moby: Ch1</a> |
@@ -72,24 +104,6 @@
 
   <div ng-view></div>
 
-  <hr />
 
-  <pre>$location.path() = {{$location.path()}}</pre>
-  <pre>$route.current.templateUrl = {{$route.current.templateUrl}}</pre>
-  <pre>$route.current.params = {{$route.current.params}}</pre>
-  <pre>$route.current.scope.name = {{$route.current.scope.name}}</pre>
-  <pre>$routeParams = {{$routeParams}}</pre>
 </div>
-
-
-
-    <script data-main="js/main" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
-
-    <!--[if lt IE 7]>
-    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-
-  </body>
-</html>
-
-
+-->
