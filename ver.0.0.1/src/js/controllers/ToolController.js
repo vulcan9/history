@@ -5,9 +5,6 @@ define([
     ],
     function(version) {
 
-        // 컨트롤러 리턴
-        return _controller;
-
         //컨트롤러 선언
         function _controller($scope, $route, $routeParams, $location) {
 
@@ -22,7 +19,16 @@ define([
             //-----------------------
 
             $scope._name = 'ToolController';
+
+            $scope.$route = $route;
+            $scope.$location = $location;
+            $scope.$routeParams = $routeParams;
+
+            out('ToolController loaded');
         }
+        
+        // 컨트롤러 리턴
+        return _controller;
 
         ////////////////////////////////////////
         // END

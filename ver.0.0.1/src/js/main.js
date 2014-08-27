@@ -44,7 +44,7 @@ user strict 명령은 엄격하게 JavaScript 룰을 적용하라는 의미이�
 //requireJS 기본 설정 부분
 ////////////////////////////////////////
 
-requirejs.config({
+require.config({
 
     /*
     baseUrl: JavaScript 파일이 있는 기본 경로를 설정한다.
@@ -91,25 +91,26 @@ requirejs.config({
 //requireJS를 활용하여 모듈 로드
 ////////////////////////////////////////
 
-requirejs( [
+require( [
         'text', //미리 선언해둔 path, css나 html을 로드하기 위한 requireJS 플러그인
         //'jquery', //미리 선언해둔 path, jQuery는 AMD를 지원하기 때문에 이렇게 로드해도 jQuery 또는 $로 호출할 수 있다.
         //'jquery-ui',
         'angular',
         'angularRoute',
-        'Application'
+        'Application',
+        _PATH.JS + 'Router'
     ],
     
-    function (text, angular, angularRoute, Application) {
+    function (text, angular, angularRoute, Application, Router) {
 
         //-----------------------------------
         // Base URL
         //-----------------------------------
         
         //$('head').append($('<base href="' + window.location.pathname + '" />'));
-        var head = document.getElementsByTagName('head');
-        var base = angular.element('<base href="' + window.location.pathname + '" />');
-        angular.element(head).append(base);
+        // var head = document.getElementsByTagName('head');
+        // var base = angular.element('<base href="' + window.location.pathname + '" />');
+        // angular.element(head).append(base);
 
         //-----------------------------------
         // angular.bootstrap(element, [modules], [config]);
@@ -120,7 +121,7 @@ requirejs( [
 
         //페이지가 완전히 로드된 뒤에 실행
         $(document).ready(function () {
-            var app = angular.bootstrap(document, ['Application']);
+            angular.bootstrap(document, ['Application']);
         });
 
         ////////////////////////////////////////

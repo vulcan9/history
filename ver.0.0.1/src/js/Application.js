@@ -21,7 +21,7 @@ define([
             function($provide, $compileProvider, $controllerProvider, $filterProvider) {
                 
 
-                /* Service*/
+                /* Service
                 $provide.factory('register', function() {
 
                         return _service;
@@ -32,7 +32,7 @@ define([
                         };
 
                 });
-                
+                */
 
 
 
@@ -41,15 +41,54 @@ define([
         );
 
         application.config(
-            function($provide, $compileProvider, $controllerProvider, $filterProvider, $routeProvider, $locationProvider) {
 
+            /* 등록 메서드는 각기 다르다.
+            $provide.service()
+            $provide.factory()
+            $provide.value()
+            $provide.constant()
+
+            $controllerProvider.resgister()
+            $animateProvider.register()
+            $filterProvider.service()
+            $compileProvider.service()
+            */
+
+            function($provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider) {
+
+                // 등록 메서드 노출
+                application.$provide = {
+                    service :       $provide.service,
+                    factory :        $provide.factory,
+                    value :          $provide.value,
+                    constant :     $provide.constant,
+                };
+
+                application.$compileProvider = $compileProvider;
+                application.$controllerProvider = $controllerProvider;
+                application.$filterProvider = $filterProvider;
+                application.$animateProvider = $animateProvider;
+
+                application.$routeProvider = $routeProvider;
+                application.$locationProvider = $locationProvider;
+                
                 // Route 설정
-                Router($provide, $compileProvider, $controllerProvider, $filterProvider, $routeProvider, $locationProvider);
+                Router.config(application);
 
                 // 보이기
                 showApplication();
             }
         );
+
+        application.run(function($rootScope, $location) {
+            
+                application.$rootScope = $rootScope;
+                application.$location = $location;
+
+                // Route 실행
+                Router.run();
+        });
+        
 
         //-----------------------------------
         //  BODY 보이기 - App 초기화 완료 시점

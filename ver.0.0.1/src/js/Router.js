@@ -9,19 +9,51 @@ define([
 	],
 	function( AdminController, LoginController, ToolController, version ) {
 
-		return _router;
-
 // when(path, routeObject);
 // params : $route.current
 // otherwise(params);
 
-		// $routeProvider : https://docs.angularjs.org/api/ngRoute/provider/$routeProvider
-		function _router($provide, $compileProvider, $controllerProvider, $filterProvider, $routeProvider, $locationProvider){
+
+var application;
+		// application : $rootScope, $location
+		function _run(){
+			// register listener to watch route changes
+			application.$rootScope.$on("$routeChangeStart", function(event, next, current) {
+
+				if(current === undefined){
+					out('#처음 접속');
+					//$location.path('/login'); 
+				}
+
+				/*
+				if ($rootScope.loggedUser == null) {
+
+					// no logged user, we should be going to #login
+					if (next.templateUrl == "partials/login.html") {
+						// already going to #login, no redirect needed
+					} else {
+						// not going to #login, we should redirect now
+						$location.path("/login");
+					}
+
+				}
+				*/
+
+				//out('$routeChangeStart : ', current, ' --> ', next);
+			});
+		}
+
+		// $$routeProvider : https://docs.angularjs.org/api/ngRoute/provider/$routeProvider
+		function _config(app){
+			application = app;
 
 			// configure html5 to get links working on jsfiddle
 			// 아래 코드를 활성화(true) 시키면 해쉬(#)가 제거된 형태의 url로 표시된다.
 			// 하지만, 주소표시줄에 나타난 주소로 직접 접근할 수는 없다.
-			$locationProvider.html5Mode(false);
+			var $locationProvider = application.$locationProvider;
+			application.$locationProvider.html5Mode(false);
+
+			var $routeProvider = application.$routeProvider;
 
 			/*
 			$routeProvider.when(
@@ -65,10 +97,19 @@ define([
 			
 			$routeProvider.when(
 				'/login', 
-				{
-					templateUrl: _PATH.TEMPLATE + 'login.html',
-					controller: LoginController
-				}
+				get(
+					_PATH.TEMPLATE + 'login.html',
+					_PATH.CONTROLLER + 'LoginController',
+					{
+						// requireJS.config의 paths에 등록해놓고 사용해도 됨
+						// directives: ['version']
+						directives: [
+							//_PATH.DIRECTIVE  + 'version'
+						], 
+						//filters: [_PATH.FILTER + 'reverse'],
+						//services: []
+					}
+				)
 			);
 			
 		        //-----------------------------------
@@ -94,7 +135,7 @@ define([
 				(function (){
 					console.log('* version : ', version);
 					//register(version);
-					$compileProvider.directive.apply(null, version);
+					aplication.compileProvider.directive.apply(null, version);
 					return {
 						templateUrl: _PATH.TEMPLATE + 'tool.html',
 						controller: ToolController
@@ -180,10 +221,11 @@ define([
 		
 		//$provide.value('a', 123);
 		//$provide.factory('a', function() { return 123; });
-		//$compileProvider.directive('directiveName', ...);
+		//aplication.compileProvider.directive('directiveName', ...);
 		//$filterProvider.register('filterName', ...);
 		
-		function get(templatePath, controllerPath, resources) {
+		function get (templatePath, controllerPath, resources, routeObject) {
+			var $controllerProvider = application.$controllerProvider;
 		
 			//컨트롤러 프로바이더가 존재하지 않으면 오류!
 			if (!$controllerProvider) {
@@ -191,7 +233,8 @@ define([
 			}
 
 			//변수 선언
-			var defer, html, routeDefinition = {};
+			var defer, html;
+			var routeDefinition = angular.extend({}, routeObject);
 
 			//경로 템플릿 설정
 			routeDefinition.template = function () {
@@ -199,17 +242,21 @@ define([
 			};
 			
 			//경로 컨트롤러 설정
-			routeDefinition.controller = controllerPath.substring(controllerPath.lastIndexOf("/") + 1);
+			var controllerName = controllerPath.substring(controllerPath.lastIndexOf("/") + 1);
+			routeDefinition.controller = controllerName;
 			
 			//경로 
 			routeDefinition.resolve = {
+				//key:factory,
 			
-				delay: function ($q, $rootScope, $timeout) {
-				
+				delay: function ($q, $rootScope, $timeout, $route, $location) {
+
 					//defer 가져오기
 					defer = $q.defer();
-					
-					/*
+					//if(!application.$route) application.$route = $route;
+
+
+
 					//html에 아무런 값이 없는 경우
 					if (!html) {
 					
@@ -234,8 +281,10 @@ define([
 							
 							//컨트롤러
 							if( angular.isDefined( controllerPath ) ) {
-								$controllerProvider.register(controllerPath.substring(controllerPath.lastIndexOf("/") + 1), arguments[indicator]);
+								$controllerProvider.register(controllerName, arguments[indicator]);
 								indicator++;
+
+								out('# Load Controller Path : ', controllerName, ' (', controllerPath, ')');
 							}
 							
 							if( angular.isDefined( resources ) ) {
@@ -267,28 +316,35 @@ define([
 							
 							//딜레이 걸어놓기
 							html = template;
-							//defer.resolve();
-							$rootScope.$apply();
+							
+							$rootScope.$apply(function(){
+								defer.resolve();
+							});
 
 							
-							out('html : ', html);
-						})
+							out('TODO : 로딩바 닫기');
+							//out($location.path(), window.location);
+							//$location.path(window.location.hash);
+						});
+
+						out('TODO : 로딩바 보이기');
 					}
 					
 					else {
 						defer.resolve();
 					}
-					*/
-out('defer : ', defer);
-					$timeout(defer.resolve, 3000);
+					
+
+					//$timeout(defer.resolve, 3000);
 					return defer.promise;
 				}
 			}
-
+			
 			return routeDefinition;
 		}
 
 		function registerDirectives(directive){
+			var $compileProvider = application.$compileProvider;
 			if(directive){
 				if (!$compileProvider) {
 					throw new Error("$compileProvider is not set!");
@@ -300,6 +356,7 @@ out('defer : ', defer);
 		}
 
 		function registerServices(service){
+			var provide = application.$provide;
 			if (service) {
 				if (!$provide) {
 					throw new Error("$setProvide is not set!");
@@ -311,6 +368,7 @@ out('defer : ', defer);
 		}
 
 		function registerFilters(filter){
+			var filterProvider = application.$filterProvider;
 			if(filter){
 				if (!$filterProvider) {
 					throw new Error("$setProvide is not set!");
@@ -345,6 +403,11 @@ out('defer : ', defer);
 
 
 }
+
+		return {
+			config : _config,
+			run : _run
+		};
 
 
 	        ////////////////////////////////////////

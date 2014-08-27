@@ -2,9 +2,6 @@
 
 define([], function() {
 
-    // 컨트롤러 리턴
-    return _controller;
-
     //컨트롤러 선언
     function _controller($scope, $element, $attrs, $transclude) {
 
@@ -28,6 +25,9 @@ define([], function() {
 
         $scope._name = 'ApplicationController';
     }
+
+    // 컨트롤러 리턴
+    return _controller;
 
     ////////////////////////////////////////
     // END

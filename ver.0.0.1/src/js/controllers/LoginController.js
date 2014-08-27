@@ -2,11 +2,8 @@
 
 define([], function() {
 
-    // 컨트롤러 리턴
-    return _controller;
-
     //컨트롤러 선언
-    function _controller($scope) {
+    function _controller($scope, $route, $routeParams, $location) {
 
         //-----------------------
         // CSS 설정
@@ -19,7 +16,16 @@ define([], function() {
         //-----------------------
 
         $scope._name = 'LoginController';
+
+        $scope.$route = $route;
+        $scope.$location = $location;
+        $scope.$routeParams = $routeParams;
+
+        out('LoginController loaded');
     }
+
+    // 컨트롤러 리턴
+    return _controller;
 
     ////////////////////////////////////////
     // END

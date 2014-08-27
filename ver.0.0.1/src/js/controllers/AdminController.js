@@ -2,9 +2,6 @@
 
 define([], function() {
 
-    // 컨트롤러 리턴
-    return _controller;
-
     //컨트롤러 선언
     function _controller($scope) {
 
@@ -20,6 +17,9 @@ define([], function() {
 
         $scope._name = 'AdminController';
     }
+
+    // 컨트롤러 리턴
+    return _controller;
 
     ////////////////////////////////////////
     // END
