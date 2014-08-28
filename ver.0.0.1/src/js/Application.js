@@ -1,27 +1,27 @@
 'use strict';
 
-define([
+define( [
         'angular',
         'Router',
         _PATH.CONTROLLER + 'ApplicationController'
     ],
-    function(angular, Router, ApplicationController) {
+    function( angular, Router, ApplicationController ) {
 
         //-----------------------------------
         // Application 모듈 선언 : angular.module(name, [requires], [configFn]);
         //-----------------------------------
-        
+
         var _router;
 
         //위의 디펜던시를 가져와서 콜백을 수행하게 되는데 여기서는 App이라는 앵귤러 모듈을 리턴한다.
         var application = angular.module(
 
             // Name, Require
-            'Application', ['ngRoute'], 
-            
+            'Application', [ 'ngRoute' ],
+
             // Configuration Function
-            function($provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider) {
-                
+            function( $provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider ) {
+
 
                 /* Service
                 $provide.factory('register', function() {
@@ -35,7 +35,6 @@ define([
 
                 });
                 */
-
 
 
 
@@ -54,55 +53,64 @@ define([
         $compileProvider.service()
         */
         application.config(
-            function($provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider) {
+            function( $provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider ) {
+                
+                // 자주쓰는 등록 메서드
+                application.controller = $controllerProvider.register;
+                application.directive = $compileProvider.directive;
+                application.filter = $filterProvider.register;
+                application.factory = $provide.factory;
+                application.service = $provide.service;
 
+                /*
                 // 등록 메서드 노출
                 application.$provide = {
-                    service :       $provide.service,
-                    factory :        $provide.factory,
-                    value :          $provide.value,
-                    constant :     $provide.constant,
+                    service: $provide.service,
+                    factory: $provide.factory,
+                    value: $provide.value,
+                    constant: $provide.constant,
                 };
 
-                application.$compileProvider          = $compileProvider;
-                application.$controllerProvider        = $controllerProvider;
-                application.$filterProvider               = $filterProvider;
-                application.$animateProvider          = $animateProvider;
+                application.$compileProvider = $compileProvider;
+                application.$controllerProvider = $controllerProvider;
+                application.$filterProvider = $filterProvider;
+                */
+               
+                application.$animateProvider = $animateProvider;
+                application.$routeProvider = $routeProvider;
+                application.$locationProvider = $locationProvider;
 
-                application.$routeProvider              = $routeProvider;
-                application.$locationProvider          = $locationProvider;
-                
-                out('application.config');
+                out( 'application.config' );
 
                 // Route 설정
-                _router = new Router(application);
+                _router = new Router( application );
                 _router.config();
             }
         );
 
-        application.run(function($rootScope, $location) {
-            
-                application.$rootScope        = $rootScope;
-                application.$location           = $location;
+        application.run( function( $rootScope, $location ) {
 
-                // Route 실행
-                _router.run();
+            application.$rootScope = $rootScope;
+            application.$location = $location;
 
-                // 보이기
-                showApplication();
-                out('application.run');
-        });
-        
+            // Route 실행
+            _router.run();
+
+            // 보이기
+            showApplication();
+            out( 'application.run' );
+        } );
+
 
         //-----------------------------------
         //  BODY 보이기 - App 초기화 완료 시점
         //-----------------------------------
-        
-        function showApplication(){
-            angular.element('body').css({
+
+        function showApplication() {
+            angular.element( 'body' ).css( {
                 opacity: 1,
-                transition:'opacity 1s'
-            });
+                transition: 'opacity 1s'
+            } );
         }
 
         /*
@@ -124,13 +132,6 @@ define([
 
 
         //$compileProvider.directive.apply(null, directive);
-        
-
-
-
-
-
-
 
 
 
@@ -138,9 +139,9 @@ define([
         //  Controller
         ////////////////////////////////////////
 
-        application.controller('ApplicationController', ApplicationController);
+        application.controller( 'ApplicationController', ApplicationController );
 
-/*
+        /*
 application.controller('MainController', function($scope, $route, $routeParams, $location) {
     $scope.$route = $route;
     $scope.$location = $location;

@@ -1,6 +1,8 @@
 'use strict';
 
-define([], function() {
+define(['Application'], function(application) {
+
+    application.controller( 'LoginController', _controller );
 
     //컨트롤러 선언
     function _controller($scope, $route, $routeParams, $location) {
