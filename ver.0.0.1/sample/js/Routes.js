@@ -24,7 +24,7 @@ define([
 					//  paths:{'view1':'./templates/view1.html'}
 					// 'view1'로 사용
 					_PATH.TEMPLATE + 'application.html', 
-					_PATH.CONTROLLER + 'ApplicationController', 
+					_PATH.CONTROLLER + 'AppController', 
 					{
 						// requireJS.config의 paths에 등록해놓고 사용해도 됨
 						// directives: ['version']
@@ -52,11 +52,11 @@ define([
 		        //-----------------------------------
 		        // LOGIN 경로 설정
 		        //-----------------------------------
-			/*
+			//*
 			$routeProvider.when(
 				'/login', 
 				routeConfig.config(
-					'./templates/view2.html', 
+					'./templates/admin.html', 
 					'./js/controllers/second', 
 					{
 						directives: ['./js/directives/version'], 
@@ -65,7 +65,7 @@ define([
 					}
 				)
 			);
-			
+			//*/
 		        //-----------------------------------
 		        // ADMIN
 		        //-----------------------------------
@@ -77,7 +77,7 @@ define([
 					'./js/controllers/AdminController'
 				)
 			); 
-			*/
+			
 		        //-----------------------------------
 		        // DEFAULT
 		        //-----------------------------------

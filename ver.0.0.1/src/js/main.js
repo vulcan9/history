@@ -2,13 +2,18 @@
 // IE 7, 8
 if(typeof console === 'undefined' || typeof console.log === 'undefined'){
     var console = {
-        log:function(){}
+        log: function(){}
     };
 }
 
 var out = window.out || function (){
     if(!arguments || arguments.length < 1) return;
-    console.log.apply(window.console, arguments);
+
+    if(window.out && window.out.$log){
+        window.out.$log.info.apply(window.out.$log, arguments);
+    }else{
+        console.log.apply(window.console, arguments);
+    }
 }
 
 console.log("# Application By Vulcan.");
@@ -69,10 +74,11 @@ require.config({
         'text':                   _PATH.LIB + 'require/text',
         //'jquery':            _PATH.LIB + 'jquery/jquery',
         //'jquery-ui':        _PATH.LIB + 'jquery/jquery-ui-1.10.2.min',
-        'angular':             _PATH.LIB + 'angular/angular.1.2.9',
-        'angularRoute':     _PATH.LIB + 'angular/angular-route.1.2.9',
+        'angular':             '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min',
+        'angularRoute':     '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular-route',
 
-        'Application':        _PATH.JS + 'Application'
+        'Application':        _PATH.JS + 'Application',
+        'Router':               _PATH.JS + 'Router'
     },
     
     /*
@@ -98,10 +104,12 @@ require( [
         'angular',
         'angularRoute',
         'Application',
-        _PATH.JS + 'Router'
+        //'Router'
     ],
     
-    function (text, angular, angularRoute, Application, Router) {
+    function (text, angular, angularRoute, Application) {
+
+        var a = require('Application');
 
         //-----------------------------------
         // Base URL
@@ -120,7 +128,7 @@ require( [
         //(주의) 디펜던시 로드 완료 시점이 페이지가 완전히 로드되기 전 일수도 있다.
 
         //페이지가 완전히 로드된 뒤에 실행
-        $(document).ready(function () {
+        angular.element(document).ready(function () {
             angular.bootstrap(document, ['Application']);
         });
 

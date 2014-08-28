@@ -2,23 +2,25 @@
 
 define([
         'angular',
-        _PATH.CONTROLLER + 'ApplicationController',
-        _PATH.JS + 'Router'
+        'Router',
+        _PATH.CONTROLLER + 'ApplicationController'
     ],
-    function(angular, ApplicationController, Router) {
+    function(angular, Router, ApplicationController) {
 
         //-----------------------------------
         // Application 모듈 선언 : angular.module(name, [requires], [configFn]);
         //-----------------------------------
+        
+        var _router;
 
         //위의 디펜던시를 가져와서 콜백을 수행하게 되는데 여기서는 App이라는 앵귤러 모듈을 리턴한다.
         var application = angular.module(
-            // Name
-            'Application', 
-            // Require
-            ['ngRoute'], 
+
+            // Name, Require
+            'Application', ['ngRoute'], 
+            
             // Configuration Function
-            function($provide, $compileProvider, $controllerProvider, $filterProvider) {
+            function($provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider) {
                 
 
                 /* Service
@@ -40,20 +42,18 @@ define([
             }
         );
 
+        /* 등록 메서드는 각기 다르다.
+        $provide.service()
+        $provide.factory()
+        $provide.value()
+        $provide.constant()
+
+        $controllerProvider.resgister()
+        $animateProvider.register()
+        $filterProvider.service()
+        $compileProvider.service()
+        */
         application.config(
-
-            /* 등록 메서드는 각기 다르다.
-            $provide.service()
-            $provide.factory()
-            $provide.value()
-            $provide.constant()
-
-            $controllerProvider.resgister()
-            $animateProvider.register()
-            $filterProvider.service()
-            $compileProvider.service()
-            */
-
             function($provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider) {
 
                 // 등록 메서드 노출
@@ -64,29 +64,33 @@ define([
                     constant :     $provide.constant,
                 };
 
-                application.$compileProvider = $compileProvider;
-                application.$controllerProvider = $controllerProvider;
-                application.$filterProvider = $filterProvider;
-                application.$animateProvider = $animateProvider;
+                application.$compileProvider          = $compileProvider;
+                application.$controllerProvider        = $controllerProvider;
+                application.$filterProvider               = $filterProvider;
+                application.$animateProvider          = $animateProvider;
 
-                application.$routeProvider = $routeProvider;
-                application.$locationProvider = $locationProvider;
+                application.$routeProvider              = $routeProvider;
+                application.$locationProvider          = $locationProvider;
                 
-                // Route 설정
-                Router.config(application);
+                out('application.config');
 
-                // 보이기
-                showApplication();
+                // Route 설정
+                _router = new Router(application);
+                _router.config();
             }
         );
 
         application.run(function($rootScope, $location) {
             
-                application.$rootScope = $rootScope;
-                application.$location = $location;
+                application.$rootScope        = $rootScope;
+                application.$location           = $location;
 
                 // Route 실행
-                Router.run();
+                _router.run();
+
+                // 보이기
+                showApplication();
+                out('application.run');
         });
         
 

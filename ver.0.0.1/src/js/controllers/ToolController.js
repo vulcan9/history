@@ -6,7 +6,7 @@ define([
     function(version) {
 
         //컨트롤러 선언
-        function _controller($scope, $route, $routeParams, $location) {
+        function _controller($scope, $route, $routeParams, $location, $rootScope) {
 
             //-----------------------
             // CSS 설정
@@ -20,9 +20,13 @@ define([
 
             $scope._name = 'ToolController';
 
-            $scope.$route = $route;
-            $scope.$location = $location;
-            $scope.$routeParams = $routeParams;
+        $rootScope.$route = $route;
+        $rootScope.$location = $location;
+        $rootScope.$routeParams = $routeParams;
+
+        out('$route : ', $route);
+        out('$location : ', $location);
+        out('$routeParams : ', $routeParams);
 
             out('ToolController loaded');
         }
@@ -33,5 +37,6 @@ define([
         ////////////////////////////////////////
         // END
         ////////////////////////////////////////
-    });
+    }
+);
 

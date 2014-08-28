@@ -25,3 +25,11 @@ define([], function() {
     // END
     ////////////////////////////////////////
 });
+
+
+/*
+$('body').injector().invoke(function($compile, $rootScope) {
+    $compile($('#ctrl'))($rootScope);
+    $rootScope.$apply();
+});
+*/

@@ -19,6 +19,7 @@ define([
 	function (lazyDirectives, lazyServices, lazyFilters) {
 
 		
+
 		var $controllerProvider; //컨트롤러 프로바이더를 받을 변수
 
 		//컨트롤러 프로바이더 설정 함수
@@ -52,7 +53,7 @@ define([
 		//$filterProvider.register('filterName', ...);
 		
 		function config(templatePath, controllerPath, lazyResources) {
-		
+		console.log('lazy');
 			//컨트롤러 프로바이더가 존재하지 않으면 오류!
 			if (!$controllerProvider) {
 				throw new Error("$controllerProvider is not set!");
@@ -134,8 +135,10 @@ define([
 							
 							//딜레이 걸어놓기
 							html = template;
-							defer.resolve();
-							$rootScope.$apply();
+							
+								$rootScope.$apply(function(){
+									defer.resolve();
+								});
 						})
 					}
 					

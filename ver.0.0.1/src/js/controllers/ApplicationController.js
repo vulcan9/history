@@ -3,7 +3,7 @@
 define([], function() {
 
     //컨트롤러 선언
-    function _controller($scope, $element, $attrs, $transclude) {
+    function _controller($scope, $element, $attrs, $transclude, $log) {
 
         //-----------------------
         //스타일시트 업데이트
@@ -24,6 +24,11 @@ define([], function() {
         //-----------------------
 
         $scope._name = 'ApplicationController';
+
+        // log 함수 설정
+        if(window.out !== undefined){
+            window.out.$log = $log;
+        }
     }
 
     // 컨트롤러 리턴
@@ -33,3 +38,5 @@ define([], function() {
     // END
     ////////////////////////////////////////
 });
+
+

@@ -55,6 +55,7 @@ requirejs.config({
         //'jquery':         _PATH.LIB + 'jquery/jquery',
         //'jquery-ui':     _PATH.LIB + 'jquery/jquery-ui-1.10.2.min',
         'angular':       _PATH.LIB + 'angular/angular',
+        'angularRoute':     _PATH.LIB + 'angular/angular-route.1.2.9',
 
         'lazyDirectives':   _PATH.JS + 'registers/lazy-directives',
         'lazyServices':     _PATH.JS + 'registers/lazy-services', 
@@ -102,8 +103,8 @@ requirejs( [
         //'jquery', //미리 선언해둔 path, jQuery는 AMD를 지원하기 때문에 이렇게 로드해도 jQuery 또는 $로 호출할 수 있다.
         //'jquery-ui',
         'angular', 
-        //'App', //App.js
-        'Routes' //Routes.js
+        'App' //App.js
+        //'RouteConfig' //Routes.js
     ],
     
     function (text, angular) {
