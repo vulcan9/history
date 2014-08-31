@@ -1,0 +1,46 @@
+﻿{
+    "version": "0.0.1",
+    "description": "문서의 부가 기능들에 대한  정보 정의, (문서 내용과 분리 시킴)",
+
+    "document": {
+
+        "id": "center1",
+        "subject": "문서 제목",
+        "descripty": "문서 요약",
+
+        "security": {
+            "permission": "all",
+            "grade": "5"
+        },
+
+        "history": {
+            "create": "Sun Aug 31 2014 21:11:16 GMT+0900",
+            "edits": []
+        },
+
+        "progress": {
+            "start": "Sun Aug 31 2014 21:11:16 GMT+0900",
+            "end": "Sun Aug 31 2014 21:11:16 GMT+0900",
+
+            "ignore": "0",
+            "percent": "0"
+        },
+
+        "todos": [
+
+            {
+                "title": "todo 요약",
+                "description": "구체적인 todo 내용",
+                "completed": "0",
+
+                "progress": {
+                    "start": "Sun Aug 31 2014 21:11:16 GMT+0900",
+                    "end": "Sun Aug 31 2014 21:11:16 GMT+0900"
+                }
+            }
+
+        ]
+
+
+    }
+}

@@ -29,7 +29,6 @@ define( [], function() {
 
 			//-----------------------------------
 			//  html5Mode
-			//  https://code.angularjs.org/1.2.23/docs/guide/$location
 			//-----------------------------------
 
 			// configure html5 to get links working on jsfiddle
@@ -48,13 +47,11 @@ define( [], function() {
 			var $routeProvider = application.$routeProvider;
 
 			this._when( routes, $routeProvider );
+
 		},
 
 		run: function() {
 
-			// change the path
-			//this.application.$location.path('/login');
-			
 		},
 
 		/////////////////////////////////////
@@ -166,13 +163,7 @@ define( [], function() {
 		
 		_getCommonDependancies: function( ) {
 			var dependencies = [
-
-				// DIRECTIVE
-				_PATH.DIRECTIVE + 'version',
-
-				// SERVICE
-				_PATH.SERVICE + 'Version',
-				_PATH.SERVICE + 'DataService'
+				_PATH.DIRECTIVE + 'version'
 			];
 
 			return dependencies;
@@ -188,10 +179,7 @@ define( [], function() {
 
 			var paths = {
 
-				//-----------------------------------
 				// DEFAULT
-				//-----------------------------------
-				
 				'/': {
 					templateUrl: _PATH.TEMPLATE + 'home.html',
 					dependencies: [
@@ -199,21 +187,7 @@ define( [], function() {
 					]
 				},
 
-				//-----------------------------------
-				// ADMIN
-				//-----------------------------------
-
-				'/admin': {
-					templateUrl: _PATH.TEMPLATE + 'admin.html',
-					dependencies: [
-						_PATH.CONTROLLER + 'AdminController'
-					]
-				},
-
-				//-----------------------------------
 				// LOGIN 경로 설정
-				//-----------------------------------
-				
 				'/login': {
 					templateUrl: _PATH.TEMPLATE + 'login.html',
 					dependencies: [
@@ -221,21 +195,19 @@ define( [], function() {
 					]
 				},
 
-				//-----------------------------------
-				// Application
-				//-----------------------------------
+				// ADMIN
+				'/admin': {
+					templateUrl: _PATH.TEMPLATE + 'admin.html',
+					dependencies: [
+						_PATH.CONTROLLER + 'AdminController'
+					]
+				},
 
+				// Application
 				'/tool': {
 					templateUrl: _PATH.TEMPLATE + 'tool.html',
 					dependencies: [
-						_PATH.CONTROLLER + 'ToolController',
-
-						_PATH.DIRECTIVE + 'menu',
-						_PATH.DIRECTIVE + 'loadingbar',
-						_PATH.DIRECTIVE + 'explorer',
-						_PATH.DIRECTIVE + 'screen',
-						_PATH.DIRECTIVE + 'timeline',
-						_PATH.DIRECTIVE + 'property'
+						_PATH.CONTROLLER + 'ToolController'
 					]
 				}
 

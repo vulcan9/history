@@ -1,0 +1,66 @@
+﻿{
+    "version": "0.0.1",
+    "description": "문서간 구조(depth)를 정의, 문서 id와 1:1 매칭 (key-value)",
+
+    "documents": {
+        
+        "overview": {
+            "parentUID": "",
+            "depth": "0",
+            "index": "0"
+        },
+
+        "center1": {
+            "parentUID": "overview",
+            "depth": "1",
+            "index": "0"
+        },
+
+        "bored": {
+            "parentUID": "overview",
+            "depth": "1",
+            "index": "1"
+        },
+
+        "bored-1": {
+            "parentUID": "bored",
+            "depth": "2",
+            "index": "0"
+        },
+
+        "bored-1-1": {
+            "parentUID": "bored-1",
+            "depth": "3",
+            "index": "0"
+        },
+
+        "bored-2": {
+            "parentUID": "bored",
+            "depth": "2",
+            "index": "1"
+        },
+
+        "bored1": {
+            "parentUID": "overview",
+            "depth": "1",
+            "index": "2"
+        },
+
+        "bored1-1": {
+            "parentUID": "bored1",
+            "depth": "2",
+            "index": "0"
+        },
+
+        "bored1-2": {
+            "parentUID": "bored1",
+            "depth": "2",
+            "index": "2"
+        }
+
+    }
+}
+
+
+
+

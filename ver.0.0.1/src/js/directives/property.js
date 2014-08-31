@@ -3,7 +3,7 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : controller 정의, 등록
+    * Description : directive 정의, 등록
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
@@ -16,27 +16,27 @@ define(
     function( application ) {
 
         // 등록
-        application.controller( 'LoginController', _controller );
+        application.directive( 'property', _directive );
 
         // 선언
-        function _controller( $scope, $route, $routeParams, $location ) {
+        function _directive() {
 
-            //-----------------------
-            // CSS 설정
-            //-----------------------
+            //out( 'version' );
 
-            //$scope.$emit('updateCSS', [_PATH.CSS + 'login.css']);
+            return {
 
-            //-----------------------
-            // scope 데이터 설정
-            //-----------------------
+                restrict: 'EA',
+                
+                link: function( scope, el, attrs ) {
+                    el.text( "property" );
+                }
 
-            $scope._name = 'LoginController';
-            
+            };
+
         }
 
         // 리턴
-        return _controller;
+        return _directive;
 
         ////////////////////////////////////////
         // END

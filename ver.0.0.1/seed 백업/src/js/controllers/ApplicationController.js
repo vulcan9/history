@@ -49,8 +49,9 @@ define(
 
             $scope._name = 'ApplicationController';
 
-            // 전역 속성
-            //$scope.application = {};
+
+out('TODO : Model 정의할것!');
+
 
             /*
             $scope.$route = $route;
@@ -58,7 +59,7 @@ define(
             $scope.$routeParams = $routeParams;
             */
            
-            out( '# ApplicationController 로드됨' );
+            out( 'ApplicationController loaded' );
         }
 
         // 컨트롤러 리턴

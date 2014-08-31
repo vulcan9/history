@@ -1,16 +1,25 @@
+/*////////////////////////////////////////////////////////////////////////////////
+
+    * 
+    * Developer : (c) Dong-il Park (pdi1066@naver.com)
+    * Project : HI-STORY (https://github.com/vulcan9/history)
+    * Description : controller 정의, 등록
+
+////////////////////////////////////////////////////////////////////////////////*/
+
 'use strict';
 
 define(
     [
-        'Application',
-        _PATH.DIRECTIVE + 'version'
+        'Application'
     ],
-    function( application, version ) {
+    function( application ) {
 
+        // 등록
         application.controller( 'ToolController', _controller );
 
-        //컨트롤러 선언
-        function _controller( $scope, $route, $routeParams, $location, $rootScope ) {
+        // 선언
+        function _controller( $scope, DataService ) {
 
             //-----------------------
             // CSS 설정
@@ -24,18 +33,57 @@ define(
 
             $scope._name = 'ToolController';
 
-            $rootScope.$route = $route;
-            $rootScope.$location = $location;
-            $rootScope.$routeParams = $routeParams;
+            // 데이터 구조 생성
+            
+            var DATA = {
 
-            out( '$route : ', $route );
-            out( '$location : ', $location );
-            out( '$routeParams : ', $routeParams );
+                // project
+                project:{
+                    id: '',
+                    data:null
+                },
 
-            out( 'ToolController loaded' );
+                // presentation
+                presentation: null,
+
+                // documents
+                documents: {
+                    info: null,
+                    contents: null
+                }
+
+            };
+
+            // 데이터 로드 서비스 호출 : Project - 문서 구조 관련 데이터
+            
+            var projectID = _PATH.DATA + 'project.json';
+            DataService(
+                'GET', 
+                projectID,
+
+                function success(data){
+                    DATA.project.id = projectID;
+                    DATA.project.data = data;
+                },
+
+                function error(){
+
+                    // preventDefault
+                    //return false;
+                    
+                }
+            );
+            
+            // 데이터 로드 서비스 호출 : Presentation - PT 관련 데이터
+
+
+            // 데이터 로드 서비스 호출 : Document Info - 문서 부가 기능 관련 정보
+            
+
+            // 데이터 로드 서비스 호출 : Document content - 문서 내용
         }
 
-        // 컨트롤러 리턴
+        // 리턴
         return _controller;
 
         ////////////////////////////////////////

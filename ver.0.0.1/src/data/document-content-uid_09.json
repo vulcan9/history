@@ -1,0 +1,11 @@
+﻿{
+    "version": "0.0.1",
+    "description": "문서 편집 내용 정의",
+
+    "document": {
+
+        "id": "bored1-2",
+        "content": "<div id='bored1-2' data-scale='1' data-x='2500' data-y='0' data-rotate='-45'><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q><br><iframe width='560' height='315' src='http://www.youtube.com/embed/ylLzyHk54Z0' frameborder='0' allowfullscreen='true'></iframe><br><a href='#bored'>기획 보기</a></div>"
+
+    }
+}

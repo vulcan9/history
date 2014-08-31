@@ -56,12 +56,10 @@ var _PATH = {
     CSS:                   _PATH_ROOT_FOLDER + 'css/',
     TEMPLATE:         _PATH_ROOT_FOLDER + 'templates/',
     LIB:                    _PATH_ROOT_FOLDER + 'libs/',
-    DATA:                 _PATH_ROOT_FOLDER + 'data/',
 
     JS:                     _PATH_ROOT_FOLDER + 'js/',
     CONTROLLER:    _PATH_ROOT_FOLDER + 'js/controllers/',
     DIRECTIVE:         _PATH_ROOT_FOLDER + 'js/directives/',
-    SERVICE:           _PATH_ROOT_FOLDER + 'js/services/',
     FILTER:               _PATH_ROOT_FOLDER + 'js/filters/'
 };
 

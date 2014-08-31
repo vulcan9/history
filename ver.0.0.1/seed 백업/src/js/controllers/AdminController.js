@@ -16,23 +16,22 @@ define(
     function( application ) {
 
         // 등록
-        application.controller( 'LoginController', _controller );
+        application.controller( 'AdminController', _controller );
 
         // 선언
-        function _controller( $scope, $route, $routeParams, $location ) {
+        function _controller( $scope ) {
 
             //-----------------------
             // CSS 설정
             //-----------------------
 
-            //$scope.$emit('updateCSS', [_PATH.CSS + 'login.css']);
+            //$scope.$emit('updateCSS', [_PATH.CSS + 'application.css']);
 
             //-----------------------
             // scope 데이터 설정
             //-----------------------
 
-            $scope._name = 'LoginController';
-            
+            $scope._name = 'AdminController';
         }
 
         // 리턴

@@ -16,7 +16,7 @@ define(
     function( application ) {
 
         // 등록
-        application.controller( 'LoginController', _controller );
+        application.controller( 'HomeController', _controller );
 
         // 선언
         function _controller( $scope, $route, $routeParams, $location ) {
@@ -31,8 +31,7 @@ define(
             // scope 데이터 설정
             //-----------------------
 
-            $scope._name = 'LoginController';
-            
+            $scope._name = 'HomeController';
         }
 
         // 리턴
