@@ -3,6 +3,22 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : directive 정의, 등록
+    * Description : application CSS
+    *
+    * http://getbootstrap.com/components/
+    * http://getbootstrap.com/css/
 
 ////////////////////////////////////////////////////////////////////////////////*/
+
+* {
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -o-box-sizing: border-box;
+
+    /*font-family: '맑은 고딕', '나눔고딕';
+    color: #4b4d4c;*/
+}

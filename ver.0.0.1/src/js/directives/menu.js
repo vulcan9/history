@@ -42,22 +42,56 @@ define(
 
                 // 다른 디렉티브들과 통신하기 위한 역할을 하는 controller명칭을 정의.
                 // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
-                controller: function( $scope, $element, $attrs, $transclude, $rootScope ) {
+                controller: function( $scope, $element, $attrs, $transclude, $rootScope, $route, $routeParams, $location ) {
 
                     $scope.items = [
-                        {label: 'File'},
-                        {label: 'Edit'},
-                        {label: 'View'}
+                        {label: 'File', link:'', command:'file'},
+                        {label: 'Edit', link:'', command:'edit'},
+                        {label: 'View', link:'', command:'view'},
+
+                        // url 이동 테스트
+                        {label: 'admin url 테스트', link:'#admin', command:''}
                     ];
 
-                },
-
-                link: function (scope, el, attrs, controller) {
                     
-                    scope.click = function(){
-                        console.log(" * item에 해당하는 command를 호출! : ", this.item);
-                    };
+                    out('$location : ', $location);
+                    out('$scope : ', $scope);
 
+                    $scope.onClick = function(item){
+                        console.log(" * item : ", item);
+                        
+                        console.log(" * $route : ", $route);
+                        console.log(" * routeParams : ", $routeParams);
+                        console.log(" * location : ", $location);
+
+                        var link = item.link;
+                        if(link){
+                            out('* link : ', link);
+                            $location.path(link);
+                            return;
+                        }
+
+                        var common = item.command;
+                        var url = '/tool/user?command=' + common;
+                        out('이동 : ', url);
+                        $location.path(url);
+                    };
+                    
+                    $rootScope.$on('$routeChangeStart', function(){
+                        out('routeChangeStart : ', arguments);
+                    });
+
+                    $rootScope.$on('$routeChangeSuccess', function(){
+                        alert('routeChangeSuccess : ', arguments);
+                    });
+
+                    $rootScope.$on('$routeChangeError', function(){
+                        out('routeChangeError : ', arguments);
+                    });
+
+                    $rootScope.$on('$routeUpdate', function(){
+                        out('routeUpdate : ', arguments);
+                    });
                 }
 
                 // end config

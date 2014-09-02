@@ -39,6 +39,7 @@ define( [], function() {
 
 			var $locationProvider = application.$locationProvider;
 			application.$locationProvider.html5Mode( false );
+			//application.$locationProvider.hashPrefix('!');
 
 			//-----------------------------------
 			//  Route
@@ -203,7 +204,7 @@ define( [], function() {
 				// ADMIN
 				//-----------------------------------
 
-				'/admin': {
+				'/admin/': {
 					templateUrl: _PATH.TEMPLATE + 'admin.html',
 					dependencies: [
 						_PATH.CONTROLLER + 'AdminController'
@@ -214,7 +215,7 @@ define( [], function() {
 				// LOGIN 경로 설정
 				//-----------------------------------
 				
-				'/login': {
+				'/login/': {
 					templateUrl: _PATH.TEMPLATE + 'login.html',
 					dependencies: [
 						_PATH.CONTROLLER + 'LoginController'
@@ -225,7 +226,21 @@ define( [], function() {
 				// Application
 				//-----------------------------------
 
-				'/tool': {
+
+				'/tool/': {
+					templateUrl: _PATH.TEMPLATE + 'tool.html',
+					dependencies: [
+						_PATH.CONTROLLER + 'ToolController',
+
+						_PATH.DIRECTIVE + 'menu',
+						_PATH.DIRECTIVE + 'loadingbar',
+						_PATH.DIRECTIVE + 'explorer',
+						_PATH.DIRECTIVE + 'screen',
+						_PATH.DIRECTIVE + 'timeline',
+						_PATH.DIRECTIVE + 'property'
+					]
+				},
+				'/tool/:command': {
 					templateUrl: _PATH.TEMPLATE + 'tool.html',
 					dependencies: [
 						_PATH.CONTROLLER + 'ToolController',
@@ -238,7 +253,6 @@ define( [], function() {
 						_PATH.DIRECTIVE + 'property'
 					]
 				}
-
 				// Path END
 			};
 
