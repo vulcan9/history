@@ -20,7 +20,8 @@
         <div class="navbar-collapse collapse">
           
           <ul class="nav navbar-nav">
-              <li ng-repeat="item in items" ng-click="onClick(item)"><a>{{item.label}}</a></li>
+              <!--<li ng-repeat="item in items" ng-click="onClick(item)"><a>{{item.label}}</a></li>-->
+              <li ng-repeat="item in items"><link href="{item}">{{item.label}}</link></li>
               <!--<li class="active"><a href="./">Static top</a></li>-->
           </ul>
 

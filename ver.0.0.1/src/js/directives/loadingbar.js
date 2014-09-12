@@ -26,11 +26,19 @@ define(
             return {
 
                 restrict: 'EA',
-                
-                link: function( scope, el, attrs ) {
-                    el.text( "loadingbar" );
-                }
 
+                templateUrl: _PATH.TEMPLATE + 'loadingbar.html',
+                
+                replace: true,
+                priority: 0,
+                transclude: true,
+                scope: false,
+
+                terminal: false,
+
+                controller: function( $scope, Version ) {
+                    $scope.value = '50%';
+                }
             };
 
         }
