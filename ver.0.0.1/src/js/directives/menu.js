@@ -45,13 +45,54 @@ define(
                 controller: function( $scope, $element, $attrs, $transclude, $rootScope, $route, $routeParams, $location ) {
 
                     $scope.items = [
-                        {label: 'Home', link:'http://localhost/history/ver.0.0.1/src', command:''},
-                        {label: 'File', link:'', command:'file'},
-                        {label: 'Edit', link:'', command:'edit'},
-                        {label: 'View', link:'', command:'view'},
+                        {
+                            label: 'Home', 
+                            link:'http://localhost/history/ver.0.0.1/src', 
+                            command:''
+                        },
+
+                        {
+                            label: 'File', 
+                            link:'', command:'file',
+                            menus:[
+                                {label: 'New', link:'', command:'new'},
+                                {label: 'Open', link:'', command:'open'},
+                                {label: 'Save', link:'', command:'save'},
+                                {label: 'Save As', link:'', command:'saveAs'},
+                                {label: 'Close', link:'', command:'close'},
+                                {label: 'Exit', link:'', command:'exit'}
+                            ]
+                        },
+                        {
+                            label: 'Edit', 
+                            link:'', command:'edit',
+                            menus:[
+                                {label: 'undo', link:'', command:'undo'},
+                                {label: 'redo', link:'', command:'redo'},
+                                {label: 'copy', link:'', command:'copy'},
+                                {label: 'cut', link:'', command:'cut'},
+                                {label: 'paste', link:'', command:'paste'}
+                            ]
+                        },
+                        {
+                            label: 'View', 
+                            link:'', command:'view',
+                            menus:[
+                                {label: 'List', link:'', command:'list'},
+                                {label: 'Property', link:'', command:'prooperty'},
+                                {label: 'Timeline', link:'', command:'timeline'},
+                                {label: 'Activity', link:'', command:'activity'},
+                                {label: 'Item', link:'', command:'item'},
+                                {label: 'Schedule', link:'', command:'schedule'}
+                            ]
+                        },
 
                         // url 이동 테스트
-                        {label: 'admin url 테스트', link:'#admin', command:''}
+                        {
+                            label: 'admin url 테스트', 
+                            link:'#admin', 
+                            command:''
+                        }
                     ];
 
                     
@@ -73,10 +114,10 @@ define(
                             return;
                         }
 
-                        var common = item.command;
-                        var url = '/tool/user?command=' + common;
-                        out('이동 : ', url);
-                        $location.path(url);
+                        var command = item.command;
+                        out('실행 : ', command);
+                        //var url = '/tool/user?command=' + command;
+                        //$location.path(url);
                     };
                     /*
                     $rootScope.$on('$routeChangeStart', function(){
@@ -125,7 +166,7 @@ define(
 
 
 
-
+        /*
         // 등록
         application.directive( 'link', _directive_link );
 
@@ -153,7 +194,7 @@ define(
                    out('link : ', element);
                 },
                 
-                /*
+                
                 controller: function( $scope, $element, $attrs, $transclude, $rootScope, $route, $routeParams, $location ) {
 
                     $scope.items = [
@@ -166,14 +207,14 @@ define(
                         {label: 'admin url 테스트', link:'#admin', command:''}
                     ];
                 }
-                */
+               
 
                 // end config
             };
 
             return config;
         }
-
+        */
 
 
 

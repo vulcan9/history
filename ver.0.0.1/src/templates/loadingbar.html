@@ -1,3 +1,20 @@
-<div>
-    {{value}}
+
+
+
+<div class="progress">
+
+    <!--% 수치로 나타낼 경우-->
+    <div ng-show="isPercentage"
+        class="progress-bar"
+        role="progressbar" aria-valuenow="{{value}}" aria-valuemin="0" aria-valuemax="100" style="width: {{value}}%;">
+        <span ng-show="value>0" class="progress-text">{{value}}%</span>
+    </div>
+
+    <!--% 수치가 없는 경우-->
+    <div ng-hide="isPercentage"
+        class="progress-bar progress-bar-striped active"
+        role="progressbar" aria-valuenow="{{value}}" aria-valuemin="0" aria-valuemax="100" style="width: {{value}}%;">
+        <span class="progress-text">wait...</span>
+    </div>
+    
 </div>

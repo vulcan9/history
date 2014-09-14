@@ -173,6 +173,7 @@ define( [], function() {
 
 				// SERVICE
 				_PATH.SERVICE + 'Version',
+				_PATH.SERVICE + 'Loading',
 				_PATH.SERVICE + 'DataService'
 			];
 

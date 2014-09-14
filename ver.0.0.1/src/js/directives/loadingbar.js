@@ -3,7 +3,7 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : directive 정의, 등록
+    * Description : 로딩바, Progress Bar 를 표시
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
@@ -32,12 +32,22 @@ define(
                 replace: true,
                 priority: 0,
                 transclude: true,
-                scope: false,
+                scope: '=',
 
-                terminal: false,
+                controller : function( $scope, Loading) {
 
-                controller: function( $scope, Version ) {
-                    $scope.value = '50%';
+                    $scope.$watch('progress', function(newValue, oldValue) {
+                        //if (newValue === oldValue) { return; }
+                        onUpdate();
+                    }, true);
+
+                    function onUpdate(){
+                        var isPercentage = Loading.isPercentage();
+                        var value =  Loading.value();
+
+                        $scope.value = value;
+                        $scope.isPercentage = isPercentage;
+                    }
                 }
             };
 

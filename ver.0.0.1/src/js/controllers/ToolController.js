@@ -19,7 +19,7 @@ define(
         application.controller( 'ToolController', _controller );
 
         // 선언
-        function _controller( $scope, DataService ) {
+        function _controller( $scope, Loading, DataService ) {
 
             //-----------------------
             // CSS 설정
@@ -54,9 +54,16 @@ define(
 
             };
 
+            ////////////////////////////////////////
             // 데이터 로드 서비스 호출 : Project - 문서 구조 관련 데이터
+            ////////////////////////////////////////
             
+            Loading.init (true);
+            //Loading.value(null);
+            //Loading.value(60);
+
             var projectID = _PATH.DATA + 'project.json';
+
             DataService(
                 'GET', 
                 projectID,
@@ -64,6 +71,9 @@ define(
                 function success(data){
                     DATA.project.id = projectID;
                     DATA.project.data = data;
+
+                    alert('로드 완료');
+                    Loading.complete();
                 },
 
                 function error(){
@@ -81,6 +91,8 @@ define(
             
 
             // 데이터 로드 서비스 호출 : Document content - 문서 내용
+             
+            // loadingbar를 전역 서비스로 만들어 API를 사용한다.
         }
 
         // 리턴
