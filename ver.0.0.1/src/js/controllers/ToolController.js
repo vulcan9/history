@@ -58,6 +58,9 @@ define(
             // 데이터 로드 서비스 호출 : Project - 문서 구조 관련 데이터
             ////////////////////////////////////////
             
+            alert('// controller간 통신 방법');
+            // http://programmingsummaries.tistory.com/124
+            
             Loading.init (true);
             //Loading.value(null);
             //Loading.value(60);

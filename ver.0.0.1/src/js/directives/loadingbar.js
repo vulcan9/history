@@ -32,15 +32,24 @@ define(
                 replace: true,
                 priority: 0,
                 transclude: true,
-                scope: '=',
+                scope: false,
 
                 controller : function( $scope, Loading) {
 
+                    //*
+                    // watch를 이용한 업데이트 방법
                     $scope.$watch('progress', function(newValue, oldValue) {
                         //if (newValue === oldValue) { return; }
                         onUpdate();
                     }, true);
-
+                    /*/
+                    // 이벤트를 이용한 업데이트 방법
+                    $scope.$on('loadStateUpdate', function(event, progress){
+                        out('progress - ', progress);
+                        onUpdate();
+                    }); 
+                    //*/
+                   
                     function onUpdate(){
                         var isPercentage = Loading.isPercentage();
                         var value =  Loading.value();
@@ -48,6 +57,7 @@ define(
                         $scope.value = value;
                         $scope.isPercentage = isPercentage;
                     }
+
                 }
             };
 

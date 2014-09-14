@@ -43,7 +43,7 @@ define(
             
             var scope = angular.element( document ).scope();
             //var _value;
-            //var _isPrecentage = false;
+            //var _isPercentage = false;
 
             function singleton() {
                 scope.progress = {
@@ -54,12 +54,14 @@ define(
 
             singleton.isPercentage =  function(){
                 return scope.progress.isPercentage;
+                //return _isPercentage;
             };
 
             singleton.value = function(value){
 
                 if(value === undefined){
                     return scope.progress.value;
+                    //return _value;
                 }
 
                 var isPercentage;
@@ -71,11 +73,14 @@ define(
                 }
 
                 if(!isPercentage) value = 100;
-
-                scope.progress = {
+                //_value = value;
+                //_isPercentage = isPercentage;
+                var progress = {
                     value: value,
                     isPercentage: isPercentage
                 };
+                scope.progress = progress;
+                //scope.$broadcast('loadStateUpdate', progress); 
                 //out( '# progress value : ', scope.progress );
             };
 
