@@ -3,7 +3,7 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : directive 정의, 등록
+    * Description : 데이터 로드를 위한 서비스 호출 유틸
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
@@ -19,7 +19,7 @@ define(
         application.service( 'DataService', _service );
 
         // 선언
-        function _service( $http ) {
+        function _service( $http, $timeout ) {
 
             out( 'Service 등록 : DataService' );
 
@@ -32,16 +32,28 @@ define(
             // 데이터 로드 서비스 호출
             // https://code.angularjs.org/1.2.23/docs/api/ng/service/$http
             
-            // method : 'GET', 'POST'...
-            // url : 서버 요청 주소
-            function singleton( method, url, successCallback, errorCallback ) {
+            function singleton( config, successCallback, errorCallback ) {
 
-                out( '# 데이터 로드 : [', method, '] ', url );
+                out( '# 데이터 로드 : [', config.method, '] ', config.url );
+                if(!config.url || !config.method){
 
-                $http( {
+                    $timeout(function(){
+                        error('서버 요청을 할 수 없습니다.');
+                    }, 1000);
+                    return;
+                }
+                
+                /*
+                // method : 'GET', 'POST'...
+                // url : 서버 요청 주소
+                config = {
                     method: method,
                     url: url
-                } )
+                    ......
+                }
+                */
+
+                $http( config )
                     .success( success )
                     .error( error );
 
@@ -50,7 +62,7 @@ define(
                 //-----------------------------------
 
                 function success( data, status, headers, config ) {
-                    out( 'success : ', data );
+                    out( 'success : [', status, '] ', data );
                     //out( 'status : ', status );
                     //out( 'headers : ', headers() );
                     //out( 'config : ', config );
@@ -74,7 +86,7 @@ define(
 
                 function error( data, status, headers, config ) {
                     //out( 'error : ', data );
-                    out( 'status : ', status );
+                    out( 'error : [', status, '] ', data );
                     //out( 'headers : ', headers() );
                     //out( 'config : ', config );
 
@@ -89,7 +101,7 @@ define(
                     if ( isPrevented ) return;
 
                     // default Function 실행
-                    alert( 'TODO : Json 로드 에러' );
+                    //alert( 'TODO : Json 로드 에러' );
                 }
 
                 // singleton End

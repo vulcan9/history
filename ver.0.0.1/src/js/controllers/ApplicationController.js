@@ -15,11 +15,11 @@ define(
     ],
     function() {
 
-        // 등록 안됨 (application config 전임)
+        // 여기서 등록 안됨 (application config 전임)
         //application.controller( 'ApplicationController', _controller );
 
         // 선언
-        function _controller( $scope, $element, $attrs, $transclude, $log, $route, $location, $routeParams, $rootScope ) {
+        function _controller( $scope, $element, $attrs, $transclude, $log, $route, $location, $routeParams, $rootScope, $window ) {
 
             //-----------------------
             //스타일시트 업데이트
@@ -33,7 +33,10 @@ define(
             // CSS 설정
             //-----------------------
 
-            $scope.$emit( 'updateCSS', [ _PATH.CSS + 'application.css' ] );
+            $scope.$emit( 'updateCSS', [ 
+                _PATH.CSS + 'basic.css' ,
+                _PATH.CSS + 'application.css' 
+                ] );
 
             //-----------------------
             // log 함수 수정
@@ -50,15 +53,9 @@ define(
             $scope._name = 'ApplicationController';
 
             // 전역 속성
-            //$scope.application = {};
-
-            /*
-            $scope.$route = $route;
-            $scope.$location = $location;
-            $scope.$routeParams = $routeParams;
-            */
-           
+            
             out( '# ApplicationController 로드됨' );
+
         }
 
         // 컨트롤러 리턴

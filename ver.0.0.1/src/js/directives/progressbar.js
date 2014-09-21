@@ -3,7 +3,7 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : 로딩바, Progress Bar 를 표시
+    * Description : 로딩바, ProgressService Bar 를 표시
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
@@ -16,7 +16,7 @@ define(
     function( application ) {
 
         // 등록
-        application.directive( 'loadingbar', _directive );
+        application.directive( 'progressbar', _directive );
 
         // 선언
         function _directive() {
@@ -27,35 +27,38 @@ define(
 
                 restrict: 'EA',
 
-                templateUrl: _PATH.TEMPLATE + 'loadingbar.html',
+                templateUrl: _PATH.TEMPLATE + 'progressbar.html',
                 
                 replace: true,
                 priority: 0,
                 transclude: true,
                 scope: false,
 
-                controller : function( $scope, Loading) {
-
+                controller : function( $scope, ProgressService) {
+                    
+                    //$scope.progress = ProgressService;
+                    
                     //*
+                    
                     // watch를 이용한 업데이트 방법
                     $scope.$watch('progress', function(newValue, oldValue) {
                         //if (newValue === oldValue) { return; }
                         onUpdate();
                     }, true);
+                    
                     /*/
-                    // 이벤트를 이용한 업데이트 방법
-                    $scope.$on('loadStateUpdate', function(event, progress){
+                    
+                    // 이벤트를 이용한 업데이트 방법 - 이벤트 등록전에는 업데이트 못함
+                    $scope.$on('#progressService.progressChange', function(event, progress){
                         out('progress - ', progress);
                         onUpdate();
                     }); 
+
                     //*/
                    
                     function onUpdate(){
-                        var isPercentage = Loading.isPercentage();
-                        var value =  Loading.value();
-
-                        $scope.value = value;
-                        $scope.isPercentage = isPercentage;
+                        $scope.value = ProgressService.value();
+                        $scope.isPercentage = ProgressService.isPercentage();
                     }
 
                 }

@@ -86,7 +86,7 @@ define(
         // Application 모듈 초기화
         /////////////////////////////////////
 
-        application.run( function( $rootScope, $location ) {
+        application.run( function( $rootScope, $location, $rootElement ) {
 
             application.$rootScope = $rootScope;
             application.$location = $location;
@@ -120,15 +120,15 @@ define(
         });
         */
 
-        ////////////////////////////////////////
+        //-----------------------------------
         //  Service를 만든다.
-        ////////////////////////////////////////
+        //-----------------------------------
 
         //$compileProvider.directive.apply(null, directive);
 
-        ////////////////////////////////////////
+        //-----------------------------------
         //  Controller
-        ////////////////////////////////////////
+        //-----------------------------------
 
         application.controller( 'ApplicationController', ApplicationController );
 

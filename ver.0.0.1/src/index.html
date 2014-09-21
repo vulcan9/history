@@ -50,7 +50,6 @@
       일부 페이지마다 필요한 CSS은 컨트롤러에서 설정해서 로드 (IE8 에서도 정상동작)
       http://plnkr.co/edit/KzjIMN
     -->
-    <link rel="stylesheet" href="css/basic.css"/>
     <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" />
     
 
@@ -62,22 +61,21 @@
   <body>
 
 
-
-
-
+    
+    <div ng-view class="applicationContainer"></div>
 
     
-    <div ng-view></div>
-
-    <hr />
     
+
+    <!--
     <div>
       <a href="#admin">admin</a> |
       <a href="#login">login</a> |
       <a href="#tool">tool</a>
     </div>
+    -->
 
-  <hr />
+
 
 
 

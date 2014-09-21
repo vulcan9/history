@@ -19,20 +19,24 @@ define(
         application.controller( 'ToolController', _controller );
 
         // 선언
-        function _controller( $scope, Loading, DataService ) {
+        function _controller( $scope, ProgressService, DataService, $rootElement, $rootScope, $timeout ) {
 
             //-----------------------
             // CSS 설정
             //-----------------------
 
             //$scope.$emit('updateCSS', [_PATH.CSS + 'application.css']);
-
+            
             //-----------------------
             // scope 데이터 설정
             //-----------------------
 
             $scope._name = 'ToolController';
 
+            ////////////////////////////////////////
+            // 데이터 로드 서비스 호출 : Project - 문서 구조 관련 데이터
+            ////////////////////////////////////////
+            
             // 데이터 구조 생성
             
             var DATA = {
@@ -54,29 +58,28 @@ define(
 
             };
 
-            ////////////////////////////////////////
-            // 데이터 로드 서비스 호출 : Project - 문서 구조 관련 데이터
-            ////////////////////////////////////////
-            
-            alert('// controller간 통신 방법');
+            // controller간 통신 방법
             // http://programmingsummaries.tistory.com/124
-            
-            Loading.init (true);
-            //Loading.value(null);
-            //Loading.value(60);
 
+            ProgressService.init (true);
+            //ProgressService.value(null);
+            //ProgressService.value(60);
+            
+            out ('TODO : project 데이터 로드 세팅 : project.json');
             var projectID = _PATH.DATA + 'project.json';
 
             DataService(
-                'GET', 
-                projectID,
+                {
+                    method : 'GET', 
+                    url : projectID
+                },
 
                 function success(data){
                     DATA.project.id = projectID;
                     DATA.project.data = data;
 
-                    alert('로드 완료');
-                    Loading.complete();
+                    //alert ('# 로드 완료 : ', projectID);
+                    // ProgressService.complete();
                 },
 
                 function error(){
@@ -84,6 +87,8 @@ define(
                     // preventDefault
                     //return false;
                     
+                    out ('# 로드 에러 : ', projectID);
+                    ProgressService.complete();
                 }
             );
             
@@ -94,8 +99,7 @@ define(
             
 
             // 데이터 로드 서비스 호출 : Document content - 문서 내용
-             
-            // loadingbar를 전역 서비스로 만들어 API를 사용한다.
+            
         }
 
         // 리턴

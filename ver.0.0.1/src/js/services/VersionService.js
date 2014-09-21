@@ -16,7 +16,7 @@ define(
     function( application ) {
 
         // 등록
-        application.service( 'Version', _service );
+        application.service( 'VersionService', _service );
 
         // 선언
         function _service( $http ) {

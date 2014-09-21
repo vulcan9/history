@@ -169,11 +169,12 @@ define( [], function() {
 			var dependencies = [
 
 				// DIRECTIVE
+				_PATH.DIRECTIVE + 'layout',
 				_PATH.DIRECTIVE + 'version',
 
 				// SERVICE
-				_PATH.SERVICE + 'Version',
-				_PATH.SERVICE + 'Loading',
+				_PATH.SERVICE + 'VersionService',
+				_PATH.SERVICE + 'ProgressService',
 				_PATH.SERVICE + 'DataService'
 			];
 
@@ -234,11 +235,12 @@ define( [], function() {
 						_PATH.CONTROLLER + 'ToolController',
 
 						_PATH.DIRECTIVE + 'menu',
-						_PATH.DIRECTIVE + 'loadingbar',
+						_PATH.DIRECTIVE + 'progressbar',
 						_PATH.DIRECTIVE + 'explorer',
 						_PATH.DIRECTIVE + 'screen',
 						_PATH.DIRECTIVE + 'timeline',
-						_PATH.DIRECTIVE + 'property'
+						_PATH.DIRECTIVE + 'property',
+						_PATH.DIRECTIVE + 'status'
 					]
 				},
 				'/tool/:command': {
@@ -247,11 +249,12 @@ define( [], function() {
 						_PATH.CONTROLLER + 'ToolController',
 
 						_PATH.DIRECTIVE + 'menu',
-						_PATH.DIRECTIVE + 'loadingbar',
+						_PATH.DIRECTIVE + 'progressbar',
 						_PATH.DIRECTIVE + 'explorer',
 						_PATH.DIRECTIVE + 'screen',
 						_PATH.DIRECTIVE + 'timeline',
-						_PATH.DIRECTIVE + 'property'
+						_PATH.DIRECTIVE + 'property',
+						_PATH.DIRECTIVE + 'status'
 					]
 				}
 				// Path END

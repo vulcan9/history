@@ -145,8 +145,15 @@ require(
 
         //$('head').append($('<base href="' + window.location.pathname + '" />'));
         var head = document.getElementsByTagName( 'head' );
-        var base = angular.element( '<base href="' + window.location.pathname + '" />' );
-        angular.element( head ).append( base );
+        var base = angular.element( '<base href="' + window.location.pathname + '"/>' );
+        angular.element( head ).prepend( base );
+
+        // <link rel="stylesheet" href="css/basic.css"/>
+        // var basic_stylesheet = angular.element( '<link rel="stylesheet" href="css/basic.css"/>' );
+        // angular.element( head ).append( basic_stylesheet );
+
+        // var application_stylesheet = angular.element( '<link rel="stylesheet" href="css/application.css"/>' );
+        // angular.element( head ).append( application_stylesheet );
 
         //-----------------------------------
         // angular.bootstrap(element, [modules], [config]);
@@ -157,7 +164,9 @@ require(
 
         //페이지가 완전히 로드된 뒤에 실행
         angular.element( document ).ready( function() {
+
             angular.bootstrap( document, [ 'Application' ] );
+            
         } );
 
         ////////////////////////////////////////

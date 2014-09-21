@@ -25,10 +25,20 @@ define(
 
             return {
 
+                // DOM 엘리먼트의 속성 : EACM (default - A)
+                // element, attribute, class, comment
                 restrict: 'EA',
+                templateUrl: _PATH.TEMPLATE + 'screen.html',
+                
+                replace: true,
+                priority: 0,
+                transclude: true,
+                scope: false,
+
+                terminal: false,
                 
                 link: function( scope, el, attrs ) {
-                    el.text( "screen" );
+                    //el.text( "screen" );
                 }
 
             };
