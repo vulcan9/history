@@ -1,0 +1,266 @@
+﻿<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <meta charset="utf-8" />
+    <title>core 라이브러리 제작</title>
+
+    <meta name="viewport" content="width=1024" />
+
+    <!--구글웹폰트 : https://www.google.com/fonts#UsePlace:use/Collection:Maven+Pro:400,900
+    <link href='http://fonts.googleapis.com/css?family=Maven+Pro:400,900' rel='stylesheet' type='text/css'>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+    -->
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <link href="core.css" rel="stylesheet" />
+
+    <script>
+
+        function out() {
+            console.log.apply(console, arguments);
+        }
+
+    </script>
+
+
+    <script src="jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jquery.pep.js"></script>
+
+
+</head>
+
+<body>
+
+
+    <div id="u-screen"></div>
+
+
+
+
+
+
+
+	<div style="position:fixed">
+		<ul>
+			<li><a href="javascript:api.init(documents);">documents</a></li>
+			<li><a href="javascript:api.init(documents1);">documents1</a></li>
+		</ul>
+		<br>
+		<ul>
+			<li><input type="button" value="PREV" onclick="api.prev()"/></li>
+			<li><input type="button" value="NEXT" onclick="api.next()" /></li>
+		</ul>
+		<br>
+		<ul>
+			<li><a href="javascript:api.prev()">편집 모드(transition, 효과 설정)</a></li>
+			<li><a href="javascript:api.next()">PT모드(프리제테이션 실행)</a></li>
+			<li><a href="javascript:api.next()">문서 편집 모드(현재 문서 편집)</a></li>
+		</ul>
+        <br>
+        <ul>
+            <li>현재 포커싱된 scale을 기준으로 depth 1 상위는 alpha=0.1, depth 1 하위는 alpha=0.2, 나머지는 hidden</li>
+        </ul>
+	</div>
+
+
+	<!--dragable, fixedScale-->
+	<div style="position:absolute; bottom:20px;">
+		<input type="checkbox" id="dragable"
+			   onchange="change_dragable(event);" value="false">dragable
+
+		<input type="checkbox" id="fixedScale"
+			   onchange="change_fixedScale(event);" value="false">fixedScale
+
+		<input type="range" id="fixedScaleNum"
+			   min="0.1" max="5" step="0.01"
+			   onchange="change_fixedScaleNum(event)">
+		<span id="currentValue"></span>/1
+	</div>
+
+
+	
+	
+	<script src="test.js"></script>
+	<input type="button" value="RUN" style="position: absolute; right: 0" onclick="run();"/>
+	
+
+
+
+	<script src="ScaleMode.js"></script>
+	<script src="./Space.js"></script>
+    <script src="./pep.js"></script>
+	<script src="./ExtendSpace.js"></script>
+	<script>
+		// 임의의 데이터로 구성해 본다.
+		// 이 데이터 목록은 원본 데이터에서 적당히 추출된 데이터들이다.
+
+        function go(hash) {
+            out("TODO : document는 이동되나 Hash 까지는 이동되지 않음");
+            api.init(documents1);
+            api.goto("#board");
+        }
+
+		// TODO : 1차 Depth 사이의 문서들을 어떻게 구분해서 버퍼 기능을 구현할 것인가가 문제점
+		// - 사각 아이콘 및 제목 표시 후 클릭시 확대(확장)되는 형식으로 UX 처리?
+		// - 선 문서 작성 후 삽입 위치 결정(?)
+
+		// scale 기준 : 10 (10 depth 까지 허용)
+
+		var documents = [
+			'<div id="overview" data-scale="50" data-x="-20000" data-y="-25000"></div>',
+
+			'<div id="center" data-scale="1" data-x="0" data-y="0" style="background:red;"></div>',
+
+			'<div id="b" data-scale="10" data-x="-10000" data-y="-15000"><q>Arent you <a href="#bored2">use the source</a>just <b>bored</b> with all those slides-based presentations?</q><p><a href="javascript:go()">기획문서 보러 가볼까? <img></a></p></div>',
+			'<div id="a" data-scale="10" data-x="0" data-y="-15000" data-rotate="-45"><q>Dont you think that presentations given <strong>in modern browsers</strong> shouldnt <strong>copy the limits</strong> of classic slide decks?</q><p><a href="#b">use the source</a></p> <br><div style="width: 299px; height: 299px; border: 10px solid red; position: relative; pointer-events:none;"><object type="image/svg+xml" data="./doc_content.svg" style="width: 100%; height: 100%;"><img src="./doc_content.svg" /></object></div></div>',
+			'<div data-scale="10" data-x="-40000" data-y="-45000"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q><p><a href="javascript:api.init(documents1);">기획문서 보러 가볼까?</a></p></div>'
+		];
+
+		var documents1 = [
+			'<div id="overview" data-scale="10" data-x="0" data-y="0"></div>',
+
+			'<div id="center1" data-scale="0.5" data-x="0" data-y="0" style="background:red;"></div>',
+
+			'<div id="bored" data-scale="2" data-x="-2000" data-y="0"><h1>프로젝트 주제 : 사이트 기획</h1><br>디자인 자료 준비해야 함<br><br><a href="#bored1">메인 컨셉 디자인 진행</a><br><a href="#bored1-2">서브 컨셉 디자인 진행</a></div>',
+			    '<div id="bored-1" data-scale="1" data-x="-2500" data-y="200">어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href="#bored">모두 보기</a></div>',
+				    '<div id="bored-1-1" data-scale="0.5" data-x="-2500" data-y="200">ㅎㅎㅎ어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href="#bored">모두 보기</a></div>',
+			    '<div id="bored-2" data-scale="1" data-x="-1500" data-y="200"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>',
+
+            '<div id="bored1" data-scale="2" data-x="1000" data-y="0" data-rotate="-45"><h1>#디자인 어디까지 해봤니~</h1><br><a href="#bored1-1">컨셉 디자인 진행1</a><br><a href="#bored1-2">컨셉 디자인 진행2</a></div>',
+			    '<div id="bored1-1" data-scale="1" data-x="1500" data-y="500" data-rotate="-45">어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href="#bored">기획 보기</a></div>',
+			    '<div id="bored1-2" data-scale="1" data-x="2500" data-y="0" data-rotate="-45"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q><br><iframe width="560" height="315" src="http://www.youtube.com/embed/ylLzyHk54Z0" frameborder="0" allowfullscreen="true"></iframe><br><a href="#bored">기획 보기</a></div>'
+		];
+		/*
+		var documents = [
+			'<div id="overview" data-x="-3000" data-y="-1500" data-scale="10"></div>',
+			'<div id="b" data-x="-1000" data-y="-1500"><q>Arent you <a href="#bored2">use the source</a>just <b>bored</b> with all those slides-based presentations?</q><p><a href="javascript:api.init(documents1);">기획문서 보러 가볼까? <img></a></p></div>',
+			'<div id="a"data-x="0" data-y="-1500" data-rotate="-45"><q>Dont you think that presentations given <strong>in modern browsers</strong> shouldnt <strong>copy the limits</strong> of classic slide decks?</q><p><a href="#b">use the source</a></p> <br><div style="width: 299px; height: 299px; border: 10px solid red; position: relative; pointer-events:none;"><object type="image/svg+xml" data="./doc_content.svg" style="width: 100%; height: 100%;"><img src="./doc_content.svg" /></object></div></div>',
+			'<div data-x="-4000" data-y="-4500" data-scale="2"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q><p><a href="javascript:api.init(documents1);">기획문서 보러 가볼까?</a></p></div>'
+		];
+
+		var documents1 = [
+			'<div id="overview" data-x="0" data-y="0" data-scale="10"></div>',
+
+			'<div id="bored" data-x="-2000" data-y="0" data-scale="3"><h1>프로젝트 주제 : 사이트 기획</h1><br>디자인 자료 준비해야 함<br><br><a href="#bored1">메인 컨셉 디자인 진행</a><br><a href="#bored1-2">서브 컨셉 디자인 진행</a></div>',
+			'<div id="bored-1" data-x="-2500" data-y="200" data-scale="1">어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href="#bored">모두 보기</a></div>',
+			'<div id="bored-2" data-x="-1500" data-y="200" data-scale="1"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>',
+
+            '<div id="bored1" data-x="1000" data-y="0" data-scale="3" data-rotate="-45"><h1>#디자인 어디까지 해봤니~</h1><br><a href="#bored1-1">컨셉 디자인 진행1</a><br><a href="#bored1-2">컨셉 디자인 진행2</a></div>',
+			'<div id="bored1-1" data-x="500" data-y="500" data-scale="1" data-rotate="-45">어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href="#bored">기획 보기</a></div>',
+			'<div id="bored1-2" data-x="1500" data-y="0" data-scale="1" data-rotate="-45"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q><br><iframe width="560" height="315" src="http://www.youtube.com/embed/ylLzyHk54Z0" frameborder="0" allowfullscreen="true"></iframe><br><a href="#bored">기획 보기</a></div>'
+		];
+		*/
+
+		var api = window.Space("u-screen");
+		var app = api.app;
+		//api.init(documents);
+		api.init(documents1);
+
+		// 설정
+		app.fixedScale = false;
+		$("#fixedScale").prop("checked", false);
+
+		app.setDragable(true);
+		$("#dragable").prop("checked", true);
+
+		// 화면
+		$("#fixedScaleNum").val(app.windowScale);
+		$("#currentValue").text(app.windowScale);
+
+		function change_fixedScale(event) {
+			var value = $(event.target).prop("checked");
+			app.fixedScale = value;
+			scaleupdate();
+		}
+		function change_fixedScaleNum(event) {
+			var value = event.target.value;
+			$("#currentValue").text(value);
+			app.customScale = value;
+			scaleupdate();
+		}
+
+		function scaleupdate(){
+			//var scale = $("#fixedScaleNum").val();
+			//app.customScale = (app.fixedScale)? scale : 1;
+			app.goto(app.activeStep);
+		}
+
+		function change_dragable(event) {
+		    var value = $(event.target).prop("checked");
+		    out(value);
+		    app.setDragable(value);
+		    app.update();
+		}
+		
+	</script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

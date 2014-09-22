@@ -22,6 +22,8 @@
     /*font-family: '맑은 고딕', '나눔고딕';
     color: #4b4d4c;*/
     font-size: 12px;
+
+    list-style: none;
 }
 
 body {
@@ -31,13 +33,24 @@ body {
     height: 100%;
 }
 
+/*
+@media (min-width: 992px)
+.container {
+    width: 970px;
+}
+@media (min-width: 768px)
+.container {
+    width: 750px;
+}
+*/
+
 /*//////////////////////////////////////
 // Nav Bar (메뉴바 부분)
 //////////////////////////////////////*/
 
 .applicationContainer{
     position: absolute;
-    border: 0px solid #FF0000;
+    /*border: 1px solid #FF0000;*/
     top: 0px;
     bottom: 0px;
     left: 0px;
@@ -47,7 +60,7 @@ body {
 
 .toolContainer{
     position: relative;
-    border: 0px solid #FF0000;
+    /*border: 1px solid #FF0000;*/
     top: 0px;
     bottom: 0px;
     left: 0px;
@@ -61,17 +74,6 @@ body {
 .menuContainer{
     position: relative;
 }
-
-/*
-@media (min-width: 992px)
-.container {
-    width: 970px;
-}
-@media (min-width: 768px)
-.container {
-    width: 750px;
-}
-*/
 
 /* 높이 조절
 .navbar{
@@ -122,6 +124,23 @@ body {
 }
 
 /*//////////////////////////////////////
+// 상태 표시줄
+//////////////////////////////////////*/
+
+.statusContainer{
+    position: relative;
+    /*border: 1px solid #FF0000;*/
+    width: 100%;
+    bottom: 0px;
+}
+.status{
+    background: #e7e7e7;
+    bottom: 0px;
+    width: 100%;
+    padding: 10px;
+}
+
+/*//////////////////////////////////////
 // screen
 //////////////////////////////////////*/
 
@@ -130,35 +149,106 @@ body {
     /*JS코드에서 위치, 크기 동적으로 바뀜*/
 }
 .screen{
-    border: 0px solid #FF0000;
+    /*border: 1px solid #FF0000;*/
     width: 100%;
     height: 100%;
+    background: #333;
+}
+
+/*------------------------------------
+// Paper
+------------------------------------*/
+
+.paper {
+    position: absolute;
+    
+    min-width: 800px;
+    min-height: 600px;
+    padding: 0px 0px;
+    margin: 20px 20px;
+    
+    font-size: 14px;
+    text-align: left;
+    
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    
+    /*border: 1px solid #ccc;*/
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+
     /*background: #333;*/
 }
 
+.paper .background{
+    position: absolute;
+    padding: 0px 0px;
+    overflow:hidden;
+    width:100%;
+    height:100%;
+}
+
+.paper .content{
+    position: absolute;
+    /*border: 1px solid #FF0000;*/
+    padding: 10px 10px;
+    cursor: crosshair;
+}
+
+/*
+.paper .modeHandle:before{
+    content: 'E'
+}
+*/
+.paper .modeHandle{
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    right: -18px;
+    top: -18px;
+    background: transparent;
+    /*display: block !important;*/
+    
+    color: #bbb;
+    border: 2px solid #bbb;
+    
+    border-radius: 2px;
+    z-index: 2 !important;
+    cursor: cell;
+}
+.paper .modeHandle:hover{
+    color: #666;
+    border: 2px solid #666;
+}
+
 /*//////////////////////////////////////
-// 상태 표시줄
+// 
 //////////////////////////////////////*/
 
-.statusContainer{
-    position: relative;
-    border: 0px solid #FF0000;
-    width: 100%;
-    bottom: 0px;
+/*객체의 크기를 미리 표시
+.areaDisplay {
+    background-color: rgba(0, 0, 0, 0.145098);
+    z-index: 7;
+    position: absolute;
 }
-.status{
-    background: #e7e7e7;
-    /*position: fixed;*/
-    bottom: 0px;
-    width: 100%;
-    padding: 10px;
+*/
+
+/*삽입될 객체의 크기를 미리 표시
+.areaDisplay.resizing {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQYV2NkYGCQBGJ08BxdgHGIKMTiF0wPgjwz2BUCADTeBYguWvyCAAAAAElFTkSuQmCC);
 }
+*/
 
-
-
-
-
-
+/*선택되는 영역의 크기 표시 ( = jquery-ui의 selecting)
+.areaDisplay.selector {
+    border: 1px dashed #444;
+    background: transparent !important;
+}
+*/
 
 
 

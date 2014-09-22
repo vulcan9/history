@@ -200,50 +200,36 @@ define( [], function() {
 					dependencies: [
 						_PATH.CONTROLLER + 'HomeController'
 					]
-				},
+				}
 
 				//-----------------------------------
 				// ADMIN
 				//-----------------------------------
 
-				'/admin/': {
+				,'/admin/': {
 					templateUrl: _PATH.TEMPLATE + 'admin.html',
 					dependencies: [
 						_PATH.CONTROLLER + 'AdminController'
 					]
-				},
+				}
 
 				//-----------------------------------
 				// LOGIN 경로 설정
 				//-----------------------------------
 				
-				'/login/': {
+				,'/login/': {
 					templateUrl: _PATH.TEMPLATE + 'login.html',
 					dependencies: [
 						_PATH.CONTROLLER + 'LoginController'
 					]
-				},
+				}
 
 				//-----------------------------------
 				// Application
 				//-----------------------------------
 
 
-				'/tool/': {
-					templateUrl: _PATH.TEMPLATE + 'tool.html',
-					dependencies: [
-						_PATH.CONTROLLER + 'ToolController',
-
-						_PATH.DIRECTIVE + 'menu',
-						_PATH.DIRECTIVE + 'progressbar',
-						_PATH.DIRECTIVE + 'explorer',
-						_PATH.DIRECTIVE + 'screen',
-						_PATH.DIRECTIVE + 'timeline',
-						_PATH.DIRECTIVE + 'property',
-						_PATH.DIRECTIVE + 'status'
-					]
-				},
-				'/tool/:command': {
+				,'/tool/': {
 					templateUrl: _PATH.TEMPLATE + 'tool.html',
 					dependencies: [
 						_PATH.CONTROLLER + 'ToolController',
@@ -257,6 +243,23 @@ define( [], function() {
 						_PATH.DIRECTIVE + 'status'
 					]
 				}
+
+				/*
+				,'/tool/:command': {
+					templateUrl: _PATH.TEMPLATE + 'tool.html',
+					dependencies: [
+						_PATH.CONTROLLER + 'ToolController',
+
+						_PATH.DIRECTIVE + 'menu',
+						_PATH.DIRECTIVE + 'progressbar',
+						_PATH.DIRECTIVE + 'explorer',
+						_PATH.DIRECTIVE + 'screen',
+						_PATH.DIRECTIVE + 'timeline',
+						_PATH.DIRECTIVE + 'property',
+						_PATH.DIRECTIVE + 'status'
+					]
+				}
+				*/
 				// Path END
 			};
 
