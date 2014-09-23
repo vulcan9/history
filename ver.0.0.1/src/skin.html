@@ -1,4 +1,58 @@
-<div class="screenContainer">
+<!DOCTYPE html>
+<html lang="ko" ng-controller="ApplicationController">
+
+  <head>
+    <meta name="google" value="notranslate">
+
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>APP :: Skin</title>
+    <meta name="description" content="">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <!-- 
+    ///////////////////////////////////
+    // 부트스트랩 미리 로드
+    ///////////////////////////////////
+    -->
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요) -->
+    <!--<script src="//code.jquery.com/jquery.min.js"></script>-->
+    <script src="./libs/jquery/jquery.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <!-- 
+    ///////////////////////////////////
+    // CSS 선택 로드
+    ///////////////////////////////////
+    -->
+
+    <link rel="stylesheet" href="css/basic.css"/>
+    <link rel="stylesheet" href="css/application.css"/>
+
+  </head>
+
+
+  <body style="opacity: 1;transition: opacity 1s;-webkit-transition: opacity 1s;">
+
+
+    
+    
+
+
+
+
+
+<div class="applicationContainer">
+    <div class="toolContainer">
+
+
+<div class="screenContainer" style="height: 800px;">
     <div class="screen">
         
 
@@ -53,9 +107,6 @@
                 <ul>
                     <li>window resize는 (#ApplicationController.resize) 이벤트 사용</li>
                     <li><s>Directive 생성 : horizontalCenter, verticalCenter</s></li>
-                    <li>Directive 생성 : select</li>
-                    <li>Directive 생성 : drag</li>
-                    <li>Directive 생성 : resize</li>
                     <li>데이터 로드 (DataService) 사용</li>
                     <li>Impress 화면 적용</li>
                 </ul>
@@ -67,19 +118,23 @@
 
 
             <!--선택 표시 객체-->
-            <div class="wire ui-draggable ui-resizable selected" style="top: 80px; left: 200px; width: 245px; height: 161px; position: absolute;" aria-disabled="false">
-                
-                <div style="top: 0px !important; left: 0px !important; height: 159px; width: 243px; border-width: 1px; border-color: rgb(68, 68, 68); color: rgb(68, 68, 68); background-color: rgb(221, 221, 221); z-index: 4; background-position: initial initial; background-repeat: initial initial;" class="wirejr latestwire new box"></div>
-                
-                <div class="ui-resizable-handle ui-resizable-n" unselectable="on" style="display: block;"></div>
-                <div class="ui-resizable-handle ui-resizable-e" unselectable="on" style="display: block;"></div>
-                <div class="ui-resizable-handle ui-resizable-s" unselectable="on" style="display: block;"></div>
-                <div class="ui-resizable-handle ui-resizable-w" unselectable="on" style="display: block;"></div>
-                <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 1000001; display: block;" unselectable="on"></div>
-                <div class="ui-resizable-handle ui-resizable-sw" style="z-index: 1000002; display: block;" unselectable="on"></div>
-                <div class="ui-resizable-handle ui-resizable-ne" style="z-index: 1000003; display: block;" unselectable="on"></div>
-                <div class="ui-resizable-handle ui-resizable-nw" style="z-index: 1000004; display: block;" unselectable="on"></div>
+            <div class="wire ui-draggable ui-resizable selected" 
+            style="top: 80px; left: 200px; width: 245px; height: 161px; position: absolute;">
 
+                <!-- <div style="z-index: 4; 
+                top: 0px !important; left: 0px !important; 
+                height: 159px; width: 243px; 
+                border: 1px solid rgb(68, 68, 68);
+                background-color: rgb(221, 221, 221);" class="wirejr latestwire new box"></div> -->
+
+                <div class="ui-resizable-handle ui-resizable-n"></div>
+                <div class="ui-resizable-handle ui-resizable-e"></div>
+                <div class="ui-resizable-handle ui-resizable-s"></div>
+                <div class="ui-resizable-handle ui-resizable-w"></div>
+                <div class="ui-resizable-handle ui-resizable-se"></div>
+                <div class="ui-resizable-handle ui-resizable-sw"></div>
+                <div class="ui-resizable-handle ui-resizable-ne"></div>
+                <div class="ui-resizable-handle ui-resizable-nw"></div>
             </div>
 
 
@@ -105,3 +160,20 @@
         
     </div>
 </div>
+
+
+
+
+
+
+    </div>
+</div>
+
+
+    
+    
+
+
+  </body>
+</html>
+
