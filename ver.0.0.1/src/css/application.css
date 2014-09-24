@@ -166,7 +166,7 @@ body {
     min-width: 800px;
     min-height: 600px;
     padding: 0px 0px;
-    margin: 20px 20px;
+    margin: 25px 25px;
     
     font-size: 14px;
     text-align: left;
@@ -191,6 +191,8 @@ body {
     overflow:hidden;
     width:100%;
     height:100%;
+    /*1px 눈금위치 차이남*/
+    margin: 1px;
 }
 
 .paper .content{
@@ -200,17 +202,16 @@ body {
     cursor: crosshair;
 }
 
-/*
-.paper .modeHandle:before{
-    content: 'E'
-}
-*/
+/*------------------------------------
+// 편집모드 전환 버튼
+------------------------------------*/
+
 .paper .modeHandle{
     position: absolute;
-    width: 16px;
-    height: 16px;
-    right: -18px;
-    top: -18px;
+    width: 20px;
+    height: 20px;
+    right: -22px;
+    top: -22px;
     background: transparent;
     /*display: block !important;*/
     
@@ -220,10 +221,23 @@ body {
     border-radius: 2px;
     z-index: 2 !important;
     cursor: cell;
+    text-align: center;
+
+    font-family: 'Glyphicons Halflings';
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 16px;
 }
 .paper .modeHandle:hover{
     color: #666;
     border: 2px solid #666;
+}
+
+.paper .modeHandle.edit:after{
+    content: "\270f";
+}
+.paper .modeHandle.play:after{
+    content: "\e014";
 }
 
 /*//////////////////////////////////////
@@ -241,20 +255,60 @@ body {
   -o-user-select: none;
 }
 
-.ui-draggable { cursor: move; }
-.ui-resizable { position: relative;}
+/*보이기, 감추기*/
+.wire{
+  display:none !important;
+}
+.wire.selected{
+    display:block !important;
+}
+
+/*------------------------------------
+// selected
+------------------------------------*/
+
+.selected{
+    z-index: 9999;
+}
+
+/*선택 상태 표시*/
+.selected:after   {
+    position:absolute;
+    display:block;
+    content:"";
+    padding:4px;
+    width:100%;
+    height:100%;
+    
+    border:1px dashed #E42806;
+    z-index: 9999 !important;
+    top:0px;
+    left:0px;
+    pointer-events:none;
+}
+.selected:not(.ui-draggable):hover{
+    cursor:default !important;
+}
+
+/*
+.selected.hastext:after{
+    pointer-events:auto !important;
+}
+*/
+
+.ui-draggable {
+    cursor: move;
+}
 
 /*------------------------------------
 // resize handle
 ------------------------------------*/
 
-.ui-resizable-handle { position: absolute; font-size: 0px; z-index: 99999; display: block;}
-/*
-.ui-resizable-disabled .ui-resizable-handle, 
-.ui-resizable-autohide .ui-resizable-handle { 
-    display: none; 
+.ui-resizable-handle {
+    position: absolute; 
+    font-size: 0px; 
+    z-index: 9999;
 }
-*/
 
 /*모서리(dot handle)*/
 .ui-resizable-n { cursor: n-resize; width: 100%; height: 7px; top: -5px; left: 0px; }
@@ -263,129 +317,117 @@ body {
 .ui-resizable-w { cursor: w-resize; width: 7px; height: 100%; left: -5px; top: 0px; }
 .ui-resizable-n, .ui-resizable-s , .ui-resizable-e , .ui-resizable-w{
     background-color: rgba(255,0,0,0.1);
-    /*display:none !important;*/
 }
 /*변 (line handle)*/
 .ui-resizable-se { cursor: se-resize; width: 8px; height: 8px; right: -10px; bottom: -10px; }
 .ui-resizable-sw { cursor: sw-resize; width: 8px; height: 8px; left: -10px; bottom: -10px; }
 .ui-resizable-nw { cursor: nw-resize; width: 8px; height: 8px; left: -10px; top: -10px; }
 .ui-resizable-ne { cursor: ne-resize; width: 8px; height: 8px; right: -10px; top: -10px;}
-.ui-resizable-se, .ui-resizable-ne , .ui-resizable-sw , .ui-resizable-nw{
-    border:1px solid #E42806;
-    display:none !important;
+.ui-resizable-se, .ui-resizable-sw , .ui-resizable-nw , .ui-resizable-ne{
+    background-color: rgba(255,0,0,0.1);
+}
+
+/*보이기, 감추기*/
+.ui-rotate-handle,
+.ui-resizable-handle,
+.ui-resizable-disabled .ui-resizable-handle, 
+.ui-resizable-autohide .ui-resizable-handle,
+.ui-resizable-disabled .ui-rotate-handle,
+.ui-resizable-autohide .ui-rotate-handle { 
+    display: none; 
+}
+.ui-resizable .ui-resizable-handle,
+.ui-resizable .ui-rotate-handle {
+    display:block;
+ }
+
+/*------------------------------------
+// rotate handle
+------------------------------------*/
+
+.ui-rotate-handle{
+    /*background-color: rgba(0,0,0,0.5);*/
+    border-radius: 10px;
+    width: 14px;
+    height: 14px;
+    margin: -20px auto 0;
+    color: rgba(255,0,0,0.3);
+}
+.ui-rotate-handle:hover{
+    cursor: default;
+    color: rgba(255,0,0,1);
+}
+.ui-rotate-handle:after{
+    font-family: 'Glyphicons Halflings';
+    content: "\e030";
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 14px;
+    text-align: center;
 }
 
 /*------------------------------------
-// selected
+// 선택 상태일때
 ------------------------------------*/
 
-.selected:hover{
-    cursor: move !important;
-}
-
-/*선택 상태*/
-.selected:after   {
-    display:block;
-    content:"";
-    padding:4px;
-    background:transparent;
-    width:100%;
-    height:100%;
-    position:absolute;
-    border:1px dashed #E42806;
-    z-index: 9999 !important;
-    top:-5px;
-    left:-5px;
-    pointer-events:none;
-}
-.selected:not(.ui-draggable):hover{
-    cursor:default !important;
-}
-/*
-.selected.hastext:after{
-    pointer-events:auto !important;
-}
-*/
-
-.selected .ui-resizable-handle {
-    z-index: 1199999;
-    /*opacity: .99;*/
-}
-
-
-.wire:hover .ui-resizable-se , 
-.wire:hover .ui-resizable-ne , 
-.wire:hover .ui-resizable-sw , 
-.wire:hover .ui-resizable-nw{
-    display:none !important;
-}
-.wire:hover, 
-.wire:hover .ui-resizable-handle {
-    cursor: default !important;
+.selected .ui-resizable-handle,
+.selected .ui-rotate-handle {
+    z-index: 9999;
 }
 
 .selected .ui-resizable-se , 
 .selected .ui-resizable-ne , 
 .selected .ui-resizable-sw , 
 .selected .ui-resizable-nw{
-    display:block !important;
+    border:1px solid rgba(255,0,0,0.3);
 }
-.selected:hover .ui-resizable-se , 
-.selected:hover .ui-resizable-ne , 
-.selected:hover .ui-resizable-sw , 
-.selected:hover .ui-resizable-nw{
-    display:block !important;
+.selected .ui-resizable-se:hover , 
+.selected .ui-resizable-ne:hover , 
+.selected .ui-resizable-sw:hover , 
+.selected .ui-resizable-nw:hover {
+    border:1px solid rgba(255,0,0,1);
 }
-.selected:hover .ui-resizable-se , 
-.selected:hover .ui-resizable-nw{
-    cursor: nw-resize !important;
-}
-.selected:hover .ui-resizable-s , 
-.selected:hover .ui-resizable-n{
-    cursor: n-resize !important;
-}
-.selected:hover .ui-resizable-e , 
-.selected:hover .ui-resizable-w{
-    cursor: e-resize !important;
-}
-.selected:hover .ui-resizable-sw , 
-.selected:hover .ui-resizable-ne{
-    cursor: ne-resize !important;
-}
-
-
-
-
-
-
-
-
-
 
 /*//////////////////////////////////////
-// 
+//  드래그한 영역 표시
 //////////////////////////////////////*/
 
-/*객체의 크기를 미리 표시
+/*영역 표시 (크기 표시)*/
 .areaDisplay {
     background-color: rgba(0, 0, 0, 0.145098);
-    z-index: 7;
+    z-index: 9999;
     position: absolute;
 }
-*/
 
-/*삽입될 객체의 크기를 미리 표시
-.areaDisplay.resizing {
+/*투명 표시*/
+.areaDisplay.transparent {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQYV2NkYGCQBGJ08BxdgHGIKMTiF0wPgjwz2BUCADTeBYguWvyCAAAAAElFTkSuQmCC);
 }
-*/
 
-/*선택되는 영역의 크기 표시 ( = jquery-ui의 selecting)
+/*마우스 드래그 선택영역 표시*/
 .areaDisplay.selector {
     border: 1px dashed #444;
     background: transparent !important;
 }
-*/
 
+/*//////////////////////////////////////
+//  Snap 라인 표시
+//////////////////////////////////////*/
 
-
+.guide {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+}
+.guide.vertical {
+    border-left: 1px solid #FFDCD6;
+    border-left: 1px solid rgba(255, 99, 71, 0.5);
+    height: 100%;
+}
+.guide.horizontal {
+    border-top: 1px solid #FFDCD6;
+    border-top: 1px solid rgba(255, 99, 71, 0.5);
+    width: 100%;
+}
