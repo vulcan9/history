@@ -18,7 +18,7 @@
 
 
 
-        <div class="paper" horizontalCenter="0" verticalCenter="0">
+        <div class="paper" horizontal-center="0" vertical-center="0">
             
             <!--배경 패턴-->
             <div class="background">
@@ -45,7 +45,7 @@
             </div>
 
             <!--컨텐츠 그룹-->
-            <div class="content" style="width:100%;height:100%; overflow: visible;">
+            <div class="content" style="width:100%;height:100%;">
 
 
 
@@ -58,6 +58,7 @@
                     <li>Directive 생성 : resize</li>
                     <li>데이터 로드 (DataService) 사용</li>
                     <li>Impress 화면 적용</li>
+                    <li>편집모드 전환</li>
                 </ul>
 
 
@@ -66,31 +67,57 @@
 
 
 
-            <!--선택 표시 객체-->
-            <div class="wire ui-draggable ui-resizable selected" style="top: 80px; left: 200px; width: 245px; height: 161px; position: absolute;" aria-disabled="false">
-                
-                <div style="top: 0px !important; left: 0px !important; height: 159px; width: 243px; border-width: 1px; border-color: rgb(68, 68, 68); color: rgb(68, 68, 68); background-color: rgb(221, 221, 221); z-index: 4; background-position: initial initial; background-repeat: initial initial;" class="wirejr latestwire new box"></div>
-                
-                <div class="ui-resizable-handle ui-resizable-n" unselectable="on" style="display: block;"></div>
-                <div class="ui-resizable-handle ui-resizable-e" unselectable="on" style="display: block;"></div>
-                <div class="ui-resizable-handle ui-resizable-s" unselectable="on" style="display: block;"></div>
-                <div class="ui-resizable-handle ui-resizable-w" unselectable="on" style="display: block;"></div>
-                <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 1000001; display: block;" unselectable="on"></div>
-                <div class="ui-resizable-handle ui-resizable-sw" style="z-index: 1000002; display: block;" unselectable="on"></div>
-                <div class="ui-resizable-handle ui-resizable-ne" style="z-index: 1000003; display: block;" unselectable="on"></div>
-                <div class="ui-resizable-handle ui-resizable-nw" style="z-index: 1000004; display: block;" unselectable="on"></div>
+
+                <!--선택 표시-->
+                <div class="wire ui-draggable ui-resizable selected" 
+                style="top: 140px; left: 40px; width: 240px; height: 160px;">
+
+                    <!-- <div style="z-index: 4; 
+                    top: 0px !important; 
+                    left: 0px !important; 
+                    height: 160px; width: 240px; 
+                    border: 1px solid rgb(68, 68, 68);
+                    background-color: rgb(221, 221, 221);"></div> -->
+
+                    <div class="ui-resizable-handle ui-resizable-n"></div>
+                    <div class="ui-resizable-handle ui-resizable-e"></div>
+                    <div class="ui-resizable-handle ui-resizable-s"></div>
+                    <div class="ui-resizable-handle ui-resizable-w"></div>
+                    <div class="ui-resizable-handle ui-resizable-se"></div>
+                    <div class="ui-resizable-handle ui-resizable-sw"></div>
+                    <div class="ui-resizable-handle ui-resizable-ne"></div>
+                    <div class="ui-resizable-handle ui-resizable-nw"></div>
+
+                    <div class="ui-rotate-handle"></div>
+                </div>
+
+                <!-- 선택 객체 샘플 -->
+                <div style="position: absolute;
+                top: 140px; left: 40px; width: 240px; height: 160px;
+                border: 1px solid rgb(68, 68, 68);
+                background-color: rgba(150, 250, 0, 0.2);
+                transform:rotateX(0deg) rotateY(0deg) rotateZ(-45deg)"></div>
+
+                <!-- 영역표시(투명표시) -->
+                <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>
+
+                <!-- 마우스 선택영역 표시 -->
+                <div class="areaDisplay selector" style="left: 500px;top: 100px;width: 100px;height: 100px;"></div>
+
+                <!--snap 선-->
+                <div id="guide-h" class="guide horizontal" style="top: 200px; display: block;"></div>
+                <div id="guide-v" class="guide vertical" style="left: 500px; display: block;"></div>
+
+
+
 
             </div>
+            
+            <!-- 편집모드로 전환 -->
+            <div class="modeHandle edit"></div>
+            <!-- 편집모드 종료 -->
+            <div class="modeHandle play" style="top:0"></div>
 
-
-
-
-
-
-
-
-            </div>
-            <div class="modeHandle"></div>
         </div>
 
 

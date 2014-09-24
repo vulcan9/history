@@ -59,6 +59,7 @@ var _PATH = {
     DATA:                 _PATH_ROOT_FOLDER + 'data/',
 
     JS:                     _PATH_ROOT_FOLDER + 'js/',
+    MODULE:            _PATH_ROOT_FOLDER + 'js/modules/',
     CONTROLLER:    _PATH_ROOT_FOLDER + 'js/controllers/',
     DIRECTIVE:         _PATH_ROOT_FOLDER + 'js/directives/',
     SERVICE:           _PATH_ROOT_FOLDER + 'js/services/',
@@ -100,6 +101,9 @@ require.config( {
         'angular':                '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min',
         'angular-route':       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular-route',
 
+        // 모듈
+        'alignModule':         _PATH.MODULE + 'alignModule',
+
         'Application':          _PATH.JS + 'Application',
         'Router':                 _PATH.JS + 'Router'
     },
@@ -117,8 +121,11 @@ require.config( {
             deps: [ 'angular' ],
             exports: 'angular-route'
         },
+        'alignModule': {
+            deps: [ 'angular']
+        },
         'Application': {
-            deps: [ 'angular', 'angular-route' ]
+            deps: [ 'angular', 'angular-route', 'alignModule' ]
         }
     }
 

@@ -3,7 +3,7 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : 버전을 표시
+    * Description : 위치 설정
 
 ////////////////////////////////////////////////////////////////////////////////*/
 

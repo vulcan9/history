@@ -657,7 +657,9 @@
 
 		// 숫자화 (fallback : 숫자 변환 실패시 반환값)
 		toNumber: function (numeric, fallback) {
-			return isNaN(numeric) ? (fallback || 0) : Number(numeric);
+                           var num = parseFloat(numeric, 10);
+                           return isNaN(num) ? (fallback || 0) : num;
+			//return isNaN(numeric) ? (fallback || 0) : Number(numeric);
 		},
 
 		// `arraify` takes an array-like object and turns it into real Array to make all the Array.prototype goodness available.
