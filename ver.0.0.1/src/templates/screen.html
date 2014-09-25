@@ -8,6 +8,8 @@
 
 
 
+<div ui-canvas class="paper"></div>
+<div ui-canvas class="paper"></div>
 
 
 
@@ -16,9 +18,7 @@
 
 
 
-
-
-        <div class="paper" horizontal-center="0" vertical-center="0">
+        <div ui-canvas class="paper" horizontal-center="0" vertical-center="0">
             
             <!--배경 패턴-->
             <div class="background">
@@ -64,60 +64,49 @@
 
 
 
-
-
-
-
-                <!--선택 표시-->
-                <div class="wire ui-draggable ui-resizable selected" 
-                style="top: 140px; left: 40px; width: 240px; height: 160px;">
-
-                    <!-- <div style="z-index: 4; 
-                    top: 0px !important; 
-                    left: 0px !important; 
-                    height: 160px; width: 240px; 
-                    border: 1px solid rgb(68, 68, 68);
-                    background-color: rgb(221, 221, 221);"></div> -->
-
-                    <div class="ui-resizable-handle ui-resizable-n"></div>
-                    <div class="ui-resizable-handle ui-resizable-e"></div>
-                    <div class="ui-resizable-handle ui-resizable-s"></div>
-                    <div class="ui-resizable-handle ui-resizable-w"></div>
-                    <div class="ui-resizable-handle ui-resizable-se"></div>
-                    <div class="ui-resizable-handle ui-resizable-sw"></div>
-                    <div class="ui-resizable-handle ui-resizable-ne"></div>
-                    <div class="ui-resizable-handle ui-resizable-nw"></div>
-
-                    <div class="ui-rotate-handle"></div>
-                </div>
-
                 <!-- 선택 객체 샘플 -->
                 <div style="position: absolute;
                 top: 140px; left: 40px; width: 240px; height: 160px;
                 border: 1px solid rgb(68, 68, 68);
                 background-color: rgba(150, 250, 0, 0.2);
-                transform:rotateX(0deg) rotateY(0deg) rotateZ(-45deg)"></div>
+                transform:rotateX(0deg) rotateY(0deg) rotateZ(-45deg)"
+                uid='uid001'></div>
 
-                <!-- 영역표시(투명표시) -->
-                <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>
 
-                <!-- 마우스 선택영역 표시 -->
-                <div class="areaDisplay selector" style="left: 500px;top: 100px;width: 100px;height: 100px;"></div>
 
-                <!--snap 선-->
-                <div id="guide-h" class="guide horizontal" style="top: 200px; display: block;"></div>
-                <div id="guide-v" class="guide vertical" style="left: 500px; display: block;"></div>
+
+
+
+<input type="button" style="position:absolute;width: 100px;height:30px;left:400px;top:200px;" value="button"/>
+<input type="text" style="position:absolute;width: 100px;height:30px;left:400px;top:230px;"/>
+
+
+
+
+
 
 
 
 
             </div>
-            
-            <!-- 편집모드로 전환 -->
+
+            <!-- 영역표시(투명표시) -->
+            <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>
+
+            <!-- 마우스 선택영역 표시 -->
+            <div class="areaDisplay selector" style="left: 500px;top: 100px;width: 100px;height: 100px;"></div>
+
+            <!--snap 선-->
+            <div id="guide-h" class="guide horizontal" style="top: 200px; display: block;"></div>
+            <div id="guide-v" class="guide vertical" style="left: 500px; display: block;"></div>
+
+            <!-- 편집모드로 전환 버튼-->
             <div class="modeHandle edit"></div>
-            <!-- 편집모드 종료 -->
             <div class="modeHandle play" style="top:0"></div>
 
+            <!--선택 표시 핸들러 컨테이너-->
+            <div ui-controller class="content"></div>
+            
         </div>
 
 

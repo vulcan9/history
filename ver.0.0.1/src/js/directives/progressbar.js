@@ -30,9 +30,8 @@ define(
                 templateUrl: _PATH.TEMPLATE + 'progressbar.html',
                 
                 replace: true,
-                priority: 0,
                 transclude: true,
-                scope: false,
+                // scope: false,
 
                 controller : function( $scope, ProgressService) {
                     
@@ -41,9 +40,11 @@ define(
                     //*
                     
                     // watch를 이용한 업데이트 방법
-                    $scope.$watch('progress', function(newValue, oldValue) {
-                        //if (newValue === oldValue) { return; }
+                    $scope.$watch('TOOL.progress', function(newValue, oldValue) {
+                        
+                        // if (newValue === oldValue) { return; }
                         onUpdate();
+
                     }, true);
                     
                     /*/
@@ -57,8 +58,13 @@ define(
                     //*/
                    
                     function onUpdate(){
-                        $scope.value = ProgressService.value();
-                        $scope.isPercentage = ProgressService.isPercentage();
+                        /*
+                        $scope.progress = {
+                            value : ProgressService.value,
+                            isPercentage : ProgressService.isPercentage
+                        };
+                        */
+                       $scope.TOOL.progress = ProgressService;
                     }
 
                 }

@@ -33,6 +33,11 @@ define(
 
             $scope._name = 'ToolController';
 
+            // tool 동작에 필요한 데이터 기록
+            $scope.TOOL = {};
+            // 편집 결과를 저장한 데이이터
+            $scope.DATA = {};
+
             ////////////////////////////////////////
             // 데이터 로드 서비스 호출 : Project - 문서 구조 관련 데이터
             ////////////////////////////////////////
@@ -62,8 +67,8 @@ define(
             // http://programmingsummaries.tistory.com/124
 
             ProgressService.init (true);
-            //ProgressService.value(null);
-            //ProgressService.value(60);
+            //ProgressService.init(null);
+            //ProgressService.update(60);
             
             out ('TODO : project 데이터 로드 세팅 : project.json');
             var projectID = _PATH.DATA + 'project.json';

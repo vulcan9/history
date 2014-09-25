@@ -241,7 +241,7 @@ body {
 }
 
 /*//////////////////////////////////////
-// resize, selected
+// ui-resize, ui-selected
 //////////////////////////////////////*/
 
 .wire{
@@ -259,20 +259,20 @@ body {
 .wire{
   display:none !important;
 }
-.wire.selected{
+.wire.ui-selected{
     display:block !important;
 }
 
 /*------------------------------------
-// selected
+// ui-selected
 ------------------------------------*/
 
-.selected{
+.ui-selected{
     z-index: 9999;
 }
 
 /*선택 상태 표시*/
-.selected:after   {
+.ui-selected:after   {
     position:absolute;
     display:block;
     content:"";
@@ -286,12 +286,12 @@ body {
     left:0px;
     pointer-events:none;
 }
-.selected:not(.ui-draggable):hover{
+.ui-selected:not(.ui-draggable):hover{
     cursor:default !important;
 }
 
 /*
-.selected.hastext:after{
+.ui-selected.hastext:after{
     pointer-events:auto !important;
 }
 */
@@ -336,8 +336,11 @@ body {
 .ui-resizable-autohide .ui-rotate-handle { 
     display: none; 
 }
-.ui-resizable .ui-resizable-handle,
-.ui-resizable .ui-rotate-handle {
+.ui-resizable .ui-resizable-handle{
+    display:block;
+ }
+
+.ui-rotatable .ui-rotate-handle {
     display:block;
  }
 
@@ -370,21 +373,21 @@ body {
 // 선택 상태일때
 ------------------------------------*/
 
-.selected .ui-resizable-handle,
-.selected .ui-rotate-handle {
+.ui-selected .ui-resizable-handle,
+.ui-selected .ui-rotate-handle {
     z-index: 9999;
 }
 
-.selected .ui-resizable-se , 
-.selected .ui-resizable-ne , 
-.selected .ui-resizable-sw , 
-.selected .ui-resizable-nw{
+.ui-selected .ui-resizable-se , 
+.ui-selected .ui-resizable-ne , 
+.ui-selected .ui-resizable-sw , 
+.ui-selected .ui-resizable-nw{
     border:1px solid rgba(255,0,0,0.3);
 }
-.selected .ui-resizable-se:hover , 
-.selected .ui-resizable-ne:hover , 
-.selected .ui-resizable-sw:hover , 
-.selected .ui-resizable-nw:hover {
+.ui-selected .ui-resizable-se:hover , 
+.ui-selected .ui-resizable-ne:hover , 
+.ui-selected .ui-resizable-sw:hover , 
+.ui-selected .ui-resizable-nw:hover {
     border:1px solid rgba(255,0,0,1);
 }
 

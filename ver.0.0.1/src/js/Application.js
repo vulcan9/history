@@ -29,7 +29,7 @@ define(
         var application = angular.module(
 
             // '모듈 Name', ['Require 모듈']
-            'Application', [ 'ngRoute', 'alignModule' ],
+            'Application', [ 'ngRoute', 'alignModule', 'uiModule' ],
 
             // Configuration Function
             function( $provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider ) {

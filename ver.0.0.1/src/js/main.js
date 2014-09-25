@@ -100,9 +100,11 @@ require.config( {
         
         'angular':                '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min',
         'angular-route':       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular-route',
+        'angular-collection':       _PATH.LIB + 'angular/angular-collection',
 
         // 모듈
         'alignModule':         _PATH.MODULE + 'alignModule',
+        'uiModule':             _PATH.MODULE + 'uiModule',
 
         'Application':          _PATH.JS + 'Application',
         'Router':                 _PATH.JS + 'Router'
@@ -121,11 +123,18 @@ require.config( {
             deps: [ 'angular' ],
             exports: 'angular-route'
         },
+        'angular-collection': {
+            deps: [ 'angular' ]
+        },
+
         'alignModule': {
             deps: [ 'angular']
         },
+        'uiModule': {
+            deps: [ 'angular', 'angular-collection']
+        },
         'Application': {
-            deps: [ 'angular', 'angular-route', 'alignModule' ]
+            deps: [ 'angular', 'angular-route', 'alignModule', 'uiModule' ]
         }
     }
 

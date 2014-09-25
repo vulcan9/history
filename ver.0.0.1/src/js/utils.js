@@ -21,6 +21,31 @@ define(
                 return isNaN(num) ? (fallback || 0) : num;
             }
 
+            ////////////////////////////////////
+            // UUID 생성기
+            ////////////////////////////////////
+
+            ,createUID: function (){
+                var uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+                var uid = uid.replace(/[xy]/g, function(c){
+                    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+                
+                return uid;
+            }
+
+
+
+
+
+
+
+
+
+
+
+            // END Utils
         };
 
         ////////////////////////////////////////

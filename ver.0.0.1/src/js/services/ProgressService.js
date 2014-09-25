@@ -29,82 +29,68 @@ define(
             
             /*
                     // 초기화
-                    singleton.init();
-                    singleton.init(true);
+                    ProgressService.init();
+                    ProgressService.init(true);
 
                     // 사용 : 
-                    ProgressService.value(50);
-                    ProgressService.value(null);
+                    ProgressService.update(50);
+                    ProgressService.update(null);
 
-                    var value = ProgressService.value();
-                    var isPercentage = ProgressService.isPercentage();
+                    var value = ProgressService.value;
+                    var isPercentage = ProgressService.isPercentage;
             */
             
-            //var scope = angular.element( document ).scope();
-            var scope = $document.scope();
+            
 
-            function singleton() {
-                //
+            var progress = {
+                isPercentage : false,
+                value : 0,
+                init : function(isEventMode){
+
+                    // event mode
+                    if(isEventMode === true){
+                        _percentage(null);
+                        return;
+                    }
+
+                    // percent mode
+                    _percentage(0);
+                },
+                update : function(percent){
+                    _percentage(percent);
+                },
+                complete : function(){
+                    _percentage(0);
+                }
             };
 
-            singleton.isPercentage =  function(){
-                return scope.progress.isPercentage;
-            };
+            //-----------------------
+            // 구현
+            //-----------------------
 
-            singleton.value = function(value){
+            function _percentage(value){
 
                 // GET
                 if(value === undefined){
-                    return scope.progress.value;
+                    return progress.value;
                 }
 
                 // SET
                 var isPercentage = (value === null) ? /*eventMode*/ false : !isNaN(value);
                 if(!isPercentage) value = 100;
 
-                scope.progress = {
-                    value: value,
-                    isPercentage: isPercentage
-                };
+                progress.value = value;
+                progress.isPercentage = isPercentage;
 
-                scope.$emit('#progressService.progressChange', scope.progress);
-                scope.$broadcast('#progressService.progressChange', scope.progress); 
+                //var scope = angular.element( document ).scope();
+                var scope = $document.scope();
+                scope.$emit('#progressService.progressChange', progress);
+                scope.$broadcast('#progressService.progressChange', progress); 
             };
 
-            //-----------------------
-            // API
-            //-----------------------
-
-            singleton.init =  function(isEventMode){
-
-                if(scope.progress === undefined){
-                    scope.progress = {
-                        value: 0,
-                        isPercentage: false
-                    };
-                }
-                
-                // event mode
-                if(isEventMode === true){
-                    singleton.value(null);
-                    return;
-                }
-
-                // percent mode
-                singleton.value(0);
-            };
-
-            singleton.complete =  function(){
-                singleton.value(0);
-            };
-
-            singleton.update =  function(percent){
-                singleton.value(percent);
-            };
 
             // 서비스 객체 리턴
-            singleton.init();
-            return singleton;
+            return progress;
         }
 
         // 리턴

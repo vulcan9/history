@@ -21,8 +21,8 @@
 
                 <!--
                 <ul class="nav navbar-nav">
-                    <li ng-repeat="item in items" ng-click="onClick(item)"><a>{{item.label}}</a></li>
-                    <li ng-repeat="item in items">
+                    <li ng-repeat="item in TOOL.menu.items" ng-click="onClick(item)"><a>{{item.label}}</a></li>
+                    <li ng-repeat="item in TOOL.menu.items">
                         <link href="{item}">{{item.label}} (todo:Link Directive)</link>
                     </li>
                     <li class="active"><a href="./">Static top</a></li>
@@ -34,7 +34,7 @@
                 <!--/////////////////////////////////////////////-->
 
                 <ul class="nav navbar-nav">
-                    <li class="dropdown" ng-repeat="item in items">
+                    <li class="dropdown" ng-repeat="item in TOOL.menu.items">
 
                         <!--하위 메뉴가 없는 경우-->
                         <a  ng-show="item.menus === undefined" ng-click="onClick(item)"

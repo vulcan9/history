@@ -43,7 +43,7 @@ define(
                 // 다른 디렉티브들과 통신하기 위한 역할을 하는 controller명칭을 정의.
                 // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
                 controller: function( $scope, VersionService ) {
-                    $scope.version = VersionService;
+                    $scope.TOOL.version = VersionService;
                 }
 
             };

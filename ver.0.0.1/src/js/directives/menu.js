@@ -44,7 +44,9 @@ define(
                 // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
                 controller: function( $scope, $element, $attrs, $transclude, $rootScope, $route, $routeParams, $location ) {
 
-                    $scope.items = [
+                    $scope.TOOL.menu = {};
+                    $scope.TOOL.menu.config = {};
+                    $scope.TOOL.menu.items = [
                         {
                             label: 'Home', 
                             link:'http://localhost/history/ver.0.0.1/src', 
