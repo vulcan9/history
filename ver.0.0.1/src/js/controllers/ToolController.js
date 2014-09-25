@@ -84,7 +84,7 @@ define(
                     DATA.project.data = data;
 
                     //alert ('# 로드 완료 : ', projectID);
-                    // ProgressService.complete();
+                    ProgressService.complete();
                 },
 
                 function error(){
@@ -105,6 +105,18 @@ define(
 
             // 데이터 로드 서비스 호출 : Document content - 문서 내용
             
+
+
+
+
+
+
+
+
+
+
+
+
         }
 
         // 리턴

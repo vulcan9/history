@@ -15,145 +15,55 @@ define(
     ],
     function(utils) {
 
+        // ui 관련 데이터
+        var _data;
+
         // 모듈에 정의
         var _module = angular.module('uiModule', ['ngCollection']);
-        _module.service('UIService', _service);
+        _module.factory('$uiControl', _uiControl);
 
         // 등록
-        // _module.directive( 'uid', uid );
+        _module.directive( 'uid', uid );
         _module.directive( 'uiCanvas', uiCanvas );
-        // _module.directive( 'uiController', uiController );
+        _module.directive( 'uiController', uiController );
 
-        // _module.directive( 'uiSelected', uiSelected );
-        // _module.directive( 'uiDraggable', uiDraggable );
-        // _module.directive( 'uiResizable', uiResizable );
-        // _module.directive( 'uiRotatable', uiResizable );
+        _module.directive( 'uiSelected', uiSelected );
+        _module.directive( 'uiDraggable', uiDraggable );
+        _module.directive( 'uiResizable', uiResizable );
+        _module.directive( 'uiRotatable', uiResizable );
   
-
-
-        
-
-        out('TODO : // 아직 구현중인 기능임 (uiModule 모듈)');
-
-
-
-
-
-            ////////////////////////////////////////
-            // 첫페이지 설정
-            ////////////////////////////////////////
-            
-
-            //--------------------------
-            // paper 마다 uiController가 생성되므로 현재 작업중인 uiController를 지정해 주어야 함
-            /*
-            // alert('현재 인스턴스마다 호출됨');
-            setTimeout(function(){
-                    
-                    var $element = angular.element('.paper')[0];
-                    out('TODO : // currentPaper 값이 변경되는 지점을 편집 모드로 전환하는 곳으로 옮긴다.');
-                    out('$element',$element);
-                    _data.current = $element;
-                    $scope.$apply();
-
-
-                    setTimeout(function(){
-                    
-                            var $element = angular.element('.paper')[1];
-                            out('TODO : // currentPaper 값이 변경되는 지점을 편집 모드로 전환하는 곳으로 옮긴다.');
-                            out('$element',$element);
-                            _data.currentPaper = $element;
-                            $scope.$apply();
-
-                    }, 1000);
-
-            }, 1000);
-            */
-            //--------------------------
-
         // 리턴
         return _module;
 
         ////////////////////////////////////////
-        // UI 컨트롤 데이터 서비스
+        // UI 컨트롤 데이터
         ////////////////////////////////////////
-        
-        function _service($collection){
 
-            //---------------------
-            // UIData Instance Function
-            //---------------------
-            
-            function UIData(){
-                this.initialize();
+        function _uiControl($window){
+
+            function uiControl(){
+
             }
 
-            UIData.prototype = {
-
-                // 데이터
-                _data: null,
-                getData: function (){
-                    return this._data;
-                },
-                initialize: function(){
-
-                    if(this._data) {
-                        // 초기화 시킨다.
-                        this._data.selectedItems._reset();
-                        return;
-                    }
-
-                    //var $collection = $injector.get('$collection');
-                    this._data = {
-                       selectedItems: $collection.getInstance()
-                    };
-                }
-
-                // end
-            };
-
-            //---------------------
-            // Service
-            //---------------------
-            
-            var _DATA;
-
-            var UIService = {
-
-                // 현재 활성화된 ui 데이터
-                current : function(data){
-                    //GET
-                    if(data === undefined) return _DATA;
-                    //SET
-                    _DATA = data;
-                },
-                newDataInstance: function(){
-                    return new UIData();
-                }
-
-                //end
-            };
-
-            return UIService;
+            return uiControl;
         }
-        
+
         ////////////////////////////////////////
         // UI 컨트롤을 위한 기능 구현
         ////////////////////////////////////////
 
-         function uiCanvas(UIService, $document) {
-
+         function uiCanvas($window, $document) {
             return {
-
                 restrict: 'EA',
                 scope: false,
+
                 
-                controller: function ($scope, $element, $attrs){
+                link: function( scope, el, attrs, controller, transclude ) {
 
-                    var uiData = UIService.newDataInstance();
-                    // out('link', $scope);
-
-                    /*
+                },
+                
+                controller: function ($scope, $element, $attrs, $collection){
+                    
                     // 초기화 체크
                     if(!$scope.TOOL.ui) _initialize($scope, $collection);
 
@@ -170,7 +80,7 @@ define(
                         _data.selectedItems._reset();
 
                     });
-                    */
+                    
                 }
                
             };
@@ -191,6 +101,32 @@ define(
 
             $scope.TOOL.ui = _data;
 
+            //--------------------------
+            // paper 마다 uiController가 생성되므로 현재 작업중인 uiController를 지정해 주어야 함
+
+            alert('현재 인스턴스마다 호출됨');
+            setTimeout(function(){
+                    
+                    var $element = angular.element('.paper')[0];
+                    out('TODO : // currentPaper 값이 변경되는 지점을 편집 모드로 전환하는 곳으로 옮긴다.');
+                    out('$element',$element);
+                    _data.currentPaper = $element;
+                    $scope.$apply();
+
+
+                    setTimeout(function(){
+                    
+                            var $element = angular.element('.paper')[1];
+                            out('TODO : // currentPaper 값이 변경되는 지점을 편집 모드로 전환하는 곳으로 옮긴다.');
+                            out('$element',$element);
+                            _data.currentPaper = $element;
+                            $scope.$apply();
+
+                    }, 1000);
+
+            }, 1000);
+
+            //--------------------------
         }
 
         ////////////////////////////////////////
