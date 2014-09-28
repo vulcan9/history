@@ -1,0 +1,66 @@
+﻿{
+    "version": "0.0.1",
+    "description": "생성된 프리젠테이션 리스트 (기존 문서로 여러개의 프레젠테이션을 구성할 수 있다.)",
+    
+    "items": [
+
+        {
+            "label": "Home", 
+            "link":"http://localhost/history/ver.0.0.1/src", 
+            "command":""
+        },
+
+        {
+            "label": "File", 
+            "link":"", "command":"file",
+            "menus":[
+                {"label": "New", "link":"", "command":"new"},
+                {"label": "Open", "link":"", "command":"open"},
+                {"label": "Save", "link":"", "command":"save"},
+                {"label": "Save As", "link":"", "command":"saveAs"},
+                {"label": "Close", "link":"", "command":"close"},
+                {"label": "Exit", "link":"", "command":"exit"}
+            ]
+        },
+        {
+            "label": "Edit", 
+            "link":"", "command":"edit",
+            "menus":[
+                {"label": "undo", "link":"", "command":"undo"},
+                {"label": "redo", "link":"", "command":"redo"},
+                {"label": "copy", "link":"", "command":"copy"},
+                {"label": "cut", "link":"", "command":"cut"},
+                {"label": "paste", "link":"", "command":"paste"},
+
+                {"class":"divider"},
+
+                {"class":"dropdown-header", "label": "Document"},
+                {"label": "(임시) addDocument", "link":"", "command":"addDocument"},
+                {"label": "(임시) removeDocument", "link":"", "command":"removeDocument"}
+
+            ]
+        },
+        {
+            "label": "View", 
+            "link":"", "command":"view",
+            "menus":[
+                {"label": "List", "link":"", "command":"list"},
+                {"label": "Property", "link":"", "command":"prooperty"},
+                {"label": "Timeline", "link":"", "command":"timeline"},
+                {"label": "Activity", "link":"", "command":"activity"},
+                {"label": "Item", "link":"", "command":"item"},
+                {"label": "Schedule", "link":"", "command":"schedule"}
+            ]
+        },
+
+
+        
+        {
+            "label": "admin url 테스트", 
+            "link":"#admin", 
+            "command":""
+        }
+
+    ]
+
+}

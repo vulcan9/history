@@ -31,7 +31,6 @@ define(
             // scope 데이터 설정
             //-----------------------
 
-            $scope._name = 'LoginController';
             
         }
 

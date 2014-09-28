@@ -53,17 +53,19 @@ var _PATH_ROOT = '/history/ver.0.0.1/src/';
 var _PATH_ROOT_FOLDER = '';
 
 var _PATH = {
+    ROOT:                _PATH_ROOT_FOLDER,
     CSS:                   _PATH_ROOT_FOLDER + 'css/',
     TEMPLATE:         _PATH_ROOT_FOLDER + 'templates/',
     LIB:                    _PATH_ROOT_FOLDER + 'libs/',
-    DATA:                 _PATH_ROOT_FOLDER + 'data/',
+    DATA:                 _PATH_ROOT_FOLDER + 'js/data/',
 
     JS:                     _PATH_ROOT_FOLDER + 'js/',
     MODULE:            _PATH_ROOT_FOLDER + 'js/modules/',
     CONTROLLER:    _PATH_ROOT_FOLDER + 'js/controllers/',
     DIRECTIVE:         _PATH_ROOT_FOLDER + 'js/directives/',
     SERVICE:           _PATH_ROOT_FOLDER + 'js/services/',
-    FILTER:               _PATH_ROOT_FOLDER + 'js/filters/'
+    FILTER:               _PATH_ROOT_FOLDER + 'js/filters/',
+    COMMAND:         _PATH_ROOT_FOLDER + 'js/command/'
 };
 
 ////////////////////////////////////////////////////////////////////////////////

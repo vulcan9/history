@@ -31,10 +31,6 @@ define(
             // scope 데이터 설정
             //-----------------------
 
-            $scope._name = 'SampleController';
-
-
-
             $rootScope.$route = $route;
             $rootScope.$location = $location;
             $rootScope.$routeParams = $routeParams;

@@ -37,10 +37,17 @@ define(
 
                 terminal: false,
                 
-                link: function( scope, el, attrs ) {
-                    //el.text( "screen" );
-                }
+                controller: function( $scope, $element, $attrs, $transclude, $rootScope, $route, $routeParams, $location ) {
+                    out('TODO : 로드된 데이터에 따라 screen에 각 document를 생성한다. (ui-canvas, Impress 적용)');
 
+                    // $scope.project = Project.current.getProject());
+
+                    $scope.$watch('project', function(newValue, oldValue) {
+                        if (newValue === oldValue) { return; }
+                        out('#project changed : ', $scope.project);
+                    }, true);
+                    
+                }
             };
 
         }

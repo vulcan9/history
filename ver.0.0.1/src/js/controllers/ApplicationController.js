@@ -34,9 +34,9 @@ define(
             //-----------------------
 
             $scope.$emit( 'updateCSS', [ 
-                _PATH.CSS + 'basic.css' ,
-                _PATH.CSS + 'application.css' 
-                ] );
+                _PATH.CSS + 'basic.css',
+                _PATH.CSS + 'application.css'
+            ] );
 
             //-----------------------
             // log 함수 수정
@@ -50,10 +50,6 @@ define(
             // scope 데이터 설정
             //-----------------------
 
-            $scope._name = 'ApplicationController';
-
-            // 전역 속성
-            
             out( '# ApplicationController 로드됨' );
 
         }

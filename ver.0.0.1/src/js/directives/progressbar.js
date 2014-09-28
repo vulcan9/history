@@ -33,18 +33,16 @@ define(
                 transclude: true,
                 // scope: false,
 
-                controller : function( $scope, ProgressService) {
+                controller : function( $scope, Project) {
                     
                     //$scope.progress = ProgressService;
-                    
+                    $scope.progress = Project.current.TOOL.progress;
+
                     //*
                     
                     // watch를 이용한 업데이트 방법
-                    $scope.$watch('TOOL.progress', function(newValue, oldValue) {
-                        
+                    $scope.$watch('progress', function(newValue, oldValue) {
                         // if (newValue === oldValue) { return; }
-                        onUpdate();
-
                     }, true);
                     
                     /*/
@@ -56,17 +54,6 @@ define(
                     }); 
 
                     //*/
-                   
-                    function onUpdate(){
-                        /*
-                        $scope.progress = {
-                            value : ProgressService.value,
-                            isPercentage : ProgressService.isPercentage
-                        };
-                        */
-                       $scope.TOOL.progress = ProgressService;
-                    }
-
                 }
             };
 

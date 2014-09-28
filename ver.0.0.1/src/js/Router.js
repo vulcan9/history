@@ -232,15 +232,27 @@ define( [], function() {
 				,'/tool/': {
 					templateUrl: _PATH.TEMPLATE + 'tool.html',
 					dependencies: [
+
+						// CONTROLLER
 						_PATH.CONTROLLER + 'ToolController',
 
+						// DIRECTIVE
 						_PATH.DIRECTIVE + 'menu',
 						_PATH.DIRECTIVE + 'progressbar',
 						_PATH.DIRECTIVE + 'explorer',
 						_PATH.DIRECTIVE + 'screen',
 						_PATH.DIRECTIVE + 'timeline',
 						_PATH.DIRECTIVE + 'property',
-						_PATH.DIRECTIVE + 'status'
+						_PATH.DIRECTIVE + 'status',
+
+		        				// FACTORY
+		        				_PATH.DATA + 'Project',
+						
+						//SERVICE
+						
+						// COMMAND
+						_PATH.COMMAND + 'Command',
+						_PATH.COMMAND + 'OpenCommand'
 					]
 				}
 

@@ -22,7 +22,7 @@
         "version": "0.0.1",
         "description": "문서간 구조(depth)를 정의, 문서 id와 1:1 매칭 (key-value)",
 
-        "documents": {
+        "items": {
 
             "document-uid_01": {
                 "parentUID": "부모 document의 아이디",

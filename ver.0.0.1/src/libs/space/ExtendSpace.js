@@ -25,7 +25,7 @@ if (!window.requestAnimationFrame) {
     //
 	// Version
 	//
-	// denpendancy : Space.js, ScaleMode.js, (pep.js)
+	// denpendancy : Space.js, ScaleMode.js, pep.js
     //
     ////////////////////////////////////////////////////////
 

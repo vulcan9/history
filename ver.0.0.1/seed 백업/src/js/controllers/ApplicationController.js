@@ -47,8 +47,6 @@ define(
             // scope 데이터 설정
             //-----------------------
 
-            $scope._name = 'ApplicationController';
-
 
 out('TODO : Model 정의할것!');
 

@@ -16,54 +16,42 @@ define(
     function( application ) {
 
         // 등록
-        application.service( 'DataService', _service );
+        application.service( 'Command', _service );
 
         // 선언
-        function _service( $http, $timeout ) {
+        function _service() {
 
-            out( 'Service 등록 : DataService' );
+            out( 'Command 등록 : Command' );
 
             /////////////////////////////////////
             // 서비스 객체 싱클톤
             /////////////////////////////////////
             
-            // 데이터 로드 서비스 호출
-            // https://code.angularjs.org/1.2.23/docs/api/ng/service/$http
-            
-            function singleton( config, successCallback, errorCallback ) {
+            function Command() {
+                //
+            }
 
-                out( '# 데이터 로드 : [', config.method, '] ', config.url );
-                if(!config.url || !config.method){
-
-                    $timeout(function(){
-                        error('서버 요청을 할 수 없습니다.');
-                    }, 1000);
-                    return;
-                }
+            Command.prototype = {
                 
-                /*
-                // method : 'GET', 'POST'...
-                // url : 서버 요청 주소
-                config = {
-                    method: method,
-                    url: url
-                    ......
-                }
-                */
+                execute : function ( config, successCallback, errorCallback ) {
 
-                $http( config )
-                    .success( success )
-                    .error( error );
+                    out( '# OpenCommand : [', config.method, '] ', config.url );
+
+                    this._config = config;
+                    this._successCallback = successCallback;
+                    this._errorCallback = errorCallback;
+                    
+                    // Override
+                    
+                },
 
                 //-----------------------------------
                 // success callback
                 //-----------------------------------
 
-                function success( data, status, headers, config ) {
-                    out( 'success : [', status, '] ', data );
-                    //out( 'status : ', status );
-                    //out( 'headers : ', headers() );
-                    //out( 'config : ', config );
+                _success : function ( data ) {
+
+                    out( 'success : ', data );
 
                     var isPrevented = false;
                     if ( successCallback ) {
@@ -76,17 +64,16 @@ define(
                     if ( isPrevented ) return;
 
                     // default Function 실행
-                }
+                },
 
                 //-----------------------------------
                 // error callback
                 //-----------------------------------
 
-                function error( data, status, headers, config ) {
+                _error : function ( data ) {
+                    
                     //out( 'error : ', data );
-                    out( 'error : [', status, '] ', data );
-                    //out( 'headers : ', headers() );
-                    //out( 'config : ', config );
+                    out( 'error : ', data );
 
                     var isPrevented = false;
                     if ( errorCallback ) {
@@ -102,11 +89,10 @@ define(
                     //alert( 'TODO : Json 로드 에러' );
                 }
 
-                // singleton End
             };
 
             // 서비스 객체 리턴
-            return singleton;
+            return Command;
         }
 
         // 리턴

@@ -4,16 +4,16 @@
     <div class="progress">
 
         <!--% 수치로 나타낼 경우-->
-        <div ng-show="TOOL.progress.isPercentage"
+        <div ng-show="progress.isPercentage"
             class="progress-bar"
-            role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{TOOL.progress.value}}" style="width: {{TOOL.progress.value}}%;">
-            <span ng-show="TOOL.progress.value>0" class="progress-text">{{TOOL.progress.value}}%</span>
+            role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{progress.value}}" style="width: {{progress.value}}%;">
+            <span ng-show="progress.value>0" class="progress-text">{{progress.value}}%</span>
         </div>
 
         <!--% 수치가 없는 경우-->
-        <div ng-hide="TOOL.progress.isPercentage"
+        <div ng-hide="progress.isPercentage"
             class="progress-bar progress-bar-striped active"
-            role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{TOOL.progress.value}}" style="width: {{TOOL.progress.value}}%;">
+            role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{progress.value}}" style="width: {{progress.value}}%;">
             <span class="progress-text">wait...</span>
         </div>
         
