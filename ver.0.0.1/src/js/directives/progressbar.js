@@ -33,10 +33,9 @@ define(
                 transclude: true,
                 // scope: false,
 
-                controller : function( $scope, Project) {
+                controller : function( $scope, ProgressService) {
                     
-                    //$scope.progress = ProgressService;
-                    $scope.progress = Project.current.TOOL.progress;
+                    $scope.progress = ProgressService;
 
                     //*
                     

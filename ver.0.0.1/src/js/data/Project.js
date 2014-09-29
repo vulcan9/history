@@ -25,25 +25,7 @@ define(
         }
 
         function _factory(VersionService, ProgressService, $rootScope, $timeout){
-/*
-            // 데이터 구조 생성
-            
-            var DATA = {
 
-                // project
-                project: new Project(),
-
-                // presentation
-                presentation: null,
-
-                // documents
-                documents: {
-                    info: null,
-                    contents: null
-                }
-
-            };
-*/
             //---------------------
             // Project Instance Function
             //---------------------
@@ -61,8 +43,14 @@ define(
 
                 initialize: function(){
                     this.TOOL = {
-                        progress : ProgressService,
-                        version : VersionService,
+
+                        // progress : ProgressService,
+                        // version : VersionService,
+
+                        // 문서별 undo/redo 데이터
+                        // history: {},
+                        
+                        // 메뉴 구성 정보
                         menu : {}
                     };
                 },
@@ -112,6 +100,11 @@ define(
 
                 },
 
+                // uid : document uid
+                modifyDocument: function(uid){
+
+                },
+
                 //---------------------
                 // Element
                 //---------------------
@@ -122,6 +115,11 @@ define(
 
                 // uid : element uid
                 removeElement: function(uid){
+
+                },
+
+                // uid : element uid
+                modifyElement: function(uid){
 
                 },
 

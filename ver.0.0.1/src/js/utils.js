@@ -20,7 +20,11 @@ define(
                 var num = parseFloat(numeric, 10);
                 return isNaN(num) ? (fallback || 0) : num;
             }
-
+            
+            ,toArray: function (a) {
+                return [].slice.call(a);
+            }
+            
             ////////////////////////////////////
             // UUID 생성기
             ////////////////////////////////////

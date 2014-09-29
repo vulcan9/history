@@ -3,7 +3,7 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : 프로젝트 불러오기
+    * Description : 프로젝트 종료 후 닫기
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
@@ -16,12 +16,12 @@ define(
     function( application ) {
 
         // 등록
-        application.service( 'OpenCommand', _service );
+        application.service( 'ExitCommand', _service );
 
         // 선언
         function _service(Command) {
 
-            out( 'Command 등록 : OpenCommand' );
+            out( 'Command 등록 : ExitCommand' );
 
             /////////////////////////////////////
             // Prototype 상속
@@ -30,21 +30,21 @@ define(
             var _superClass = Command;
             var _super = _superClass.prototype;
 
-            function OpenCommand() {
+            function ExitCommand() {
 
                 _superClass.apply(this, arguments);
-                out( '# OpenCommand : ', this);
+                out( '# ExitCommand : ', this);
 
             }
 
             // Prototype 상속
-            angular.extend( OpenCommand.prototype,  Command.prototype, {
+            angular.extend( ExitCommand.prototype,  Command.prototype, {
                 execute : function ( config, successCallback, errorCallback ) {
 
                     _super.execute.apply(this, arguments);
 
                     // Override
-                    out( '# OpenCommand Execute' );
+                    out( '# ExitCommand Execute' );
 
                 }
             });
@@ -56,7 +56,7 @@ define(
 
 
             // 서비스 객체 리턴
-            return OpenCommand;
+            return ExitCommand;
         }
 
         // 리턴

@@ -51,7 +51,7 @@ define(
             // Controller
             ////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, $rootScope, OpenCommand ) {
+            function Controller( $scope, $element, $attrs, $rootScope, $location, ExecuteService ) {
                 
                 // ToolController 에서 데이터 로드 후 지정해줌
                 // $scope.menu = Project.current.TOOL.menu;
@@ -75,73 +75,9 @@ define(
                     }
 
                     var command = item.command;
-                    execute(command);
+                    ExecuteService.execute(command);
                 };
 
-
-                ////////////////////////////////////////
-                //
-                // 메뉴 Command 실행
-                // 
-                ////////////////////////////////////////
-                
-                function execute(command){
-
-                    var func = 'command_' + command;
-                    out('실행 : ', command, ' --> ', func);
-                    
-                    try{
-                        //$scope.$eval(func).apply();
-                        var command = eval(func).apply();
-
-                        out('TODO : // undo, redo를 위해 command 객체 저장 : ', command);
-
-                    }catch(err){
-                        out('TODO //실행 에러 : ', func);
-                    }
-                }
-
-                ////////////////////////////////////////
-                // File 메뉴
-                ////////////////////////////////////////
-                
-                function command_new(){
-                    out('TODO : # command_new 실행');
-                }
-
-                function command_open(){
-                    var command = new OpenCommand();
-                    command.execute()
-                    out('TODO : # command_open 실행' );
-
-                    return command;
-                }
-
-                function command_save(){
-                    out('TODO : # command_save 실행');
-                }
-
-                function command_saveAs(){
-                    out('TODO : # command_saveAs 실행');
-                }
-
-                function command_close(){
-                    out('TODO : # command_close 실행');
-                }
-
-                function command_exit(){
-                    out('TODO : # command_exit 실행');
-                }
-
-                ////////////////////////////////////////
-                // Edit 메뉴
-                ////////////////////////////////////////
-                
-
-                ////////////////////////////////////////
-                // View 메뉴
-                ////////////////////////////////////////
-                
             }
 
         }

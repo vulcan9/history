@@ -3,7 +3,7 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : 데이터 로드를 위한 서비스 호출 유틸
+    * Description : Command 계열 서비스의 부모 클래스
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
@@ -24,7 +24,7 @@ define(
             out( 'Command 등록 : Command' );
 
             /////////////////////////////////////
-            // 서비스 객체 싱클톤
+            // 서비스 객체
             /////////////////////////////////////
             
             function Command() {
@@ -35,13 +35,13 @@ define(
                 
                 execute : function ( config, successCallback, errorCallback ) {
 
-                    out( '# OpenCommand : [', config.method, '] ', config.url );
+                    out( '# Command Execute : ', this );
 
                     this._config = config;
                     this._successCallback = successCallback;
                     this._errorCallback = errorCallback;
                     
-                    // Override
+                    // Override 하여 사용할것
                     
                 },
 
@@ -86,7 +86,6 @@ define(
                     if ( isPrevented ) return;
 
                     // default Function 실행
-                    //alert( 'TODO : Json 로드 에러' );
                 }
 
             };

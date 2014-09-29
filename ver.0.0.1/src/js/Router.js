@@ -249,13 +249,19 @@ define( [], function() {
 		        				_PATH.DATA + 'Project',
 						
 						//SERVICE
+						_PATH.SERVICE + 'ExecuteService',
 						
 						// COMMAND
 						_PATH.COMMAND + 'Command',
-						_PATH.COMMAND + 'OpenCommand'
+						_PATH.COMMAND + 'NewCommand',
+						_PATH.COMMAND + 'OpenCommand',
+						_PATH.COMMAND + 'SaveCommand',
+						_PATH.COMMAND + 'SaveAsCommand',
+						_PATH.COMMAND + 'CloseCommand',
+						_PATH.COMMAND + 'ExitCommand'
 					]
 				}
-
+				
 				/*
 				,'/tool/:command': {
 					templateUrl: _PATH.TEMPLATE + 'tool.html',
