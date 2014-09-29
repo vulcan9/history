@@ -11,9 +11,9 @@
 
 define(
     [
-        _PATH.JS + 'utils'
+        'Utils'
     ],
-    function(utils) {
+    function(Utils) {
 
         // 모듈에 정의
         var _module = angular.module('alignModule', []);
@@ -73,11 +73,11 @@ define(
                     H = $document.height();
                 }else{
                     var parent = el.parent();
-                    H = parent.height() + (utils.toNumber(parent.css('padding-top')) + utils.toNumber(parent.css('padding-bottom')));
+                    H = parent.height() + (Utils.toNumber(parent.css('padding-top')) + Utils.toNumber(parent.css('padding-bottom')));
                 }
                 
-                var h = el.height() + utils.toNumber(el.css('margin-top')) + utils.toNumber(el.css('margin-bottom'));
-                var offset = utils.toNumber(attrs.verticalCenter);
+                var h = el.height() + Utils.toNumber(el.css('margin-top')) + Utils.toNumber(el.css('margin-bottom'));
+                var offset = Utils.toNumber(attrs.verticalCenter);
 
                 var pos = (H-h)/2 + offset;
                 el.css('top', pos);
@@ -111,11 +111,11 @@ define(
                     W = $document.width();
                 }else{
                     var parent = el.parent();
-                    W = parent.width() + (utils.toNumber(parent.css('padding-left')) + utils.toNumber(parent.css('padding-right')));
+                    W = parent.width() + (Utils.toNumber(parent.css('padding-left')) + Utils.toNumber(parent.css('padding-right')));
                 }
                 
-                var w = el.width() + utils.toNumber(el.css('margin-left')) + utils.toNumber(el.css('margin-right'));
-                var offset = utils.toNumber(attrs.horizontalCenter);
+                var w = el.width() + Utils.toNumber(el.css('margin-left')) + Utils.toNumber(el.css('margin-right'));
+                var offset = Utils.toNumber(attrs.horizontalCenter);
 
                 var pos = (W-w)/2 + offset;
                 el.css('left', pos);

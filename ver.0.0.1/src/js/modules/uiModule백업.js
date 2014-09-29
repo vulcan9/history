@@ -11,9 +11,9 @@
 
 define(
     [
-        _PATH.JS + 'utils'
+        'Utils'
     ],
-    function(utils) {
+    function(Utils) {
 
         // ui 관련 데이터
         var _data;

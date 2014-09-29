@@ -11,9 +11,9 @@
 
 define(
     [
-        _PATH.JS + 'utils'
+        
     ],
-    function(utils) {
+    function() {
 
         // 모듈에 정의
         var _module = angular.module('uiModule', ['ngCollection']);

@@ -109,7 +109,9 @@ require.config( {
         'uiModule':             _PATH.MODULE + 'uiModule',
 
         'Application':          _PATH.JS + 'Application',
-        'Router':                 _PATH.JS + 'Router'
+        'Router':                 _PATH.JS + 'Router',
+
+        'Utils':                 _PATH.JS + 'Utils'
     },
 
     /*

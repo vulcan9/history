@@ -11,9 +11,9 @@
 
 define(
     [
-        'Application', _PATH.JS + 'utils'
+        'Application', 'Utils'
     ],
-    function( application, utils ) {
+    function( application, Utils ) {
 
         // 등록
         application.service( 'ExecuteService', _service );
@@ -41,7 +41,7 @@ define(
                 ////////////////////////////////////////
                 
                  execute : function (){
-                    var args = utils.toArray(arguments);
+                    var args = Utils.toArray(arguments);
                     var commandName = args.shift();
                     var func = 'command_' + commandName;
 

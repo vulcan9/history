@@ -11,9 +11,9 @@
 
 define(
     [
-        'Application'
+        'Application', 'Utils'
     ],
-    function(application) {
+    function(application, Utils) {
 
         // 등록
         application.factory( 'Project', _factory );
@@ -21,7 +21,7 @@ define(
         function Project(data){
             
             this.initialize();
-            this._setProject(data);
+            this.setProject(data);
         }
 
         function _factory(VersionService, ProgressService, $rootScope, $timeout){
@@ -32,17 +32,20 @@ define(
             
             // 현재 사용중인 데이터 Instance
             Project.current = null;
-
+            
             Project.prototype = {
 
                 // tool 동작에 필요한 데이터 기록
-                TOOL: null,
+                _TOOL: null,
 
                 // 편집 결과를 저장한 데이이터
-                PROJECT: null,
+                _PROJECT: null,
+
 
                 initialize: function(){
-                    this.TOOL = {
+                    
+                    // 읽기 전용 TOOL 속성 생성
+                    this._TOOL = Utils.defineProperty ( this, 'TOOL', 'readOnly', {
 
                         // progress : ProgressService,
                         // version : VersionService,
@@ -52,19 +55,16 @@ define(
                         
                         // 메뉴 구성 정보
                         menu : {}
-                    };
+                    });
+                    
+                    // 읽기 전용 PROJECT 속성 생성
+                    this._PROJECT = Utils.defineProperty ( this, 'PROJECT', 'readOnly');
+
+                    alert('여기까지');
                 },
 
                 setTool: function(config){
-                    angular.extend(this.TOOL, config);
-                    /*
-                    $timeout(function() {
-                        out('callLater', $rootScope);
-                        $rootScope.$apply(function(){
-                            //$scope.menu = $rootScope.DATA.TOOL.menu;
-                        });
-                    }, 0);
-                    */
+                    angular.extend(this._TOOL, config);
                 },
 
                 //---------------------
@@ -78,9 +78,15 @@ define(
                 getProject : function(){
                     return this.PROJECT.items;
                 },
-                _setProject: function(project){
-                    this.PROJECT = project;
+                setProject: function(project){
+                    this._PROJECT = project;
                 },
+
+                //////////////////////////////////////////////////////////////////////////
+                //
+                // 데이터 조작 API
+                // 
+                //////////////////////////////////////////////////////////////////////////
 
                 //---------------------
                 // Document
@@ -123,8 +129,22 @@ define(
 
                 },
 
+                //////////////////////////////////////////////////////////////////////////
+                //
+                // Command 관련 API
+                // 
+                //////////////////////////////////////////////////////////////////////////
+                
+                // uid : element uid
+                newProject: function(uid){
 
+                },
+                openProject: function(uid){
 
+                },
+                closeProject: function(uid){
+
+                },
 
                 // end
             };

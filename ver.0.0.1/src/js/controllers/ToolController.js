@@ -64,7 +64,7 @@ define(
 
                 function success(data){
 
-                    DATA._setProject(data);
+                    DATA.setProject(data);
 
                     out ('# Project 로드 완료 : ', data);
                     // ProgressService.complete();

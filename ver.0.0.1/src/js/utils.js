@@ -39,7 +39,36 @@ define(
                 return uid;
             }
 
+            ////////////////////////////////////
+            // Getter, Setter 메서드로 속성 정의
+            ////////////////////////////////////
 
+            // name 이름의 속성을 정의한다. (get, set)
+            // 이때 _name 속성이 자동으로 만들어 진다.
+            
+            /*
+            this._num = utils.defineProperty ( this, 'num', 'readOnly', 10);
+            this._num == 10; //true
+            this.num == 10; //true
+            this.num = 10 ; // error (readOnly)
+            */
+            
+            ,defineProperty : function (context, name, readOnly, defaultValue) {
+                Object.defineProperty( context, name, {
+                    get: function() {
+                        return context['_' + name];
+                    },
+                    set: function(value) {
+                        if(readOnly === 'readOnly'){
+                            throw Error('Project [ ' + name + ' ]은 읽기 전용 속성입니다.');
+                            return;
+                        }
+                        context['_' + name] = value;
+                    }
+                });
+
+                return defaultValue;
+            }
 
 
 
