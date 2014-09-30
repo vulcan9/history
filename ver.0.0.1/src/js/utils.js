@@ -81,40 +81,49 @@ define(
                 var defaultValue;
 
                 // readOnly, defaultValue
-                if(config === undefined || typeof config === 'string'){
+                if(config === undefined || typeof config === 'string')
+                {
                     config = {
                         get: getter,
                         set: setter
                     };
-                    Object.defineProperty( context, name, config);
-                    return defaultValue;
+                }
+                else
+                {
+                    // writeOnly 체크
+                    if(typeof config.get !== 'function'){
+                        writeOnly = (config.get === undefined) ? false : !Boolean(config.get);
+                        config.get = getter;
+                    }
+
+                    // readOnly 체크
+                    if(typeof config.set !== 'function'){
+                        readOnly = (config.set === undefined) ? false : !Boolean(config.set);
+                        config.set = setter;
+                    }
+
+                    // 초기값 설정
+                    if(typeof config.value === 'function'){
+                        defaultValue = config.value.apply(context);
+                    }else{
+                        defaultValue = config.value;
+                    }
+
+                    delete config.value;
                 }
 
-                // writeOnly 체크
-                if(typeof config.get !== 'function'){
-                    writeOnly = (config.get === undefined) ? false : !Boolean(config.get);
-                    config.get = getter;
-                }
-
-                // readOnly 체크
-                if(typeof config.set !== 'function'){
-                    readOnly = (config.set === undefined) ? false : !Boolean(config.set);
-                    config.set = setter;
-                }
-
-                // 초기값 설정
-                if(typeof config.value === 'function'){
-                    defaultValue = config.value.apply(context);
-                }else{
-                    defaultValue = config.value;
-                }
-
-                delete config.value;
+                // 재정의 가능한 속성으로 설정
+                config.configurable = true;
+                // 속성 생성
                 Object.defineProperty( context, name, config);
 
                 // 기본 설정값 리턴
                 return defaultValue;
 
+                //-----------------
+                // getter, setter
+                //-----------------
+                
                 function getter() {
                     if(writeOnly){
                         throw new Error('[ ' + name + ' ]은 쓰기 전용 속성입니다.');

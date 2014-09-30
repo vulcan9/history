@@ -24,7 +24,7 @@ define(
             out( 'Command 등록 : SaveAsCommand' );
 
             /////////////////////////////////////
-            // Prototype 상속
+            // 생성자
             /////////////////////////////////////
 
             var _superClass = Command;
@@ -37,8 +37,11 @@ define(
 
             }
 
+            /////////////////////////////////////
             // Prototype 상속
-            angular.extend( SaveAsCommand.prototype,  Command.prototype, {
+            /////////////////////////////////////
+
+            angular.extend( SaveAsCommand.prototype,  _super, {
                 execute : function ( config, successCallback, errorCallback ) {
 
                     _super.execute.apply(this, arguments);

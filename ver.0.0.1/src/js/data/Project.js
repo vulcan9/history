@@ -20,32 +20,39 @@ define(
         
         // 현재 사용중인 데이터 Instance
         Project.current = null;
-        
-        function Project(){
-            this.initialize();
-        }
+
+        var _superClass;
+        var _super;
 
         // 등록
         application.factory( 'Project', _factory );
 
-        function _factory(VersionService, ProgressService, $rootScope, $timeout){
+        /////////////////////////////////////
+        // Prototype 상속
+        /////////////////////////////////////
+
+        function Project (){
+            _superClass.apply(this, arguments);
+        }
+
+        function _factory( Data ){
+
+            _superClass = Data;
+            _super = _superClass.prototype;
 
             //------------------------------------------
             // angular의 Injection 활용을 위해 이곳에서 Prototype을 정의한다.
             //------------------------------------------
             
-            Project.prototype = {
-
-                // tool 동작에 필요한 데이터 기록 (자동 생성)
-                // __TOOL: null,
-
-                // 편집 결과를 저장한 데이이터 (자동 생성)
-                // __PROJECT: null,
+            // Prototype 상속
+            angular.extend( Project.prototype,  _super, {
 
                 initialize: function(){
                     
+                    _super.initialize.apply(this, arguments);
+
                     //---------------------
-                    // PROJECT 속성 
+                    // PROJECT 속성 : 편집 결과를 저장한 데이이터 (자동 생성)
                     //---------------------
                     
                     // 읽기 전용 PROJECT 속성 생성
@@ -57,76 +64,9 @@ define(
                         }
                     );
 
-
-
+                    // end initialize
                 },
 
-                /*
-                name에 해당하는 속성 NAME, __NAME이 생성됨
-                getter, setter 메서드인 name 이 생성됨
-                 - 메서드 : name()
-                 - 속성 : NAME
-                
-                // set
-                Project.current.tool ('MENU', data);
-                // get
-                $scope.menu = Project.current.tool('MENU');
-                // 하위 속성 접근
-                Project.current.tool('menu')('uid')
-                */
-                
-                __createProxy : function  (dataPath, name, initValue){
-                    
-                    // Proxy 속성 설정
-                    var property = name.toUpperCase();
-                    var prop = '__' + property;
-
-                    // path에 self가 있을 수있으므로 미리 정의해 놓는다.
-                    var self = this;
-                    // this는 상황에 따라 context가 바뀔수 있으므로 self로 고정시켜 준다.
-                    dataPath = dataPath.replace(/\bthis\./, 'self\.');
-                    var owner = eval(dataPath);
-
-                    Utils.defineProperty ( owner, property, 'readOnly' );
-                    owner[prop] = initValue;
-
-                    // Proxy 메서드 설정
-                    var pathString = dataPath + '.' + name;
-
-                    function proxy (key, value){
-                        if(arguments.length < 1){
-                            throw new Error('전달된 인자가 없습니다.');
-                            return;
-                        }
-
-                        // out('pathString : ', pathString);
-
-                        // GETTER
-                        var data = eval(pathString);
-                        if(value === undefined){
-                            return data[key];
-                        }
-                        
-                        var property = key.toUpperCase();
-                        var prop = '__' + property;
-                        
-                        // 미리 예상된 변수만 허용하기 위해 체크함
-                        if(prop in data == false){
-                            throw new Error(
-                                pathString + '.' + prop + ' 속성이 정의되어 있지 않습니다.\n' + 
-                                prop + ' 속성값을 먼저 선언 하세요.'
-                            );
-                            return;
-                        }
-
-                        // SETTER
-                        var methodName = key.toLowerCase();
-                        data[methodName] = self.__createProxy.apply (self, [pathString, property, value]);
-                        // data[key] = value;
-                    }
-
-                    return proxy;
-                },
 
                 
 
@@ -219,7 +159,7 @@ define(
                 },
 
                 // end
-            };
+            });
 
             return Project;
         }

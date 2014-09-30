@@ -24,7 +24,7 @@ define(
             out( 'Command 등록 : OpenCommand' );
 
             /////////////////////////////////////
-            // Prototype 상속
+            // 생성자
             /////////////////////////////////////
 
             var _superClass = Command;
@@ -37,11 +37,11 @@ define(
 
             }
 
-            //-----------------------------------
-            // Prototype 재정의
-            //-----------------------------------
+            /////////////////////////////////////
+            // Prototype 상속
+            /////////////////////////////////////
 
-            angular.extend( OpenCommand.prototype,  Command.prototype, {
+            angular.extend( OpenCommand.prototype,  _super, {
 
                 /*
                 config = {

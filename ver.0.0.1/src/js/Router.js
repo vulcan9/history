@@ -246,6 +246,7 @@ define( [], function() {
 						_PATH.DIRECTIVE + 'status',
 
 		        				// FACTORY
+		        				_PATH.DATA + 'Data',
 		        				_PATH.DATA + 'Tool',
 		        				_PATH.DATA + 'Project',
 						

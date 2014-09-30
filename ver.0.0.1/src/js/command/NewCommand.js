@@ -24,7 +24,7 @@ define(
             out( 'Command 등록 : NewCommand' );
 
             /////////////////////////////////////
-            // Prototype 상속
+            // 생성자
             /////////////////////////////////////
 
             var _superClass = Command;
@@ -37,8 +37,11 @@ define(
 
             }
 
+            /////////////////////////////////////
             // Prototype 상속
-            angular.extend( NewCommand.prototype,  Command.prototype, {
+            /////////////////////////////////////
+
+            angular.extend( NewCommand.prototype,  _super, {
 
                 /*
                 config = {
@@ -60,23 +63,20 @@ define(
                     //ProgressService.init(null);
                     //ProgressService.update(60);
                     
-                    
-                    alert('tool 관련 데이터는 ToolController에서 처음 한번만 생성하는걸로.....');
+                    // tool 동작에 필요한 데이터 기록
                     if(!Tool.current){
                         Tool.current = new Tool();
                     }
 
-
+                    // 편집 결과를 저장한 데이이터
                     Project.current = new Project();
-
-
-                    
 
                     ////////////////////////////////////////
                     // 메뉴 설정 데이터 로드
                     ////////////////////////////////////////
                     
                     var menuURL = _PATH.ROOT + 'data/menu.json';
+                    
                     DataService(
                         {
                             method : 'GET', 
