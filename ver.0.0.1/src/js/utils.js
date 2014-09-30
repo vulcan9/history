@@ -43,31 +43,92 @@ define(
             // Getter, Setter 메서드로 속성 정의
             ////////////////////////////////////
 
-            // name 이름의 속성을 정의한다. (get, set)
-            // 이때 _name 속성이 자동으로 만들어 진다.
+            // 'name' 이름의 속성을 정의한다. (get, set)
+            // 이때 '__name' 속성이 자동으로 만들어 진다.
             
             /*
-            this._num = utils.defineProperty ( this, 'num', 'readOnly', 10);
-            this._num == 10; //true
+            this.__name = utils.defineProperty ( this, 'num', {set:false, value:10});
+            this.__name == 10; //true
             this.num == 10; //true
             this.num = 10 ; // error (readOnly)
             */
-            
-            ,defineProperty : function (context, name, readOnly, defaultValue) {
-                Object.defineProperty( context, name, {
-                    get: function() {
-                        return context['_' + name];
-                    },
-                    set: function(value) {
-                        if(readOnly === 'readOnly'){
-                            throw Error('Project [ ' + name + ' ]은 읽기 전용 속성입니다.');
-                            return;
-                        }
-                        context['_' + name] = value;
-                    }
-                });
+           
+            /*
+            config = {
+                get:Function or Boolean, (생략시 true)
+                set:Function or Boolean, (생략시 true)
+                value:Function or Primitive (생략시 undefined)
+            }
 
+            예:{
+                get:true, (생략)
+
+                // override
+                set:function (value){
+                    this.__name = value;
+                }, 
+                value: function (){
+                    return 10;
+                }
+            }
+            */
+           
+            // IE 9 이상 (8, but only on DOM objects and with some non-standard behaviors
+            ,defineProperty : function (context, name, config) {
+                
+                var readOnly = (config === 'readOnly');
+                var writeOnly = (config === 'writeOnly');
+                var defaultValue;
+
+                // readOnly, defaultValue
+                if(config === undefined || typeof config === 'string'){
+                    config = {
+                        get: getter,
+                        set: setter
+                    };
+                    Object.defineProperty( context, name, config);
+                    return defaultValue;
+                }
+
+                // writeOnly 체크
+                if(typeof config.get !== 'function'){
+                    writeOnly = (config.get === undefined) ? false : !Boolean(config.get);
+                    config.get = getter;
+                }
+
+                // readOnly 체크
+                if(typeof config.set !== 'function'){
+                    readOnly = (config.set === undefined) ? false : !Boolean(config.set);
+                    config.set = setter;
+                }
+
+                // 초기값 설정
+                if(typeof config.value === 'function'){
+                    defaultValue = config.value.apply(context);
+                }else{
+                    defaultValue = config.value;
+                }
+
+                delete config.value;
+                Object.defineProperty( context, name, config);
+
+                // 기본 설정값 리턴
                 return defaultValue;
+
+                function getter() {
+                    if(writeOnly){
+                        throw new Error('[ ' + name + ' ]은 쓰기 전용 속성입니다.');
+                        return ;
+                    }
+                    return context['__' + name];
+                };
+                function setter(value) {
+                    if(readOnly){
+                        throw new Error('[ ' + name + ' ]은 읽기 전용 속성입니다.');
+                        return;
+                    }
+                    context['__' + name] = value;
+                };
             }
 
 

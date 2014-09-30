@@ -19,7 +19,7 @@ define(
         application.controller( 'ToolController', _controller );
 
         // 선언
-        function _controller( $scope, ProgressService, DataService, $rootElement, $rootScope, $timeout, Project ) {
+        function _controller( $scope, $element, $attrs, ExecuteService ) {
 
             //-----------------------
             // CSS 설정
@@ -33,17 +33,31 @@ define(
                 _PATH.CSS + 'space.css' 
             ] );
 
+            // 새프로젝트 열기
+            
+            var injetion = {
+                scope : $scope, 
+                element : $element, 
+                attrs : $attrs
+            }
+
+            ExecuteService.execute('new', injetion, function successCallback(){
+
+            }, function errorCallback(){
+
+            });
+
             //-----------------------
             // scope 데이터 설정
             //-----------------------
 
-            var DATA  = new Project();
-            Project.current = DATA;
+            // var DATA  = new Project();
+            // Project.current = DATA;
 
             // controller간 통신 방법
             // http://programmingsummaries.tistory.com/124
 
-            ProgressService.init (true);
+            // ProgressService.init (true);
             //ProgressService.init(null);
             //ProgressService.update(60);
             
@@ -52,7 +66,7 @@ define(
             ////////////////////////////////////////
             
             out ('TODO : project 데이터 로드 세팅 : project.json');
-
+            /*
             var projectUID = 'project-b16fea9c-d10a-413b-ba20-08344f937336';
             var projectURL = _PATH.ROOT + 'data/' + projectUID + '.json';
 
@@ -64,7 +78,7 @@ define(
 
                 function success(data){
 
-                    DATA.setProject(data);
+                    DATA.project('TREE', data);
 
                     out ('# Project 로드 완료 : ', data);
                     // ProgressService.complete();
@@ -72,8 +86,9 @@ define(
                     // 갱신
                     $timeout(function() {
                         $scope.$apply(function(){
-                            $scope.project = Project.current.getProject();
-                            out('project callLater', $scope);
+                            // out('uid : ', Project.current.project('tree')('uid'));
+                            $scope.tree = Project.current.project('TREE');
+                            // out('project callLater', $scope);
                         });
                     }, 0);
                 },
@@ -89,6 +104,7 @@ define(
                     // ProgressService.complete();
                 }
             );
+            */
             
             // 데이터 로드 서비스 호출 : Presentation - PT 관련 데이터
 
@@ -102,7 +118,7 @@ define(
             ////////////////////////////////////////
             // 메뉴 설정 데이터 로드
             ////////////////////////////////////////
-            
+            /*
             var menuURL = _PATH.ROOT + 'data/menu.json';
             DataService(
                 {
@@ -112,7 +128,7 @@ define(
 
                 function success(data){
 
-                    DATA.setTool({ menu: data });
+                    Project.current.tool ('MENU', data);
 
                     out ('# Menu 로드 완료 : ', data);
                     // ProgressService.complete();
@@ -120,15 +136,19 @@ define(
                     // 갱신
                     $timeout(function() {
                         $scope.$apply(function(){
-                            $scope.menu = Project.current.TOOL.menu;
-                            out('menu callLater', $scope);
+                            
+                            // out('menu callLater', Project.current.tool('MENU'));
+                            // out('menu callLater', Project.current.tool('menu')('items'));
+
+                            $scope.menu = Project.current.tool('MENU');
+                            // out('project callLater', $scope);
                         });
                     }, 0);
                 },
 
                 function error(){
 
-                    DATA.setTool({ menu: null });
+                    DATA.tool ('menu', null);
 
                     // preventDefault
                     //return false;
@@ -137,12 +157,9 @@ define(
                     // ProgressService.complete();
                 }
             );
-            
+            */
 
 
-            function callLater(){
-
-            }
 
 
 

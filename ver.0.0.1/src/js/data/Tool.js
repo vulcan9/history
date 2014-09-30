@@ -2,8 +2,8 @@
 
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
-    * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : Project 데이터 관리
+    * Tool : HI-STORY (https://github.com/vulcan9/history)
+    * Description : Tool 데이터 관리
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
@@ -15,26 +15,26 @@ define(
     ],
     function(application, Utils) {
 
-        out ('TODO : // 디버깅용으로 노출된 속성 비활성화 시킬것 (Project)')
-        window.Project = Project;
+        out ('TODO : // 디버깅용으로 노출된 속성 비활성화 시킬것 (Tool)')
+        window.Tool = Tool;
         
         // 현재 사용중인 데이터 Instance
-        Project.current = null;
+        Tool.current = null;
         
-        function Project(){
+        function Tool(){
             this.initialize();
         }
 
         // 등록
-        application.factory( 'Project', _factory );
+        application.factory( 'Tool', _factory );
 
-        function _factory(VersionService, ProgressService, $rootScope, $timeout){
+        function _factory( ProgressService, $rootScope, $timeout){
 
             //------------------------------------------
             // angular의 Injection 활용을 위해 이곳에서 Prototype을 정의한다.
             //------------------------------------------
             
-            Project.prototype = {
+            Tool.prototype = {
 
                 // tool 동작에 필요한 데이터 기록 (자동 생성)
                 // __TOOL: null,
@@ -45,19 +45,23 @@ define(
                 initialize: function(){
                     
                     //---------------------
-                    // PROJECT 속성 
+                    // TOOL 속성
                     //---------------------
                     
-                    // 읽기 전용 PROJECT 속성 생성
-                    // 속성 접근 : project (key, value);
-                    this.project = this.__createProxy ('this', 'PROJECT', {
+                    // 읽기 전용 TOOL 속성 생성
+                    // 속성 접근 : tool (key, value);
+                    this.tool = this.__createProxy ('this', 'TOOL', {
 
-                            // project 문서 구성 정보
-                            __TREE : null
+                            // progress : ProgressService,
+                            // version : VersionService,
+
+                            // 문서별 undo/redo 데이터
+                            // history: {},
+                            
+                            // 메뉴 구성 정보
+                            __MENU : null
                         }
                     );
-
-
 
                 },
 
@@ -68,11 +72,11 @@ define(
                  - 속성 : NAME
                 
                 // set
-                Project.current.tool ('MENU', data);
+                Tool.current.tool ('MENU', data);
                 // get
-                $scope.menu = Project.current.tool('MENU');
+                $scope.menu = Tool.current.tool('MENU');
                 // 하위 속성 접근
-                Project.current.tool('menu')('uid')
+                Tool.current.tool('menu')('uid')
                 */
                 
                 __createProxy : function  (dataPath, name, initValue){
@@ -137,7 +141,7 @@ define(
                 */
                
                 //---------------------
-                // Project 
+                // Tool 
                 //---------------------
                 
                 /*
@@ -147,7 +151,7 @@ define(
                 */
                 
                 /*
-                setProject: function(project){
+                setTool: function(project){
                     this.__PROJECT = project;
                 },
                 */
@@ -160,72 +164,14 @@ define(
                 // 
                 //////////////////////////////////////////////////////////////////////////
 
-                //---------------------
-                // Document
-                //---------------------
-                
-                // uid : document uid
-                getDocument : function(uid){
-                    return this.PROJECT.items[uid];
-                },
-
-                addDocument: function(docElement){
-
-                },
-
-                // uid : document uid
-                removeDocument: function(uid){
-
-                },
-
-                // uid : document uid
-                modifyDocument: function(uid){
-
-                },
-
-                //---------------------
-                // Element
-                //---------------------
-
-                addElement: function(el){
-
-                },
-
-                // uid : element uid
-                removeElement: function(uid){
-
-                },
-
-                // uid : element uid
-                modifyElement: function(uid){
-
-                },
-
-                //////////////////////////////////////////////////////////////////////////
-                //
-                // Command 관련 API
-                // 
-                //////////////////////////////////////////////////////////////////////////
-                
-                // uid : element uid
-                newProject: function(uid){
-
-                },
-                openProject: function(uid){
-
-                },
-                closeProject: function(uid){
-
-                },
-
                 // end
             };
 
-            return Project;
+            return Tool;
         }
 
         // 리턴
-        return Project;
+        return Tool;
 
         ////////////////////////////////////////
         // END

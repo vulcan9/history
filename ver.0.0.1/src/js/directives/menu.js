@@ -54,14 +54,11 @@ define(
             function Controller( $scope, $element, $attrs, $rootScope, $location, ExecuteService ) {
                 
                 // ToolController 에서 데이터 로드 후 지정해줌
-                // $scope.menu = Project.current.TOOL.menu;
 
-                /*
-                $scope.$watch( 'menu', function(newValue, oldValue) {
-                    out('update menu : ', arguments);
-                    $scope.menu = Project.current.TOOL.menu;
+                $scope.$watch('menu', function(newValue, oldValue) {
+                    if (newValue === oldValue) { return; }
+                    out('#menu changed : ', $scope.menu);
                 }, true);
-                */
                 
                 $scope.onClick = function(item){
                     console.log(" * item : ", item);
@@ -74,8 +71,19 @@ define(
                         return;
                     }
 
+                    var injetion = {
+                        scope : $scope, 
+                        element : $element, 
+                        attrs : $attrs
+                    }
+
                     var command = item.command;
-                    ExecuteService.execute(command);
+                    ExecuteService.execute(command, injetion, function successCallback(){
+
+                    }, function errorCallback(){
+                        
+                    });
+                    
                 };
 
             }

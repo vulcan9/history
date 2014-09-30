@@ -60,7 +60,7 @@ define(
                 //-----------------------------------
 
                 function success( data, status, headers, config ) {
-                    out( 'success : [', status, '] ', data );
+                    out( 'success : [', status, '] ', config.url );
                     //out( 'status : ', status );
                     //out( 'headers : ', headers() );
                     //out( 'config : ', config );
@@ -84,7 +84,7 @@ define(
 
                 function error( data, status, headers, config ) {
                     //out( 'error : ', data );
-                    out( 'error : [', status, '] ', data );
+                    out( 'error : [', status, '] ', config.url );
                     //out( 'headers : ', headers() );
                     //out( 'config : ', config );
 

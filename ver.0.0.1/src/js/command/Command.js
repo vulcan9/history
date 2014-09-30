@@ -33,6 +33,15 @@ define(
 
             Command.prototype = {
                 
+                /*
+                config = {
+                    scope : $scope, 
+                    element : $element, 
+                    attrs : $attrs,
+                    ...............
+                }
+                */
+               
                 execute : function ( config, successCallback, errorCallback ) {
 
                     out( '# Command Execute : ', this );

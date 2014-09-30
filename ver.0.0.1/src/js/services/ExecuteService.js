@@ -41,6 +41,7 @@ define(
                 ////////////////////////////////////////
                 
                  execute : function (){
+
                     var args = Utils.toArray(arguments);
                     var commandName = args.shift();
                     var func = 'command_' + commandName;
@@ -66,7 +67,7 @@ define(
                 
                 command_new : function (){
                     var command = new NewCommand();
-                    command.execute();
+                    command.execute.apply(this, arguments);
 
                     return command;
                 },
@@ -77,35 +78,35 @@ define(
 
                 command_open : function (){
                     var command = new OpenCommand();
-                    command.execute();
+                    command.execute.apply(this, arguments);
 
                     return command;
                 },
 
                 command_save : function (){
                     var command = new SaveCommand();
-                    command.execute();
+                    command.execute.apply(this, arguments);
 
                     return command;
                 },
 
                 command_saveAs : function (){
                     var command = new SaveAsCommand();
-                    command.execute();
+                    command.execute.apply(this, arguments);
 
                     return command;
                 },
 
                 command_close : function (){
                     var command = new CloseCommand();
-                    command.execute();
+                    command.execute.apply(this, arguments);
 
                     return command;
                 },
 
                 command_exit : function (){
                     var command = new ExitCommand();
-                    command.execute();
+                    command.execute.apply(this, arguments);
 
                     return command;
                 }
