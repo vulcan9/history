@@ -1,0 +1,74 @@
+/*////////////////////////////////////////////////////////////////////////////////
+
+    * 
+    * Developer : (c) Dong-il Park (pdi1066@naver.com)
+    * Project : HI-STORY (https://github.com/vulcan9/history)
+    * Description : Command 구현 시나리오
+
+////////////////////////////////////////////////////////////////////////////////*/
+
+
+//----------------------------
+// Data 속성값 변경 이벤트 발송
+//----------------------------
+
+var args = {newValue:value, oldValue:oldValue, name:property};
+$rootScope.$broadcast('#Data.changed', args); 
+
+$scope.$on('#Data.changed', function(e, data){
+                    out('#Data.changed : ', arguments);
+                });
+
+
+
+
+//----------------------------
+// resize 이벤트 발송
+//----------------------------
+
+* 이벤트 네이밍 : # + 파일이름 + . + 이벤트타입
+* 샘플 : #ApplicationController.resize
+
+// trigger
+//$rootScope.$emit('#ToolController.resize', {width:0, height:0});
+$rootScope.$broadcast('#ApplicationController.resize'); 
+
+// listener
+$scope.$on('#ApplicationController.resize', function .....)
+
+
+
+
+
+//----------------------------
+// element로부터 각 객체에 접근하기
+//----------------------------
+
+var $document = angular.element(document);
+var treeContainer = $document.find('.treeContainer');
+
+// tree 디렉티브
+var treeController = treeContainer.controller('tree');
+// controller 함수에서 정의된 this.setTree 메서드 호출
+treeController.setTree();
+
+// 디렉티브의 scope 설정이 false로 설정되었다면 아래와 같이 접근 가능하다.
+// 디렉티브의 scope 설정이 scope={} 로 설정된 경우에는 scop 하위에 새로운 child scpoe에서 찾아야 한다.
+var $scope = treeContainer.scope('tree');
+
+
+
+//----------------------------
+// 화면 갱신이 잘 안되는 경우
+//----------------------------
+
+$timeout(function() {
+    $scope.$apply(function(){
+        
+        // out('menu callLater', Tool.current.tool('MENU'));
+        // out('menu callLater', Tool.current.tool('menu')('items'));
+
+        $scope.menu = Tool.current.tool('MENU');
+        // out('project callLater', $scope);
+    });
+}, 0);

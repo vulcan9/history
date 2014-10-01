@@ -239,7 +239,7 @@ define( [], function() {
 						// DIRECTIVE
 						_PATH.DIRECTIVE + 'menu',
 						_PATH.DIRECTIVE + 'progressbar',
-						_PATH.DIRECTIVE + 'explorer',
+						_PATH.DIRECTIVE + 'tree',
 						_PATH.DIRECTIVE + 'screen',
 						_PATH.DIRECTIVE + 'timeline',
 						_PATH.DIRECTIVE + 'property',

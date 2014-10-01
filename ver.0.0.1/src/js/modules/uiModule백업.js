@@ -11,9 +11,9 @@
 
 define(
     [
-        'Utils'
+        'U'
     ],
-    function(Utils) {
+    function(U) {
 
         // ui 관련 데이터
         var _data;

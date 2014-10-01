@@ -11,9 +11,9 @@
 
 define(
     [
-        'Application', 'Utils'
+        'Application', 'U'
     ],
-    function(application, Utils) {
+    function(application, U) {
 
         out ('TODO : // 디버깅용으로 노출된 속성 비활성화 시킬것 (Tool)')
         window.Tool = Tool;

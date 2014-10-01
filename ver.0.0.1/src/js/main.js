@@ -111,7 +111,7 @@ require.config( {
         'Application':          _PATH.JS + 'Application',
         'Router':                 _PATH.JS + 'Router',
 
-        'Utils':                 _PATH.JS + 'Utils'
+        'U':                 _PATH.JS + 'U'
     },
 
     /*

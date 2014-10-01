@@ -23,7 +23,7 @@ define(
 
             return {
                 restrict: 'A',
-                scope: false,
+                scope: {},
 
                 link: function( scope, el, attrs, controller, transclude ) {
 
@@ -138,7 +138,7 @@ define(
             var screenH = h - (menuContainer.height() + progressContainer.height() + statusContainer.height());
             screenContainer.height(screenH);
 
-            //var explorer = el.find('.explorer');
+            // var treeContainer = el.find('.treeContainer');
             //var timeline = el.find('.timeline');
             //var property = el.find('.property');
             

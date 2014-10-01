@@ -47,7 +47,7 @@ define(
             // 이때 '__name' 속성이 자동으로 만들어 진다.
             
             /*
-            this.__name = utils.defineProperty ( this, 'num', {set:false, value:10});
+            this.__name = U.defineProperty ( this, 'num', {set:false, value:10});
             this.__name == 10; //true
             this.num == 10; //true
             this.num = 10 ; // error (readOnly)
@@ -140,6 +140,30 @@ define(
                 };
             }
 
+            ////////////////////////////////////
+            // Angular 유틸
+            ////////////////////////////////////
+
+            // 디렉티브에 정의된 controller 찾기
+            ,getController: function(selector, directiveName){
+                    // var $document = angular.element(document);
+                    // var treeContainer = $document.find('.treeContainer');
+                    
+                    var $element = angular.element(selector);
+                    var controller = $element.controller(directiveName);
+                    return controller;
+            }
+
+            // 디렉티브의 scope 설정이 false로 설정되었다면 아래와 같이 접근 가능하다.
+            // 디렉티브의 scope 설정이 scope={} 로 설정된 경우에는 scop 하위에 새로운 child scpoe에서 찾아야 한다.
+            ,getScope: function(selector, directiveName){
+                    // var $document = angular.element(document);
+                    // var treeContainer = $document.find('.treeContainer');
+                    
+                    var $element = angular.element(selector);
+                    var $scope = treeContainer.scope(directiveName);
+                    return $scope;
+            }
 
 
 
@@ -147,8 +171,7 @@ define(
 
 
 
-
-            // END Utils
+            // END
         };
 
         ////////////////////////////////////////

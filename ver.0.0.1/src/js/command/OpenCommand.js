@@ -11,9 +11,9 @@
 
 define(
     [
-        'Application'
+        'Application', 'U'
     ],
-    function( application ) {
+    function( application, U ) {
 
         // 등록
         application.service( 'OpenCommand', _service );
@@ -44,7 +44,7 @@ define(
             angular.extend( OpenCommand.prototype,  _super, {
 
                 /*
-                config = {
+                param = {
                     scope : $scope, 
                     element : $element, 
                     attrs : $attrs,
@@ -52,7 +52,7 @@ define(
                 }
                 */
                
-                execute : function ( config, successCallback, errorCallback ) {
+                execute : function ( param, successCallback, errorCallback ) {
 
                     _super.execute.apply(this, arguments);
 
@@ -72,7 +72,7 @@ define(
                     // 데이터 로드 서비스 호출 : Project - 문서 구조 관련 데이터
                     ////////////////////////////////////////
                     
-                    out ('TODO : project 데이터 로드 세팅 : project.json');
+                    out ('TODO : project 데이터 로드 경로(아이디) 세팅 : project.json');
 
                     var projectUID = 'project-b16fea9c-d10a-413b-ba20-08344f937336';
                     var projectURL = _PATH.ROOT + 'data/' + projectUID + '.json';
@@ -85,33 +85,26 @@ define(
 
                         function success(data){
 
-                            Project.current.project('TREE', data);
-
                             out ('# Project 로드 완료 : ', data);
                             // ProgressService.complete();
                             
-
                             out('TODO : // CloseCommand 실행');
 
-                            var $scope = config.scope;
-                            $scope.tree = Project.current.project('TREE');
-                            
-                            /*
-                            // 갱신
-                            $timeout(function() {
-                                $scope.$apply(function(){
-                                    // out('uid : ', Project.current.project('tree')('uid'));
-                                    $scope.tree = Project.current.project('TREE');
-                                    // out('project callLater', $scope);
-                                });
-                            }, 0);
-                            */
+                            // 데이터 변경
+                            Project.current.project('TREE', data);
 
+                            // Controller 메서드 직접 호출 방법
+                            // var treeController = U.getController('.treeContainer', 'tree');
+                            // treeController.updateTree();
+
+                            // scope에 직접 접근 방법
+                            // var $scope = param.scope;
+                            // $scope.tree = Project.current.project('TREE');
                         },
 
                         function error(){
 
-                            DATA._setProject(null);
+                            Project.current.project('TREE', null);
 
                             // preventDefault
                             //return false;

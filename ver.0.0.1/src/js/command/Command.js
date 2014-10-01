@@ -34,7 +34,7 @@ define(
             Command.prototype = {
                 
                 /*
-                config = {
+                param = {
                     scope : $scope, 
                     element : $element, 
                     attrs : $attrs,
@@ -42,11 +42,11 @@ define(
                 }
                 */
                
-                execute : function ( config, successCallback, errorCallback ) {
+                execute : function ( param, successCallback, errorCallback ) {
 
                     out( '# Command Execute : ', this );
 
-                    this._config = config;
+                    this._param = param;
                     this._successCallback = successCallback;
                     this._errorCallback = errorCallback;
                     

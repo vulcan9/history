@@ -11,9 +11,9 @@
 
 define(
     [
-        'Application', 'Utils'
+        'Application', 'U'
     ],
-    function(application, Utils) {
+    function(application, U) {
 
         function Data(){
             this.initialize();
@@ -22,7 +22,7 @@ define(
         // 등록
         application.factory( 'Data', _factory );
 
-        function _factory(){
+        function _factory($rootScope){
 
             //------------------------------------------
             // angular의 Injection 활용을 위해 이곳에서 Prototype을 정의한다.
@@ -70,7 +70,7 @@ define(
                 Data.current.tool('menu')('uid')
                 */
                 
-                __createProxy : function  (dataPath, name, initValue){
+                __createProxy : function  (ownerPath, name, initValue){
                     
                     // Proxy 속성 설정
                     var property = name.toUpperCase();
@@ -79,14 +79,18 @@ define(
                     // path에 self가 있을 수있으므로 미리 정의해 놓는다.
                     var self = this;
                     // this는 상황에 따라 context가 바뀔수 있으므로 self로 고정시켜 준다.
-                    dataPath = dataPath.replace(/\bthis\./, 'self\.');
-                    var owner = eval(dataPath);
+                    ownerPath = ownerPath.replace(/\bthis\./, 'self\.');
+                    var owner = eval(ownerPath);
 
-                    Utils.defineProperty ( owner, property, 'readOnly' );
+                    // 값 적용
+                    U.defineProperty ( owner, property, 'readOnly' );
                     owner[prop] = initValue;
 
+                    //----------------------
                     // Proxy 메서드 설정
-                    var pathString = dataPath + '.' + name;
+                    //----------------------
+                    
+                    var pathString = ownerPath + '.' + name;
 
                     function proxy (key, value){
                         if(arguments.length < 1){
@@ -96,7 +100,10 @@ define(
 
                         // out('pathString : ', pathString);
 
+                        //-----------
                         // GETTER
+                        //-----------
+                        
                         var data = eval(pathString);
                         if(value === undefined){
                             return data[key];
@@ -114,10 +121,31 @@ define(
                             return;
                         }
 
+                        //-----------
                         // SETTER
-                        var methodName = key.toLowerCase();
-                        data[methodName] = self.__createProxy.apply (self, [pathString, property, value]);
-                        // data[key] = value;
+                        //-----------
+                        
+                        var oldValue = data[property];
+                        var changed = !angular.equals(oldValue, value);
+
+                        if (oldValue ===  undefined) {
+                            var methodName = key.toLowerCase();
+                            data[methodName] = self.__createProxy.apply (self, [pathString, property, value]);
+                        }else{
+                            data[prop] = value;
+                            // data[key] = value;
+                        }
+                        
+                        // 이벤트 발송
+                        if(changed){
+                            // out('#Data.changed', property);
+                            //$rootScope.$emit('#ToolController.resize', {width:0, height:0});
+                            var args = {newValue:value, oldValue:oldValue, name:property};
+                            $rootScope.$broadcast('#Data.changed', args); 
+                        }
+                        
+                        
+                        
                     }
 
                     return proxy;
@@ -128,6 +156,7 @@ define(
                 // 데이터 조작 API
                 // 
                 //////////////////////////////////////////////////////////////////////////
+
 
 
 

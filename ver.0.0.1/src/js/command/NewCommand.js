@@ -44,7 +44,7 @@ define(
             angular.extend( NewCommand.prototype,  _super, {
 
                 /*
-                config = {
+                param = {
                     scope : $scope, 
                     element : $element, 
                     attrs : $attrs,
@@ -52,7 +52,7 @@ define(
                 }
                 */
                
-                execute : function ( config, successCallback, errorCallback ) {
+                execute : function ( param, successCallback, errorCallback ) {
 
                     _super.execute.apply(this, arguments);
 
@@ -62,64 +62,21 @@ define(
                     // ProgressService.init (true);
                     //ProgressService.init(null);
                     //ProgressService.update(60);
-                    
-                    // tool 동작에 필요한 데이터 기록
-                    if(!Tool.current){
-                        Tool.current = new Tool();
-                    }
 
+                    //-----------------------
+                    // Project 데이터 세팅
+                    //-----------------------
+/*
+                    if(Project.current && Project.current.project){
+                        Project.current.project ('TREE', null);
+                    }
+*/
+                    
+                    
                     // 편집 결과를 저장한 데이이터
                     Project.current = new Project();
 
-                    ////////////////////////////////////////
-                    // 메뉴 설정 데이터 로드
-                    ////////////////////////////////////////
-                    
-                    var menuURL = _PATH.ROOT + 'data/menu.json';
-                    
-                    DataService(
-                        {
-                            method : 'GET', 
-                            url : menuURL
-                        },
 
-                        function success(data){
-
-                            Tool.current.tool ('MENU', data);
-
-                            out ('# Menu 로드 완료 : ', data);
-                            // ProgressService.complete();
-                            
-                            var $scope = config.scope;
-                            $scope.menu = Tool.current.tool('MENU');
-
-                            /*
-                            // 갱신
-                            $timeout(function() {
-                                $scope.$apply(function(){
-                                    
-                                    // out('menu callLater', Tool.current.tool('MENU'));
-                                    // out('menu callLater', Tool.current.tool('menu')('items'));
-
-                                    $scope.menu = Tool.current.tool('MENU');
-                                    // out('project callLater', $scope);
-                                });
-                            }, 0);
-                            */
-                           
-                        },
-
-                        function error(){
-
-                            Tool.current.tool ('menu', null);
-
-                            // preventDefault
-                            //return false;
-                            
-                            out ('# Menu 로드 에러 : ', menuURL);
-                            // ProgressService.complete();
-                        }
-                    );
 
 
 

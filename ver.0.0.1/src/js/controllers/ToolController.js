@@ -22,7 +22,7 @@ define(
         // http://programmingsummaries.tistory.com/124
         
         // 선언
-        function _controller( $scope, $element, $attrs, ExecuteService ) {
+        function _controller( $scope, $element, $attrs, DataService, ExecuteService ) {
 
             //-----------------------
             // CSS 설정
@@ -35,6 +35,15 @@ define(
                 _PATH.CSS + 'application.css',
                 _PATH.CSS + 'space.css' 
             ] );
+
+            //-----------------------
+            // Tool 데이터 세팅
+            //-----------------------
+
+            // tool 동작에 필요한 데이터 기록
+            if (!Tool.current) {
+                Tool.current = new Tool();
+            }
 
             ////////////////////////////////////////
             // 초기화
@@ -130,13 +139,13 @@ define(
             // 새프로젝트 만들기
             ////////////////////////////////////////
             
-            var injetion = {
-                scope : $scope, 
-                element : $element, 
-                attrs : $attrs
+            var param = {
+                // scope : $scope, 
+                // element : $element, 
+                // attrs : $attrs
             }
 
-            ExecuteService.execute('new', injetion, function successCallback(){
+            ExecuteService.execute('new', param, function successCallback(){
 
             }, function errorCallback(){
 
@@ -155,8 +164,7 @@ define(
 
 
 
-
-
+            // End Controller
         }
 
         // 리턴

@@ -36,7 +36,7 @@ define(
                 replace: true,
                 priority: 0,
                 transclude: true,
-                scope: false,
+                scope: {},
 
                 // 다른 디렉티브들과 통신하기 위한 역할을 하는 controller명칭을 정의.
                 // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
@@ -51,17 +51,45 @@ define(
             // Controller
             ////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, $rootScope, $location, ExecuteService ) {
+            function Controller( $scope, $element, $attrs, $location, ExecuteService, Tool, DataService ) {
                 
-                // ToolController 에서 데이터 로드 후 지정해줌
+                // 데이터 로드
+                if (Tool.current.TOOL.MENU == undefined){
+                    setMenu();
+                }
 
+                //------------------
+                // 데이터 변경 감지 순서
+                //------------------
+
+                // 1. 이벤트를 받는다.
+                var self = this;
+                $scope.$on('#Data.changed', function(e, data){
+                    if(data.name == 'MENU'){
+                        out(data.name, '#Data.changed : ', arguments);
+                        self.updateMenu();
+                    }
+                });
+
+                // 2. 변경 내용을 scope에 적용한다.
+                this.updateMenu = function(){
+                    $scope.menu = Tool.current.tool('MENU');
+                }
+                
+                // 3. scope이 변경되었음을 감지한다.
+                // 메뉴 설정 : 데이터가 있으면 다시 로드하지 않음
                 $scope.$watch('menu', function(newValue, oldValue) {
                     if (newValue === oldValue) { return; }
                     out('#menu changed : ', $scope.menu);
                 }, true);
-                
+            
+                //-----------------------
+                // 메뉴 클릭 이벤트 처리
+                //-----------------------
+
+                // 메뉴 항목을 클릭한 경우 호출되는 함수
                 $scope.onClick = function(item){
-                    console.log(" * item : ", item);
+                    console.log(" * MENU item : ", item);
                     
                     // 링크
                     var link = item.link;
@@ -71,14 +99,15 @@ define(
                         return;
                     }
 
-                    var injetion = {
-                        scope : $scope, 
-                        element : $element, 
-                        attrs : $attrs
+                    var param = {
+                        // scope : $scope, 
+                        // element : $element, 
+                        // attrs : $attrs
                     }
 
+                    // 메뉴 클릭 이벤트 처리
                     var command = item.command;
-                    ExecuteService.execute(command, injetion, function successCallback(){
+                    ExecuteService.execute(command, param, function successCallback(){
 
                     }, function errorCallback(){
                         
@@ -86,10 +115,49 @@ define(
                     
                 };
 
+                ////////////////////////////////////////
+                // 메뉴 설정 데이터 로드
+                ////////////////////////////////////////
+                
+                function setMenu(){
+
+                    var menuURL = _PATH.ROOT + 'data/menu.json';
+                    
+                    DataService(
+                        {
+                            method : 'GET', 
+                            url : menuURL
+                        },
+
+                        function success(data){
+
+                            out ('# Menu 로드 완료 : ', data);
+                            // ProgressService.complete();
+                            
+                            // 데이터 변경
+                            Tool.current.tool ('MENU', data);
+                        },
+
+                        function error(){
+
+                            Tool.current.tool ('MENU', null);
+
+                            // preventDefault
+                            //return false;
+                            
+                            out ('# Menu 로드 에러 : ', menuURL);
+                            // ProgressService.complete();
+                        }
+                    );
+
+                }
+
+                ////////////////////////////////////////
+                // End Controller
+                ////////////////////////////////////////
             }
 
         }
-
 
         // 리턴
         return _directive;

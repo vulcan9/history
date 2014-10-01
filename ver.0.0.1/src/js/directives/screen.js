@@ -33,7 +33,7 @@ define(
                 replace: true,
                 priority: 0,
                 transclude: true,
-                scope: false,
+                scope: {},
 
                 terminal: false,
                 

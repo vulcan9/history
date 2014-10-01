@@ -31,7 +31,7 @@ define(
                 
                 replace: true,
                 transclude: true,
-                // scope: false,
+                scope: {},
 
                 controller : function( $scope, ProgressService) {
                     

@@ -54,7 +54,7 @@ define(
                         =   :   부모 scope의 property와 디렉티브의 property를 data binding하여 부모 scope에 접근
                         @  :   디렉티브의 attribute value를 {{}}방식(interpolation)을 이용해 부모 scope에 접근
                 */
-                scope: false,
+                scope: {},
 
                 terminal: false,
 
@@ -71,6 +71,10 @@ define(
 
                     //var childElement = $transclude();   //childScope 없이 그냥 호출
                     //$element.append( childElement );
+                    
+                    $element.on('$destroy', function() {
+                        //$interval.cancel(timeoutId);
+                    });
                 },
 
                 // 확인할 사항 : 
