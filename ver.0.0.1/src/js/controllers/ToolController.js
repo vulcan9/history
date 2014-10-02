@@ -22,7 +22,7 @@ define(
         // http://programmingsummaries.tistory.com/124
         
         // 선언
-        function _controller( $scope, $element, $attrs, DataService, ExecuteService ) {
+        function _controller( $scope, $element, $attrs, ProgressService, DataService, ExecuteService ) {
 
             //-----------------------
             // CSS 설정
@@ -41,52 +41,69 @@ define(
             //-----------------------
 
             // tool 동작에 필요한 데이터 기록
-            if (!Tool.current) {
-                Tool.current = new Tool();
+            var callback = angular.bind(this, initComplate);
+            if (Tool.current == null) {
+                Tool.current = new Tool(callback);
+            }else{
+                Tool.current.initialize(callback);
             }
+
+
+
+
 
             ////////////////////////////////////////
             // 초기화
             ////////////////////////////////////////
 
-            // ProgressService.init (true);
+            ProgressService.init (true);
             // ProgressService.init(null);
             // ProgressService.update(60);
             
             out ('TODO : Tool 초기화 작업');
 
-            /*
-            // 저장 성공 여부 기록
-            this._saveSuccessed = undefined;
+            
+            // Tool 세팅 관련 데이터가 모두 완료된 뒤 초기화 완료
+            
+            
 
             // 로드완료 체크 timeout 간격 (20초)
-            this._loadTimeoutInterval = 20000;
+            // this._loadTimeoutInterval = 20000;
 
-            // 함수 호출 관리 (Command Process 관리)
-            this._process = new ProcessQueue();
-            //processAdd, processNext, processCancel, _checkProcess
+            
 
             // 화면 보호 관리 protectON, protectOFF
             // Notice, Toast
             
             // 로드 완료 flag 초기화
-            loadingON, loadingOFF
-            this._initReadyState();
+            // loadingON, loadingOFF
+            // this._initReadyState();
 
             // View 인스턴스 생성
-
             // 새로운 데이터 구조 생성하기
-            this.initProject();
-            // 저장된 이후로 데이터가 변경되었는지를 체크
-            this._dataChanged = false;
             
-            // 최종 랜더링 확인
-            this.addResizeEvent();
-            this.render();
-
+            ////////////////////////////////////////
             // 닫기 상태로 초기화 완료
-            this.closeProject();
-            */
+            ////////////////////////////////////////
+            
+            function initComplate(){
+                
+                var param = {
+                    // scope : $scope, 
+                    // element : $element, 
+                    // attrs : $attrs
+                }
+
+                ExecuteService.execute ( ExecuteService.CLOSE, param, function callback(isSuccess, result) {
+                    out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
+                    ProgressService.complete();
+                });
+            }
+
+            
+            
+
+
 
             ////////////////////////////////////////
             // 데이터
@@ -134,22 +151,6 @@ define(
             // 리스트가 초기화 될때
             onRemoveAll: function()
             */
-
-            ////////////////////////////////////////
-            // 새프로젝트 만들기
-            ////////////////////////////////////////
-            
-            var param = {
-                // scope : $scope, 
-                // element : $element, 
-                // attrs : $attrs
-            }
-
-            ExecuteService.execute('new', param, function successCallback(){
-
-            }, function errorCallback(){
-
-            });
 
             //-----------------------
             // scope 데이터 설정

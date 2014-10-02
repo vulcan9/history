@@ -40,18 +40,44 @@ define(
                     attrs : $attrs,
                     ...............
                 }
+
+                execute (param)
+                execute (param, callback)
                 */
-               
-                execute : function ( param, successCallback, errorCallback ) {
+                
+                _param : null,
+                _callback : null,
+
+                execute : function ( param, callback ) {
+
+                    this._param = param;
+                    this._callback = callback;
 
                     out( '# Command Execute : ', this );
 
-                    this._param = param;
-                    this._successCallback = successCallback;
-                    this._errorCallback = errorCallback;
+                    try{
+                        
+                        this._run (param);
+
+                    }catch(err){
+                        this._error(err);
+                    }
+                },
+
+                // Override 하여 사용할것
+                _run: function(param){
+                    out('_run : ', param);
+                    /*
+                    // 속성 사용
+                    this._param
+                    this._callback
+
+                    // 결과 값으로 둘중 하나의 메서드 꼭 실행할 것 
+                    this._success(result);
+                    this._err(error);
+                    */
                     
-                    // Override 하여 사용할것
-                    
+                    this._success();
                 },
 
                 //-----------------------------------
@@ -63,8 +89,8 @@ define(
                     out( 'success : ', data );
 
                     var isPrevented = false;
-                    if ( successCallback ) {
-                        var result = successCallback.apply( null, arguments );
+                    if ( this._callback ) {
+                        var result = this._callback.apply( null, [true, data] );
 
                         // true ||  undefined 이면 계속 진행
                         var isPrevented = !( result == true || result === undefined );
@@ -85,8 +111,8 @@ define(
                     out( 'error : ', data );
 
                     var isPrevented = false;
-                    if ( errorCallback ) {
-                        var result = errorCallback.apply( null, arguments );
+                    if ( this._callback ) {
+                        var result = this._callback.apply( null, [false, data] );
 
                         // true ||  undefined 이면 계속 진행
                         var isPrevented = !( result == true || result === undefined );

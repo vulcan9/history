@@ -28,7 +28,7 @@ define(
         application.factory( 'Project', _factory );
 
         /////////////////////////////////////
-        // Prototype 상속
+        // 생성자
         /////////////////////////////////////
 
         function Project (){
@@ -36,6 +36,10 @@ define(
         }
 
         function _factory( Data ){
+
+            /////////////////////////////////////
+            // Prototype 상속
+            /////////////////////////////////////
 
             _superClass = Data;
             _super = _superClass.prototype;
@@ -45,121 +49,124 @@ define(
             //------------------------------------------
             
             // Prototype 상속
-            angular.extend( Project.prototype,  _super, {
+            angular.extend( 
+                Project.prototype,  _super, 
+                {
 
-                initialize: function(){
+                    initialize: function(){
+                        
+                        _super.initialize.apply(this, arguments);
+
+                        //---------------------
+                        // PROJECT 속성 : 편집 결과를 저장한 데이이터 (자동 생성)
+                        //---------------------
+                        
+                        // 읽기 전용 PROJECT 속성 생성
+                        // 속성 접근 : project (key, value);
+                        this.project = this.__createProxy ('this', 'PROJECT', {
+
+                                // project 문서 구성 정보
+                                __TREE : null
+                            }
+                        );
+
+                        // end initialize
+                    },
+
+
                     
-                    _super.initialize.apply(this, arguments);
+
+                    /*
+                    setTool: function(config){
+                        angular.extend(this.__TOOL, config);
+                    },
+                    */
+                   
+                    //---------------------
+                    // Project 
+                    //---------------------
+                    
+                    /*
+                    getUID : function(){
+                        return this.PROJECT.uid;
+                    },
+                    */
+                    
+                    /*
+                    setProject: function(project){
+                        this.__PROJECT = project;
+                    },
+                    */
+                    //
+                    
+
+                    //////////////////////////////////////////////////////////////////////////
+                    //
+                    // 데이터 조작 API
+                    // 
+                    //////////////////////////////////////////////////////////////////////////
 
                     //---------------------
-                    // PROJECT 속성 : 편집 결과를 저장한 데이이터 (자동 생성)
+                    // Document
                     //---------------------
                     
-                    // 읽기 전용 PROJECT 속성 생성
-                    // 속성 접근 : project (key, value);
-                    this.project = this.__createProxy ('this', 'PROJECT', {
+                    // uid : document uid
+                    getDocument : function(uid){
+                        return this.PROJECT.items[uid];
+                    },
 
-                            // project 문서 구성 정보
-                            __TREE : null
-                        }
-                    );
+                    addDocument: function(docElement){
 
-                    // end initialize
-                },
+                    },
 
+                    // uid : document uid
+                    removeDocument: function(uid){
 
-                
+                    },
 
-                /*
-                setTool: function(config){
-                    angular.extend(this.__TOOL, config);
-                },
-                */
-               
-                //---------------------
-                // Project 
-                //---------------------
-                
-                /*
-                getUID : function(){
-                    return this.PROJECT.uid;
-                },
-                */
-                
-                /*
-                setProject: function(project){
-                    this.__PROJECT = project;
-                },
-                */
-                //
-                
+                    // uid : document uid
+                    modifyDocument: function(uid){
 
-                //////////////////////////////////////////////////////////////////////////
-                //
-                // 데이터 조작 API
-                // 
-                //////////////////////////////////////////////////////////////////////////
+                    },
 
-                //---------------------
-                // Document
-                //---------------------
-                
-                // uid : document uid
-                getDocument : function(uid){
-                    return this.PROJECT.items[uid];
-                },
+                    //---------------------
+                    // Element
+                    //---------------------
 
-                addDocument: function(docElement){
+                    addElement: function(el){
 
-                },
+                    },
 
-                // uid : document uid
-                removeDocument: function(uid){
+                    // uid : element uid
+                    removeElement: function(uid){
 
-                },
+                    },
 
-                // uid : document uid
-                modifyDocument: function(uid){
+                    // uid : element uid
+                    modifyElement: function(uid){
 
-                },
+                    },
 
-                //---------------------
-                // Element
-                //---------------------
+                    //////////////////////////////////////////////////////////////////////////
+                    //
+                    // Command 관련 API
+                    // 
+                    //////////////////////////////////////////////////////////////////////////
+                    
+                    // uid : element uid
+                    newProject: function(uid){
 
-                addElement: function(el){
+                    },
+                    openProject: function(uid){
 
-                },
+                    },
+                    closeProject: function(uid){
 
-                // uid : element uid
-                removeElement: function(uid){
+                    },
 
-                },
-
-                // uid : element uid
-                modifyElement: function(uid){
-
-                },
-
-                //////////////////////////////////////////////////////////////////////////
-                //
-                // Command 관련 API
-                // 
-                //////////////////////////////////////////////////////////////////////////
-                
-                // uid : element uid
-                newProject: function(uid){
-
-                },
-                openProject: function(uid){
-
-                },
-                closeProject: function(uid){
-
-                },
-
-                // end
-            });
+                    // end
+                }
+            );
 
             return Project;
         }

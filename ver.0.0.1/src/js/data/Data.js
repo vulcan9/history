@@ -15,14 +15,22 @@ define(
     ],
     function(application, U) {
 
+        // 등록
+        application.factory( 'Data', _factory );
+
+        /////////////////////////////////////
+        // 생성자
+        /////////////////////////////////////
+        
         function Data(){
             this.initialize();
         }
 
-        // 등록
-        application.factory( 'Data', _factory );
-
         function _factory($rootScope){
+
+            /////////////////////////////////////
+            // Prototype
+            /////////////////////////////////////
 
             //------------------------------------------
             // angular의 Injection 활용을 위해 이곳에서 Prototype을 정의한다.
@@ -140,8 +148,12 @@ define(
                         if(changed){
                             // out('#Data.changed', property);
                             //$rootScope.$emit('#ToolController.resize', {width:0, height:0});
+                            
+                            var eventName = '#Data.changed#' + property;
+                            out('# 이벤트 발생 : ', eventName);
+
                             var args = {newValue:value, oldValue:oldValue, name:property};
-                            $rootScope.$broadcast('#Data.changed', args); 
+                            $rootScope.$broadcast(eventName, args); 
                         }
                         
                         

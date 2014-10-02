@@ -42,13 +42,15 @@ define(
             /////////////////////////////////////
 
             angular.extend( CloseCommand.prototype,  _super, {
-                execute : function ( config, successCallback, errorCallback ) {
 
-                    _super.execute.apply(this, arguments);
+                _run : function ( param ) {
+                    //_super._run.apply(this, arguments);
 
                     // Override
                     out( '# CloseCommand Execute' );
 
+                    // 결과 리턴
+                    this._success();
                 }
             });
 

@@ -27,11 +27,19 @@ define(
         // 등록
         application.factory( 'Tool', _factory );
 
-        function Tool(){
-            this.initialize();
+        /////////////////////////////////////
+        // 생성자
+        /////////////////////////////////////
+
+        function Tool(callback){
+            this.initialize(callback);
         }
 
-        function _factory( Data ){
+        function _factory( Data, $rootScope, $timeout ){
+
+            /////////////////////////////////////
+            // Prototype 상속
+            /////////////////////////////////////
 
             _superClass = Data;
             _super = _superClass.prototype;
@@ -43,9 +51,22 @@ define(
             // Prototype 상속
             angular.extend( Tool.prototype,  _super, {
 
-                initialize: function(){
+                initialize: function(callback){
 
                     _super.initialize.apply(this, arguments);
+
+                    //---------------------
+                    // 속성
+                    //---------------------
+                    
+                    // 초기화가 완료된 상태인지 체크
+                    this.initialized = false;
+
+                    // 저장 성공 여부 기록
+                    // this._saveSuccessed = undefined;
+                    
+                    // 저장된 이후로 데이터가 변경되었는지를 체크
+                    this.dataChanged = false;
 
                     //---------------------
                     // TOOL 속성 : tool 동작에 필요한 데이터 기록 (자동 생성)
@@ -66,6 +87,21 @@ define(
                         }
                     );
 
+                    // 데이터 로드 상태 확인
+                    var removeHandler = $rootScope.$on('#Data.changed#MENU', angular.bind(this, onDataChanged)); 
+                    
+                    function onDataChanged(e, data){
+                        // 필요한 모든 데이터 로드가 완료 되었는지 확인
+                        if(this.TOOL.MENU){
+                            this.initialized = true;
+                            removeHandler();
+
+                            // 랜더링 실행 시간을 고려하여 약간의 delay를 준다.
+                            if(callback){
+                                $timeout(callback, 0);
+                            }
+                        }
+                    }
                     // end initialize
                 },
 

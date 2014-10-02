@@ -48,9 +48,9 @@ define(
 
                 // 1. 이벤트를 받는다.
                 var self = this;
-                $scope.$on('#Data.changed', function(e, data){
+                $scope.$on('#Data.changed#TREE', function(e, data){
                     if(data.name == 'TREE'){
-                        out(data.name, '#Data.changed : ', arguments);
+                        out('#Data.changed#TREE : ', arguments);
                         self.updateTree();
                     }
                 });

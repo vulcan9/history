@@ -42,12 +42,14 @@ define(
             /////////////////////////////////////
 
             angular.extend( SaveCommand.prototype,  _super, {
-                execute : function ( config, successCallback, errorCallback ) {
-
-                    _super.execute.apply(this, arguments);
+                
+                _run : function ( param ) {
 
                     // Override
                     out( '# SaveCommand Execute' );
+
+                    // 결과 리턴
+                    _super._run.apply(this, arguments);
 
                 }
             });

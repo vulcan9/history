@@ -19,7 +19,7 @@ define(
         application.service( 'OpenCommand', _service );
 
         // 선언
-        function _service(Command, DataService, Project, ProgressService) {
+        function _service(Command, DataService, Project, ProgressService, $timeout) {
 
             out( 'Command 등록 : OpenCommand' );
 
@@ -42,31 +42,18 @@ define(
             /////////////////////////////////////
 
             angular.extend( OpenCommand.prototype,  _super, {
-
-                /*
-                param = {
-                    scope : $scope, 
-                    element : $element, 
-                    attrs : $attrs,
-                    ...............
-                }
-                */
-               
-                execute : function ( param, successCallback, errorCallback ) {
-
-                    _super.execute.apply(this, arguments);
+                
+                _run : function ( param ) {
 
                     // ProgressService.init (true);
                     //ProgressService.init(null);
                     //ProgressService.update(60);
-                    
-                    _super.execute.apply(this, arguments);
 
                     // Override
                     out( '# OpenCommand Execute' );
 
-                    // var DATA  = new Project();
-                    // Project.current = DATA;
+                    var DATA  = new Project();
+                    Project.current = DATA;
 
                     ////////////////////////////////////////
                     // 데이터 로드 서비스 호출 : Project - 문서 구조 관련 데이터
@@ -77,6 +64,7 @@ define(
                     var projectUID = 'project-b16fea9c-d10a-413b-ba20-08344f937336';
                     var projectURL = _PATH.ROOT + 'data/' + projectUID + '.json';
 
+                    var self = this;
                     DataService(
                         {
                             method : 'GET', 
@@ -88,7 +76,7 @@ define(
                             out ('# Project 로드 완료 : ', data);
                             // ProgressService.complete();
                             
-                            out('TODO : // CloseCommand 실행');
+                            out('TODO : // OpenCommand 실행');
 
                             // 데이터 변경
                             Project.current.project('TREE', data);
@@ -100,6 +88,17 @@ define(
                             // scope에 직접 접근 방법
                             // var $scope = param.scope;
                             // $scope.tree = Project.current.project('TREE');
+                            
+                            // 결과 리턴
+                            // self._success({tree:data});
+
+
+                            $timeout(function(){
+                                out ('\nTODO : ====> TREE 결과 리턴 DELAY 삭제\n');
+                                self._success({tree:data});
+                            }, 0);
+
+
                         },
 
                         function error(){
@@ -111,6 +110,8 @@ define(
                             
                             out ('# 로드 에러 : ', projectUID, '\n-url : ', projectURL);
                             // ProgressService.complete();
+                            
+                            self._error();
                         }
                     );
 

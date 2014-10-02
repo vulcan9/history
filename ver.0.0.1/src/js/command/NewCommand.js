@@ -42,19 +42,8 @@ define(
             /////////////////////////////////////
 
             angular.extend( NewCommand.prototype,  _super, {
-
-                /*
-                param = {
-                    scope : $scope, 
-                    element : $element, 
-                    attrs : $attrs,
-                    ...............
-                }
-                */
-               
-                execute : function ( param, successCallback, errorCallback ) {
-
-                    _super.execute.apply(this, arguments);
+                
+                _run : function ( param ) {
 
                     // Override
                     out( '# NewCommand Execute' );
@@ -88,6 +77,8 @@ define(
 
 
 
+                    // 결과 리턴
+                    _super._run.apply(this, arguments);
 
                     // END Execute
                 }

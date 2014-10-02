@@ -51,7 +51,7 @@ define(
             // Controller
             ////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, $location, ExecuteService, Tool, DataService ) {
+            function Controller( $scope, $element, $attrs, $location, ExecuteService, Tool, DataService, $timeout ) {
                 
                 // 데이터 로드
                 if (Tool.current.TOOL.MENU == undefined){
@@ -64,9 +64,9 @@ define(
 
                 // 1. 이벤트를 받는다.
                 var self = this;
-                $scope.$on('#Data.changed', function(e, data){
+                $scope.$on('#Data.changed#MENU', function(e, data){
                     if(data.name == 'MENU'){
-                        out(data.name, '#Data.changed : ', arguments);
+                        out(data.name, '#Data.changed#MENU : ', arguments);
                         self.updateMenu();
                     }
                 });
@@ -107,10 +107,9 @@ define(
 
                     // 메뉴 클릭 이벤트 처리
                     var command = item.command;
-                    ExecuteService.execute(command, param, function successCallback(){
-
-                    }, function errorCallback(){
-                        
+                    ExecuteService.execute(command, param, function callback(isSuccess, result){
+                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
+                        // ProgressService.complete();
                     });
                     
                 };
