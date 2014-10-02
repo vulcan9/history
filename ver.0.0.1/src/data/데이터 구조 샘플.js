@@ -1,0 +1,241 @@
+
+[네이밍 컨벤션 정의]
+
+* project.json : 문서간 구조(depth)를 정의
+* presentation : 프리젠테이션 리스트
+
+* document-info-{uid_01}.json : 개별 문서 부가 기능들에 대한  정보
+* document-content-{uid_01.json} : 문서 편집 내용 정의
+
+//////////////////////////////////////////////////////////
+
+
+
+{
+    "version": "최종 편집 도구 버전",
+
+
+    //-----------------------------
+    // 문서간 구조 정보 (Tree 구조)
+    //-----------------------------
+
+    project:{
+		"version": "0.0.1",
+		"description": "문서간 구조(depth)를 정의, 문서 id와 1:1 매칭 (key-value)",
+		
+		"items" : {
+
+			"project-uid": {
+				
+				"overview": {
+					"parentUID": "",
+					"depth": "0", "index": "0"
+				},
+
+				"center1": {
+					"parentUID": "overview",
+					"depth": "1", "index": "0"
+				},
+
+				"bored": {
+					"parentUID": "overview",
+					"depth": "1", "index": "1"
+				},
+
+				"bored-1": {
+					"parentUID": "bored",
+					"depth": "2", "index": "0"
+				},
+
+				"bored-1-1": {
+					"parentUID": "bored-1",
+					"depth": "3", "index": "0"
+				},
+
+				"bored-2": {
+					"parentUID": "bored",
+					"depth": "2", "index": "1"
+				},
+
+				"bored1": {
+					"parentUID": "overview",
+					"depth": "1", "index": "2"
+				},
+
+				"bored1-1": {
+					"parentUID": "bored1",
+					"depth": "2", "index": "0"
+				},
+
+				"bored1-2": {
+					"parentUID": "bored1",
+					"depth": "2", "index": "2"
+				}
+
+			}
+
+
+
+		}
+	},
+
+
+    //-----------------------------
+    // 프리젠 테이션 설정 정보
+    //-----------------------------
+
+    presentation:{
+
+        "version": "0.0.1",
+        "description": "생성된 프리젠테이션 리스트 (기존 문서로 여러개의 프레젠테이션을 구성할 수 있다.)",
+        
+        "items": {
+
+            presentation-uid00001: {
+
+                "title": "제목",
+                "description": "요약",
+
+                "order": [
+
+                    {
+                        "project-uid": "문서가 속한 project id",
+                        "document-uid": "슬라이드로 사용될 document의 uid"
+                    },
+
+                    {
+                        "project-uid": "문서가 속한 project id",
+                        "document-uid": "슬라이드로 사용될 document의 uid"
+                    },
+
+                    {
+                        "project-uid": "문서가 속한 project id",
+                        "document-uid": "슬라이드로 사용될 document의 uid"
+                    }
+
+                ]
+
+            }
+
+
+        }
+    },
+
+	document-info:{
+
+		"items": {
+			document-uid:{
+				document-info-uid의 "item" 내용
+			},
+			......
+		}
+		
+	}
+
+	document-content:{
+
+		"items": {
+			document-uid:{
+				document-content-uid의 "item" 내용
+			},
+			......
+		}
+		
+	}
+
+    //-----------------------------
+    // 개별 문서 정보 파일
+    //-----------------------------
+
+	// document-info-uid.json 파일 내용
+
+    {
+
+        "version": "0.0.1",
+        "description": "문서의 부가 기능들에 대한  정보 정의, (문서 내용과 분리 시킴)",
+
+        "item": {
+
+			"uid": document-uid //"아이디 (아이디로 해당 document의 content를 찾는다.)",
+			"subject": "문서 제목",
+			"descripty": "문서 요약",
+
+			"security": {
+				"permission": "read | write | none | all",
+				"grade": "보안 등급에 따라 노출 여부를 결정"
+			},
+
+			"history": {
+				"create": "문서 생성 일시",
+				"edits": [
+					"timeline - 문서 수정(저장) 일시 리스트 (변경 과정을 시간순으로 보여줄 수 있음)",
+					"이 부분은 SVN 지원 여부에 따라 내용이 달라질 수 있을것 같음"
+				]
+			},
+
+			"progress": {
+				"start": "일정 시작 일시",
+				"end": "일정 종료 예정 일시"
+
+				"ignore": "todo가 없을때 일정이 정해졌더라도 이 문서는 전체 progress에 영향을 주지 않음 체크",
+				"percent": "todo의 각 항목에 대한 complate 통계 (일정 또는 todo 가 없는 경우 무시 - {ignore?100:0}%)"
+			},
+
+			"todos": [
+
+				{
+					"title": "todo 요약",
+					"description": "구체적인 todo 내용"
+					"completed": "체크박스로 간단 완료 표시 (일정 종료 일시를 오버한 경우 경고 표시 가능)",
+
+					"progress": {
+						"start": "일정 시작 일시",
+						"end": "일정 종료 일시",
+						//"percent": "진행중인 경우엔 % 직접 입력으로 업데이트 (관련 문서가 링크된 경우 문서의 통계를 자동으로 계산 - X : 순환참조에 걸릴수도 있음)"
+					}
+				}
+
+			]
+
+
+        }
+    },
+
+
+    //-----------------------------
+    // 개별 문서 내용 파일
+    //-----------------------------
+
+	// document-content-uid.json 파일 내용
+
+	{
+        "version": "0.0.1",
+        "description": "문서 편집 내용 정의",
+
+        "item": {
+
+			"uid": document-uid //"overview",
+			"content": "<div id='overview' data-scale='10' data-x='0' data-y='0'></div>"
+		}
+
+    }
+
+
+}
+
+
+
+//////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
