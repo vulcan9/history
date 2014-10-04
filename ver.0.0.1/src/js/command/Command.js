@@ -58,7 +58,7 @@ define(
                     try{
                         
                         this._run (param);
-
+                        
                     }catch(err){
                         this._error(err);
                     }
@@ -67,6 +67,7 @@ define(
                 // Override 하여 사용할것
                 _run: function(param){
                     out('_run : ', param);
+                    
                     /*
                     // 속성 사용
                     this._param

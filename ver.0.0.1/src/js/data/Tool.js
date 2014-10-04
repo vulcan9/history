@@ -88,9 +88,13 @@ define(
                     );
 
                     // 데이터 로드 상태 확인
-                    var removeHandler = $rootScope.$on('#Data.changed#MENU', angular.bind(this, onDataChanged)); 
+                    var removeHandler = $rootScope.$on('#Data.changed-MENU', angular.bind(this, onDataChanged)); 
                     
                     function onDataChanged(e, data){
+                        
+                        out('------->TODO : $q.defer(); tnen 이용');
+                        // http://blog.naver.com/youmasan/130189628570
+
                         // 필요한 모든 데이터 로드가 완료 되었는지 확인
                         if(this.TOOL.MENU){
                             this.initialized = true;

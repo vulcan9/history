@@ -16,7 +16,7 @@ define(
     function( application ) {
 
         // 등록
-        application.directive( 'menu', _directive );
+        application.directive( 'menuView', _directive );
 
         // 선언
         function _directive() {
@@ -31,7 +31,7 @@ define(
 
                 // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
                 //template: '<span><span ng-transclude></span> {{version}} </span>',
-                templateUrl: _PATH.TEMPLATE + 'menu.html',
+                templateUrl: _PATH.TEMPLATE + 'view/menuView.html',
                 
                 replace: true,
                 priority: 0,
@@ -64,9 +64,9 @@ define(
 
                 // 1. 이벤트를 받는다.
                 var self = this;
-                $scope.$on('#Data.changed#MENU', function(e, data){
+                $scope.$on('#Data.changed-MENU', function(e, data){
                     if(data.name == 'MENU'){
-                        out(data.name, '#Data.changed#MENU : ', arguments);
+                        out(data.name, '#Data.changed-MENU : ', arguments);
                         self.updateMenu();
                     }
                 });
@@ -107,6 +107,8 @@ define(
 
                     // 메뉴 클릭 이벤트 처리
                     var command = item.command;
+                    out('\n# [ ', command, ' ] 명령 실행');
+                    
                     ExecuteService.execute(command, param, function callback(isSuccess, result){
                         out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
                         // ProgressService.complete();

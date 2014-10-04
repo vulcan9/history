@@ -16,7 +16,7 @@ define(
     function( application ) {
 
         // 등록
-        application.directive( 'timeline', _directive );
+        application.directive( 'timelineView', _directive );
 
         // 선언
         function _directive() {
@@ -28,7 +28,7 @@ define(
                 restrict: 'EA',
                 
                 link: function( scope, el, attrs ) {
-                    el.text( "timeline" );
+                    el.text( "timelineView" );
                 }
 
             };

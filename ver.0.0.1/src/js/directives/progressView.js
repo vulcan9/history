@@ -16,7 +16,7 @@ define(
     function( application ) {
 
         // 등록
-        application.directive( 'progressbar', _directive );
+        application.directive( 'progressView', _directive );
 
         // 선언
         function _directive() {
@@ -27,7 +27,7 @@ define(
 
                 restrict: 'EA',
 
-                templateUrl: _PATH.TEMPLATE + 'progressbar.html',
+                templateUrl: _PATH.TEMPLATE + 'view/progressView.html',
                 
                 replace: true,
                 transclude: true,

@@ -100,9 +100,12 @@ require.config( {
         // 'jquery':                 _PATH.LIB + 'jquery/jquery',
         // 'jquery-ui':             _PATH.LIB + 'jquery/jquery-ui-1.10.2.min',
         
-        'angular':                '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min',
+        'angular':                '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular',
         'angular-route':       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular-route',
         'angular-collection':       _PATH.LIB + 'angular/angular-collection',
+
+        // http://angular-ui.github.io/bootstrap/
+        'ui-bootstrap':                _PATH.LIB + 'ui-bootstrap-tpls-0.11.2',
 
         // 모듈
         'alignModule':         _PATH.MODULE + 'alignModule',
@@ -130,6 +133,9 @@ require.config( {
         'angular-collection': {
             deps: [ 'angular' ]
         },
+        'ui-bootstrap': {
+            deps: [ 'angular' ]
+        },
 
         'alignModule': {
             deps: [ 'angular']
@@ -138,7 +144,7 @@ require.config( {
             deps: [ 'angular', 'angular-collection']
         },
         'Application': {
-            deps: [ 'angular', 'angular-route', 'alignModule', 'uiModule' ]
+            deps: [ 'angular', 'angular-route', 'alignModule', 'uiModule', 'ui-bootstrap']
         }
     }
 

@@ -175,7 +175,8 @@ define( [], function() {
 				// SERVICE
 				_PATH.SERVICE + 'VersionService',
 				_PATH.SERVICE + 'ProgressService',
-				_PATH.SERVICE + 'DataService'
+				_PATH.SERVICE + 'DataService',
+				_PATH.SERVICE + 'NoticeService'
 			];
 
 			return dependencies;
@@ -237,13 +238,13 @@ define( [], function() {
 						_PATH.CONTROLLER + 'ToolController',
 
 						// DIRECTIVE
-						_PATH.DIRECTIVE + 'menu',
-						_PATH.DIRECTIVE + 'progressbar',
-						_PATH.DIRECTIVE + 'tree',
-						_PATH.DIRECTIVE + 'screen',
-						_PATH.DIRECTIVE + 'timeline',
-						_PATH.DIRECTIVE + 'property',
-						_PATH.DIRECTIVE + 'status',
+						_PATH.DIRECTIVE + 'menuView',
+						_PATH.DIRECTIVE + 'progressView',
+						_PATH.DIRECTIVE + 'treeView',
+						_PATH.DIRECTIVE + 'screenView',
+						_PATH.DIRECTIVE + 'timelineView',
+						_PATH.DIRECTIVE + 'propertyView',
+						_PATH.DIRECTIVE + 'statusView',
 
 		        				// FACTORY
 		        				_PATH.DATA + 'Data',
@@ -270,13 +271,13 @@ define( [], function() {
 					dependencies: [
 						_PATH.CONTROLLER + 'ToolController',
 
-						_PATH.DIRECTIVE + 'menu',
-						_PATH.DIRECTIVE + 'progressbar',
-						_PATH.DIRECTIVE + 'explorer',
-						_PATH.DIRECTIVE + 'screen',
-						_PATH.DIRECTIVE + 'timeline',
-						_PATH.DIRECTIVE + 'property',
-						_PATH.DIRECTIVE + 'status'
+						_PATH.DIRECTIVE + 'menuView',
+						_PATH.DIRECTIVE + 'progressView',
+						_PATH.DIRECTIVE + 'treeView',
+						_PATH.DIRECTIVE + 'screenView',
+						_PATH.DIRECTIVE + 'timelineView',
+						_PATH.DIRECTIVE + 'propertyView',
+						_PATH.DIRECTIVE + 'statusView'
 					]
 				}
 				*/

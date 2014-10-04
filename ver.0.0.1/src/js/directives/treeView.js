@@ -16,7 +16,7 @@ define(
     function( application ) {
 
         // 등록
-        application.directive( 'tree', _directive );
+        application.directive( 'treeView', _directive );
 
         // 선언
         function _directive() {
@@ -28,7 +28,7 @@ define(
                 restrict: 'EA',
                 // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
                 //template: '<span><span ng-transclude></span> {{version}} </span>',
-                templateUrl: _PATH.TEMPLATE + 'tree.html',
+                templateUrl: _PATH.TEMPLATE + 'view/treeView.html',
                 replace: true,
                 scope: {},
                 
@@ -48,9 +48,9 @@ define(
 
                 // 1. 이벤트를 받는다.
                 var self = this;
-                $scope.$on('#Data.changed#TREE', function(e, data){
+                $scope.$on('#Data.changed-TREE', function(e, data){
                     if(data.name == 'TREE'){
-                        out('#Data.changed#TREE : ', arguments);
+                        out('#Data.changed-TREE : ', arguments);
                         self.updateTree();
                     }
                 });

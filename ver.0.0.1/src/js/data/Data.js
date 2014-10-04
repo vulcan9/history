@@ -149,7 +149,7 @@ define(
                             // out('#Data.changed', property);
                             //$rootScope.$emit('#ToolController.resize', {width:0, height:0});
                             
-                            var eventName = '#Data.changed#' + property;
+                            var eventName = '#Data.changed-' + property;
                             out('# 이벤트 발생 : ', eventName);
 
                             var args = {newValue:value, oldValue:oldValue, name:property};

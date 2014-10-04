@@ -21,8 +21,8 @@
     -o-box-sizing: border-box;
     -ms-box-sizing: border-box;
 
-    /*font-family: '맑은 고딕', '나눔고딕';
-    color: #4b4d4c;*/
+    font-family: '맑은 고딕', '나눔고딕';
+    /*color: #4b4d4c;*/
     font-size: 12px;
     /*vertical-align: baseline;*/
     /*vertical-align: middle;*/
@@ -73,3 +73,11 @@ i, em {font-style: italic;}
 
 
 
+/*//////////////////////////////////////
+// UI Bootstrap 커스트마이징
+// http://angular-ui.github.io/bootstrap/
+//////////////////////////////////////*/
+
+.btn{
+    min-width: 80px;
+}

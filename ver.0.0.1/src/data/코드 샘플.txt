@@ -26,7 +26,7 @@ $scope.$on('#Data.changed', function(e, data){
 // resize 이벤트 발송
 //----------------------------
 
-* 이벤트 네이밍 : # + 파일이름 + . + 이벤트타입
+* 이벤트 네이밍 : '#' + 파일이름 + '.' + 이벤트타입 [+ '-' + 구분자]
 * 샘플 : #ApplicationController.resize
 
 // trigger

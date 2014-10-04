@@ -44,10 +44,25 @@ define(
             var callback = angular.bind(this, initComplate);
             if (Tool.current == null) {
                 Tool.current = new Tool(callback);
+
+                var $window = angular.element(window);
+                $window.on('beforeunload', _checkSaveForExit);
+                $window.on('unload', _checkSaveForExit);
+
             }else{
                 Tool.current.initialize(callback);
             }
 
+            function _checkSaveForExit(){
+                if(Tool.current.dataChanged){
+                    var message = '저장되지 않은 데이터가 있습니다.';
+                    return message;
+                }else{
+                    var $window = angular.element(window);
+                    $window.off('beforeunload', _checkSaveForExit);
+                    $window.off('unload', _checkSaveForExit);
+                }
+            }
 
 
 

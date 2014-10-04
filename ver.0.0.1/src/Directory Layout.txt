@@ -108,3 +108,7 @@ http://vitalets.github.io/angular-xeditable/
 http://getbootstrap.com/
 http://getbootstrap.com/components/
 http://bootstrapk.com/BS3/
+http://bootstrapk.com/BS3/components
+
+// UI Bootstrap
+http://angular-ui.github.io/bootstrap/

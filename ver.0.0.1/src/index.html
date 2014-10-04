@@ -1,102 +1,103 @@
 <!DOCTYPE html>
 <html lang="ko" ng-controller="ApplicationController">
 
-  <head>
-    <meta name="google" value="notranslate">
+    <head>
+        <meta name="google" value="notranslate">
 
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>APP :: Document - Reporting - Presentation</title>
-    <meta name="description" content="">
+        <title>APP :: Document - Reporting - Presentation</title>
+        <meta name="description" content="">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <!-- 
-    ///////////////////////////////////
-    // 부트스트랩 미리 로드
-    ///////////////////////////////////
-    -->
+        <!--
+            ///////////////////////////////////
+            // 부트스트랩 미리 로드
+            ///////////////////////////////////
+        -->
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">-->
+        <link rel="stylesheet" href="./libs/bootstrap-3.2.0/css/bootstrap.css">
 
-    <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요) -->
-    <!--<script src="//code.jquery.com/jquery.min.js"></script>-->
-    <script src="./libs/jquery/jquery.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요) -->
+        <!--<script src="//code.jquery.com/jquery.min.js"></script>-->
+        <script src="./libs/jquery/jquery.js"></script>
+        <!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>-->
+        <script src="./libs/bootstrap-3.2.0/js/bootstrap.js"></script>
 
-    <!-- 
-    ///////////////////////////////////
-    // CSS 선택 로드
-    ///////////////////////////////////
-    -->
+        <!-- UI Bootstrap : http://angular-ui.github.io/bootstrap/ -->
+        <!--<script src="./libs/ui-bootstrap-tpls-0.11.2.js"></script> -->
 
-    <!--http://cdnjs.com/
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js"></script> 
-    <link rel="stylesheet" href="css/basic.css"/>
-    -->
+        <!--
+            ///////////////////////////////////
+            // CSS 선택 로드
+            ///////////////////////////////////
+        -->
+        <!--http://cdnjs.com/
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js"></script>
+        <link rel="stylesheet" href="css/basic.css"/>
+        -->
 
-    <!--
-    <script src="./libs/angular/angular.1.2.9.js"></script>
-    <script src="./libs/angular/angular-route.1.2.9.js"></script>
-    
-    <script type="text/javascript">
-    angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
-    </script>
-    -->
+        <!--
+        <script src="./libs/angular/angular.1.2.9.js"></script>
+        <script src="./libs/angular/angular-route.1.2.9.js"></script>
 
-    <!--
-      일부 페이지마다 필요한 CSS은 컨트롤러에서 설정해서 로드 (IE8 에서도 정상동작)
-      http://plnkr.co/edit/KzjIMN
-    -->
-    <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" />
-    
+        <script type="text/javascript">
+            angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
+        </script>
+        -->
 
-    <script data-main="js/main" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
-
-  </head>
-
-
-  <body>
+        <!--
+            일부 페이지마다 필요한 CSS은 컨트롤러에서 설정해서 로드 (IE8 에서도 정상동작)
+            http://plnkr.co/edit/KzjIMN
+        -->
+        <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" />
 
 
-    
-    <div ng-view class="applicationContainer"></div>
+        <script data-main="js/main" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
 
-    <!-- 
-    Split Bar :
-    http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
-    Floating Window
-    http://codepen.io/m-e-conroy/pen/enIcC
-    drag & resize
-    http://www.codeproject.com/Articles/637430/Angular-js-example-application
-    angular-gridster
-    http://angular-js.in/angular-gridster/
-     -->
-    
-    
+    </head>
 
-    <!--
-    <div>
-      <a href="#admin">admin</a> |
-      <a href="#login">login</a> |
-      <a href="#tool">tool</a>
-    </div>
-    -->
+
+    <body>
+
+
+        <div ng-view class="applicationContainer"></div>
+
+        <!--
+            Split Bar :
+            http://stackoverflow.com/questions/18368485/angular-js-resizable-div-directive
+            Floating Window
+            http://codepen.io/m-e-conroy/pen/enIcC
+            drag & resize
+            http://www.codeproject.com/Articles/637430/Angular-js-example-application
+            angular-gridster
+            http://angular-js.in/angular-gridster/
+        -->
 
 
 
+        <!--
+            <div>
+                <a href="#admin">admin</a> |
+                <a href="#login">login</a> |
+                <a href="#tool">tool</a>
+            </div>
+        -->
 
 
 
 
-  
-    <!--[if lt IE 7]>
-    <p class="browsehappy">You are using an <strong>outdated</strong> browser. 
-    Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
 
-  </body>
+
+
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser.
+            Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    </body>
 </html>
-
