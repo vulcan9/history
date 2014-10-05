@@ -49,7 +49,12 @@
                 {"label": "Timeline", "link":"", "command":"timeline"},
                 {"label": "Activity", "link":"", "command":"activity"},
                 {"label": "Item", "link":"", "command":"item"},
-                {"label": "Schedule", "link":"", "command":"schedule"}
+                {"label": "Schedule", "link":"", "command":"schedule"},
+
+                {"class":"divider"},
+
+                {"label": "presentation", "link":"", "command":"play"},
+                {"label": "edit", "link":"", "command":"edit"}
             ]
         },
 

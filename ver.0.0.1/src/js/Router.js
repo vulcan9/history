@@ -175,7 +175,8 @@ define( [], function() {
 				// SERVICE
 				_PATH.SERVICE + 'VersionService',
 				_PATH.SERVICE + 'ProgressService',
-				_PATH.SERVICE + 'DataService',
+				// _PATH.SERVICE + 'DataService',
+				_PATH.SERVICE + 'HttpService',
 				_PATH.SERVICE + 'NoticeService'
 			];
 
@@ -261,7 +262,10 @@ define( [], function() {
 						_PATH.COMMAND + 'SaveCommand',
 						_PATH.COMMAND + 'SaveAsCommand',
 						_PATH.COMMAND + 'CloseCommand',
-						_PATH.COMMAND + 'ExitCommand'
+						_PATH.COMMAND + 'ExitCommand',
+
+						_PATH.COMMAND + 'PlayCommand',
+						// _PATH.COMMAND + 'EditCommand'
 					]
 				}
 				

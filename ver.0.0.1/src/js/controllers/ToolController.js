@@ -22,7 +22,7 @@ define(
         // http://programmingsummaries.tistory.com/124
         
         // 선언
-        function _controller( $scope, $element, $attrs, ProgressService, DataService, ExecuteService ) {
+        function _controller( $scope, $element, $attrs, ProgressService, ExecuteService ) {
 
             //-----------------------
             // CSS 설정
@@ -45,27 +45,32 @@ define(
             if (Tool.current == null) {
                 Tool.current = new Tool(callback);
 
-                var $window = angular.element(window);
-                $window.on('beforeunload', _checkSaveForExit);
-                $window.on('unload', _checkSaveForExit);
+                _windowCloseEvent();
 
             }else{
                 Tool.current.initialize(callback);
             }
 
-            function _checkSaveForExit(){
+            //-----------------------
+            // 윈도우 종료 이벤트
+            //-----------------------
+            
+            function _windowCloseEvent(){
+                var $window = angular.element(window);
+                $window.on('beforeunload', _checkExit);
+                $window.on('unload', _checkExit);
+            }
+
+            function _checkExit(){
                 if(Tool.current.dataChanged){
                     var message = '저장되지 않은 데이터가 있습니다.';
                     return message;
                 }else{
                     var $window = angular.element(window);
-                    $window.off('beforeunload', _checkSaveForExit);
-                    $window.off('unload', _checkSaveForExit);
+                    $window.off('beforeunload', _checkExit);
+                    $window.off('unload', _checkExit);
                 }
             }
-
-
-
 
             ////////////////////////////////////////
             // 초기화

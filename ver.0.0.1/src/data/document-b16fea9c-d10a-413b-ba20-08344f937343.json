@@ -1,0 +1,65 @@
+﻿{
+    "version": "0.0.1",
+    "description": "문서 편집 내용 정의",
+
+    "uid": "document-b16fea9c-d10a-413b-ba20-08344f937343",
+
+    "document": {
+
+        "uid": "document-b16fea9c-d10a-413b-ba20-08344f937343",
+
+        "id": "bored1",
+        "content": "<div id='bored1' data-scale='2' data-x='1000' data-y='0' data-rotate='-45'><h1>#디자인 어디까지 해봤니~</h1><br><a href='#bored1-1'>컨셉 디자인 진행1</a><br><a href='#bored1-2'>컨셉 디자인 진행2</a></div>"
+
+    },
+
+    "configuration": {
+
+        "uid": "document-b16fea9c-d10a-413b-ba20-08344f937343",
+
+        "id": "bored1",
+        "subject": "문서 제목",
+        "descripty": "문서 요약",
+
+        "security": {
+            "permission": "all",
+            "grade": "5"
+        },
+
+        "history": {
+            "create": "Sun Aug 31 2014 21:11:16 GMT+0900",
+            "edits": []
+        },
+
+        "progress": {
+            "start": "Sun Aug 31 2014 21:11:16 GMT+0900",
+            "end": "Sun Aug 31 2014 21:11:16 GMT+0900",
+
+            "ignore": "0",
+            "percent": "0"
+        }
+    },
+
+    "todos": {
+
+        "uid": "document-b16fea9c-d10a-413b-ba20-08344f937343",
+
+        "items":{
+
+            "todo-b16fea9c-d10a-413b-ba20-08344f937337": {
+                "uid": "todo-b16fea9c-d10a-413b-ba20-08344f937337",
+                "title": "todo 요약",
+                "description": "구체적인 todo 내용",
+                "completed": "0",
+
+                "progress": {
+                    "start": "Sun Aug 31 2014 21:11:16 GMT+0900",
+                    "end": "Sun Aug 31 2014 21:11:16 GMT+0900"
+                }
+            }
+            
+        }
+
+    }
+
+}

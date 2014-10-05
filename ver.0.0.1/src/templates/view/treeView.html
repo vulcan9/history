@@ -1,4 +1,8 @@
 <div class="treeContainer">
-tree
+[tree]
+    <ul>
+        <li ng-repeat="item in tree.items" ng-model="counter">{{$index + 1}} : {{item.uid}}</li>
+    </ul>
+
 </div>
 

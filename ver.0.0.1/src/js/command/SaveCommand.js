@@ -19,7 +19,7 @@ define(
         application.service( 'SaveCommand', _service );
 
         // 선언
-        function _service(Command, Tool, $timeout) {
+        function _service( Command, Tool, NoticeService, $timeout ) {
 
             out( 'Command 등록 : SaveCommand' );
 
@@ -32,8 +32,8 @@ define(
 
             function SaveCommand() {
 
-                _superClass.apply(this, arguments);
-                out( '# SaveCommand : ', this);
+                _superClass.apply( this, arguments );
+                out( '# SaveCommand : ', this );
 
             }
 
@@ -41,49 +41,56 @@ define(
             // Prototype 상속
             /////////////////////////////////////
 
-            angular.extend( SaveCommand.prototype,  _super, {
-                
-                _run : function ( param ) {
+            angular.extend( SaveCommand.prototype, _super, {
+
+                _run: function( param ) {
 
                     // Override
                     out( '# SaveCommand Execute' );
 
+                    out( 'TODO : // SaveCommand 실행' );
+
                     // 결과 리턴
                     // _super._run.apply(this, arguments);
-                    
-                    /*
-                    var title = LOCALE.getLocaleString("Application","save","error_title", "문서 저장 실패");
-                    var msg = LOCALE.getLocaleString("Application","save","error01", "문서 저장에 실패하였습니다.");
-                    
-                    if (self._process.size() !== 0) {
-                        msg += LOCALE.getLocaleString("Application","save","error02", " 계속 진행 하시겠습니까?");
-                        if(errMsg) msg += "<br>" + errMsg;
-                        u.confirm(msg, title, true, callback, self);
-                    } else {
-                        msg += LOCALE.getLocaleString("Application","save","error03", " 다시 시도하여 주십시요.");
-                        if(errMsg) msg += "<br>ERROR : " + errMsg;
-                        u.alert(msg, title, true, callback, self);
-                    }
-                    */
-
 
                     var self = this;
-                    $timeout(function(){
-                        
-                        // 저장 체크
-                        Tool.current.dataChanged = true;
-                    
+                    $timeout( function() {
+
                         self._success.apply(self, [param]);
+                        // self._error.apply(self, [param]);
+                        // self._error();
 
-                    }, 2000);
+                    }, 2000 );
+                },
+
+                _success: function( data ) {
+                    
+                    // 저장 체크 변경
+                    Tool.current.dataChanged = false;
+
+                    // 콜백 호출
+                    _super._success.apply( this, arguments );
+                },
+
+                _error: function( data ) {
+                    var self = this;
+                    this._errorNotice( {
+                            title: '저장 실패',
+                            content: '저장하기에 실패했습니다. 계속 진행 하시겠습니까?'
+                        },
+                        function( result, element, scope ) {
+                            // result : -1:cancel, 1:yes, 0:no
+                            if ( result > 0 ) {
+                                _super._error.apply( self, [ data ] );
+                            } else {
+                                // 저장 체크 변경하지 않음
+                                // Tool.current.dataChanged = true;
+                                _super._error.apply( self, [ data, true ] );
+                            }
+                        }
+                    );
                 }
-            });
-
-
-
-
-
-
+            } );
 
             // 서비스 객체 리턴
             return SaveCommand;

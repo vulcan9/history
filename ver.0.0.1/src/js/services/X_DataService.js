@@ -29,7 +29,60 @@ define(
             
             // 데이터 로드 서비스 호출
             // https://code.angularjs.org/1.2.23/docs/api/ng/service/$http
-            
+                    
+                    /*
+                    var self = this;
+                    DataService(
+                        {
+                            method : 'GET', 
+                            url : projectURL
+                        },
+
+                        function success(data){
+
+                            out ('# Project 로드 완료 : ', data);
+                            // ProgressService.complete();
+                            
+                            out('TODO : // OpenCommand 실행');
+
+                            // 데이터 변경
+                            Project.current.project('TREE', data);
+
+                            // Controller 메서드 직접 호출 방법
+                            // var treeController = U.getController('.treeContainer', 'tree');
+                            // treeController.updateTree();
+
+                            // scope에 직접 접근 방법
+                            // var $scope = param.scope;
+                            // $scope.tree = Project.current.project('TREE');
+                            
+                            // 결과 리턴
+                            // self._success({tree:data});
+
+
+                            $timeout(function(){
+                                out ('\nTODO : ====> TREE 결과 리턴 DELAY 삭제\n');
+                                self._success({tree:data});
+                            }, 1000);
+
+
+                        },
+
+                        function error(){
+
+                            Project.current.project('TREE', null);
+
+                            // preventDefault
+                            //return false;
+                            
+                            out ('# 로드 에러 : ', projectUID, '\n-url : ', projectURL);
+                            // ProgressService.complete();
+                            
+                            self._error();
+                        }
+                    );
+                    */
+                   
             function singleton( config, successCallback, errorCallback ) {
 
                 out( '# 데이터 로드 : [', config.method, '] ', config.url );

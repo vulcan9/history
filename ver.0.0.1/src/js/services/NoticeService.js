@@ -65,6 +65,8 @@ define(
                 size: '',
                 backdrop: true,
                 buttons: ['예', '아니오', '취소']
+                isHTML: false // content가 HTML 이면 true
+                hideCloseButton: false // x버튼 감출려면 tree
             };
             var callback = {
                 
@@ -126,15 +128,6 @@ define(
                 close : closePopup
             };
             
-            /*
-            function alertPopup( config, callback ) {
-                var config = config || {};
-                var callback = callback || {};
-                config.buttons = config.buttons || ['ok'];
-
-                confirmPopup(config, callback);
-            }
-            */
             
             function confirmPopup( config, callback ) {
                 var config = config || {};
@@ -180,7 +173,7 @@ define(
                     function( reason ) {
                         if ( callback.closed ) callback.closed.apply( null, [ reason, windowElement, $scope ] );
                     },
-                    // NO : 0
+                    // NO : 0, -1
                     function( reason ) {
                         if ( reason == 'backdrop click' ) reason = -1;
                         if ( callback.closed ) callback.closed.apply( null, [ reason, windowElement, $scope ] );
@@ -192,20 +185,37 @@ define(
                     // UI Bootstrap
                     // http://angular-ui.github.io/bootstrap/
                     windowElement = angular.element( 'div[modal-window]' );
-                    var $element = windowElement.find( '.modal-body' );
+                    var $header = windowElement.find( '.modal-header' );
+                    var $body = windowElement.find( '.modal-body' );
+                    var $footer = windowElement.find( '.modal-footer' );
+
                     // 마지막 요소
-                    var win = $element[$element.length-1];
+                    var win = $body[$body.length-1];
 
-                    var linkingFunction = $compile( config.content );
-                    var elem = linkingFunction( $scope );
+                    if(config.isHTML){
+                        var linkingFunction = $compile( config.content );
+                        var elem = linkingFunction( $scope );
+                        angular.element( win ).html( elem );
+                    }else{
+                        angular.element( win ).html( config.content );
+                    }
 
-                    angular.element( win ).html( elem );
+                    out('# NOTICE : ', angular.element( win ).text());
+
+                    //-----------------
+                    // close 버튼 표시
+                    //-----------------
+                    
+                    if(config.hideCloseButton){
+                        var $close = $header.find( '.close' );
+                        $close.remove();
+                    }
 
                     //-----------------
                     // 버튼 label, 개수 재조정
                     //-----------------
                     
-                    var $buttons = windowElement.find( '.modal-footer' ).find('.btn');
+                    var $buttons = $footer.find('.btn');
                     var len = $buttons.length;
                     for(var i=len-1; i>=0; --i){
                         var label = config.buttons[i];

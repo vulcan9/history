@@ -3,7 +3,7 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : service 정의, 등록
+    * Description : command 호출 관리
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
@@ -141,21 +141,27 @@ define(
                 _runMacro: function( macro, param, resultCallback ) {
 
                     out( '\n----------------------------//start' );
+                    
+                    // macro 강제 종료
+                    var macroCanceled = false;
 
                     // args => [param]
-                    var callback = angular.bind( this, function( isSuccess, result ) {
+                    var callback = angular.bind( this, function( isSuccess, result, isStopPropergation ) {
 
                         if ( isSuccess ) {
                             out( 'TODO : // undo, redo를 위해 command 객체 저장 : ', command );
                         } else {
-                            out( 'TODO : // command 실행 취소', command );
+                            out( '# command 실행 취소', command );
+                            if(isStopPropergation) macroCanceled = true;
                         }
 
                         out( '----------------------------//end\n' );
 
-                        if ( macro.length < 1 ) {
+                        if ( macro.length < 1 || macroCanceled) {
                             if ( resultCallback ) {
                                 
+                                out('TODO : 화면 랜더링 타임을 늦춘다. (데이터가 바뀌는 이벤트 시점을 명령 종료 시점으로 늦춘다.)');
+
                                 out('# Macro 실행 종료');
                                 out( '=================================================\n' );
 
@@ -200,6 +206,7 @@ define(
                         var config = {
                             title: '저장',
                             content: '<span>저장되지 않은 데이터가 있습니다. 저장하시겠습니까?</span>',
+                            // backdrop: false,
                             buttons: ['예', '아니오', '취소']
                             // templateUrl: _PATH.TEMPLATE + 'popup/notice.html'
                         };
@@ -284,6 +291,12 @@ define(
                     var macro = [];
                     var deferred = $q.defer();
 
+                    if(!param || !param.uid){
+                        var uid = 'b16fea9c-d10a-413b-ba20-08344f937336';
+                        param.uid = uid;
+                        out( 'TODO : project 데이터 로드 경로(아이디) 세팅 : ', uid );
+                    }
+
                     // 닫기 과정 추가
                     var promise_close = this.command_close( param );
                     promise_close.then( function( macro_close ) {
@@ -297,7 +310,7 @@ define(
                     } );
 
                     // 저장하기 취소인 경우 -> 실행 취소
-
+                    
                     function resove() {
                         // 새 프로젝트
                         var command = new OpenCommand();
@@ -335,6 +348,12 @@ define(
                     var macro = [];
                     var deferred = $q.defer();
 
+                    if(!param || !param.uid){
+                        var uid = 'b16fea9c-d10a-413b-ba20-08344f937336';
+                        param.uid = uid;
+                        out( 'TODO : project 데이터 저장 경로(아이디) 세팅 : ', uid );
+                    }
+                    
                     // 다른 이름으로 저장
                     var command = new SaveAsCommand();
                     macro.push( command );
@@ -377,7 +396,7 @@ define(
                     }
 
                     return deferred.promise;
-                }
+                },
 
                 ////////////////////////////////////////
                 // Edit 메뉴
@@ -387,6 +406,26 @@ define(
                 ////////////////////////////////////////
                 // View 메뉴
                 ////////////////////////////////////////
+
+                command_play: function( param ) {
+                    var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    out('TODO : 아직 구현 안됨');
+
+                    return deferred.promise;
+                },
+
+                command_edit: function( param ) {
+                    var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    out('TODO : 아직 구현 안됨');
+
+                    return deferred.promise;
+                }
 
             };
 

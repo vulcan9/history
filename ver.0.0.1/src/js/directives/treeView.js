@@ -50,7 +50,7 @@ define(
                 var self = this;
                 $scope.$on('#Data.changed-TREE', function(e, data){
                     if(data.name == 'TREE'){
-                        out('#Data.changed-TREE : ', arguments);
+                        out('#Data.changed-TREE (tree) : ', arguments);
                         self.updateTree();
                     }
                 });
@@ -63,7 +63,7 @@ define(
                 // 3. scope이 변경되었음을 감지한다.
                 $scope.$watch('tree', function(newValue, oldValue) {
                     if (newValue === oldValue) { return; }
-                    out('#tree changed : ', $scope.tree);
+                    out('#tree changed (tree) : ', $scope.tree);
 
                 }, true);
 

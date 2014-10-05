@@ -51,7 +51,7 @@ define(
             // Controller
             ////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, $location, ExecuteService, Tool, DataService, $timeout ) {
+            function Controller( $scope, $element, $attrs, $location, ExecuteService, Tool, HttpService, $timeout ) {
                 
                 // 데이터 로드
                 if (Tool.current.TOOL.MENU == undefined){
@@ -124,32 +124,32 @@ define(
 
                     var menuURL = _PATH.ROOT + 'data/menu.json';
                     
-                    DataService(
-                        {
-                            method : 'GET', 
-                            url : menuURL
-                        },
 
-                        function success(data){
+                    var promise = HttpService.load( {
+                            method: 'GET',
+                            url: menuURL
+                        } )
+                        .then( success, error );
 
-                            out ('# Menu 로드 완료 : ', data);
-                            // ProgressService.complete();
-                            
-                            // 데이터 변경
-                            Tool.current.tool ('MENU', data);
-                        },
+                    function success(data){
 
-                        function error(){
+                        out ('# Menu 로드 완료 : ', data);
+                        // ProgressService.complete();
+                        
+                        // 데이터 변경
+                        Tool.current.tool ('MENU', data);
+                    }
 
-                            Tool.current.tool ('MENU', null);
+                    function error(){
 
-                            // preventDefault
-                            //return false;
-                            
-                            out ('# Menu 로드 에러 : ', menuURL);
-                            // ProgressService.complete();
-                        }
-                    );
+                        Tool.current.tool ('MENU', null);
+
+                        // preventDefault
+                        //return false;
+                        
+                        out ('# Menu 로드 에러 : ', menuURL);
+                        // ProgressService.complete();
+                    }
 
                 }
 

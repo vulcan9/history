@@ -40,13 +40,35 @@ define(
                 controller: function( $scope, $element, $attrs, $transclude, $rootScope, $route, $routeParams, $location ) {
                     out('TODO : 로드된 데이터에 따라 screen에 각 document를 생성한다. (ui-canvas, Impress 적용)');
 
-                    // ToolController 에서 데이터 로드 후 지정해줌
+                    //------------------
+                    // 데이터 변경 감지 순서 - OpenCommand
+                    //------------------
 
+                    // 1. 이벤트를 받는다.
+                    var self = this;
+                    $scope.$on('#Data.changed-TREE', function(e, data){
+                        if(data.name == 'TREE'){
+                            out('#Data.changed-TREE (screen) : ', arguments);
+                            self.updateTree();
+                        }
+                    });
+
+                    // 2. 변경 내용을 scope에 적용한다.
+                    this.updateTree = function(){
+                        $scope.tree = Project.current.project('TREE');
+                    }
+                    
+                    // 3. scope이 변경되었음을 감지한다.
                     $scope.$watch('tree', function(newValue, oldValue) {
                         if (newValue === oldValue) { return; }
-                        out('#tree changed : ', $scope.tree);
+                        out('#tree changed (screen) : ', $scope.tree);
+
                     }, true);
                     
+                    //------------------
+                    // 데이터 변경된 겨우 화면 업데이트
+                    //------------------
+
                 }
             };
 

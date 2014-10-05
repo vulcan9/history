@@ -3,7 +3,7 @@
     * 
     * Developer : (c) Dong-il Park (pdi1066@naver.com)
     * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : 정렬 관련된 유틸함수들
+    * Description : 유틸함수들
 
 ////////////////////////////////////////////////////////////////////////////////*/
 

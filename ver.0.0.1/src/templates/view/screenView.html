@@ -1,7 +1,11 @@
 <div class="screenContainer">
     <div class="screen">
         
-
+[screen]
+    <ul>
+        <li ng-repeat="item in tree.items" ng-model="counter">{{$index + 1}} : {{item.uid}}</li>
+    </ul>
+    
     <!-- uiCanvas 를 삽입한다.-->
         
     </div>

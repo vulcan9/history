@@ -66,7 +66,13 @@ define(
                         this.project = this.__createProxy ('this', 'PROJECT', {
 
                                 // project 문서 구성 정보
-                                __TREE : null
+                                __TREE : null,
+
+                                // project 문서 내용
+                                __DOC : null,
+
+                                // Presentation 데이터
+                                __PRESENTATION : null
                             }
                         );
 
@@ -191,7 +197,7 @@ define(
     "version": "0.0.1",
     "description": "문서간 Tree 구조(depth)를 정의, 문서 uid와 1:1 매칭 (key-value)",
 
-    "uid": "project-b16fea9c-d10a-413b-ba20-08344f937336",
+    "uid": "b16fea9c-d10a-413b-ba20-08344f937336",
 
     "items": {
         
