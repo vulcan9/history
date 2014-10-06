@@ -69,7 +69,7 @@ define(
                                 __TREE : null,
 
                                 // project 문서 내용
-                                __DOC : null,
+                                __DOCUMENT : null,
 
                                 // Presentation 데이터
                                 __PRESENTATION : null

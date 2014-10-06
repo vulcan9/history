@@ -19,7 +19,7 @@ define(
         application.service( 'OpenCommand', _service );
 
         // 선언
-        function _service( Command, HttpService, $q, Tool, Project ) {
+        function _service( Command, HttpService, $q, Tool, Project, $timeout ) {
 
             out( 'Command 등록 : OpenCommand' );
 
@@ -63,7 +63,7 @@ define(
                         // 데이터 로드 : document 리스트 로드
                         self.documentLoad( treeData, function( dataMap ) {
 
-                            self.presentationLoad( uid, function() {
+                            self.presentationLoad( uid, function(presentationData) {
 
                                 // 로드 종료
                                 self._loadComplete( dataMap );
@@ -131,13 +131,14 @@ define(
                                 Project.current = DATA;
                                 Project.current.project( 'TREE', data );
 
-                                if ( callback ) callback.apply( self, [ data ] );
+                                // if ( callback ) callback.apply( self, [ data ] );
 
                                 // document 리스트 로드
                                 // self.documentLoad( data );
 
                                 // 결과 리턴
                                 // self._success({tree:data});
+                                return data;
                             },
                             function error( data ) {
 
@@ -148,10 +149,17 @@ define(
                                 Project.current = DATA;
                                 Project.current.project( 'TREE', null );
 
+                                return null;
+                            }
+                        )
+                        .then(function(data){
+                            if(data == null){
                                 // 결과 리턴
                                 self._error();
+                            }else{
+                                if ( callback ) callback.apply( self, [ data ] );
                             }
-                        );
+                        });
 
                     return promies;
                 },
@@ -203,10 +211,10 @@ define(
 
                             return dataMap;
                         } )
-                        .then( function() {
+                        .then( function(data) {
 
                             // self._loadComplete( dataMap );
-                            if ( callback ) callback.apply( self, [ dataMap ] );
+                            if ( callback ) callback.apply( self, [ data ] );
 
                         } );
 
@@ -234,6 +242,7 @@ define(
                                 // 데이터 변경
                                 Project.current.project( 'PRESENTATION', data );
 
+                                return data;
                             },
                             function error( data ) {
                                 Project.current.project( 'PRESENTATION', null );
@@ -242,11 +251,12 @@ define(
 
                                 // 결과 리턴
                                 // self._error();
+                                return null;
                             }
                         )
-                        .then( function() {
+                        .then( function(data) {
 
-                            if ( callback ) callback.apply( self );
+                            if ( callback ) callback.apply( self, [data] );
 
                         } );
 
@@ -260,7 +270,7 @@ define(
                 _loadComplete: function( dataMap ) {
 
                     // 데이터 저장
-                    Project.current.project( 'DOC', dataMap );
+                    Project.current.project( 'DOCUMENT', dataMap );
 
                     // 저장 체크 변경
                     Tool.current.dataChanged = false;
@@ -268,7 +278,10 @@ define(
                     // out( 'dataMap : ', dataMap );
 
                     // 결과 리턴
-                    this._success( dataMap );
+                    var self = this;
+                    $timeout(function(){
+                        self._success( dataMap );
+                    });
                 }
 
             } );

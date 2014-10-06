@@ -199,7 +199,7 @@ define(
                     var deferred = $q.defer();
 
                     // 저장 체크
-                    Tool.current.dataChanged = true;
+                    // Tool.current.dataChanged = true;
 
                     if ( Tool.current.dataChanged ) {
 

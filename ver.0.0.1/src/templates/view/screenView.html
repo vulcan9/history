@@ -3,7 +3,9 @@
         
 [screen]
     <ul>
-        <li ng-repeat="item in tree.items" ng-model="counter">{{$index + 1}} : {{item.uid}}</li>
+        <li ng-repeat="item in tree.items" ng-model="counter">
+            {{$index + 1}} : {{document[item.uid].document}}
+        </li>
     </ul>
     
     <!-- uiCanvas 를 삽입한다.-->

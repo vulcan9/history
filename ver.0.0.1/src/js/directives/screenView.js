@@ -62,12 +62,52 @@ define(
                     $scope.$watch('tree', function(newValue, oldValue) {
                         if (newValue === oldValue) { return; }
                         out('#tree changed (screen) : ', $scope.tree);
+                        updatedocumentList();
+                    }, true);
 
+                    //------------------
+                    // 데이터 변경 감지 순서 - OpenCommand
+                    //------------------
+
+                    // 1. 이벤트를 받는다.
+                    var self = this;
+                    $scope.$on('#Data.changed-DOCUMENT', function(e, data){
+                        if(data.name == 'DOCUMENT'){
+                            out('#Data.changed-DOCUMENT (screen) : ', arguments);
+                            self.updateDocument();
+                        }
+                    });
+
+                    // 2. 변경 내용을 scope에 적용한다.
+                    this.updateDocument = function(){
+                        $scope.document = Project.current.project('DOCUMENT');
+                    }
+                    
+                    // 3. scope이 변경되었음을 감지한다.
+                    $scope.$watch('document', function(newValue, oldValue) {
+                        if (newValue === oldValue) { return; }
+                        out('#document changed (document) : ', $scope.document);
+                        updatedocumentList();
                     }, true);
                     
                     //------------------
-                    // 데이터 변경된 겨우 화면 업데이트
+                    // 데이터 변경된 경우 화면 업데이트
                     //------------------
+
+                    function updatedocumentList(){
+                        
+                        /*
+                        <li ng-repeat="item in tree.items" ng-model="counter">
+                            {{$index + 1}} : {{document[item.uid].document}}
+                        </li>
+                        */
+                        if(!$scope.tree || !$scope.document) return;
+                        var documents = [];
+
+
+                        여기서부터~~~~
+                        //
+                    }
 
                 }
             };
