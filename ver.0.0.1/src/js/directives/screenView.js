@@ -11,9 +11,9 @@
 
 define(
     [
-        'Application'
+        'Application', 'ExtendSpace'
     ],
-    function( application ) {
+    function( application, ExtendSpace ) {
 
         // 등록
         application.directive( 'screenView', _directive );
@@ -28,6 +28,7 @@ define(
                 // DOM 엘리먼트의 속성 : EACM (default - A)
                 // element, attribute, class, comment
                 restrict: 'EA',
+                // templateUrl: _PATH.TEMPLATE + 'view/screenView_sample.html',
                 templateUrl: _PATH.TEMPLATE + 'view/screenView.html',
                 
                 replace: true,
@@ -39,6 +40,8 @@ define(
                 
                 controller: function( $scope, $element, $attrs, $transclude, $rootScope, $route, $routeParams, $location ) {
                     out('TODO : 로드된 데이터에 따라 screen에 각 document를 생성한다. (ui-canvas, Impress 적용)');
+
+                    updatedocumentList();
 
                     //------------------
                     // 데이터 변경 감지 순서 - OpenCommand
@@ -90,23 +93,70 @@ define(
                         updatedocumentList();
                     }, true);
                     
+                    ////////////////////////////////////////////////////////////////////////////////
+                    //
+                    // 화면 업데이트
+                    // 
+                    ////////////////////////////////////////////////////////////////////////////////
+                    
                     //------------------
                     // 데이터 변경된 경우 화면 업데이트
                     //------------------
 
                     function updatedocumentList(){
                         
+                        var api = window.Space("u-screen");
+                        api.config({
+                            useHashHistory:false
+                        });
+                        
+                        if(!$scope.tree || !$scope.document){
+                            api.init([]);
+                            return;
+                        }
+                        
+
                         /*
-                        <li ng-repeat="item in tree.items" ng-model="counter">
+                        <li ng-repeat="item in tree.items">
                             {{$index + 1}} : {{document[item.uid].document}}
                         </li>
                         */
-                        if(!$scope.tree || !$scope.document) return;
+                        
+                        out('TODO :  SCREEN css 통일 시킬것');
+                        out('TODO :  변경된 아이템만 갱신되도록 로직 수정 필요함(현재는 리셋됨)');
+
+                        // 편집 : contentEditable
                         var documents = [];
+                        var items = $scope.tree.items
+                        for(var uid in items)
+                        {
+                            var docs = $scope.document[uid];
+                            if(docs == null) continue;
 
+                            var div = docs.document.content;
+                            out('* ', uid, ' : ', div);
+                            documents.push(div);
+                        }
 
-                        여기서부터~~~~
-                        //
+                        /*
+                        var documents1 = [
+                            '<div id="overview" data-scale="10" data-x="0" data-y="0"></div>',
+
+                            '<div id="center1" data-scale="0.5" data-x="0" data-y="0" style="background:red;"></div>',
+
+                            '<div id="bored" data-scale="2" data-x="-2000" data-y="0"><h1>프로젝트 주제 : 사이트 기획</h1><br>디자인 자료 준비해야 함<br><br><a href="#bored1">메인 컨셉 디자인 진행</a><br><a href="#bored1-2">서브 컨셉 디자인 진행</a></div>',
+                                '<div id="bored-1" data-scale="1" data-x="-2500" data-y="200">어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href="#bored">모두 보기</a></div>',
+                                    '<div id="bored-1-1" data-scale="0.5" data-x="-2500" data-y="200">ㅎㅎㅎ어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href="#bored">모두 보기</a></div>',
+                                '<div id="bored-2" data-scale="1" data-x="-1500" data-y="200"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>',
+
+                            '<div id="bored1" data-scale="2" data-x="1000" data-y="0" data-rotate="-45"><h1>#디자인 어디까지 해봤니~</h1><br><a href="#bored1-1">컨셉 디자인 진행1</a><br><a href="#bored1-2">컨셉 디자인 진행2</a></div>',
+                                '<div id="bored1-1" data-scale="1" data-x="1500" data-y="500" data-rotate="-45">어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href="#bored">기획 보기</a></div>',
+                                '<div id="bored1-2" data-scale="1" data-x="2500" data-y="0" data-rotate="-45"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q><br><iframe width="560" height="315" src="http://www.youtube.com/embed/ylLzyHk54Z0" frameborder="0" allowfullscreen="true"></iframe><br><a href="#bored">기획 보기</a></div>'
+                        ];
+                        */
+                        
+                        // 데이터 적용
+                        api.init(documents);
                     }
 
                 }

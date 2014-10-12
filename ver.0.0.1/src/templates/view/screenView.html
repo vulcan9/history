@@ -1,9 +1,15 @@
 <div class="screenContainer">
+
+
+
+<div id="u-screen"></div>
+
+
     <div class="screen">
         
 [screen]
     <ul>
-        <li ng-repeat="item in tree.items" ng-model="counter">
+        <li ng-repeat="item in tree.items">
             {{$index + 1}} : {{document[item.uid].document}}
         </li>
     </ul>

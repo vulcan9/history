@@ -5,6 +5,11 @@ https://github.com/vulcan9
 Space Version.0.0.1
 -----------------------
 
+[2014.10.11]
+* 초기화 속성 설정 config 메서드 추가
+* 해쉬 사용으로 브라우져 리다이이렉팅 시킴 (브라우져 history 사용) 옵션 처리
+  - useHashHistory 속성 (default : true)
+
 [2014.07.23]
 * 기본적인 Transition 동작 구현 완료
 * key, mouse, hash 등에 대한 이벤트 수신 구현

@@ -49,6 +49,12 @@ define(
                     // Override
                     out( '# CloseCommand Execute' );
 
+                    if(Project.current){
+                        Project.current.project( 'TREE', null );
+                        Project.current.project( 'PRESENTATION', null );
+                        Project.current.project( 'DOCUMENT', null );
+                    }
+
                     // 결과 리턴
                     this._success();
                 }

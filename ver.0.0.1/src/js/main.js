@@ -105,6 +105,7 @@ require.config( {
         'angular-collection':       _PATH.LIB + 'angular/angular-collection',
 
         // http://angular-ui.github.io/bootstrap/
+        'bootstrap':                _PATH.LIB + 'bootstrap-3.2.0/js/bootstrap',
         'ui-bootstrap':                _PATH.LIB + 'ui-bootstrap-tpls-0.11.2',
 
         // 모듈
@@ -114,7 +115,11 @@ require.config( {
         'Application':          _PATH.JS + 'Application',
         'Router':                 _PATH.JS + 'Router',
 
-        'U':                 _PATH.JS + 'U'
+        'U':                 _PATH.JS + 'U',
+        
+        'Space':                 _PATH.LIB + 'space/Space',
+        'ScaleMode':                 _PATH.LIB + 'space/ScaleMode',
+        'ExtendSpace':                 _PATH.LIB + 'space/ExtendSpace'
     },
 
     /*
@@ -122,6 +127,7 @@ require.config( {
     참고 : http://gregfranko.com/blog/require-dot-js-2-dot-0-shim-configuration/
     */
     shim: {
+        // 'jquery':{exports: 'jquery'},
         //'jquery-ui': {deps: ['jquery'] },
         'angular': {
             exports: 'angular'
@@ -132,6 +138,9 @@ require.config( {
         },
         'angular-collection': {
             deps: [ 'angular' ]
+        },
+        'bootstrap': {
+            // deps: [ 'jquery' ]
         },
         'ui-bootstrap': {
             deps: [ 'angular' ]
@@ -145,6 +154,19 @@ require.config( {
         },
         'Application': {
             deps: [ 'angular', 'angular-route', 'alignModule', 'uiModule', 'ui-bootstrap']
+        },
+
+        'Space':{
+            // deps: [ 'jquery'],
+            exports: 'Space'
+        },
+        'ScaleMode':{
+            exports: 'ScaleMode'
+        },
+        'ExtendSpace':{
+            // deps: [ 'jquery', 'Space', 'ScaleMode'],
+            deps: [ 'Space', 'ScaleMode'],
+            exports: 'ExtendSpace'
         }
     }
 
@@ -159,11 +181,19 @@ require.config( {
 
 require(
     [
+        'bootstrap',
         'angular',
         'Application'
     ],
 
-    function( angular, Application ) {
+    /*
+    Uncaught Error: [jqLite:nosel] Looking up elements via selectors is not supported by jqLite! 
+    See: 
+    http://docs.angularjs.org/api/angular.element
+    http://errors.angularjs.org/1.2.22/jqLite/nosel 
+    */
+
+    function( bootstrap, angular, Application ) {
 
         //-----------------------------------
         // Base URL

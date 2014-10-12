@@ -268,20 +268,10 @@ define( [], function() {
 						// _PATH.COMMAND + 'EditCommand'
 					]
 				}
-				
 				/*
 				,'/tool/:command': {
 					templateUrl: _PATH.TEMPLATE + 'tool.html',
 					dependencies: [
-						_PATH.CONTROLLER + 'ToolController',
-
-						_PATH.DIRECTIVE + 'menuView',
-						_PATH.DIRECTIVE + 'progressView',
-						_PATH.DIRECTIVE + 'treeView',
-						_PATH.DIRECTIVE + 'screenView',
-						_PATH.DIRECTIVE + 'timelineView',
-						_PATH.DIRECTIVE + 'propertyView',
-						_PATH.DIRECTIVE + 'statusView'
 					]
 				}
 				*/
