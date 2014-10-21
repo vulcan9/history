@@ -22,6 +22,7 @@ define(
         function _service(
             $q,
             NewCommand, OpenCommand, SaveCommand, SaveAsCommand, CloseCommand, ExitCommand,
+            AddDocumentCommand, RemoveDocumentCommand, ModifyDocumentCommand, 
             Tool, NoticeService, ProgressService
 
         ) {
@@ -47,6 +48,10 @@ define(
                 SAVEAS: 'saveAs',
                 CLOSE: 'close',
                 EXIT: 'exit',
+
+                ADD_DOCUMENT: 'addDocument',
+                REMOVE_DOCUMENT: 'removeDocument',
+                MODIFY_DOCUMENT: 'modifyDocument',
 
                 ////////////////////////////////////////////////////////////////////////////////
                 //
@@ -114,6 +119,13 @@ define(
                         
                         var self = this;
                         var macroPromise = this[ funcName ].apply( this, [ param ] );
+                        if(!macroPromise){
+                            out('\n# Command 실행하지 않음');
+                            out( '\n=================================================' );
+                            ProgressService.complete();
+                            return;
+                        }
+
                         macroPromise.then( function( macro ) {
                             
                             // Macro 실행
@@ -401,6 +413,110 @@ define(
                 ////////////////////////////////////////
                 // Edit 메뉴
                 ////////////////////////////////////////
+
+
+                //-----------------------------------
+                // Document
+                //-----------------------------------
+
+                command_addDocument: function( param ) {
+
+                    // 아이디 체크
+                    if(param === undefined) param = {};
+                    if(param.uid === undefined){
+                        param.uid = U.createUID();
+                    }
+
+                    var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 추가
+                    var command = new AddDocumentCommand();
+                    macro.push( command );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+
+                command_removeDocument: function( param ) {
+
+                    // 아이디 체크
+                    if(!param || param.uid === undefined){
+                        return null;
+                    }
+
+                    var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 제거
+                    var command = new RemoveDocumentCommand();
+                    macro.push( command );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+
+                command_modifyDocument: function( param ) {
+
+                    // 아이디 체크
+                    if(!param || param.uid === undefined){
+                        return null;
+                    }
+
+                    var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 수정
+                    var command = new ModifyDocumentCommand();
+                    macro.push( command );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
                 ////////////////////////////////////////

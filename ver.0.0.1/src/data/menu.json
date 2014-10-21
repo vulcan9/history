@@ -36,7 +36,8 @@
 
                 {"class":"dropdown-header", "label": "Document"},
                 {"label": "(임시) addDocument", "link":"", "command":"addDocument"},
-                {"label": "(임시) removeDocument", "link":"", "command":"removeDocument"}
+                {"label": "(임시) removeDocument", "link":"", "command":"removeDocument"},
+                {"label": "(임시) modifyDocument", "link":"", "command":"modifyDocument"}
 
             ]
         },

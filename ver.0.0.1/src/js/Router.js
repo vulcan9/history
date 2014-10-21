@@ -264,6 +264,10 @@ define( [], function() {
 						_PATH.COMMAND + 'CloseCommand',
 						_PATH.COMMAND + 'ExitCommand',
 
+						_PATH.COMMAND + 'document/AddDocumentCommand',
+						_PATH.COMMAND + 'document/RemoveDocumentCommand',
+						_PATH.COMMAND + 'document/ModifyDocumentCommand',
+
 						_PATH.COMMAND + 'PlayCommand',
 						// _PATH.COMMAND + 'EditCommand'
 					]

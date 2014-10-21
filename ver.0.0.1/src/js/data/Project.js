@@ -79,60 +79,37 @@ define(
                         // end initialize
                     },
 
-
-                    
-
-                    /*
-                    setTool: function(config){
-                        angular.extend(this.__TOOL, config);
-                    },
-                    */
-                   
-                    //---------------------
-                    // Project 
-                    //---------------------
-                    
-                    /*
-                    getUID : function(){
-                        return this.PROJECT.uid;
-                    },
-                    */
-                    
-                    /*
-                    setProject: function(project){
-                        this.__PROJECT = project;
-                    },
-                    */
-                    //
-                    
-
                     //////////////////////////////////////////////////////////////////////////
                     //
                     // 데이터 조작 API
                     // 
                     //////////////////////////////////////////////////////////////////////////
-
+                    
                     //---------------------
                     // Document
                     //---------------------
                     
                     // uid : document uid
                     getDocument : function(uid){
-                        return this.PROJECT.items[uid];
+                        return this.__get('DOCUMENT', this.PROJECT.DOCUMENT, uid);
                     },
 
-                    addDocument: function(docElement){
-
+                    // itemObject.uid 값이 있어야함
+                    addDocument: function(itemObject){
+                        if(this.PROJECT.DOCUMENT == undefined){
+                            this.project('DOCUMENT', {});
+                        }
+                        this.add('DOCUMENT', this.PROJECT.DOCUMENT, itemObject);
                     },
 
-                    // uid : document uid
+                    // itemObject.uid 값이 있어야함
                     removeDocument: function(uid){
-
+                        this.remove('DOCUMENT', this.PROJECT.DOCUMENT, itemObject);
                     },
 
-                    // uid : document uid
+                    // itemObject.uid 값이 있어야함
                     modifyDocument: function(uid){
-
+                        this.modify('DOCUMENT', this.PROJECT.DOCUMENT, itemObject);
                     },
 
                     //---------------------

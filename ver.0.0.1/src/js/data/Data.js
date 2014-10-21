@@ -161,7 +161,7 @@ define(
                     }
 
                     return proxy;
-                }
+                },
 
                 //////////////////////////////////////////////////////////////////////////
                 //
@@ -169,19 +169,99 @@ define(
                 // 
                 //////////////////////////////////////////////////////////////////////////
 
+                // dataObject을 가진 데이터에 값을 추가한다.
+                // propertyName : __createProxy로 생성된 property 이름
+                
+                add: function(propertyName, dataOwner, itemObject){
 
+                    // Override 내용 구현
+                    this.__add(propertyName, dataOwner, itemObject);
 
+                    // 이벤트 발송
+                    var eventName = '#Data.added-' + propertyName;
+                    out('# 이벤트 발생 : ', eventName);
 
+                    var args = {data:dataOwner, item:itemObject};
+                    $rootScope.$broadcast(eventName, args); 
+                },
 
+                remove: function(propertyName, dataOwner, itemObject){
 
+                    // Override 내용 구현
+                    this.__remove(propertyName, dataOwner, itemObject);
 
+                    // 이벤트 발송
+                    var eventName = '#Data.removed-' + propertyName;
+                    out('# 이벤트 발생 : ', eventName);
 
+                    var args = {data:dataOwner, item:itemObject};
+                    $rootScope.$broadcast(eventName, args); 
+                },
 
+                modify: function(propertyName, dataOwner, itemObject){
 
+                    // Override 내용 구현
+                    this.__modify(propertyName, dataOwner, itemObject);
 
+                    // 이벤트 발송
+                    var eventName = '#Data.modified-' + propertyName;
+                    out('# 이벤트 발생 : ', eventName);
 
+                    var args = {data:dataOwner, item:itemObject};
+                    $rootScope.$broadcast(eventName, args); 
+                },
 
+                //---------------------
+                // Override 내용 구현
+                //---------------------
+                
+                __add: function(propertyName, dataOwner, itemObject){
+                    var uid = itemObject.uid;
+                    if(uid === undefined){
+                        throw 'uid 값이 없습니다. (add)';
+                    }
+                    
+                    if(dataOwner === undefined){
+                        throw propertyName + '이 정의되지 않았습니다.';
+                    }
+                    dataOwner[uid] = itemObject;
+                },
 
+                __remove: function(propertyName, dataOwner, itemObject){
+                    var uid = itemObject.uid;
+                    if(uid === undefined){
+                        throw 'uid 값이 없습니다. (remove)';
+                    }
+                    
+                    if(dataOwner === undefined){
+                        throw propertyName + '이 정의되지 않았습니다.';
+                    }
+                    dataOwner[uid] = null;
+                    delete dataOwner[uid];
+                },
+
+                __modify: function(propertyName, dataOwner, itemObject){
+                    var uid = itemObject.uid;
+                    if(uid === undefined){
+                        throw 'uid 값이 없습니다. (modify)';
+                    }
+                    
+                    if(dataOwner === undefined){
+                        throw propertyName + '이 정의되지 않았습니다.';
+                    }
+                    dataOwner[uid] = itemObject;
+                },
+
+                __get: function(propertyName, dataOwner, uid){
+                    if(uid === undefined){
+                        throw 'uid 값이 없습니다. (get)';
+                    }
+
+                    if(dataOwner === undefined){
+                        throw propertyName + '이 정의되지 않았습니다.';
+                    }
+                    return dataOwner[uid];
+                }
 
                 // end
             };

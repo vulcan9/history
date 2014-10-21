@@ -98,7 +98,7 @@ define(
                     // 화면 업데이트
                     // 
                     ////////////////////////////////////////////////////////////////////////////////
-                    
+
                     //------------------
                     // 데이터 변경된 경우 화면 업데이트
                     //------------------
@@ -159,6 +159,53 @@ define(
                         api.init(documents);
                     }
 
+                    ////////////////////////////////////////////////////////////////////////////////
+                    //
+                    // 이벤트-업데이트
+                    // 
+                    ////////////////////////////////////////////////////////////////////////////////
+                    
+                    var self = this;
+
+                    // {data:dataObject, item:itemObject}
+                    $scope.$on('#Data.added-DOCUMENT', function(e, data){
+                        if(data.name == 'DOCUMENT'){
+                            out('#Data.added-DOCUMENT (screen) : ', arguments);
+                            self.addDocument();
+                        }
+                    });
+
+                    // {data:dataObject, item:itemObject}
+                    $scope.$on('#Data.removed-DOCUMENT', function(e, data){
+                        if(data.name == 'DOCUMENT'){
+                            out('#Data.removed-DOCUMENT (screen) : ', arguments);
+                            self.removeDocument();
+                        }
+                    });
+
+                    // {data:dataObject, item:itemObject}
+                    $scope.$on('#Data.modified-DOCUMENT', function(e, data){
+                        if(data.name == 'DOCUMENT'){
+                            out('#Data.modified-DOCUMENT (screen) : ', arguments);
+                            self.modifyDocument();
+                        }
+                    });
+
+                    function addDocument(){
+                        alert('addDocument');
+                    }
+
+                    function removeDocument(){
+                        alert('removeDocument');
+                    }
+
+
+                    function modifyDocument(){
+                        alert('modifyDocument');
+                    }
+
+
+                    // end controller
                 }
             };
 

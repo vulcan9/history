@@ -126,11 +126,15 @@ define(
                                 out( '# Project 로드 완료 : ', data );
                                 out( 'TODO : // OpenCommand 실행' );
 
+                                //*****************************************
+                                
                                 // 데이터 변경
                                 var DATA = new Project();
                                 Project.current = DATA;
                                 Project.current.project( 'TREE', data );
 
+                                //*****************************************
+                                
                                 // if ( callback ) callback.apply( self, [ data ] );
 
                                 // document 리스트 로드
@@ -269,6 +273,8 @@ define(
 
                 _loadComplete: function( dataMap ) {
 
+                    //*****************************************
+                    
                     // 데이터 저장
                     Project.current.project( 'DOCUMENT', dataMap );
 
@@ -277,6 +283,8 @@ define(
 
                     // out( 'dataMap : ', dataMap );
 
+                    //*****************************************
+                    
                     // 결과 리턴
                     var self = this;
                     $timeout(function(){
