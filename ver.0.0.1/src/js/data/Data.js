@@ -23,7 +23,7 @@ define(
         /////////////////////////////////////
         
         function Data(){
-            this.initialize();
+            //this.initialize();
         }
 
         function _factory($rootScope){
@@ -146,9 +146,6 @@ define(
                         
                         // 이벤트 발송
                         if(changed){
-                            // out('#Data.changed', property);
-                            //$rootScope.$emit('#ToolController.resize', {width:0, height:0});
-                            
                             var eventName = '#Data.changed-' + property;
                             out('# 이벤트 발생 : ', eventName);
 
@@ -181,7 +178,7 @@ define(
                     var eventName = '#Data.added-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
 
-                    var args = {data:dataOwner, item:itemObject};
+                    var args = {data:dataOwner, item:itemObject, name:propertyName};
                     $rootScope.$broadcast(eventName, args); 
                 },
 
@@ -194,7 +191,7 @@ define(
                     var eventName = '#Data.removed-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
 
-                    var args = {data:dataOwner, item:itemObject};
+                    var args = {data:dataOwner, item:itemObject, name:propertyName};
                     $rootScope.$broadcast(eventName, args); 
                 },
 
@@ -207,7 +204,7 @@ define(
                     var eventName = '#Data.modified-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
 
-                    var args = {data:dataOwner, item:itemObject};
+                    var args = {data:dataOwner, item:itemObject, name:propertyName};
                     $rootScope.$broadcast(eventName, args); 
                 },
 
@@ -224,7 +221,10 @@ define(
                     if(dataOwner === undefined){
                         throw propertyName + '이 정의되지 않았습니다.';
                     }
-                    dataOwner[uid] = itemObject;
+                    if(dataOwner.items === undefined){
+                        dataOwner.items = {};
+                    }
+                    dataOwner.items[uid] = itemObject;
                 },
 
                 __remove: function(propertyName, dataOwner, itemObject){
@@ -236,8 +236,9 @@ define(
                     if(dataOwner === undefined){
                         throw propertyName + '이 정의되지 않았습니다.';
                     }
-                    dataOwner[uid] = null;
-                    delete dataOwner[uid];
+                    if(dataOwner.items === undefined) return;
+                    dataOwner.items[uid] = null;
+                    delete dataOwner.items[uid];
                 },
 
                 __modify: function(propertyName, dataOwner, itemObject){
@@ -249,7 +250,10 @@ define(
                     if(dataOwner === undefined){
                         throw propertyName + '이 정의되지 않았습니다.';
                     }
-                    dataOwner[uid] = itemObject;
+                    if(dataOwner.items === undefined){
+                        dataOwner.items = {};
+                    }
+                    dataOwner.items[uid] = itemObject;
                 },
 
                 __get: function(propertyName, dataOwner, uid){
@@ -260,7 +264,8 @@ define(
                     if(dataOwner === undefined){
                         throw propertyName + '이 정의되지 않았습니다.';
                     }
-                    return dataOwner[uid];
+                    if(dataOwner.items === undefined) return null;
+                    return dataOwner.items[uid];
                 }
 
                 // end

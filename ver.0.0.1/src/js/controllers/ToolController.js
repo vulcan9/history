@@ -22,7 +22,7 @@ define(
         // http://programmingsummaries.tistory.com/124
         
         // 선언
-        function _controller( $scope, $element, $attrs, ProgressService, ExecuteService ) {
+        function _controller( $scope, $element, $attrs, ProgressService, CommandService ) {
 
             //-----------------------
             // CSS 설정
@@ -114,7 +114,15 @@ define(
                     // attrs : $attrs
                 }
 
-                ExecuteService.execute ( ExecuteService.CLOSE, param, function callback(isSuccess, result) {
+                /*
+                CommandService.execute ( CommandService.CLOSE, param, function callback(isSuccess, result) {
+                    out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
+                    ProgressService.complete();
+                });
+                */
+
+                // 새문서 열기
+                CommandService.execute(CommandService.NEW, param, function callback(isSuccess, result) {
                     out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
                     ProgressService.complete();
                 });

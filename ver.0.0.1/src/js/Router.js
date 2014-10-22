@@ -253,7 +253,7 @@ define( [], function() {
 		        				_PATH.DATA + 'Project',
 						
 						//SERVICE
-						_PATH.SERVICE + 'ExecuteService',
+						_PATH.SERVICE + 'CommandService',
 						
 						// COMMAND
 						_PATH.COMMAND + 'Command',

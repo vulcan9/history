@@ -78,7 +78,7 @@ define(
                     this._err(error);
                     */
 
-                    this._success();
+                    this._success(param);
                 },
 
                 //-----------------------------------

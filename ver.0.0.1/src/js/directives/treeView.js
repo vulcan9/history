@@ -63,7 +63,7 @@ define(
                 // 3. scope이 변경되었음을 감지한다.
                 $scope.$watch('tree', function(newValue, oldValue) {
                     if (newValue === oldValue) { return; }
-                    out('#tree changed (tree) : ', $scope.tree);
+                    out('# $scope.tree changed (tree) : ', $scope.tree);
 
                 }, true);
 

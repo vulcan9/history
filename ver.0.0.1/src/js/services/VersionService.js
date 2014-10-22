@@ -26,7 +26,7 @@ define(
                     
                     project : "Hi-Story",
 
-                    version : "0.0.1.1",
+                    number : "0.0.1.1",
                     
                     company : "vulcan",
                     
@@ -37,9 +37,15 @@ define(
                     web : "https://github.com/vulcan9/history",
 
                     toString : function(){
-                        return Version.project + " Version." + Version.version + "<br>"
-                                 + Version.company  + " "+ Version.developer  + " ( " + Version.email + " ) <br>"
-                                 + Version.web;
+                        return Version.version() + "<br>" + Version.copyright() + "<br>" + Version.web;
+                    }, 
+
+                    version : function(){
+                        return Version.project + " " + Version.number;
+                    },
+
+                    copyright : function(){
+                        return Version.company  + " "+ Version.developer  + " ( " + Version.email + " )";
                     }
             };
 

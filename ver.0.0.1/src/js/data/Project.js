@@ -35,7 +35,7 @@ define(
             _superClass.apply(this, arguments);
         }
 
-        function _factory( Data ){
+        function _factory( Data, VersionService ){
 
             /////////////////////////////////////
             // Prototype 상속
@@ -76,7 +76,108 @@ define(
                             }
                         );
 
+                        this.project('DOCUMENT', {items:{}});
+                        this.project('TREE', {items:{}});
+                        this.project('PRESENTATION', {items:{}});
+
+                        // Root Element (Overview)
+                        this.__checkRootDocument();
+
                         // end initialize
+                    },
+
+                    __checkRootDocument: function(){
+                        if(this.PROJECT.DOCUMENT.items['overview'] !== undefined){
+                            return;
+                        }
+
+                        var param = {
+                            uid : U.createUID(),
+                            document:{
+                                id : 'overview'
+                            }
+                        }
+                        this.addDocument(param);
+                    },
+
+                    //////////////////////////////////////////////////////////////////////////
+                    //
+                    // 데이터 원형
+                    // 
+                    //////////////////////////////////////////////////////////////////////////
+                    
+                    // content --> element.outerHTML
+                    getDefinitionDocument : function (uid){
+
+                        var version = VersionService.version();
+                        
+                        var definition = {
+                            "version": version,
+                            "description": "문서 편집 내용 정의",
+
+                            "uid": uid,
+
+                            // Document 구성 정보
+                            "document": {
+
+                                "uid": uid,
+
+                                "id": "overview1",
+                                "content": "<div id='overview1' data-scale='10' data-x='0' data-y='0'></div>"
+
+                            },
+
+                            // Document 운영 정보
+                            "configuration": {
+
+                                "uid": uid,
+
+                                "id": "overview1",
+                                "subject": "문서 제목",
+                                "descripty": "문서 요약",
+
+                                "security": {
+                                    "permission": "all",
+                                    "grade": "5"
+                                },
+
+                                "history": {
+                                    "create": new Date(),
+                                    "edits": []
+                                },
+
+                                "progress": {
+                                    "start": "",
+                                    "end": "",
+
+                                    "ignore": "0",
+                                    "percent": "0"
+                                }
+                            },
+
+                            // Document에 포함된 todo 정보
+                            "todos": {
+                                "uid": uid,
+                                "items":{}
+                            }
+                        };
+
+                        return definition;
+                    },
+
+                    getDefinitionTree : function (uid){
+                        var definition = {
+                            "uid" : uid,
+                            "name" : "bored-1-1",
+
+                            "parentUID": "",
+                            "parentName": "",
+                            
+                            "depth": "0",
+                            "index": "0"
+                        };
+
+                        return definition;
                     },
 
                     //////////////////////////////////////////////////////////////////////////
@@ -95,11 +196,18 @@ define(
                     },
 
                     // itemObject.uid 값이 있어야함
-                    addDocument: function(itemObject){
-                        if(this.PROJECT.DOCUMENT == undefined){
-                            this.project('DOCUMENT', {});
-                        }
-                        this.add('DOCUMENT', this.PROJECT.DOCUMENT, itemObject);
+                    addDocument: function(param){
+                        var uid = param.uid;
+
+                        // tree에 추가
+                        var treeItem = this.getDefinitionTree(uid);
+                        this.add('TREE', this.PROJECT.TREE, treeItem);
+
+                        out('TODO : param으로 넘어온 값을 document에 적용');
+
+                        // document 추가
+                        var documentItem = this.getDefinitionDocument(uid);
+                        this.add('DOCUMENT', this.PROJECT.DOCUMENT, documentItem);
                     },
 
                     // itemObject.uid 값이 있어야함
@@ -147,7 +255,7 @@ define(
 
                     },
 
-                    // end
+                    // end prototype
                 }
             );
 

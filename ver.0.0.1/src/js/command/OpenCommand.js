@@ -130,6 +130,8 @@ define(
                                 
                                 // 데이터 변경
                                 var DATA = new Project();
+                                DATA.initialize();
+
                                 Project.current = DATA;
                                 Project.current.project( 'TREE', data );
 
@@ -150,6 +152,8 @@ define(
 
                                 // 데이터 변경
                                 var DATA = new Project();
+                                DATA.initialize();
+
                                 Project.current = DATA;
                                 Project.current.project( 'TREE', null );
 
@@ -276,7 +280,7 @@ define(
                     //*****************************************
                     
                     // 데이터 저장
-                    Project.current.project( 'DOCUMENT', dataMap );
+                    Project.current.project( 'DOCUMENT', {items:dataMap} );
 
                     // 저장 체크 변경
                     Tool.current.dataChanged = false;

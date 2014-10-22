@@ -51,7 +51,7 @@ define(
             // Controller
             ////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, $location, ExecuteService, Tool, HttpService, $timeout ) {
+            function Controller( $scope, $element, $attrs, $location, CommandService, Tool, HttpService, $timeout ) {
                 
                 // 데이터 로드
                 if (Tool.current.TOOL.MENU == undefined){
@@ -89,7 +89,7 @@ define(
 
                 // 메뉴 항목을 클릭한 경우 호출되는 함수
                 $scope.onClick = function(item){
-                    console.log(" * MENU item : ", item);
+                    out(' * MENU item : ', item);
                     
                     // 링크
                     var link = item.link;
@@ -109,7 +109,7 @@ define(
                     var command = item.command;
                     out('\n# [ ', command, ' ] 명령 실행');
                     
-                    ExecuteService.execute(command, param, function callback(isSuccess, result){
+                    CommandService.execute(command, param, function callback(isSuccess, result){
                         out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
                         // ProgressService.complete();
                     });

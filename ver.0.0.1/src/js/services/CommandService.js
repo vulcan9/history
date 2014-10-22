@@ -16,7 +16,7 @@ define(
     function( application, U ) {
 
         // 등록
-        application.service( 'ExecuteService', _service );
+        application.service( 'CommandService', _service );
 
         // 선언
         function _service(
@@ -27,9 +27,9 @@ define(
 
         ) {
 
-            out( 'ExecuteService 등록 : ' );
+            out( 'CommandService 등록 : ' );
 
-            function ExecuteService() {
+            function CommandService() {
 
             }
 
@@ -37,7 +37,7 @@ define(
             // this._process = new ProcessQueue();
             // processAdd, processNext, processCancel, _checkProcess
 
-            ExecuteService.prototype = {
+            CommandService.prototype = {
 
 
                 // const
@@ -60,7 +60,7 @@ define(
                 ////////////////////////////////////////////////////////////////////////////////
 
                 /*
-                ExecuteService.execute(ExecuteService.OPEN, param, function callback(isSuccess, result){
+                CommandService.execute(CommandService.OPEN, param, function callback(isSuccess, result){
 
                 });
                 */
@@ -546,7 +546,7 @@ define(
             };
 
             // 서비스 객체 리턴
-            return new ExecuteService();
+            return new CommandService();
         }
 
         // 리턴

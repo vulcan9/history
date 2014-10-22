@@ -10,10 +10,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
-/*//////////////////////////////////////
-// Nav Bar (메뉴바 부분)
-//////////////////////////////////////*/
-
 .applicationContainer{
     position: absolute;
     /*border: 1px solid #FF0000;*/
@@ -22,6 +18,8 @@
     left: 0px;
     right: 0px;
     padding: 10px;
+
+    /*overflow: hidden;*/
 }
 
 .toolContainer{
@@ -31,6 +29,53 @@
     bottom: 0px;
     left: 0px;
     right: 0px;
+}
+
+/*//////////////////////////////////////
+// Split Layout
+//////////////////////////////////////*/
+
+.dock{
+    position: relative;
+    display: inline-block;
+    overflow: auto;
+    
+    width: 100%;
+    height: 100%;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+.dock.top{
+    background-color: rgba(255,0,0,1);
+    width: 100%;
+    height: 100%;
+}
+
+.dock.left{
+    background-color: rgba(255,255,0,0.8);
+    float: left;
+    width: 100px;
+    height: 100%;
+}
+
+.dock.center{
+    background-color: rgba(150,150,255,0.6);
+    width: calc(100% - 200px);
+    height: 100%;
+}
+
+.dock.right{
+    background-color: rgba(255,0,255,0.4);
+    float: right;
+    width: 100px;
+    height: 100%;
+}
+
+.dock.bottom{
+    clear: both;
+    background-color: rgba(0,255,255,0.2);
+
 }
 
 /*//////////////////////////////////////
@@ -111,37 +156,33 @@
 //////////////////////////////////////*/
 
 .treeContainer{
-    position: absolute;
-    /*top: 100px;*/
-}
-
-/*//////////////////////////////////////
-// screen
-//////////////////////////////////////*/
-
-.screenContainer{
     position: relative;
-    overflow: hidden;
-    /*JS코드에서 위치, 크기 동적으로 바뀜*/
+    /*overflow: hidden;*/
+    min-width: 250px;
+    min-height: 250px;
 }
-.screen{
+
+.tree{
+    position: relative;
     /*border: 1px solid #FF0000;*/
     width: 100%;
     height: 100%;
     background: #333;
+    padding: 20px;
 }
 
 /*------------------------------------
 // Paper
 ------------------------------------*/
 
-.paper {
-    position: absolute;
+.tree .paper {
+    /*position: absolute;*/
+    display: inline-block;
     
-    min-width: 800px;
-    min-height: 600px;
+    min-width: 100px;
+    min-height: 70px;
     padding: 0px 0px;
-    margin: 25px 25px;
+    margin: 15px 15px;
     
     font-size: 14px;
     text-align: left;
@@ -160,7 +201,61 @@
     /*background: #333;*/
 }
 
-.paper .background{
+.tree .paper .content{
+    position: absolute;
+    /*border: 1px solid #FF0000;*/
+    padding: 10px 10px;
+    cursor: crosshair;
+}
+
+/*//////////////////////////////////////
+// screen
+//////////////////////////////////////*/
+
+.screenContainer{
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    /*JS코드에서 위치, 크기 동적으로 바뀜*/
+}
+.screen{
+    /*border: 1px solid #FF0000;*/
+    width: 100%;
+    height: 100%;
+    /*background: #333;*/
+}
+
+/*------------------------------------
+// Paper
+------------------------------------*/
+
+.screen .paper {
+    position: absolute;
+    display: inline-block;
+    
+    min-width: 800px;
+    min-height: 600px;
+    padding: 0px 0px;
+    margin: 35px 35px;
+    
+    font-size: 14px;
+    text-align: left;
+    
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    
+    /*border: 1px solid #ccc;*/
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+
+    /*background: #333;*/
+}
+
+.screen .paper .background{
     position: absolute;
     padding: 0px 0px;
     overflow:hidden;
@@ -170,7 +265,7 @@
     margin: 1px;
 }
 
-.paper .content{
+.screen .paper .content{
     position: absolute;
     /*border: 1px solid #FF0000;*/
     padding: 10px 10px;
@@ -181,7 +276,7 @@
 // 편집모드 전환 버튼
 ------------------------------------*/
 
-.paper .modeHandle{
+.screen .paper .modeHandle{
     position: absolute;
     width: 20px;
     height: 20px;
@@ -203,15 +298,15 @@
     font-size: 14px;
     line-height: 16px;
 }
-.paper .modeHandle:hover{
+.screen .paper .modeHandle:hover{
     color: #666;
     border: 2px solid #666;
 }
 
-.paper .modeHandle.edit:after{
+.screen .paper .modeHandle.edit:after{
     content: "\270f";
 }
-.paper .modeHandle.play:after{
+.screen .paper .modeHandle.play:after{
     content: "\e014";
 }
 

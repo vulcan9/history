@@ -89,7 +89,7 @@ define(
                     // 3. scope이 변경되었음을 감지한다.
                     $scope.$watch('document', function(newValue, oldValue) {
                         if (newValue === oldValue) { return; }
-                        out('#document changed (document) : ', $scope.document);
+                        out('# $scope.document changed (screen) : ', $scope.document);
                         updatedocumentList();
                     }, true);
                     
@@ -105,6 +105,16 @@ define(
 
                     function updatedocumentList(){
                         
+                        /*
+                        <li ng-repeat="item in tree.items">
+                            {{$index + 1}} : {{document[item.uid].document}}
+                        </li>
+                        */
+                        
+                        out('TODO :  SCREEN css 통일 시킬것');
+                        out('TODO :  변경된 아이템만 갱신되도록 로직 수정 필요함(현재는 리셋됨)');
+
+                        /*
                         var api = window.Space("u-screen");
                         api.config({
                             useHashHistory:false
@@ -115,30 +125,19 @@ define(
                             return;
                         }
                         
-
-                        /*
-                        <li ng-repeat="item in tree.items">
-                            {{$index + 1}} : {{document[item.uid].document}}
-                        </li>
-                        */
-                        
-                        out('TODO :  SCREEN css 통일 시킬것');
-                        out('TODO :  변경된 아이템만 갱신되도록 로직 수정 필요함(현재는 리셋됨)');
-
                         // 편집 : contentEditable
                         var documents = [];
-                        var items = $scope.tree.items
+                        var items = $scope.tree.items;
                         for(var uid in items)
                         {
-                            var docs = $scope.document[uid];
+                            var docs = $scope.document.items[uid];
                             if(docs == null) continue;
 
                             var div = docs.document.content;
                             out('* ', uid, ' : ', div);
                             documents.push(div);
                         }
-
-                        /*
+                        
                         var documents1 = [
                             '<div id="overview" data-scale="10" data-x="0" data-y="0"></div>',
 
@@ -153,10 +152,10 @@ define(
                                 '<div id="bored1-1" data-scale="1" data-x="1500" data-y="500" data-rotate="-45">어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href="#bored">기획 보기</a></div>',
                                 '<div id="bored1-2" data-scale="1" data-x="2500" data-y="0" data-rotate="-45"><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q><br><iframe width="560" height="315" src="http://www.youtube.com/embed/ylLzyHk54Z0" frameborder="0" allowfullscreen="true"></iframe><br><a href="#bored">기획 보기</a></div>'
                         ];
-                        */
                         
                         // 데이터 적용
                         api.init(documents);
+                        */
                     }
 
                     ////////////////////////////////////////////////////////////////////////////////
@@ -171,7 +170,7 @@ define(
                     $scope.$on('#Data.added-DOCUMENT', function(e, data){
                         if(data.name == 'DOCUMENT'){
                             out('#Data.added-DOCUMENT (screen) : ', arguments);
-                            self.addDocument();
+                            addDocument();
                         }
                     });
 
@@ -179,7 +178,7 @@ define(
                     $scope.$on('#Data.removed-DOCUMENT', function(e, data){
                         if(data.name == 'DOCUMENT'){
                             out('#Data.removed-DOCUMENT (screen) : ', arguments);
-                            self.removeDocument();
+                            removeDocument();
                         }
                     });
 
@@ -187,7 +186,7 @@ define(
                     $scope.$on('#Data.modified-DOCUMENT', function(e, data){
                         if(data.name == 'DOCUMENT'){
                             out('#Data.modified-DOCUMENT (screen) : ', arguments);
-                            self.modifyDocument();
+                            modifyDocument();
                         }
                     });
 

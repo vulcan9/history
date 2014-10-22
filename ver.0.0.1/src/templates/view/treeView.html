@@ -1,8 +1,64 @@
 <div class="treeContainer">
-[tree]
+
+
+
+    <!--
     <ul>
         <li ng-repeat="item in tree.items" ng-model="counter">{{$index + 1}} : {{item.uid}}</li>
     </ul>
+    -->
+
+
+
+
+    <div class="tree">
+
+
+
+        <div class="paper" ng-repeat="item in tree.items" >
+            
+
+            <!--컨텐츠 그룹-->
+            <div class="content">
+                {{$index + 1}}
+            </div>
+
+            <!-- 영역표시(투명표시)
+            <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>
+             -->
+
+            <!-- 마우스 선택영역 표시
+            <div class="areaDisplay selector" style="left: 500px;top: 100px;width: 100px;height: 100px;"></div>
+             -->
+
+            <!--snap 선
+            <div id="guide-h" class="guide horizontal" style="top: 200px; display: block;"></div>
+            <div id="guide-v" class="guide vertical" style="left: 500px; display: block;"></div>
+             -->
+
+            <!-- 편집모드로 전환 버튼
+            <div class="modeHandle edit"></div>-->
+            <!--<div class="modeHandle play" style="top:0"></div>-->
+
+            <!--선택 표시 핸들러 컨테이너
+            <div ui-controller class="content"></div>-->
+            
+        </div>
+
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
 
 </div>
 
