@@ -76,6 +76,8 @@ define(
 
             angular.element($window).bind( 'resize' , function() {
 
+                $rootScope.$broadcast('#ApplicationController.resizeing'); 
+
                 if(_watchResizingID != -1){
                     clearTimeout(_watchResizingID);
                     _watchResizingID = -1;
@@ -136,7 +138,7 @@ define(
             var statusContainer = el.find('.statusContainer');
 
             var screenH = h - (menuContainer.height() + progressContainer.height() + statusContainer.height());
-            screenContainer.height(screenH);
+            // screenContainer.height(screenH);
 
             // var treeContainer = el.find('.treeContainer');
             //var timeline = el.find('.timeline');
@@ -147,6 +149,13 @@ define(
             // out('screenContainer : ', screenContainer.height());
             // out('statusContainer : ', statusContainer.height());
             
+            /*
+            var dockTop = el.find('.dockTop');
+            var dockLeft = el.find('.menuContainer');
+            var dockCenter = el.find('.progressContainer');
+            var dockRight = el.find('.screenContainer');
+            var dockBottom = el.find('.statusContainer');
+            */
         }
 
         ////////////////////////////////////////
