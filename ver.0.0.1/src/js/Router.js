@@ -169,7 +169,6 @@ define( [], function() {
 			var dependencies = [
 
 				// DIRECTIVE
-				_PATH.DIRECTIVE + 'layout',
 				_PATH.DIRECTIVE + 'version',
 
 				// SERVICE

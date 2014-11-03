@@ -82,7 +82,7 @@ define(
                     if (newValue === oldValue) { return; }
                     out('#menu changed : ', $scope.menu);
                 }, true);
-            
+                
                 //-----------------------
                 // 메뉴 클릭 이벤트 처리
                 //-----------------------

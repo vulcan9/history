@@ -125,6 +125,9 @@ define(
                 CommandService.execute(CommandService.NEW, param, function callback(isSuccess, result) {
                     out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
                     ProgressService.complete();
+
+                    //var $document = angular.element(document);
+                    //$document.trigger('#tool.complete'); 
                 });
             }
 

@@ -29,6 +29,7 @@ define(
                 
                 link: function( scope, el, attrs ) {
                     el.text( "propertyView" );
+                    //$element.trigger('#view.layoutUpdate'); 
                 }
 
             };

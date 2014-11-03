@@ -105,6 +105,8 @@ define(
 
                     function updatedocumentList(){
                         
+                        $element.trigger('#view.layoutUpdate'); 
+                        
                         /*
                         <li ng-repeat="item in tree.items">
                             {{$index + 1}} : {{document[item.uid].document}}
@@ -191,16 +193,16 @@ define(
                     });
 
                     function addDocument(){
-                        alert('addDocument');
+                        //alert('addDocument');
                     }
 
                     function removeDocument(){
-                        alert('removeDocument');
+                        //alert('removeDocument');
                     }
 
 
                     function modifyDocument(){
-                        alert('modifyDocument');
+                        //alert('modifyDocument');
                     }
 
 

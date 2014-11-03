@@ -109,6 +109,7 @@ require.config( {
         'ui-bootstrap':                _PATH.LIB + 'ui-bootstrap-tpls-0.11.2',
 
         // 모듈
+        'dockModule':         _PATH.MODULE + 'dockModule',
         'alignModule':         _PATH.MODULE + 'alignModule',
         'uiModule':             _PATH.MODULE + 'uiModule',
 
@@ -146,6 +147,9 @@ require.config( {
             deps: [ 'angular' ]
         },
 
+        'dockModule': {
+            deps: [ 'angular']
+        },
         'alignModule': {
             deps: [ 'angular']
         },
@@ -153,7 +157,7 @@ require.config( {
             deps: [ 'angular', 'angular-collection']
         },
         'Application': {
-            deps: [ 'angular', 'angular-route', 'alignModule', 'uiModule', 'ui-bootstrap']
+            deps: [ 'angular', 'angular-route', 'dockModule', 'alignModule', 'uiModule', 'ui-bootstrap']
         },
 
         'Space':{

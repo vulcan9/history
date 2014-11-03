@@ -29,6 +29,7 @@ define(
                 
                 link: function( scope, el, attrs ) {
                     el.text( "timelineView" );
+                    $element.trigger('#view.layoutUpdate'); 
                 }
 
             };

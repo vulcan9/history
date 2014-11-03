@@ -284,7 +284,6 @@ define(
                     // 저장하기 취소인 경우 -> 실행 취소
 
                     function resove() {
-                        // 새 프로젝트
                         var command = new NewCommand();
                         macro.push( command );
                         deferred.resolve( macro );

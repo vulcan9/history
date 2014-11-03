@@ -64,6 +64,7 @@ define(
                 $scope.$watch('tree', function(newValue, oldValue) {
                     if (newValue === oldValue) { return; }
                     out('# $scope.tree changed (tree) : ', $scope.tree);
+                    $element.trigger('#view.layoutUpdate'); 
 
                 }, true);
 
