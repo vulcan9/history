@@ -35,7 +35,7 @@ define(
             _superClass.apply(this, arguments);
         }
 
-        function _factory( Data, VersionService ){
+        function _factory( Data, VersionService, $rootScope ){
 
             /////////////////////////////////////
             // Prototype 상속
@@ -50,8 +50,9 @@ define(
             
             // Prototype 상속
             angular.extend( 
-                Project.prototype,  _super, 
-                {
+                Project.prototype,  _super, {
+
+                    eventPrefix : 'Project',
 
                     initialize: function(){
                         
@@ -73,12 +74,24 @@ define(
 
                                 // Presentation 데이터
                                 __PRESENTATION : null
+
+                                // 현재 선택 문서 (uid)
+                                //__SELECT_DOCUMENT: null
+
                             }
                         );
 
                         this.project('DOCUMENT', {items:{}});
-                        this.project('TREE', {items:{}});
+                        this.project('TREE', {items:[]});
                         this.project('PRESENTATION', {items:{}});
+
+                        //this.project('SELECT_DOCUMENT', {items:{}});
+
+                        // 이벤트 발송
+                        var eventName = '#' + this.eventPrefix + '.initialized';
+                        out('# 이벤트 발생 : ', eventName);
+                        var args = {data:this.project};
+                        $rootScope.$broadcast(eventName, args); 
 
                         // Root Element (Overview)
                         this.__checkRootDocument();
@@ -122,8 +135,8 @@ define(
 
                                 "uid": uid,
 
-                                "id": "overview1",
-                                "content": "<div id='overview1' data-scale='10' data-x='0' data-y='0'></div>"
+                                "id": "overview",
+                                "content": "<div id='overview' data-scale='10' data-x='0' data-y='0'></div>"
 
                             },
 
@@ -132,7 +145,7 @@ define(
 
                                 "uid": uid,
 
-                                "id": "overview1",
+                                "id": "overview",
                                 "subject": "문서 제목",
                                 "descripty": "문서 요약",
 
@@ -182,10 +195,43 @@ define(
 
                     //////////////////////////////////////////////////////////////////////////
                     //
+                    // Command 관련 API
+                    // 
+                    //////////////////////////////////////////////////////////////////////////
+                    
+                    // uid : element uid
+                    newProject: function(){
+                        this.initialize();
+                        //this.project( 'TREE', null );
+                    },
+
+                    // data : tree-uid.json 파일 내용
+                    openProject: function(data){
+                        this.initialize();
+                        this.project( 'TREE', data );
+                    },
+                    closeProject: function(){
+                        this.project( 'TREE', null );
+                        this.project( 'PRESENTATION', null );
+                        this.project( 'DOCUMENT', null );
+                    },
+
+                    //////////////////////////////////////////////////////////////////////////
+                    //
                     // 데이터 조작 API
                     // 
                     //////////////////////////////////////////////////////////////////////////
                     
+                    //---------------------
+                    // Tree
+                    //---------------------
+                    
+                    /*
+                    getTree : function(uid){
+                        return this.__get('TREE', this.PROJECT.TREE, uid);
+                    },
+                    */
+
                     //---------------------
                     // Document
                     //---------------------
@@ -194,16 +240,16 @@ define(
                     getDocument : function(uid){
                         return this.__get('DOCUMENT', this.PROJECT.DOCUMENT, uid);
                     },
-
+                    
                     // itemObject.uid 값이 있어야함
                     addDocument: function(param){
                         var uid = param.uid;
 
                         // tree에 추가
-                        var treeItem = this.getDefinitionTree(uid);
-                        this.add('TREE', this.PROJECT.TREE, treeItem);
+                        //var treeItem = this.getDefinitionTree(uid);
+                        //this.add('TREE', this.PROJECT.TREE, treeItem);
 
-                        out('TODO : param으로 넘어온 값을 document에 적용');
+                        out('TODO : param으로 넘어온 값(open)을 document에 적용 : ', param);
 
                         // document 추가
                         var documentItem = this.getDefinitionDocument(uid);
@@ -212,13 +258,70 @@ define(
 
                     // itemObject.uid 값이 있어야함
                     removeDocument: function(uid){
-                        this.remove('DOCUMENT', this.PROJECT.DOCUMENT, itemObject);
+
+                        // tree에 제거
+                        //var treeItem = this.getDefinitionTree(uid);
+                        // this.remove('TREE', this.PROJECT.TREE, treeItem);
+
+                        out('TODO : 기능 확인 필요');
+
+                        var documentItem = this.getDocument(uid);
+                        this.remove('DOCUMENT', this.PROJECT.DOCUMENT, documentItem);
                     },
 
                     // itemObject.uid 값이 있어야함
                     modifyDocument: function(uid){
-                        this.modify('DOCUMENT', this.PROJECT.DOCUMENT, itemObject);
+
+                        // tree에 수정
+                        //var treeItem = this.getDefinitionTree(uid);
+                        // this.modify('TREE', this.PROJECT.TREE, treeItem);
+
+                        out('TODO : 기능 확인 필요');
+
+                        var documentItem = this.getDocument(uid);
+                        this.modify('DOCUMENT', this.PROJECT.DOCUMENT, documentItem);
                     },
+                    
+                    //---------------------
+                    // Select Document
+                    //---------------------
+
+                    getSelectDocument : function(){
+                        // var uid = this.project('DOCUMENT').selectUID;
+                        // return this.__get('DOCUMENT', this.PROJECT.DOCUMENT, uid);
+                        return Tool.current.getSelectDocument();
+                    },
+
+                    setSelectDocument: function(uid){
+                        if(uid === undefined){
+                            throw 'uid 값이 없습니다. (modify)';
+                        }
+
+                        // GET
+                        var oldValue = this.getSelectDocument();
+                        var newValue = uid;
+
+                        // SET
+                        Tool.current.setSelectDocument(uid);
+
+                        // 이벤트 발송
+                        var propertyName = 'DOCUMENT';
+                        var eventName = '#' + this.eventPrefix + '.selected-' + propertyName;
+                        out('# 이벤트 발생 : ', eventName);
+
+                        var args = {newValue:newValue, name:propertyName, oldValue:oldValue};
+                        $rootScope.$broadcast(eventName, args); 
+                    },
+
+
+
+
+
+
+
+
+
+
 
                     //---------------------
                     // Element
@@ -238,20 +341,8 @@ define(
 
                     },
 
-                    //////////////////////////////////////////////////////////////////////////
-                    //
-                    // Command 관련 API
-                    // 
-                    //////////////////////////////////////////////////////////////////////////
-                    
                     // uid : element uid
-                    newProject: function(uid){
-
-                    },
-                    openProject: function(uid){
-
-                    },
-                    closeProject: function(uid){
+                    selectElement: function(uid){
 
                     },
 

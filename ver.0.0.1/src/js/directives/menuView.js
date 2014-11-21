@@ -64,9 +64,9 @@ define(
 
                 // 1. 이벤트를 받는다.
                 var self = this;
-                $scope.$on('#Data.changed-MENU', function(e, data){
+                $scope.$on('#Tool.changed-MENU', function(e, data){
                     if(data.name == 'MENU'){
-                        out(data.name, '#Data.changed-MENU : ', arguments);
+                        out(data.name, '#Tool.changed-MENU : ', arguments);
                         self.updateMenu();
                     }
                 });
@@ -103,7 +103,7 @@ define(
                         // scope : $scope, 
                         // element : $element, 
                         // attrs : $attrs
-                    }
+                    };
 
                     // 메뉴 클릭 이벤트 처리
                     var command = item.command;

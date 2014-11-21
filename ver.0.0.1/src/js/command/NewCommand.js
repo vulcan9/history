@@ -54,7 +54,7 @@ define(
                     
                     // 편집 결과를 저장한 데이이터
                     Project.current = new Project();
-                    Project.current.initialize();
+                    Project.current.newProject();
 
                     // 결과 리턴
                     _super._run.apply(this, arguments);

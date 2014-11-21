@@ -4,91 +4,72 @@
 
     "uid": "b16fea9c-d10a-413b-ba20-08344f937336",
 
-    "items": {
-        
-        "document-b16fea9c-d10a-413b-ba20-08344f937337": {
-            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937337",
-            "name" : "overview",
-            "parentUID": "",
-            "parentName": "",
-            "depth": "0",
-            "index": "0"
-        },
-
-        "document-b16fea9c-d10a-413b-ba20-08344f937338": {
-            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937338",
-            "name" : "center1",
-            "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937337",
-            "parentName": "overview",
-            "depth": "1",
-            "index": "0"
-        },
-
-        "document-b16fea9c-d10a-413b-ba20-08344f937339": {
-            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937339",
-            "name" : "bored",
-            "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937337",
-            "parentName": "overview",
-            "depth": "1",
-            "index": "1"
-        },
-
-        "document-b16fea9c-d10a-413b-ba20-08344f937340": {
-            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937340",
-            "name" : "bored-1",
-            "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937339",
-            "parentName": "bored",
-            "depth": "2",
-            "index": "0"
-        },
-
-        "document-b16fea9c-d10a-413b-ba20-08344f937341": {
-            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937341",
-            "name" : "bored-1-1",
-            "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937340",
-            "parentName": "bored-1",
-            "depth": "3",
-            "index": "0"
-        },
-
-        "document-b16fea9c-d10a-413b-ba20-08344f937342": {
-            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937342",
-            "name" : "bored-2",
-            "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937339",
-            "parentName": "bored",
-            "depth": "2",
-            "index": "1"
-        },
-
-        "document-b16fea9c-d10a-413b-ba20-08344f937343": {
-            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937343",
-            "name" : "bored1",
-            "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937337",
-            "parentName": "overview",
-            "depth": "1",
-            "index": "2"
-        },
-
-        "document-b16fea9c-d10a-413b-ba20-08344f937344": {
-            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937344",
-            "name" : "bored1-1",
-            "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937343",
-            "parentName": "bored1",
-            "depth": "2",
-            "index": "0"
-        },
-
-        "document-b16fea9c-d10a-413b-ba20-08344f937345": {
-            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937345",
-            "name" : "bored1-2",
-            "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937343",
-            "parentName": "bored1",
-            "depth": "2",
-            "index": "2"
-        }
-
-    }
+    "items" : [{
+	"uid" : "document-b16fea9c-d10a-413b-ba20-08344f937337",
+	"name" : "overview",
+	"parentUID": "",
+	"items": [{
+	    "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937338",
+	    "name" : "center1",
+	    "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937337",
+	    "items": []
+	},
+	{
+	    "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937339",
+	    "name" : "bored",
+	    "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937337",
+	    "items": [{
+		    "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937340",
+		    "name" : "bored-1",
+		    "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937339",
+		    "items": [{
+			    "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937341",
+			    "name" : "bored-1-1",
+			    "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937340",
+			    "items": []
+			}]
+		},
+		{
+		    "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937342",
+		    "name" : "bored-2",
+		    "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937339",
+		    "items": []
+		}]
+	},
+	{
+	    "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937343",
+	    "name" : "bored1",
+	    "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937337",
+	    "items": [{
+		    "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937344",
+		    "name" : "bored1-1",
+		    "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937343",
+		    "items": []
+		},
+		{
+		    "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937345",
+		    "name" : "bored1-2",
+		    "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937343",
+		    "items": []
+		}]
+	}]
+    }]
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -61,7 +61,7 @@
 .dock.left{
     /*background-color: rgba(255,255,0,0.8);*/
     float: left;
-    min-width: 200px;
+    min-width: 400px;
 }
 
 .dock.center{
@@ -171,14 +171,14 @@
 }
 
 .tree{
-    position: relative;
+    position: absolute;
     /*border: 1px solid #FF0000;*/
     width: 100%;
     height: 100%;
     min-width: 250px;
     min-height: 250px;
     /*background: #333;*/
-    padding: 20px;
+    padding: 0px 20px;
 }
 
 /*------------------------------------
@@ -192,7 +192,7 @@
     min-width: 100px;
     min-height: 70px;
     padding: 0px 0px;
-    margin: 15px 15px;
+    margin: 0px 0px;
     
     font-size: 14px;
     text-align: left;
@@ -210,12 +210,149 @@
 
     /*background: #333;*/
 }
+.tree .paper:hover {
+    border: 1px solid #5cb85c;
+}
 
 .tree .paper .content{
     position: absolute;
     /*border: 1px solid #FF0000;*/
     padding: 10px 10px;
     cursor: crosshair;
+}
+
+/*----------------
+// Tree
+-----------------*/
+
+.angular-ui-tree-empty{
+    border:1px dashed #bbb;
+    min-height:100px;
+    background-color:#e5e5e5;
+    background-image:-webkit-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff),-webkit-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff);
+    background-image:-moz-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff),-moz-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff);
+    background-image:linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff),linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff);
+    background-size:60px 60px;
+    background-position:0 0,30px 30px
+}
+
+.tree .paper.selected,
+.tree .paper.selected:hover {
+    border: 2px solid #5cb85c;
+    /*font-weight:bold;*/
+}
+
+.angular-ui-tree {
+    padding: 50px;
+    position: absolute;
+}
+
+.angular-ui-tree-nodes{
+    display:inline-block;
+    position:relative;
+}
+
+.angular-ui-tree-nodes .angular-ui-tree-nodes{
+    margin-left: 50px;
+    padding-left: 30px;
+    border-left: 1px solid #DDD;
+}
+
+/*----------------
+// Tree - handle
+-----------------*/
+
+.angular-ui-tree-handle{
+    /*cursor:move;*/
+    position: relative;
+}
+.angular-ui-tree-handle.select{
+    cursor:cell
+}
+.angular-ui-tree-handle.copy{
+    cursor:copy
+}
+
+/*----------------
+// Tree - drag
+-----------------*/
+
+.angular-ui-tree-placeholder,
+.angular-ui-tree-node {
+    /*border: 1px dotted #FF0000;*/
+    margin: 5px 0px 5px 0px;
+    font-size: 0;
+}
+
+.angular-ui-tree-placeholder{
+    border: 1px dashed #DDD;
+    background-color: rgba(200,200,200,0.15);
+    border-radius: 4px;
+
+    display:inline-block;
+    min-width: 100px;
+    min-height: 70px;
+    padding: 0px 0px;
+    margin: 0px 0px;
+}
+.angular-ui-tree-placeholders-wrapper{
+    /*margin-bottom:5px*/
+}
+
+.angular-ui-tree-drag{
+    position:absolute;
+    pointer-events:none;
+    z-index:999;
+    opacity:0.8
+}
+
+/*----------------
+// Tree - drag select
+-----------------*/
+
+.angular-ui-tree-node.selected .angular-ui-tree-node>.angular-ui-tree-handle,
+.angular-ui-tree-node.selected>.angular-ui-tree-handle{
+    background:#DDE7FF;
+    border:1px solid #000
+}
+.angular-ui-tree-node.original>.angular-ui-tree-handle{
+    background:#E2E2E2;
+    border:1px solid lightgrey
+}
+.angular-ui-tree-hidden{
+    display:none
+}
+
+/*----------------
+// Tree - content button
+-----------------*/
+
+.angular-ui-tree-node .tree-node-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.angular-ui-tree-node .collapseBtn{
+    min-width: 20px;
+    min-height: 20px;
+    position: absolute;
+    left: -45px;
+    top: 20px;
+}
+.angular-ui-tree-node .removeBtn{
+    min-width: 20px;
+    min-height: 20px;
+    position: absolute;
+    right: -10px;
+    top: 10px;
+}
+.angular-ui-tree-node .addBtn{
+    min-width: 20px;
+    min-height: 20px;
+    position: absolute;
+    right: -10px;
+    top: 35px;
 }
 
 /*//////////////////////////////////////

@@ -129,11 +129,8 @@ define(
                                 //*****************************************
                                 
                                 // 데이터 변경
-                                var DATA = new Project();
-                                DATA.initialize();
-
-                                Project.current = DATA;
-                                Project.current.project( 'TREE', data );
+                                Project.current = new Project();
+                                Project.current.openProject(data);
 
                                 //*****************************************
                                 
@@ -151,11 +148,8 @@ define(
                                 out( '# 로드 에러 : ', treeUID, '\n-url : ', treeURL, data );
 
                                 // 데이터 변경
-                                var DATA = new Project();
-                                DATA.initialize();
-
-                                Project.current = DATA;
-                                Project.current.project( 'TREE', null );
+                                Project.current = new Project();
+                                Project.current.openProject(null);
 
                                 return null;
                             }
@@ -176,13 +170,43 @@ define(
                 // Project Tree 내용에 따라 document 내용 로드
                 //-----------------------------------
 
-                documentLoad: function( data, callback ) {
+                documentLoad: function( treeData, callback ) {
                     var self = this;
                     var promiseArray = [];
                     var dataMap = {};
 
-                    // out("data", data.items);
-                    angular.forEach( data.items, function( value, key ) {
+                    // treeData 구조가 바뀌어 모든 노드를 검사할려면 forEach를 쓸 수 없다.
+                    //  모든 노드를 탐색하여 document리스트를 로드한다.
+                    findItems(treeData);
+
+                    function findItems(node){
+                        angular.forEach( node.items, function( value, key ) {
+                            out( '---> ', key, ' : ', value.uid );
+                            var documentURL = _PATH.ROOT + 'data/' + value.uid + '.json';
+                            var promise = HttpService.load( {
+                                    method: 'GET',
+                                    url: documentURL
+                                } )
+                                .then( function success( result ) {
+                                    // out('success : ', result);
+                                    // 로드 성공한 경우 파일의 json 객체를 리턴한다.
+                                    return result;
+                                }, function fail( result ) {
+                                    // out('fail : ', result);
+                                    // 로드 실패한 경우 파일의 uid를 리턴한다.
+                                    return value.uid;
+                                } );
+                            promiseArray.push( promise );
+
+                            // 재귀 호출 (depth로 진행)
+                            findItems(value);
+
+                        }, this );
+                    }
+
+                    /*
+                    // out("treeData", treeData.items);
+                    angular.forEach( treeData.items, function( value, key ) {
                         // out( key, ' : ', value.uid );
                         var documentURL = _PATH.ROOT + 'data/' + value.uid + '.json';
 
@@ -203,6 +227,7 @@ define(
                         promiseArray.push( promise );
 
                     }, this );
+                    */
 
                     $q.all( promiseArray )
                         .then( function success( result ) {

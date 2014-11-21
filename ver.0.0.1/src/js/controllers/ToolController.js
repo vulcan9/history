@@ -114,12 +114,14 @@ define(
                     // attrs : $attrs
                 }
 
-                /*
+                //*
+                
                 CommandService.execute ( CommandService.CLOSE, param, function callback(isSuccess, result) {
                     out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
                     ProgressService.complete();
                 });
-                */
+                
+                /*/
 
                 // 새문서 열기
                 CommandService.execute(CommandService.NEW, param, function callback(isSuccess, result) {
@@ -129,6 +131,8 @@ define(
                     //var $document = angular.element(document);
                     //$document.trigger('#tool.complete'); 
                 });
+                
+                */
             }
 
             

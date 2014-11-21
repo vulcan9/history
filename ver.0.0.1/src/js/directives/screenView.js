@@ -38,61 +38,189 @@ define(
 
                 terminal: false,
                 
-                controller: function( $scope, $element, $attrs, $transclude, $rootScope, $route, $routeParams, $location ) {
-                    out('TODO : 로드된 데이터에 따라 screen에 각 document를 생성한다. (ui-canvas, Impress 적용)');
+                controller: Controller
 
+            };
+
+
+            ////////////////////////////////////////
+            // Controller
+            ////////////////////////////////////////
+            
+            function Controller ( $scope, $element, $attrs, Project , CommandService) {
+
+                out('TODO : 로드된 데이터에 따라 screen에 각 document를 생성한다. (ui-canvas, Impress 적용)');
+
+                $element.trigger('#view.layoutUpdate');
+                
+                ////////////////////////////////////////
+                // DOCUMENT 데이터
+                ////////////////////////////////////////
+                
+                /*
+                #Project.added-DOCUMENT
+                #Project.removed-DOCUMENT
+                #Project.modified-DOCUMENT
+                #Project.selected-DOCUMENT
+                */
+
+                // var data = {data:project};
+                $scope.$on('#Project.initialized', function(e, data){
+                    
+                    $scope.tree = Project.current.project('TREE');
+                    $scope.document = Project.current.project('DOCUMENT');
+
+                });
+
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.added-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.added-DOCUMENT (screen) : ', data);
+                        addDocument(data.item);
+                    }
+                });
+
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.removed-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.removed-DOCUMENT (screen) : ', data);
+                        removeDocument(data.item);
+                    }
+                });
+
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.modified-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.modified-DOCUMENT (screen) : ', data);
+                        modifyDocument(data.item);
+                    }
+                });
+
+                //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
+                $scope.$on('#Project.selected-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.selected-DOCUMENT (screen) : ', data);
+                        selectDocument(data.item, data.oldValue);
+                    }
+                });
+
+                //-------------------------------------
+                // DOM 업데이트
+                //-------------------------------------
+
+                function addDocument(item){
+
+                }
+
+                function removeDocument(item){
+                    
+                }
+
+                function modifyDocument(item){
+                    
+                }
+
+                function selectDocument(newItem, oldItem){
+                    out(' - oldValue : ', oldItem);
+                    out(' - newValue : ', newItem);
+                    //uid로 DOM 찾아내기
+                    //out('current select : ', Project.current.getSelectDocument());
+                }
+/*
+depth 0 - index
+            -
+    depth 1 - index
+*/
+
+                ////////////////////////////////////////
+                // TREE, DOCUMENT 데이터
+                ////////////////////////////////////////
+
+                /*
+                updatedocumentList();
+
+                //------------------
+                // 데이터 변경 감지 순서 - OpenCommand
+                //------------------
+                
+                // 1. 이벤트를 받는다.
+                var self = this;
+                $scope.$on('#Project.changed-TREE', function(e, data){
+                    if(data.name == 'TREE'){
+                        out('#Project.changed-TREE (screen) : ', arguments);
+                        self.updateTree();
+                    }
+                });
+
+                // 2. 변경 내용을 scope에 적용한다.
+                this.updateTree = function(){
+                    $scope.tree = Project.current.project('TREE');
+                }
+                
+                // 3. scope이 변경되었음을 감지한다.
+                $scope.$watch('tree', function(newValue, oldValue) {
+                    if (newValue === oldValue) { return; }
+                    out('#tree changed (screen) : ', $scope.tree);
                     updatedocumentList();
+                }, true);
 
-                    //------------------
-                    // 데이터 변경 감지 순서 - OpenCommand
-                    //------------------
+                //------------------
+                // 데이터 변경 감지 순서 - OpenCommand
+                //------------------
 
-                    // 1. 이벤트를 받는다.
-                    var self = this;
-                    $scope.$on('#Data.changed-TREE', function(e, data){
-                        if(data.name == 'TREE'){
-                            out('#Data.changed-TREE (screen) : ', arguments);
-                            self.updateTree();
-                        }
-                    });
-
-                    // 2. 변경 내용을 scope에 적용한다.
-                    this.updateTree = function(){
-                        $scope.tree = Project.current.project('TREE');
+                // 1. 이벤트를 받는다.
+                var self = this;
+                $scope.$on('#Project.changed-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.changed-DOCUMENT (screen) : ', arguments);
+                        self.updateDocument();
                     }
-                    
-                    // 3. scope이 변경되었음을 감지한다.
-                    $scope.$watch('tree', function(newValue, oldValue) {
-                        if (newValue === oldValue) { return; }
-                        out('#tree changed (screen) : ', $scope.tree);
-                        updatedocumentList();
-                    }, true);
+                });
 
-                    //------------------
-                    // 데이터 변경 감지 순서 - OpenCommand
-                    //------------------
+                // 2. 변경 내용을 scope에 적용한다.
+                this.updateDocument = function(){
+                    $scope.document = Project.current.project('DOCUMENT');
+                }
+                
+                // 3. scope이 변경되었음을 감지한다.
+                $scope.$watch('document', function(newValue, oldValue) {
+                    if (newValue === oldValue) { return; }
+                    out('# $scope.document changed (screen) : ', $scope.document);
+                    updatedocumentList();
+                }, true);
+                */
+                
 
-                    // 1. 이벤트를 받는다.
-                    var self = this;
-                    $scope.$on('#Data.changed-DOCUMENT', function(e, data){
-                        if(data.name == 'DOCUMENT'){
-                            out('#Data.changed-DOCUMENT (screen) : ', arguments);
-                            self.updateDocument();
-                        }
+                ////////////////////////////////////////
+                // DOM 인터렉션
+                ////////////////////////////////////////
+
+                // Document 선택
+                $scope.selectDocument = function(item, index){
+                    var param = {
+                        uid : item.uid
+                    };
+                    var command = CommandService.SELECT_DOCUMENT;
+                    out('\n# [ ', command, ' ] 명령 실행');
+
+                    CommandService.execute(command, param, function callback(isSuccess, result){
+                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
                     });
+                };
+                
+                ////////////////////////////////////////
+                // End Controller
+                ////////////////////////////////////////
+            }
 
-                    // 2. 변경 내용을 scope에 적용한다.
-                    this.updateDocument = function(){
-                        $scope.document = Project.current.project('DOCUMENT');
-                    }
-                    
-                    // 3. scope이 변경되었음을 감지한다.
-                    $scope.$watch('document', function(newValue, oldValue) {
-                        if (newValue === oldValue) { return; }
-                        out('# $scope.document changed (screen) : ', $scope.document);
-                        updatedocumentList();
-                    }, true);
-                    
+
+
+
+
+
+
+
+
                     ////////////////////////////////////////////////////////////////////////////////
                     //
                     // 화면 업데이트
@@ -105,17 +233,12 @@ define(
 
                     function updatedocumentList(){
                         
-                        $element.trigger('#view.layoutUpdate'); 
-                        
                         /*
                         <li ng-repeat="item in tree.items">
                             {{$index + 1}} : {{document[item.uid].document}}
                         </li>
                         */
                         
-                        out('TODO :  SCREEN css 통일 시킬것');
-                        out('TODO :  변경된 아이템만 갱신되도록 로직 수정 필요함(현재는 리셋됨)');
-
                         /*
                         var api = window.Space("u-screen");
                         api.config({
@@ -160,55 +283,17 @@ define(
                         */
                     }
 
-                    ////////////////////////////////////////////////////////////////////////////////
-                    //
-                    // 이벤트-업데이트
-                    // 
-                    ////////////////////////////////////////////////////////////////////////////////
-                    
-                    var self = this;
-
-                    // {data:dataObject, item:itemObject}
-                    $scope.$on('#Data.added-DOCUMENT', function(e, data){
-                        if(data.name == 'DOCUMENT'){
-                            out('#Data.added-DOCUMENT (screen) : ', arguments);
-                            addDocument();
-                        }
-                    });
-
-                    // {data:dataObject, item:itemObject}
-                    $scope.$on('#Data.removed-DOCUMENT', function(e, data){
-                        if(data.name == 'DOCUMENT'){
-                            out('#Data.removed-DOCUMENT (screen) : ', arguments);
-                            removeDocument();
-                        }
-                    });
-
-                    // {data:dataObject, item:itemObject}
-                    $scope.$on('#Data.modified-DOCUMENT', function(e, data){
-                        if(data.name == 'DOCUMENT'){
-                            out('#Data.modified-DOCUMENT (screen) : ', arguments);
-                            modifyDocument();
-                        }
-                    });
-
-                    function addDocument(){
-                        //alert('addDocument');
-                    }
-
-                    function removeDocument(){
-                        //alert('removeDocument');
-                    }
 
 
-                    function modifyDocument(){
-                        //alert('modifyDocument');
-                    }
 
 
-                    // end controller
-                }
-            };
+
+
+
+
+
+
+
 
         }
 

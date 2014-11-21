@@ -1,64 +1,134 @@
 <div class="treeContainer">
-
-
-
     <!--
     <ul>
         <li ng-repeat="item in tree.items" ng-model="counter">{{$index + 1}} : {{item.uid}}</li>
     </ul>
     -->
-
-
-
-
     <div class="tree">
 
 
-
-        <div class="paper" ng-repeat="item in tree.items" >
-            
-
-            <!--컨텐츠 그룹-->
-            <div class="content">
-                {{$index + 1}}
-            </div>
-
-            <!-- 영역표시(투명표시)
-            <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>
-             -->
-
-            <!-- 마우스 선택영역 표시
-            <div class="areaDisplay selector" style="left: 500px;top: 100px;width: 100px;height: 100px;"></div>
-             -->
-
-            <!--snap 선
-            <div id="guide-h" class="guide horizontal" style="top: 200px; display: block;"></div>
-            <div id="guide-v" class="guide vertical" style="left: 500px; display: block;"></div>
-             -->
-
-            <!-- 편집모드로 전환 버튼
-            <div class="modeHandle edit"></div>-->
-            <!--<div class="modeHandle play" style="top:0"></div>-->
-
-            <!--선택 표시 핸들러 컨테이너
-            <div ui-controller class="content"></div>-->
-            
+        
+        <!--
+        <div class="paper" ng-repeat="item in tree.items[0]" ng-click="selectDocument(item, $index)">
+            {{$index}} : {{item.depth}} - {{item.index}}
         </div>
+        {{tree.items}}
+        -->
+        
+
+
+
+
+        <!-- Nested list template
+        <script type="text/ng-template" id="items_renderer.html">
+            <div ui-tree-handle ng-class="{ 'select': $treeScope.multiSelect, 'copy': $treeScope.copy }">
+                <a class="btn btn-success btn-xs" nodrag ng-click="toggle(this)">
+                  <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed }"></span>
+                </a>
+                {{item.title}}
+
+                <a class="pull-right btn btn-danger btn-xs" nodrag ng-click="remove(this)">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+                <a class="pull-right btn btn-primary btn-xs" nodrag ng-click="newSubItem(this)" style="margin-right: 8px;">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </a>
+            </div>
+            
+            <ol ui-tree-nodes ng-model="item.items" ng-class="{ 'hidden': collapsed }">
+                <li ng-repeat="item in item.items" ui-tree-node ng-class="{ 'selected': selected, 'original': original }" ng-include="'items_renderer.html'"></li>
+            </ol>
+        </script>
+
+        <ui-tree 
+                callbacks="callbacks" 
+                drag-enabled="parameters.dragEnabled" 
+                empty-placeholder-enabled="parameters.emptyPlaceholderEnabled" 
+                max-depth="parameters.maxDepth" 
+                drag-delay="parameters.dragDelay" 
+                drag-distance="parameters.dragDistance" 
+                lock-x="parameters.lockX" l
+                ock-y="parameters.lockY" 
+                bound-to="parameters.boundTo" 
+                spacing="parameters.spacing" 
+                coverage="parameters.coverage" 
+                cancel-key="parameters.cancelKey" 
+                copy-key="parameters.copyKey" 
+                select-key="parameters.selectKey" 
+                expand-on-hover="(parameters.enableExpandOnHover) ? parameters.expandOnHover : parameters.enableExpandOnHover">
+
+            <ol ui-tree-nodes ng-model="list">
+                <li ng-repeat="item in list" ui-tree-node ng-class="{ 'selected': selected, 'original': original }" ng-include="'items_renderer.html'"></li>
+            </ol>
+        </ui-tree>
+         -->
+
+
+        <!-- Nested node template  -->
+        <script type="text/ng-template" id="nodes_renderer.html">
+            
+
+            <div class="paper" ui-tree-handle uid="{{item.uid}}" ng-class="{selected: item.uid==selectUID}" 
+                ng-mouseover="hover=true" ng-mouseleave="hover=false" ng-model="hover" ng-init="hover=false">
+
+                <div class="tree-node-content" ng-click="selectDocument(item)"></div>
+                <span>{{this.depth()}} : {{item.name}}</span>
+                
+                <!--확장 버튼-->
+                <div class="btn btn-success btn-xs collapseBtn"
+                        ng-if="item.items && item.items.length > 0" nodrag ng-click="toggle(this)">
+                        <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
+                </div>
+
+                <!--삭제 버튼-->
+                <div class="pull-right btn btn-danger btn-xs removeBtn" nodrag ng-click="remove(this)" ng-show="hover">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </div>
+
+                <!--추가 버튼-->
+                <div class="pull-right btn btn-primary btn-xs addBtn" nodrag ng-click="addItem(this)" ng-show="hover">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </div>
+            </div>
+            
+            <!--재귀 탐색-->
+            <ol ui-tree-nodes="" ng-model="item.items" ng-class="{hidden: collapsed}">
+                <li ng-repeat="item in item.items" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+            </ol>
+
+        </script>
+
+        <div ui-tree
+            drag-delay="10" drag-distance="10" drag-enabled="true">
+            <ol ui-tree-nodes ng-model="tree">
+                <li ng-repeat="item in tree" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+            </ol>
+        </div>
+       
+        <!-- Nested node template 
+        <script type="text/ng-template" id="nodes_renderer.html">
+          <div ui-tree-handle class="tree-node tree-node-content">
+            <a class="btn btn-success btn-xs" ng-if="node.nodes && node.nodes.length > 0" nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
+            {{node.title}}
+            <a class="pull-right btn btn-danger btn-xs" nodrag ng-click="remove(this)"><span class="glyphicon glyphicon-remove"></span></a>
+            <a class="pull-right btn btn-primary btn-xs" nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
+          </div>
+          <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
+            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+            </li>
+          </ol>
+        </script>
+        <div ui-tree id="tree-root">
+          <ol ui-tree-nodes ng-model="data">
+            <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+          </ol>
+        </div>
+-->
+
 
 
 
 
     </div>
-
-
-
-
-
-
-
-
-
-
-
 </div>
 

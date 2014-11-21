@@ -22,7 +22,7 @@ define(
         function _service(
             $q,
             NewCommand, OpenCommand, SaveCommand, SaveAsCommand, CloseCommand, ExitCommand,
-            AddDocumentCommand, RemoveDocumentCommand, ModifyDocumentCommand, 
+            AddDocumentCommand, RemoveDocumentCommand, ModifyDocumentCommand, SelectDocumentCommand,
             Tool, NoticeService, ProgressService
 
         ) {
@@ -49,9 +49,13 @@ define(
                 CLOSE: 'close',
                 EXIT: 'exit',
 
+                UNDO: 'undo',
+                REDO: 'redo',
+
                 ADD_DOCUMENT: 'addDocument',
                 REMOVE_DOCUMENT: 'removeDocument',
                 MODIFY_DOCUMENT: 'modifyDocument',
+                SELECT_DOCUMENT: 'selectDocument',
 
                 ////////////////////////////////////////////////////////////////////////////////
                 //
@@ -305,14 +309,14 @@ define(
                     if(!param || !param.uid){
                         var uid = 'b16fea9c-d10a-413b-ba20-08344f937336';
                         param.uid = uid;
-                        out( 'TODO : project 데이터 로드 경로(아이디) 세팅 : ', uid );
+                        alert( 'TODO : project 데이터 로드 경로(아이디) 세팅 : ' + uid );
                     }
 
                     // 닫기 과정 추가
-                    var promise_close = this.command_close( param );
-                    promise_close.then( function( macro_close ) {
+                    var promise_new = this.command_new( param );
+                    promise_new.then( function( macro_new ) {
                         // macro 추가
-                        macro = macro.concat( macro_close );
+                        macro = macro.concat( macro_new );
                         resove();
 
                     }, function(result){
@@ -338,6 +342,9 @@ define(
                 //-----------------------------------
 
                 command_save: function( param ) {
+
+                    if(Project.current == null) return;
+
                     var self = this;
                     var macro = [];
                     var deferred = $q.defer();
@@ -355,6 +362,9 @@ define(
                 //-----------------------------------
 
                 command_saveAs: function( param ) {
+
+                    if(Project.current == null) return;
+
                     var self = this;
                     var macro = [];
                     var deferred = $q.defer();
@@ -413,12 +423,46 @@ define(
                 // Edit 메뉴
                 ////////////////////////////////////////
 
+                command_undo: function( param ) {
+                    alert('command_undo');
+                    //if(Project.current == null) return;
+                },
+
+                command_redo: function( param ) {
+                    alert('command_redo');
+                    //if(Project.current == null) return;
+                },
 
                 //-----------------------------------
                 // Document
                 //-----------------------------------
 
+                command_selectDocument: function( param ) {
+                    
+                    if(Project.current == null) return;
+
+                    // 아이디 체크
+                    if(param === undefined) param = {};
+                    if(param.uid === undefined){
+                        throw '선택할 Document의 uid가 정해지지 않았습니다.';
+                        return;
+                    }
+
+                    var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 추가
+                    var command = new SelectDocumentCommand();
+                    macro.push( command );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+
                 command_addDocument: function( param ) {
+                    
+                    if(Project.current == null) return;
 
                     // 아이디 체크
                     if(param === undefined) param = {};
@@ -440,6 +484,8 @@ define(
 
                 command_removeDocument: function( param ) {
 
+                    if(Project.current == null) return;
+
                     // 아이디 체크
                     if(!param || param.uid === undefined){
                         return null;
@@ -458,6 +504,8 @@ define(
                 },
 
                 command_modifyDocument: function( param ) {
+
+                    if(Project.current == null) return;
 
                     // 아이디 체크
                     if(!param || param.uid === undefined){

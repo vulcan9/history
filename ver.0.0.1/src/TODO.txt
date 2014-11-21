@@ -1,0 +1,8 @@
+﻿* Select Document 데이터 관리
+ - Tool에서 마지막 선택 상태를 관리 (null이면 첫페이지)
+ - 닫기, 열기, 새문서 작업시 선택상태 점검
+ - 문서 삭제, 수정시 선택상태 점검
+
+* Element UI Command
+
+* UNDO/REDO 기능

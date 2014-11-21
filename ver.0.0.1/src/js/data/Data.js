@@ -37,6 +37,8 @@ define(
             //------------------------------------------
             
             Data.prototype = {
+                
+                eventPrefix : 'Data',
 
                 initialize: function(){
 
@@ -146,7 +148,7 @@ define(
                         
                         // 이벤트 발송
                         if(changed){
-                            var eventName = '#Data.changed-' + property;
+                            var eventName = '#' + self.eventPrefix + '.changed-' + property;
                             out('# 이벤트 발생 : ', eventName);
 
                             var args = {newValue:value, oldValue:oldValue, name:property};
@@ -175,7 +177,7 @@ define(
                     this.__add(propertyName, dataOwner, itemObject);
 
                     // 이벤트 발송
-                    var eventName = '#Data.added-' + propertyName;
+                    var eventName = '#' + this.eventPrefix + '.added-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
 
                     var args = {data:dataOwner, item:itemObject, name:propertyName};
@@ -188,7 +190,7 @@ define(
                     this.__remove(propertyName, dataOwner, itemObject);
 
                     // 이벤트 발송
-                    var eventName = '#Data.removed-' + propertyName;
+                    var eventName = '#' + this.eventPrefix + '.removed-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
 
                     var args = {data:dataOwner, item:itemObject, name:propertyName};
@@ -201,7 +203,7 @@ define(
                     this.__modify(propertyName, dataOwner, itemObject);
 
                     // 이벤트 발송
-                    var eventName = '#Data.modified-' + propertyName;
+                    var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
 
                     var args = {data:dataOwner, item:itemObject, name:propertyName};

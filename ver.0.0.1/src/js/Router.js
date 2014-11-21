@@ -239,6 +239,7 @@ define( [], function() {
 
 						// DIRECTIVE
 						_PATH.DIRECTIVE + 'menuView',
+						_PATH.DIRECTIVE + 'iconView',
 						_PATH.DIRECTIVE + 'progressView',
 						_PATH.DIRECTIVE + 'treeView',
 						_PATH.DIRECTIVE + 'screenView',
@@ -266,6 +267,7 @@ define( [], function() {
 						_PATH.COMMAND + 'document/AddDocumentCommand',
 						_PATH.COMMAND + 'document/RemoveDocumentCommand',
 						_PATH.COMMAND + 'document/ModifyDocumentCommand',
+						_PATH.COMMAND + 'document/SelectDocumentCommand',
 
 						_PATH.COMMAND + 'PlayCommand',
 						// _PATH.COMMAND + 'EditCommand'

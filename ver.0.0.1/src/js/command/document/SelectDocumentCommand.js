@@ -49,10 +49,10 @@ define(
                     out( '# SelectDocumentCommand Execute : ', param);
 
                     //-----------------------
-                    // Project 데이터 세팅
+                    // 데이터 세팅
                     //-----------------------
                     
-                    Project.current.addDocument(param);
+                    Project.current.setSelectDocument(param.uid);
 
                     // 결과 리턴
                     _super._run.apply(this, arguments);

@@ -51,6 +51,8 @@ define(
             // Prototype 상속
             angular.extend( Tool.prototype,  _super, {
 
+                eventPrefix : 'Tool',
+
                 initialize: function(callback){
 
                     _super.initialize.apply(this, arguments);
@@ -82,20 +84,35 @@ define(
                             // 문서별 undo/redo 데이터
                             // history: {},
                             
+                            // 현재 선택 문서 (uid)
+                            //__SELECT_DOCUMENT: null,
+                            __CURRENT: null,
+
                             // 메뉴 구성 정보
                             __MENU : null
                         }
                     );
 
+                    // 현재 실행 state를 기록한다.
+                    this.tool('CURRENT', {
+                        document:{
+                            selectUID:null
+                        },
+                        element:{
+                            selectUID:null
+                        }
+                    });
+
                     // 데이터 로드 상태 확인
-                    var removeHandler = $rootScope.$on('#Data.changed-MENU', angular.bind(this, onDataChanged)); 
+                    var removeHandler = $rootScope.$on('#Tool.changed-MENU', angular.bind(this, onDataChanged)); 
                     
                     function onDataChanged(e, data){
+                        
+                        out('# 필요한 모든 데이터 로드가 완료 되었는지 확인');
                         
                         out('------->TODO : $q.defer(); tnen 이용');
                         // http://blog.naver.com/youmasan/130189628570
 
-                        // 필요한 모든 데이터 로드가 완료 되었는지 확인
                         if(this.TOOL.MENU){
                             this.initialized = true;
                             removeHandler();
@@ -133,6 +150,16 @@ define(
                 },
                 */
                 //
+
+                getSelectDocument: function(){
+                    return Tool.current.tool('CURRENT').document.selectUID;
+                },
+
+                setSelectDocument: function(uid){
+                    Tool.current.tool('CURRENT').document.selectUID = uid;
+                }
+
+                
                 
 
                 //////////////////////////////////////////////////////////////////////////
