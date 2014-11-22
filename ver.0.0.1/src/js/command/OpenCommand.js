@@ -177,11 +177,15 @@ define(
 
                     // treeData 구조가 바뀌어 모든 노드를 검사할려면 forEach를 쓸 수 없다.
                     //  모든 노드를 탐색하여 document리스트를 로드한다.
-                    findItems(treeData);
+                    findItems(treeData, 0);
 
-                    function findItems(node){
+                    function findItems(node, dep){
+                        
                         angular.forEach( node.items, function( value, key ) {
-                            out( '---> ', key, ' : ', value.uid );
+                            
+                            var _depth = dep;
+                            out( '---> ', _depth, '[', key, '] : ', value.name, '::', value.uid );
+
                             var documentURL = _PATH.ROOT + 'data/' + value.uid + '.json';
                             var promise = HttpService.load( {
                                     method: 'GET',
@@ -199,7 +203,9 @@ define(
                             promiseArray.push( promise );
 
                             // 재귀 호출 (depth로 진행)
-                            findItems(value);
+                            if(value.items && value.items.length > 0){
+                                findItems(value, (_depth+1));
+                            }
 
                         }, this );
                     }

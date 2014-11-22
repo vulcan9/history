@@ -313,10 +313,10 @@ define(
                     }
 
                     // 닫기 과정 추가
-                    var promise_new = this.command_new( param );
-                    promise_new.then( function( macro_new ) {
+                    var promise_close = this.command_close( param );
+                    promise_close.then( function( macro_close ) {
                         // macro 추가
-                        macro = macro.concat( macro_new );
+                        macro = macro.concat( macro_close );
                         resove();
 
                     }, function(result){
@@ -327,7 +327,7 @@ define(
                     // 저장하기 취소인 경우 -> 실행 취소
                     
                     function resove() {
-                        // 새 프로젝트
+                        // 프로젝트 열기
                         var command = new OpenCommand();
                         macro.push( command );
                         deferred.resolve( macro );
@@ -437,29 +437,6 @@ define(
                 // Document
                 //-----------------------------------
 
-                command_selectDocument: function( param ) {
-                    
-                    if(Project.current == null) return;
-
-                    // 아이디 체크
-                    if(param === undefined) param = {};
-                    if(param.uid === undefined){
-                        throw '선택할 Document의 uid가 정해지지 않았습니다.';
-                        return;
-                    }
-
-                    var self = this;
-                    var macro = [];
-                    var deferred = $q.defer();
-
-                    // 추가
-                    var command = new SelectDocumentCommand();
-                    macro.push( command );
-
-                    deferred.resolve( macro );
-                    return deferred.promise;
-                },
-
                 command_addDocument: function( param ) {
                     
                     if(Project.current == null) return;
@@ -518,6 +495,29 @@ define(
 
                     // 수정
                     var command = new ModifyDocumentCommand();
+                    macro.push( command );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+
+                command_selectDocument: function( param ) {
+                    
+                    if(Project.current == null) return;
+
+                    // 아이디 체크
+                    if(param === undefined) param = {};
+                    if(param.uid === undefined){
+                        throw '선택할 Document의 uid가 정해지지 않았습니다.';
+                        return;
+                    }
+
+                    var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 추가
+                    var command = new SelectDocumentCommand();
                     macro.push( command );
 
                     deferred.resolve( macro );

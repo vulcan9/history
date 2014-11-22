@@ -280,7 +280,7 @@
 .angular-ui-tree-placeholder,
 .angular-ui-tree-node {
     /*border: 1px dotted #FF0000;*/
-    margin: 5px 0px 5px 0px;
+    margin: 10px 0px;
     font-size: 0;
 }
 
@@ -297,6 +297,8 @@
 }
 .angular-ui-tree-placeholders-wrapper{
     /*margin-bottom:5px*/
+    margin: 10px 0px;
+    font-size: 0;
 }
 
 .angular-ui-tree-drag{

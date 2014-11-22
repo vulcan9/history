@@ -112,17 +112,24 @@ define(
                     });
                 }
 
-                function addDocument(){
+                // 같은 Depth에 Document 추가
+                function addDocument_next(){
 
-                    var parentUID = Project.current.getSelectDocument();
-                    alert('구현안됨 - addDocumentCommand : ' + parentUID);
+                    if(Project.current == null) return;
 
- ++++++++++++++++++++++++
+                    // 현재 선택 상태의 Document uid 의  nextSibling에 추가한다.
+                    var selectUID = Project.current.getSelectDocument();
 
+                    // selectUID에 해당되는 tree item 노드 찾기
+                    var position = Project.current.getTreePosition(selectUID);
+                    // next
+                    position.index = position.index + 1;
+
+
+                    // command 호출
                     var param = {
-                        // scope : $scope, 
-                        // element : $element, 
-                        // attrs : $attrs
+                        //document : null,
+                        treePosition : position
                     };
 
                     var command = CommandService.ADD_DOCUMENT;
@@ -133,6 +140,11 @@ define(
                     });
                 }
                 
+                // 하위 Depth에 Document 추가
+                function addDocument_sub(){
+
+                }
+
                 function play(){
                     alert('play 구현안됨');
                 }

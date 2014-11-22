@@ -151,11 +151,11 @@ define(
                 */
                 //
 
-                getSelectDocument: function(){
+                _getSelectDocument: function(){
                     return Tool.current.tool('CURRENT').document.selectUID;
                 },
 
-                setSelectDocument: function(uid){
+                _setSelectDocument: function(uid){
                     Tool.current.tool('CURRENT').document.selectUID = uid;
                 }
 

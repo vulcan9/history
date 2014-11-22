@@ -241,6 +241,30 @@ define(
 
 
 
+                    // 3. treeItem.items.push({새로운 Documnt - tree item});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -94,23 +94,9 @@ define(
                         $rootScope.$broadcast(eventName, args); 
 
                         // Root Element (Overview)
-                        this.__checkRootDocument();
+                        // this.__checkRootDocument();
 
                         // end initialize
-                    },
-
-                    __checkRootDocument: function(){
-                        if(this.PROJECT.DOCUMENT.items['overview'] !== undefined){
-                            return;
-                        }
-
-                        var param = {
-                            uid : U.createUID(),
-                            document:{
-                                id : 'overview'
-                            }
-                        }
-                        this.addDocument(param);
                     },
 
                     //////////////////////////////////////////////////////////////////////////
@@ -178,21 +164,6 @@ define(
                         return definition;
                     },
 
-                    getDefinitionTree : function (uid){
-                        var definition = {
-                            "uid" : uid,
-                            "name" : "bored-1-1",
-
-                            "parentUID": "",
-                            "parentName": "",
-                            
-                            "depth": "0",
-                            "index": "0"
-                        };
-
-                        return definition;
-                    },
-
                     //////////////////////////////////////////////////////////////////////////
                     //
                     // Command 관련 API
@@ -203,17 +174,41 @@ define(
                     newProject: function(){
                         this.initialize();
                         //this.project( 'TREE', null );
+
+                        // Root Element (Overview)
+                        this.__checkRootDocument();
                     },
 
                     // data : tree-uid.json 파일 내용
                     openProject: function(data){
                         this.initialize();
                         this.project( 'TREE', data );
+
+                        // 선택 상태 표시 (Root  Document를 초기 선택 상태로 표시)
+                        out('TODO : 저장된 마지막 선택 문서를 선택상태로 표시하기');
+                        //var uid = this.project( 'TREE').items[0].uid;
+                        var uid = data.items[0].uid;
+                        this.setSelectDocument(uid);
                     },
                     closeProject: function(){
                         this.project( 'TREE', null );
                         this.project( 'PRESENTATION', null );
                         this.project( 'DOCUMENT', null );
+                    },
+
+                    // 최초 첫 문서 한개를 임의로 세팅
+                    __checkRootDocument: function(){
+                        if(this.PROJECT.DOCUMENT.items['overview'] !== undefined){
+                            return;
+                        }
+
+                        var param = {
+                            uid : U.createUID(),
+                            document:{
+                                id : 'overview'
+                            }
+                        }
+                        this.addDocument(param);
                     },
 
                     //////////////////////////////////////////////////////////////////////////
@@ -232,6 +227,80 @@ define(
                     },
                     */
 
+                    //  모든 노드를 탐색하여 해당 uid를 가진 document의 tree 상 위치 정보를 찾는다
+                    getTreePosition: function (selectUID){
+
+                        out('* TREE에서 위치를 찾는 UID : ', selectUID);
+                        var treeData = this.project('TREE');
+                        
+                        var pos = {
+                            items: treeData.items,
+                            depth:1, 
+                            index:0
+                        };
+
+                        var isFinded = false;
+                        findItems(treeData, 1, selectUID);
+                        return pos;
+
+                        function findItems(node, dep, uid){
+
+                            var _depth = dep;
+                            var len = node.items.length;
+
+                            for(var index=0; index<len; ++index)
+                            {
+                                if(isFinded) return;
+                                var item = node.items[index];
+                                //out( '---> ', _depth, '[', index, '] : ', item.name, '::', item.uid );
+
+                                if(item.uid === uid){
+                                    pos = {
+                                        items: node.items,
+                                        depth: _depth, 
+                                        index: index
+                                    };
+                                    
+                                    out('\t=> parent : ', node.name, '::', node.uid);
+                                    out('\t=> 위치 정보 : ', pos);
+
+                                    isFinded = true;
+                                    return;
+                                }
+
+                                // 재귀 호출 (depth로 진행)
+                                if(item.items && item.items.length > 0){
+                                    findItems(item, (_depth+1), uid);
+                                }
+                            }
+                        }
+
+                        //end
+                    },
+
+                    getDefinitionTree : function (uid){
+                        var definition = {
+                            // "parentUID": "",
+                            // "parentName": "",
+                            
+                            // "depth": "0",
+                            // "index": "0",
+
+                            "uid" : uid,
+                            "name" : "undefined",
+                            "items": []
+                        };
+
+                        return definition;
+                    },
+
+                    // Tree에 해당 위치에 데이터 추가
+                    addTreeNode: function(treeItem, treePosition){
+                        //treePosition.items.push(treeItem);
+                        var index = treePosition.index;
+                        treePosition.items.splice(index, 0, treeItem);
+                    },
+
                     //---------------------
                     // Document
                     //---------------------
@@ -243,17 +312,23 @@ define(
                     
                     // itemObject.uid 값이 있어야함
                     addDocument: function(param){
+
                         var uid = param.uid;
+                        var treePosition = param.treePosition;
+                        // var document = param.document;
 
                         // tree에 추가
-                        //var treeItem = this.getDefinitionTree(uid);
-                        //this.add('TREE', this.PROJECT.TREE, treeItem);
+                        var treeItem = this.getDefinitionTree(uid);
+                        this.addTreeNode(treeItem, treePosition);
 
                         out('TODO : param으로 넘어온 값(open)을 document에 적용 : ', param);
 
                         // document 추가
                         var documentItem = this.getDefinitionDocument(uid);
                         this.add('DOCUMENT', this.PROJECT.DOCUMENT, documentItem);
+
+                        // 선택 표시
+                        this.setSelectDocument(uid);
                     },
 
                     // itemObject.uid 값이 있어야함
@@ -289,7 +364,7 @@ define(
                     getSelectDocument : function(){
                         // var uid = this.project('DOCUMENT').selectUID;
                         // return this.__get('DOCUMENT', this.PROJECT.DOCUMENT, uid);
-                        return Tool.current.getSelectDocument();
+                        return Tool.current._getSelectDocument();
                     },
 
                     setSelectDocument: function(uid){
@@ -302,7 +377,7 @@ define(
                         var newValue = uid;
 
                         // SET
-                        Tool.current.setSelectDocument(uid);
+                        Tool.current._setSelectDocument(uid);
 
                         // 이벤트 발송
                         var propertyName = 'DOCUMENT';
