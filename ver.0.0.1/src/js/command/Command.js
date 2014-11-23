@@ -107,9 +107,12 @@ define(
                 //-----------------------------------
 
                 _error: function( data, isStopPropergation ) {
-
                     //out( 'error : ', data );
-                    out( 'error : ', data );
+                    out( '\n\n\n');
+                    out( 'ERROR [command error] : ', data );
+                    out( '\n\n\n');
+
+alert('* command ERROR : ' + data);
 
                     var isPrevented = false;
                     if ( this._callback ) {

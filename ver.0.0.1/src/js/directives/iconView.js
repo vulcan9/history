@@ -52,11 +52,6 @@ define(
             ////////////////////////////////////////
             
             function Controller( $scope, $element, $attrs, $location, CommandService, Tool, HttpService, $timeout ) {
-                
-                // 데이터 로드
-                if (Tool.current.TOOL.MENU == undefined){
-                    
-                }
 
                 //------------------
                 // 데이터 변경 감지 순서
@@ -68,6 +63,12 @@ define(
                     if(data.name == 'MENU'){
                         out(data.name, '#Tool.changed-MENU : ', arguments);
                         //self.updateMenu();
+
+                        if (Tool.current.TOOL.MENU == undefined){
+                            out('TODO : MENU 버튼 비활성화');
+                        }else{
+                            out('TODO : MENU 버튼 활성화');
+                        }
                     }
                 });
                 
@@ -112,20 +113,17 @@ define(
                     });
                 }
 
-                // 같은 Depth에 Document 추가
-                function addDocument_next(){
+                // Document 추가 
+                // option : 'next', 'sub', 'prev'
+                function addDocument (option, uid){
 
                     if(Project.current == null) return;
 
                     // 현재 선택 상태의 Document uid 의  nextSibling에 추가한다.
-                    var selectUID = Project.current.getSelectDocument();
-
                     // selectUID에 해당되는 tree item 노드 찾기
-                    var position = Project.current.getTreePosition(selectUID);
-                    // next
-                    position.index = position.index + 1;
-
-
+                    var selectUID = uid || Project.current.getSelectDocument();
+                    var position = Project.current.getTreePosition(selectUID, option);
+                    
                     // command 호출
                     var param = {
                         //document : null,
@@ -140,11 +138,6 @@ define(
                     });
                 }
                 
-                // 하위 Depth에 Document 추가
-                function addDocument_sub(){
-
-                }
-
                 function play(){
                     alert('play 구현안됨');
                 }

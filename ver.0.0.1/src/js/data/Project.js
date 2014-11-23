@@ -198,16 +198,25 @@ define(
 
                     // 최초 첫 문서 한개를 임의로 세팅
                     __checkRootDocument: function(){
-                        if(this.PROJECT.DOCUMENT.items['overview'] !== undefined){
-                            return;
-                        }
+                        // if(this.PROJECT.DOCUMENT.items['overview'] !== undefined) return;
+                        var treeData = this.project('TREE');
+                        if(treeData.items && treeData.items.length > 0) return;
+
+                        var treePosition = this.getTreePosition();
+                        //var documentItem = this.getDefinitionDocument(uid);
+                        var uid = U.createUID();
 
                         var param = {
-                            uid : U.createUID(),
+                            uid: uid,
                             document:{
-                                id : 'overview'
-                            }
+                                // Document 구성 정보
+                                "document": {
+                                    "id": "overview--------------"
+                                }
+                            },
+                            treePosition : treePosition
                         }
+
                         this.addDocument(param);
                     },
 
@@ -228,9 +237,13 @@ define(
                     */
 
                     //  모든 노드를 탐색하여 해당 uid를 가진 document의 tree 상 위치 정보를 찾는다
-                    getTreePosition: function (selectUID){
+                    // selectUID : 현재 option값에 기준이 되고 있는 Tree item의 uid
+                    // option : 'next', 'sub', 'prev' - selectUID에 대한 상대 위치
+                    // option을 생략하면 selectUID의 정보를 리턴한다.
 
-                        out('* TREE에서 위치를 찾는 UID : ', selectUID);
+                    getTreePosition: function (selectUID, option){
+
+                        out('* TREE에서 위치를 찾는 UID : (', option, ') ', selectUID);
                         var treeData = this.project('TREE');
                         
                         var pos = {
@@ -252,16 +265,56 @@ define(
                             {
                                 if(isFinded) return;
                                 var item = node.items[index];
-                                //out( '---> ', _depth, '[', index, '] : ', item.name, '::', item.uid );
+                                out( '---> ', _depth, '[', index, '] : ', item.name, '::', item.uid );
 
-                                if(item.uid === uid){
-                                    pos = {
-                                        items: node.items,
-                                        depth: _depth, 
-                                        index: index
-                                    };
-                                    
-                                    out('\t=> parent : ', node.name, '::', node.uid);
+                                if(item.uid === uid)
+                                {
+                                    var parent;
+                                    switch(option)
+                                    {
+                                        // 하위 Depth에 Document 추가할때
+                                        case 'sub':
+                                            parent = item;
+                                            pos = {
+                                                items: parent.items,
+                                                depth: _depth + 1, 
+                                                index: 0
+                                            };
+                                            break;
+
+                                        // 같은 Depth에 이전 Document 추가할때
+                                        case 'prev':
+                                            parent = node;
+                                            pos = {
+                                                items: parent.items,
+                                                depth: _depth, 
+                                                index: Math.max(index, 0)
+                                            };
+                                            break;
+
+                                        // 같은 Depth에 다음 Document 추가할때
+                                        case 'next':
+                                            parent = node;
+                                            pos = {
+                                                items: parent.items,
+                                                depth: _depth, 
+                                                index: Math.min(index + 1, parent.items.length)
+                                            };
+                                            break;
+
+                                        // 현재 selectUID에 대한 정보를 그냥 리턴
+                                        default:
+                                            parent = node;
+                                            pos = {
+                                                items: parent.items,
+                                                depth: _depth, 
+                                                index: index
+                                            };
+                                    }
+
+                                    // next
+                                    // index: index+1, depth: _depth
+                                    out('\t=> parent : ', parent.name, '::', parent.uid);
                                     out('\t=> 위치 정보 : ', pos);
 
                                     isFinded = true;
@@ -287,7 +340,6 @@ define(
                             // "index": "0",
 
                             "uid" : uid,
-                            "name" : "undefined",
                             "items": []
                         };
 
@@ -295,7 +347,7 @@ define(
                     },
 
                     // Tree에 해당 위치에 데이터 추가
-                    addTreeNode: function(treeItem, treePosition){
+                    __addTreeNode: function(treeItem, treePosition){
                         //treePosition.items.push(treeItem);
                         var index = treePosition.index;
                         treePosition.items.splice(index, 0, treeItem);
@@ -315,17 +367,23 @@ define(
 
                         var uid = param.uid;
                         var treePosition = param.treePosition;
-                        // var document = param.document;
+                        var document = param.document || {};
 
                         // tree에 추가
                         var treeItem = this.getDefinitionTree(uid);
-                        this.addTreeNode(treeItem, treePosition);
+                        this.__addTreeNode(treeItem, treePosition);
 
-                        out('TODO : param으로 넘어온 값(open)을 document에 적용 : ', param);
+                        // param으로 넘어온 값(open)을 document에 적용
+                        var documentItem = this.getDefinitionDocument(uid);
+
+                        // 하위 Object들을 직접 extend 해주어야 한다.
+                        angular.extend(documentItem.document, document.document);
+                        angular.extend(documentItem.configuration, document.configuration);
+                        angular.extend(documentItem.todos, document.todos);
 
                         // document 추가
-                        var documentItem = this.getDefinitionDocument(uid);
                         this.add('DOCUMENT', this.PROJECT.DOCUMENT, documentItem);
+                        out('# 추가 된 Document : ', documentItem);
 
                         // 선택 표시
                         this.setSelectDocument(uid);

@@ -76,7 +76,32 @@ define(
             function Controller ( $scope, $element, $attrs, Project , CommandService) {
 
                 $element.trigger('#view.layoutUpdate');
+
+                ////////////////////////////////////////
+                // TREE 데이터
+                ////////////////////////////////////////
+
+                //*
+                // 1. 이벤트를 받는다.
+                var self = this;
+                $scope.$on('#Project.changed-TREE', function(e, data){
+                    if(data.name == 'TREE'){
+                        out('#Project.changed-TREE (tree) : ', arguments);
+
+                        // 2. 변경 내용을 scope에 적용한다.
+                        var tree = Project.current.project('TREE');
+                        $scope.tree = (tree)? tree.items : [];
+                    }
+                });
                 
+                // 3. scope이 변경되었음을 감지한다.
+                $scope.$watch('tree', function(newValue, oldValue) {
+                    if (newValue === oldValue) { return; }
+                    out('# $scope.tree changed (tree) : ', $scope.tree);
+                    $element.trigger('#view.layoutUpdate');
+                }, true);
+                //*/
+
                 ////////////////////////////////////////
                 // DOCUMENT 데이터
                 ////////////////////////////////////////
@@ -90,17 +115,15 @@ define(
 
                 // var data = {data:project};
                 $scope.$on('#Project.initialized', function(e, data){
-                    
                     // $scope.tree = Project.current.project('TREE');
                     // $scope.document = Project.current.project('DOCUMENT');
-
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.added-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.added-DOCUMENT (tree) : ', data);
-                        addDocument(data.item);
+                        __onAddDocument(data.item);
                     }
                 });
 
@@ -108,7 +131,7 @@ define(
                 $scope.$on('#Project.removed-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.removed-DOCUMENT (tree) : ', data);
-                        removeDocument(data.item);
+                        __onRemoveDocument(data.item);
                     }
                 });
 
@@ -116,7 +139,7 @@ define(
                 $scope.$on('#Project.modified-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.modified-DOCUMENT (tree) : ', data);
-                        modifyDocument(data.item);
+                        __onModifyDocument(data.item);
                     }
                 });
 
@@ -124,7 +147,7 @@ define(
                 $scope.$on('#Project.selected-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.selected-DOCUMENT (tree) : ', data);
-                        selectDocument(data.newValue, data.oldValue);
+                        __onSelectDocument(data.newValue, data.oldValue);
                     }
                 });
 
@@ -132,81 +155,40 @@ define(
                 // DOM 업데이트
                 //-------------------------------------
 
-                function addDocument (item){
-                    /*
-                    <div class="paper" ng-repeat="item in tree.items" ng-click="selectDocument(item, $index)">
-                        {{$index}}
-                    </div>
-                    */
-
-                    // 필터링
-                    // 1. TREE 데이터에 따라 depth - index 순으로 정렬한다.
-                    // 2. 정렬된 순서대로 Dom에 추가한다.
-                    
-                    //var tree = Project.current.project('TREE');
-                    //var treeItem = Project.current.getTree(item.uid);
-                    //out('addDocument : ', item.uid, treeItem);
-
+                /*
+                <div class="paper" ng-repeat="item in tree.items" ng-click="selectDocument(item, $index)">
+                    {{$index}}
+                </div>
+                */
+                function __onAddDocument (item){
+                    //
                 }
 
-                function removeDocument(item){
+                function __onRemoveDocument(item){
                     out('TODO : select 상태의 item이 삭제되었는지 검사');
                 }
 
-                function modifyDocument(item){
+                function __onModifyDocument(item){
                     
                 }
 
-                function selectDocument(newValue, oldValue){
+                function __onSelectDocument(newValue, oldValue){
                     out(' - oldValue : ', oldValue);
                     out(' - newValue : ', newValue);
 
                     $scope.selectUID = newValue;
                 }
 
-                ////////////////////////////////////////
-                // TREE 데이터
-                ////////////////////////////////////////
-
-                //*
-                // 1. 이벤트를 받는다.
-                var self = this;
-                $scope.$on('#Project.changed-TREE', function(e, data){
-                    if(data.name == 'TREE'){
-                        out('#Project.changed-TREE (tree) : ', arguments);
-                        self.updateTree();
-                    }
-                });
-
-                // 2. 변경 내용을 scope에 적용한다.
-                this.updateTree = function(){
-                    var tree = Project.current.project('TREE');
-                    if(!tree){
-                        $scope.tree = [];
-                        return;
-                    }
-
-                    $scope.tree = tree.items;
-                }
-                
-                // 3. scope이 변경되었음을 감지한다.
-                $scope.$watch('tree', function(newValue, oldValue) {
-                    if (newValue === oldValue) { return; }
-                    out('# $scope.tree changed (tree) : ', $scope.tree);
-                    $element.trigger('#view.layoutUpdate');
-                }, true);
-                //*/
-                
+                ////////////////////////////////////////////////////////////////////////////////
+                // DOM 인터렉션
+                ////////////////////////////////////////////////////////////////////////////////
 
                 //-----------------------------------
                 // Tree component
                 // http://jimliu.github.io/angular-ui-tree/
                 //-----------------------------------
 
-                $scope.remove = function(scope) {
-                    scope.remove();
-                };
-
+                // dom에서 this == scope
                 $scope.toggle = function(scope) {
                     scope.toggle();
                 };
@@ -217,62 +199,7 @@ define(
                     $scope.data.splice(0,0, a);
                 };
                 */
-
-                $scope.addItem = function(scope) {
-                    var nodeData = scope.$modelValue;
-                    var uid = U.createUID();
-                    //var treeItem = Project.current.getDefinitionTree(uid);
-
-                    // nodeData.items.push({
-                    //     "uid" : uid,
-                    //     "name" : "bored-2",
-                    //     "parentUID": "document-b16fea9c-d10a-413b-ba20-08344f937339",
-                    //     "items": []
-                    // });
-                    alert('구현안됨 - addDocumentCommand');
-
-
-
-// Project의 selectUID를 Tool로 옮긴다.
-// Project.current.project('DOCUMENT').selectUID
-// Tool.current.tool('CURRENT').document.selectUID
-// Select 관리를 해야한다.
-
-
-
-
-                    // 3. treeItem.items.push({새로운 Documnt - tree item});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                };
-
+                
                 $scope.collapseAll = function() {
                     $scope.$broadcast('collapseAll');
                 };
@@ -281,16 +208,36 @@ define(
                     $scope.$broadcast('expandAll');
                 };
 
+                // Document 선택
+                $scope.selectDocument = function(item){
+                    __selectDocument(item);
+                };
+                
+                $scope.addDocument = function(item) {
+                    // scope 이용할 경우
+                    // var nodeData = scope.$modelValue;
+                    // nodeData.items.push({새로운 Documnt - tree item});
+
+                    var uid = item.uid;
+                    __addDocument('sub', uid);
+                };
+
+                $scope.removeDocument = function(item) {
+                    alert('TODO : removeCommand로 처리');
+                    alert('삭제 하시겠습니니까?');
+                    // scope.remove();
+                    // $scope.$modelValue.splice(index, 1)[0];
+
+                    // var uid = item.uid;
+                    // __removeDocument(uid);
+                };
+
                 ////////////////////////////////////////
-                // DOM 인터렉션
+                // DOM 인터렉션 실행
                 ////////////////////////////////////////
 
                 // Document 선택
-                $scope.selectDocument = function(item){
-
-                    //$filter('orderBy')(array, expression, reverse)
-                    //var treeItem = Project.current.getTree(item.uid);
-                    
+                function __selectDocument (item){
                     var param = {
                         uid : item.uid
                     };
@@ -300,15 +247,42 @@ define(
                     CommandService.execute(command, param, function callback(isSuccess, result){
                         out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
                     });
-                };
-                
+                }
+
+                // Document 추가 
+                // option : 'next', 'sub', 'prev'
+                function __addDocument (option, uid){
+
+                    if(Project.current == null) return;
+
+                    // 현재 선택 상태의 Document uid 의  nextSibling에 추가한다.
+                    // selectUID에 해당되는 tree item 노드 찾기
+                    var selectUID = uid || Project.current.getSelectDocument();
+                    var position = Project.current.getTreePosition(selectUID, option);
+                    
+                    // command 호출
+                    var param = {
+                        //document : null,
+                        treePosition : position
+                    };
+
+                    var command = CommandService.ADD_DOCUMENT;
+                    out('\n# [ ', command, ' ] 명령 실행');
+
+                    CommandService.execute(command, param, function callback(isSuccess, result){
+                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
+                    });
+                }
+
+                function __removeDocument (uid){
+                }
+
                 ////////////////////////////////////////
                 // End Controller
                 ////////////////////////////////////////
             }
 
-
-
+            // end directive
         }
 
         // 리턴

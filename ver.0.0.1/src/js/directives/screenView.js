@@ -67,8 +67,8 @@ define(
                 // var data = {data:project};
                 $scope.$on('#Project.initialized', function(e, data){
                     
-                    $scope.tree = Project.current.project('TREE');
-                    $scope.document = Project.current.project('DOCUMENT');
+                    // $scope.tree = Project.current.project('TREE');
+                    // $scope.document = Project.current.project('DOCUMENT');
 
                 });
 
@@ -76,7 +76,7 @@ define(
                 $scope.$on('#Project.added-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.added-DOCUMENT (screen) : ', data);
-                        addDocument(data.item);
+                        __onAddDocument(data.item);
                     }
                 });
 
@@ -84,7 +84,7 @@ define(
                 $scope.$on('#Project.removed-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.removed-DOCUMENT (screen) : ', data);
-                        removeDocument(data.item);
+                        __onRemoveDocument(data.item);
                     }
                 });
 
@@ -92,7 +92,7 @@ define(
                 $scope.$on('#Project.modified-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.modified-DOCUMENT (screen) : ', data);
-                        modifyDocument(data.item);
+                        __onModifyDocument(data.item);
                     }
                 });
 
@@ -100,7 +100,7 @@ define(
                 $scope.$on('#Project.selected-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.selected-DOCUMENT (screen) : ', data);
-                        selectDocument(data.item, data.oldValue);
+                        _onSelectDocument(data.item, data.oldValue);
                     }
                 });
 
@@ -108,19 +108,19 @@ define(
                 // DOM 업데이트
                 //-------------------------------------
 
-                function addDocument(item){
+                function __onAddDocument(item){
 
                 }
 
-                function removeDocument(item){
+                function __onRemoveDocument(item){
                     
                 }
 
-                function modifyDocument(item){
+                function __onModifyDocument(item){
                     
                 }
 
-                function selectDocument(newItem, oldItem){
+                function _onSelectDocument(newItem, oldItem){
                     out(' - oldValue : ', oldItem);
                     out(' - newValue : ', newItem);
                     //uid로 DOM 찾아내기

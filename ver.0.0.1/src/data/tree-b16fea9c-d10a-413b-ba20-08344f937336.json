@@ -7,47 +7,38 @@
     "items" : [
         {
 	    "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937337",
-	    "name" : "overview",
 	    "items": [
 	        {
 	            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937338",
-	            "name" : "center1",
 	            "items": []
 	        },
 	        {
 	            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937339",
-	            "name" : "bored",
 	            "items": [
 	                {
 		            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937340",
-		            "name" : "bored-1",
 		            "items": [
 		                {
 			            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937341",
-			            "name" : "bored-1-1",
 			            "items": []
 			        }
 			    ]
 		        },
 		        {
 		            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937342",
-		            "name" : "bored-2",
 		            "items": []
 		        }
 		    ]
 	        },
 	        {
 	            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937343",
-	            "name" : "bored1",
 	            "items": [
 	                {
 		            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937344",
-		            "name" : "bored1-1",
 		            "items": []
 		        },
 		        {
 		            "uid" : "document-b16fea9c-d10a-413b-ba20-08344f937345",
-		            "name" : "bored1-2",
 		            "items": []
 		        }
 		    ]

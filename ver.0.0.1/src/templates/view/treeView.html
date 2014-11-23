@@ -72,7 +72,7 @@
                 ng-mouseover="hover=true" ng-mouseleave="hover=false" ng-model="hover" ng-init="hover=false">
 
                 <div class="tree-node-content" ng-click="selectDocument(item)"></div>
-                <span>{{this.depth()}} : {{item.name}}</span>
+                <span>{{this.depth()}} : {{$index}}</span>
                 
                 <!--확장 버튼-->
                 <div class="btn btn-success btn-xs collapseBtn"
@@ -81,12 +81,12 @@
                 </div>
 
                 <!--삭제 버튼-->
-                <div class="pull-right btn btn-danger btn-xs removeBtn" nodrag ng-click="remove(this)" ng-show="hover">
+                <div class="pull-right btn btn-danger btn-xs removeBtn" nodrag ng-click="removeDocument(item)" ng-show="hover">
                     <span class="glyphicon glyphicon-remove"></span>
                 </div>
 
                 <!--추가 버튼-->
-                <div class="pull-right btn btn-primary btn-xs addBtn" nodrag ng-click="addItem(this)" ng-show="hover">
+                <div class="pull-right btn btn-primary btn-xs addBtn" nodrag ng-click="addDocument(item)" ng-show="hover">
                     <span class="glyphicon glyphicon-plus"></span>
                 </div>
             </div>
