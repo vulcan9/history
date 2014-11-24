@@ -4,6 +4,12 @@
         <li ng-repeat="item in tree.items" ng-model="counter">{{$index + 1}} : {{item.uid}}</li>
     </ul>
     -->
+
+
+        <!--//검색 기능-->
+        <div style="position: fixed;top: 120px;z-index: 1;background-color: #DDD;">필터링 검색 : <input type="text" name="search" placeholder="기능 구현 안됨"></div>
+
+
     <div class="tree">
 
 
@@ -85,8 +91,8 @@
 
                 <!--// 삭제 버튼-->
                 <!--// "hover && (item.items && item.items.length<1)"-->
-                <div class="pull-right btn btn-info btn-xs removeBtn" nodrag ng-click="removeDocument(item)" 
-                    ng-show="hover">
+                <div class="pull-right btn btn-default btn-xs removeBtn" nodrag ng-click="removeDocument(item)" 
+                    ng-show="hover" style="border-color: #4cae4c;">
                     <span class="glyphicon glyphicon-remove"></span>
                 </div>
 
