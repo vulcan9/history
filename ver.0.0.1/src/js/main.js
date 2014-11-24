@@ -22,6 +22,9 @@ user strict 명령은 엄격하게 JavaScript 룰을 적용하라는 의미이�
 */
 'use strict';
 
+console.log ('TODO : // 디버깅용으로 노출된 속성 비활성화 시킬것 (window.debug=false)');
+window.debug = true;
+
 ////////////////////////////////////////
 // 로그 출력
 ////////////////////////////////////////
@@ -34,6 +37,7 @@ if ( typeof console === 'undefined' || typeof console.log === 'undefined' ) {
 }
 
 var out = window.out || function() {
+    if( !window.debug ) return;
     if ( !arguments || arguments.length < 1 ) return;
 
     if ( window.out && window.out.$log ) {
@@ -108,7 +112,7 @@ require.config( {
         'bootstrap':                _PATH.LIB + 'bootstrap-3.2.0/js/bootstrap',
         'ui-bootstrap':                _PATH.LIB + 'ui-bootstrap-tpls-0.11.2',
 
-        'ui.tree':                'test/angular-ui-tree',
+        'ui.tree':                _PATH.LIB + 'tree/angular-ui-tree',
 
         // 모듈
         'dockModule':         _PATH.MODULE + 'dockModule',

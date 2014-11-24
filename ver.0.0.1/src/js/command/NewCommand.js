@@ -19,7 +19,7 @@ define(
         application.service( 'NewCommand', _service );
 
         // 선언
-        function _service(Command) {
+        function _service(Command, Project) {
 
             out( 'Command 등록 : NewCommand' );
 

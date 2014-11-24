@@ -15,11 +15,13 @@ define(
     ],
     function( application ) {
 
+        console.log( "# Version.", _service().version() );
+
         // 등록
         application.service( 'VersionService', _service );
 
         // 선언
-        function _service( $http ) {
+        function _service( ) {
 
             // 버전 기록
             var Version = {

@@ -1,5 +1,5 @@
 <div class="treeContainer">
-    <!--
+    <!--//
     <ul>
         <li ng-repeat="item in tree.items" ng-model="counter">{{$index + 1}} : {{item.uid}}</li>
     </ul>
@@ -8,7 +8,7 @@
 
 
         
-        <!--
+        <!--//
         <div class="paper" ng-repeat="item in tree.items[0]" ng-click="selectDocument(item, $index)">
             {{$index}} : {{item.depth}} - {{item.index}}
         </div>
@@ -19,7 +19,7 @@
 
 
 
-        <!-- Nested list template
+        <!--// Nested list template
         <script type="text/ng-template" id="items_renderer.html">
             <div ui-tree-handle ng-class="{ 'select': $treeScope.multiSelect, 'copy': $treeScope.copy }">
                 <a class="btn btn-success btn-xs" nodrag ng-click="toggle(this)">
@@ -65,35 +65,41 @@
 
 
         <!-- Nested node template  -->
-        <script type="text/ng-template" id="nodes_renderer.html">
+        <script type="text/ng-template" id="tree_renderer.html">
             
 
-            <div class="paper" ui-tree-handle uid="{{item.uid}}" ng-class="{selected: item.uid==selectUID}" 
+            <div class="paper" style="width:150px;" 
+                ui-tree-handle uid="{{item.uid}}" ng-class="{selected: item.uid==selectUID}" 
                 ng-mouseover="hover=true" ng-mouseleave="hover=false" ng-model="hover" ng-init="hover=false">
 
                 <div class="tree-node-content" ng-click="selectDocument(item)"></div>
-                <span>{{this.depth()}} : {{$index}}</span>
+                <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">
+                    {{this.depth()}} : {{$index}} : {{item.uid.substring(item.uid.lastIndexOf('-')+1)}}
+                </div>
                 
-                <!--확장 버튼-->
+                <!--// 확장 버튼-->
                 <div class="btn btn-success btn-xs collapseBtn"
                         ng-if="item.items && item.items.length > 0" nodrag ng-click="toggle(this)">
                         <span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span>
                 </div>
 
-                <!--삭제 버튼-->
-                <div class="pull-right btn btn-danger btn-xs removeBtn" nodrag ng-click="removeDocument(item)" ng-show="hover">
+                <!--// 삭제 버튼-->
+                <!--// "hover && (item.items && item.items.length<1)"-->
+                <div class="pull-right btn btn-info btn-xs removeBtn" nodrag ng-click="removeDocument(item)" 
+                    ng-show="hover">
                     <span class="glyphicon glyphicon-remove"></span>
                 </div>
 
-                <!--추가 버튼-->
-                <div class="pull-right btn btn-primary btn-xs addBtn" nodrag ng-click="addDocument(item)" ng-show="hover">
+                <!--// 추가 버튼-->
+                <div class="pull-right btn btn-success btn-xs addBtn" nodrag ng-click="addDocument(item)" 
+                    ng-show="hover">
                     <span class="glyphicon glyphicon-plus"></span>
                 </div>
             </div>
             
-            <!--재귀 탐색-->
+            <!--// 재귀 탐색-->
             <ol ui-tree-nodes="" ng-model="item.items" ng-class="{hidden: collapsed}">
-                <li ng-repeat="item in item.items" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+                <li ng-repeat="item in item.items" ui-tree-node ng-include="'tree_renderer.html'"></li>
             </ol>
 
         </script>
@@ -101,12 +107,12 @@
         <div ui-tree
             drag-delay="10" drag-distance="10" drag-enabled="true">
             <ol ui-tree-nodes ng-model="tree">
-                <li ng-repeat="item in tree" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+                <li ng-repeat="item in tree" ui-tree-node ng-include="'tree_renderer.html'"></li>
             </ol>
         </div>
        
-        <!-- Nested node template 
-        <script type="text/ng-template" id="nodes_renderer.html">
+        <!--// Nested node template 
+        <script type="text/ng-template" id="tree_renderer.html">
           <div ui-tree-handle class="tree-node tree-node-content">
             <a class="btn btn-success btn-xs" ng-if="node.nodes && node.nodes.length > 0" nodrag ng-click="toggle(this)"><span class="glyphicon" ng-class="{'glyphicon-chevron-right': collapsed, 'glyphicon-chevron-down': !collapsed}"></span></a>
             {{node.title}}
@@ -114,16 +120,34 @@
             <a class="pull-right btn btn-primary btn-xs" nodrag ng-click="newSubItem(this)" style="margin-right: 8px;"><span class="glyphicon glyphicon-plus"></span></a>
           </div>
           <ol ui-tree-nodes="" ng-model="node.nodes" ng-class="{hidden: collapsed}">
-            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'nodes_renderer.html'">
+            <li ng-repeat="node in node.nodes" ui-tree-node ng-include="'tree_renderer.html'">
             </li>
           </ol>
         </script>
         <div ui-tree id="tree-root">
           <ol ui-tree-nodes ng-model="data">
-            <li ng-repeat="node in data" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+            <li ng-repeat="node in data" ui-tree-node ng-include="'tree_renderer.html'"></li>
           </ol>
         </div>
--->
+        -->
+
+        <!--// 삭제하기 팝업창 템플릿-->
+        <script type="text/ng-template" id="tree_message_remove">
+            <span>페이지를 삭제 하시겠습니까?</span>
+
+            <p style="margin: 20px 40px;" ng-init="removeOption='only'">
+                <label><input type="radio" ng-model="removeOption" name="removeOption" value="only" ng-checked="removeOption=='only'"> 해당 페이지만 제거 (하위 페이지들은 상위 카테고리로 자동 이동됨)</label>
+                <br>
+                <label><input type="radio" ng-model="removeOption" name="removeOption" value="all" ng-checked="removeOption=='all'"> 모든 하위 페이지 함께 모두 제거</label>
+            </p>
+
+        </script>
+
+
+
+
+
+
 
 
 

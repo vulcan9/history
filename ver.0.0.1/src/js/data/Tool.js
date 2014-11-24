@@ -15,8 +15,8 @@ define(
     ],
     function(application, U) {
 
-        out ('TODO : // 디버깅용으로 노출된 속성 비활성화 시킬것 (Tool)')
-        window.Tool = Tool;
+        // 디버깅용으로 속성 노출
+        if(window.debug) window.Tool = Tool;
         
         // 현재 사용중인 데이터 Instance
         Tool.current = null;
@@ -152,11 +152,12 @@ define(
                 //
 
                 _getSelectDocument: function(){
-                    return Tool.current.tool('CURRENT').document.selectUID;
+                    return this.tool('CURRENT').document.selectUID;
                 },
 
                 _setSelectDocument: function(uid){
-                    Tool.current.tool('CURRENT').document.selectUID = uid;
+                    this.tool('CURRENT').document.selectUID = uid;
+                    this.dataChanged = true;
                 }
 
                 

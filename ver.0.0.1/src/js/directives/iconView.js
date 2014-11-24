@@ -118,16 +118,14 @@ define(
                 function addDocument (option, uid){
 
                     if(Project.current == null) return;
-
-                    // 현재 선택 상태의 Document uid 의  nextSibling에 추가한다.
-                    // selectUID에 해당되는 tree item 노드 찾기
-                    var selectUID = uid || Project.current.getSelectDocument();
-                    var position = Project.current.getTreePosition(selectUID, option);
                     
                     // command 호출
                     var param = {
                         //document : null,
-                        treePosition : position
+                        option: {
+                            position: option,
+                            selectUID: uid || Project.current.getSelectDocument()
+                        }
                     };
 
                     var command = CommandService.ADD_DOCUMENT;

@@ -73,12 +73,12 @@ define(
             // Controller
             ////////////////////////////////////////
             
-            function Controller ( $scope, $element, $attrs, Project , CommandService) {
+            function Controller ( $scope, $element, $attrs, Project , CommandService, NoticeService, $q) {
 
                 $element.trigger('#view.layoutUpdate');
 
                 ////////////////////////////////////////
-                // TREE 데이터
+                // TREE 데이터 이벤트
                 ////////////////////////////////////////
 
                 //*
@@ -103,7 +103,7 @@ define(
                 //*/
 
                 ////////////////////////////////////////
-                // DOCUMENT 데이터
+                // DOCUMENT 데이터 이벤트
                 ////////////////////////////////////////
                 
                 /*
@@ -119,30 +119,6 @@ define(
                     // $scope.document = Project.current.project('DOCUMENT');
                 });
 
-                // var data = {data:dataOwner, item:itemObject, name:propertyName};
-                $scope.$on('#Project.added-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.added-DOCUMENT (tree) : ', data);
-                        __onAddDocument(data.item);
-                    }
-                });
-
-                // var data = {data:dataOwner, item:itemObject, name:propertyName};
-                $scope.$on('#Project.removed-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.removed-DOCUMENT (tree) : ', data);
-                        __onRemoveDocument(data.item);
-                    }
-                });
-
-                // var data = {data:dataOwner, item:itemObject, name:propertyName};
-                $scope.$on('#Project.modified-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.modified-DOCUMENT (tree) : ', data);
-                        __onModifyDocument(data.item);
-                    }
-                });
-
                 //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
                 $scope.$on('#Project.selected-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
@@ -151,32 +127,97 @@ define(
                     }
                 });
 
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.added-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.added-DOCUMENT (tree) : ', data);
+                        __onAddDocument(data.item, data.param);
+                    }
+                });
+
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.removed-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.removed-DOCUMENT (tree) : ', data);
+                        __onRemoveDocument(data.item, data.param);
+                    }
+                });
+
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.modified-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.modified-DOCUMENT (tree) : ', data);
+                        __onModifyDocument(data.item, data.param);
+                    }
+                });
+
                 //-------------------------------------
                 // DOM 업데이트
                 //-------------------------------------
-
-                /*
-                <div class="paper" ng-repeat="item in tree.items" ng-click="selectDocument(item, $index)">
-                    {{$index}}
-                </div>
-                */
-                function __onAddDocument (item){
-                    //
-                }
-
-                function __onRemoveDocument(item){
-                    out('TODO : select 상태의 item이 삭제되었는지 검사');
-                }
-
-                function __onModifyDocument(item){
-                    
-                }
 
                 function __onSelectDocument(newValue, oldValue){
                     out(' - oldValue : ', oldValue);
                     out(' - newValue : ', newValue);
 
                     $scope.selectUID = newValue;
+                }
+
+                /*
+                <div class="paper" ng-repeat="item in tree.items" ng-click="selectDocument(item, $index)">
+                    {{$index}}
+                </div>
+                
+                option: {
+                    position: option,
+                    selectUID: uid || Project.current.getSelectDocument()
+                }
+                */
+
+                // Tree에 해당 위치에 데이터 추가
+                function __onAddDocument (item, param){
+                    var option = param.option || {};
+                    var posOption = option.position;
+                    var selectUID = option.selectUID;
+                    var info = Project.current.getTreePosition(selectUID, posOption);
+                    
+                    var uid = item.uid;
+                    var treeItem = Project.current.getDefinitionTree(uid);
+                    info.items.splice(info.index, 0, treeItem);
+                }
+
+                function __onRemoveDocument(item, param){
+                    // out('tree remove : ', param.position);
+                    // var info = Project.current.getTreePosition(uid);
+                    
+                    var option = param.option;
+                    var info = param.position;
+                    var item = info.items[info.index];
+
+                    if(option == 'only'){
+                        // 하위 노드들이 있는지 검색 후 있으면 리스트의 depth를 한단계씩 올림
+
+                        // subItem을 이동시킬 index
+                        var holder = info.index;
+                        var len = item.items.length;
+
+                        for(var i=len-1; i>=0; --i){
+                            var subItem = item.items[i];
+                            // out('subItem : ', subItem);
+                            info.items.splice(holder, 0, subItem);
+                        }
+
+                        // index가 변경됨
+                        var changedIndex = holder + len;
+                        info.items.splice(changedIndex, 1);
+
+                    }else{
+                        // option == 'all' : 하위 노드 모두 제거
+                        info.items.splice(info.index, 1);
+                    }
+                }
+
+                function __onModifyDocument(item, param){
+                    
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////
@@ -223,13 +264,91 @@ define(
                 };
 
                 $scope.removeDocument = function(item) {
-                    alert('TODO : removeCommand로 처리');
-                    alert('삭제 하시겠습니니까?');
-                    // scope.remove();
-                    // $scope.$modelValue.splice(index, 1)[0];
+                    
+                    if(Project.current == null) return;
+                    
+                    //----------------
+                    // 팝업창
+                    //----------------
 
-                    // var uid = item.uid;
-                    // __removeDocument(uid);
+                    var config = {
+                        
+                        /*
+                        // http://stackoverflow.com/questions/21149653/ng-include-not-working-with-script-type-text-ng-template
+
+                        content: '<script type="text/ng-template" id="tree_message_remove">'+
+                                    '<span>삭제 하시겠습니까?</span>' + 
+                                    '</script>'+
+                                    '<div ng-include src="templateID"></div>',
+                        // scope.templateID = 'tree_message_remove';
+                        
+                        content: '<div ng-include src="tree_message_remove.html">' + 
+                                    '<span>삭제 하시겠습니까?</span>' +
+                                    '<p style="margin: 20px 40px;" ng-init="removeOption=1">' + 
+                                    '<label><input type="radio" ng-model="removeOption" name="removeOption" value="1" ng-checked="removeOption==1"> 모든 하위 페이지 함께 제거</label>' + 
+                                    '<br>'+
+                                    '<label><input type="radio" ng-model="removeOption" name="removeOption" value="2" ng-checked="removeOption==2"> 해당 페이지만 제거</label>' + 
+                                    '</p>' + 
+                                    '</div>',
+                        */
+
+                        title: '삭제',
+                        content: U.getTemplate('#tree_message_remove', $element),
+                        isHTML: true,
+                        // backdrop: false,
+                        // buttons: ['예', '아니오', '취소']
+                        buttons: ['예', '아니오']
+                        // templateUrl: _PATH.TEMPLATE + 'popup/notice.html'
+                    };
+                    
+                    var callback = {
+                        /*
+                        opened: function( element, scope ) {
+                            out( 'opened : ', element, scope );
+                            // scope.templateID = template;
+
+                            // content scope 초기화
+                            // scope.removeOption = 'all';
+                            // scope.showDeleteButton = item.items && (item.items.length > 0);
+                        },
+                        */
+                        closed: function( result, element, scope ) {
+                            // result : -1:cancel, 1:yes, 0:no
+                            if ( result > 0 ) {
+                                // yes
+                                out('- result : 예 (', scope.removeOption, ')');
+                                deferred.resolve(scope.removeOption);
+
+                            }else if(result < 0){
+                                // cancel
+                                out('- result : 취소 (', scope.removeOption, ')');
+                                
+                            }else{
+                                out('- result : 아니오 (', scope.removeOption, ')');
+                                deferred.reject(scope.removeOption);
+                            }
+                        }
+                    };
+                    
+                    // 팝업창 띄우기
+                    NoticeService.open( config, callback );
+
+                    //----------------
+                    // 팝업 닫힘 후 처리
+                    //----------------
+
+                    var deferred = $q.defer();
+                    deferred.promise.then( 
+                        function resolve( optionValue ) {
+                        
+                            var uid = item.uid;
+                            __removeDocument(optionValue, uid);
+                            
+                        }, 
+                        function reject(){
+                            out('- 삭제 : 작업 취소');
+                        } 
+                    );
                 };
 
                 ////////////////////////////////////////
@@ -251,19 +370,21 @@ define(
 
                 // Document 추가 
                 // option : 'next', 'sub', 'prev'
-                function __addDocument (option, uid){
+                function __addDocument (option, selectUID){
 
                     if(Project.current == null) return;
 
                     // 현재 선택 상태의 Document uid 의  nextSibling에 추가한다.
                     // selectUID에 해당되는 tree item 노드 찾기
-                    var selectUID = uid || Project.current.getSelectDocument();
-                    var position = Project.current.getTreePosition(selectUID, option);
+                    // var selectUID = selectUID || Project.current.getSelectDocument();
+                    // var position = Project.current.getTreePosition(selectUID, option);
                     
                     // command 호출
                     var param = {
-                        //document : null,
-                        treePosition : position
+                        option: {
+                            position: option,
+                            selectUID: selectUID || Project.current.getSelectDocument()
+                        }
                     };
 
                     var command = CommandService.ADD_DOCUMENT;
@@ -274,7 +395,32 @@ define(
                     });
                 }
 
-                function __removeDocument (uid){
+                // option: 'all', 'only'
+                function __removeDocument (option, uid){
+                    
+                    if(Project.current == null) return;
+
+                    /*
+                    if(option == 'all'){
+                        out('- 삭제 : 해당 노드 및 하위노드 모두 삭제');
+                    }else if(option == 'only'){
+                        out('- 삭제 : 해당 노드만 삭제후 하위노드는 상위 depth로 이동');
+                    }
+                    */
+                    
+                    // command 호출
+                    var selectUID = uid || Project.current.getSelectDocument();
+                    var param = {
+                        uid : selectUID,
+                        option : option
+                    };
+
+                    var command = CommandService.REMOVE_DOCUMENT;
+                    out('\n# [ ', command, ' ] 명령 실행');
+
+                    CommandService.execute(command, param, function callback(isSuccess, result){
+                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
+                    });
                 }
 
                 ////////////////////////////////////////

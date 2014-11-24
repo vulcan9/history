@@ -20,10 +20,10 @@ define(
 
         // 선언
         function _service(
-            $q,
+            $q, 
             NewCommand, OpenCommand, SaveCommand, SaveAsCommand, CloseCommand, ExitCommand,
             AddDocumentCommand, RemoveDocumentCommand, ModifyDocumentCommand, SelectDocumentCommand,
-            Tool, NoticeService, ProgressService
+            Project, Tool, NoticeService, ProgressService
 
         ) {
 
@@ -38,7 +38,6 @@ define(
             // processAdd, processNext, processCancel, _checkProcess
 
             CommandService.prototype = {
-
 
                 // const
                 // 싱클톤으로 사용되므로 상수도 여기에서 정의해준다
@@ -215,8 +214,6 @@ define(
                     var deferred = $q.defer();
 
                     // 저장 체크
-                    // Tool.current.dataChanged = true;
-
                     if ( Tool.current.dataChanged ) {
 
                         var config = {
@@ -309,7 +306,7 @@ define(
                     if(!param || !param.uid){
                         var uid = 'b16fea9c-d10a-413b-ba20-08344f937336';
                         param.uid = uid;
-                        alert( 'TODO : project 데이터 로드 경로(아이디) 세팅 : ' + uid );
+                        alert( 'TODO : [command_open] project 데이터 로드 경로(아이디) 다이얼로그 팝업창 띄우기 : ' + uid );
                     }
 
                     // 닫기 과정 추가
@@ -444,7 +441,7 @@ define(
                     // 아이디 체크
                     if(param === undefined) param = {};
                     if(param.uid === undefined){
-                        param.uid = U.createUID();
+                        param.uid = Project.current.createDocumentUID();
                     }
 
                     var self = this;
@@ -458,7 +455,13 @@ define(
                     deferred.resolve( macro );
                     return deferred.promise;
                 },
-
+                
+                /*
+                var param = {
+                    uid : selectUID,
+                    option : 'all' | 'only'
+                };
+                */
                 command_removeDocument: function( param ) {
 
                     if(Project.current == null) return;

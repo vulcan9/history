@@ -19,7 +19,7 @@ define(
         application.service( 'SelectDocumentCommand', _service );
 
         // 선언
-        function _service(Command, VersionService) {
+        function _service(Command, VersionService, Project) {
 
             out( 'Command 등록 : SelectDocumentCommand' );
 

@@ -46,6 +46,7 @@ define(
             // 사용 샘플
             ////////////////////////////////////////
             
+            // 원본 소스 수정함 : 
             // navigation 메뉴가 두번 클릭에 의해서 열리기 때문에 주석처리함
             // dropdownToggle directive의 dropdownCtrl.toggle(); 라인 
             
@@ -63,7 +64,7 @@ define(
                 title: '저장',
                 content: '<span>저장되지 않은 데이터가 있습니다. 저장하시겠습니까?</span>',
                 size: '',
-                backdrop: true,
+                backdrop: true, // 반투명 배경(true)
                 buttons: ['예', '아니오', '취소']
                 isHTML: false // content가 HTML 이면 true
                 hideCloseButton: false // x버튼 감출려면 tree

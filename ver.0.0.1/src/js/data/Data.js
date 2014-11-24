@@ -171,7 +171,7 @@ define(
                 // dataObject을 가진 데이터에 값을 추가한다.
                 // propertyName : __createProxy로 생성된 property 이름
                 
-                add: function(propertyName, dataOwner, itemObject){
+                add: function(propertyName, dataOwner, itemObject, param){
 
                     // Override 내용 구현
                     this.__add(propertyName, dataOwner, itemObject);
@@ -180,11 +180,11 @@ define(
                     var eventName = '#' + this.eventPrefix + '.added-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
 
-                    var args = {data:dataOwner, item:itemObject, name:propertyName};
+                    var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
                     $rootScope.$broadcast(eventName, args); 
                 },
 
-                remove: function(propertyName, dataOwner, itemObject){
+                remove: function(propertyName, dataOwner, itemObject, param){
 
                     // Override 내용 구현
                     this.__remove(propertyName, dataOwner, itemObject);
@@ -193,11 +193,11 @@ define(
                     var eventName = '#' + this.eventPrefix + '.removed-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
 
-                    var args = {data:dataOwner, item:itemObject, name:propertyName};
+                    var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
                     $rootScope.$broadcast(eventName, args); 
                 },
 
-                modify: function(propertyName, dataOwner, itemObject){
+                modify: function(propertyName, dataOwner, itemObject, param){
 
                     // Override 내용 구현
                     this.__modify(propertyName, dataOwner, itemObject);
@@ -206,7 +206,7 @@ define(
                     var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
 
-                    var args = {data:dataOwner, item:itemObject, name:propertyName};
+                    var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
                     $rootScope.$broadcast(eventName, args); 
                 },
 

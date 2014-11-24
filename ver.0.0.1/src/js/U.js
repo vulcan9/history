@@ -39,6 +39,48 @@ define(
                 return uid;
             }
 
+            //---------------------------
+            // 템플릿 가져오기
+            //---------------------------
+            
+            // <script> 태그에 있는 템플릿 객체 가져오기
+            // 사용예 : U.getTemplate('#tree_message_remove', $element);
+
+            ,getTemplate: function (templateElement_selector, $parent){
+                var templateElement = $parent.find(templateElement_selector)[0];
+                var $template = angular.element(templateElement);
+                var html;
+
+                if(templateElement){
+                    if(templateElement.nodeName.toUpperCase() == "SCRIPT"){
+                        var htmlString = $template.text();
+                        if(htmlString){
+                            // var html = $.parseHTML(htmlString);
+                            html = angular.element(htmlString);
+                        }
+                    }else{
+                        html = $template.html();
+                    }
+                }
+                return html;
+                
+                /*
+                // template가 없으면  alert을 띄운다.
+                if($template){
+                    if($template.nodeName.toUpperCase() == "SCRIPT"){
+                        var htmlString = $template.text();
+                        if(htmlString){
+                            var html = $.parseHTML(htmlString);
+                        }
+                    }else{
+                        var html = $template.html();
+                    }
+                    
+                    return $(html);
+                }
+                return null;
+                */
+            }
             ////////////////////////////////////
             // Getter, Setter 메서드로 속성 정의
             ////////////////////////////////////
