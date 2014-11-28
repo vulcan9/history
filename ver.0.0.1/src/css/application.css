@@ -22,6 +22,9 @@
     /* Dock에서 스크롤 유무 계산을 정확히 하기 위해
     (스크롤이 깜빡이면 계산이 부정확해짐)*/
     overflow: hidden;
+
+    min-width: 1280px;
+    min-height: 800px;
 }
 
 .toolContainer{
@@ -43,14 +46,16 @@
 
 .dock{
     position: relative;
-    /*display: inline-block;*/
+    display: inline-block;
     /*
     width: 100%;
     height: 100%;
     */
     min-width: 20px;
     min-height: 30px;
-    /*border: 1px solid red;*/
+    border-right: 1px solid #DDD;
+    border-left: 1px solid #DDD; 
+    margin-left: -1px;
 }
 
 .dock.top{
@@ -61,17 +66,17 @@
 .dock.left{
     /*background-color: rgba(255,255,0,0.8);*/
     float: left;
-    min-width: 400px;
+    min-width: 200px;
 }
 
 .dock.center{
     /*background-color: rgba(150,150,255,0.6);*/
-    float: left;
+    /*float: left;*/
 }
 
 .dock.right{
     /*background-color: rgba(255,0,255,0.4);*/
-    float: right;
+    /*float: right;*/
     min-width: 200px;
 }
 
@@ -165,20 +170,22 @@
 
 .treeContainer{
     position: relative;
-    overflow: auto;
+    /*overflow: auto;*/
     width: 100%;
     height: 100%;
 }
 
 .tree{
+    overflow-x: auto;
+    overflow-y: scroll;
     position: absolute;
     /*border: 1px solid #FF0000;*/
     width: 100%;
     height: 100%;
-    min-width: 250px;
-    min-height: 250px;
+    min-width: 30px;
+    min-height: 30px;
     /*background: #333;*/
-    padding: 0px 20px;
+    /*padding: 0px 20px;*/
 }
 
 /*------------------------------------
@@ -187,7 +194,7 @@
 
 .tree .paper {
     /*position: absolute;*/
-    display: inline-block;
+    /*display: inline-block;*/
     
     min-width: 100px;
     min-height: 70px;
@@ -236,15 +243,10 @@
     background-position:0 0,30px 30px
 }
 
-.tree .paper.selected,
-.tree .paper.selected:hover {
-    border: 2px solid #5cb85c;
-    /*font-weight:bold;*/
-}
-
 .angular-ui-tree {
-    padding: 50px;
     position: absolute;
+    padding: 50px 30px 50px 30px;
+    /*border-left: 1px solid rgba(200,200,200,0.2);*/
 }
 
 .angular-ui-tree-nodes{
@@ -255,7 +257,23 @@
 .angular-ui-tree-nodes .angular-ui-tree-nodes{
     margin-left: 50px;
     padding-left: 30px;
-    border-left: 1px solid #DDD;
+    border-left: 1px solid rgba(200,200,200,0.2);
+}
+
+/*선택 표시*/
+.tree .paper.selected,
+.tree .paper.selected:hover {
+    border: 2px solid #5cb85c;
+    /*font-weight:bold;*/
+}
+
+/*삭제 대상 표시*/
+.tree .paper.remove,
+.tree .paper.remove:hover,
+/*삭제 대상 표시(하위노드까지)*/
+.tree .paper.removeAll,
+.tree .paper.removeAll + ol .paper {
+    border-color: #FF0000;
 }
 
 /*----------------
@@ -265,6 +283,7 @@
 .angular-ui-tree-handle{
     /*cursor:move;*/
     position: relative;
+    width: 150px;
 }
 .angular-ui-tree-handle.select{
     cursor:cell
@@ -300,12 +319,39 @@
     margin: 10px 0px;
     font-size: 0;
 }
-
+/*드래그할때 나타나는 임시 이미지*/
 .angular-ui-tree-drag{
     position:absolute;
     pointer-events:none;
     z-index:999;
-    opacity:0.8
+    opacity:0.8;
+
+
+    /*paper 모양 class와 같음
+    js에서 드래그하는 동안 모양 동적으로 수정해 주어야함
+
+    display: inline-block;
+    
+    min-width: 100px;
+    min-height: 70px;
+    padding: 0px 0px;
+    margin: 10px 0px;
+    
+    font-size: 14px;
+    text-align: left;
+    
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    
+    border-radius: 4px;
+    
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+
+    border: 1px solid #5cb85c;
+    */
+
 }
 
 /*----------------
@@ -333,13 +379,14 @@
     position: absolute;
     width: 100%;
     height: 100%;
+    /*background-image: url("http://www.w3schools.com/html/img_logo.gif");*/
 }
 
 .angular-ui-tree-node .collapseBtn{
     min-width: 20px;
     min-height: 20px;
     position: absolute;
-    left: -45px;
+    left: -28px;
     top: 20px;
 }
 .angular-ui-tree-node .removeBtn{
@@ -358,18 +405,45 @@
 }
 
 /*//////////////////////////////////////
+//  Property
+//////////////////////////////////////*/
+
+.propertyContainer{
+    position: relative;
+    /*overflow: scroll;*/
+    /*display: inline-block;*/
+    /*JS코드에서 위치, 크기 동적으로 바뀜*/
+    width: 100%;
+    height: 100%;
+}
+.property{
+    overflow-x: auto;
+    overflow-y: scroll;
+    position: absolute;
+    /*border: 1px solid #FF0000;*/
+    width: 100%;
+    height: 100%;
+    /*background: #333;*/
+    min-width: 30px;
+    min-height: 30px;
+}
+
+
+/*//////////////////////////////////////
 // screen
 //////////////////////////////////////*/
 
 .screenContainer{
     position: relative;
-    overflow: scroll;
+    overflow: auto;
     display: inline-block;
     /*JS코드에서 위치, 크기 동적으로 바뀜*/
     width: 100%;
     height: 100%;
 }
 .screen{
+    overflow: hidden;
+    position: absolute;
     /*border: 1px solid #FF0000;*/
     width: 100%;
     height: 100%;
@@ -385,12 +459,21 @@
 .screen .paper {
     position: absolute;
     display: inline-block;
-    
+    padding: 0px 0px;
+    margin: 35px 35px;
+
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+    /*
+    js 코드에서 동적으로 변경함
     min-width: 800px;
     min-height: 600px;
     padding: 0px 0px;
     margin: 35px 35px;
-    
+    */
+
     font-size: 14px;
     text-align: left;
     

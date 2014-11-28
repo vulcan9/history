@@ -11,9 +11,9 @@
 
 define(
     [
-        'Application', 'ExtendSpace'
+        'Application', 'U'
     ],
-    function( application, ExtendSpace ) {
+    function( application, U ) {
 
         // 등록
         application.directive( 'screenView', _directive );
@@ -42,21 +42,158 @@ define(
 
             };
 
-
             ////////////////////////////////////////
             // Controller
             ////////////////////////////////////////
             
-            function Controller ( $scope, $element, $attrs, Project , CommandService) {
+            function Controller ( $scope, $element, $attrs, Project , CommandService, $document, ScaleMode, $sce, $timeout) {
 
                 out('TODO : 로드된 데이터에 따라 screen에 각 document를 생성한다. (ui-canvas, Impress 적용)');
 
                 $element.trigger('#view.layoutUpdate');
+
+                // layout이 변경이 완료된 후 이벤트 받음
+                $document.on('#dock.layoutUpdating', __onLayoutUpdating);
                 
+                //-----------------------------------
+                // Background Pattern
+                // Svg Attribute (ng-attr-xxx 사용해야함)
+                // bug patch : http://alexandros.resin.io/angular-d3-svg/
+                //-----------------------------------
+
+                $scope.$watch('size', function(newValue, oldValue) {
+                    $scope.ratio = getRatio(newValue.scale);
+                }, true);
+
+                // A4 : 595x842, ppt : 1193x671
+
+                // margin은 (.paper) class 설정치를 참고할것
+                var margin = 35 * 2;
+
+                var sourceWidth = Project.paper.width;
+                var sourceHeight = Project.paper.height;
+                var compareWidth = Math.max(0, sourceWidth - margin);
+                var compareHeight = Math.max(0, sourceHeight - margin);
+
+                $scope.size = getSize(1);
+                $scope.stroke = 1;
+                
+                function getRatio(scale){
+                    var obj = {
+                        value: scale
+                    };
+                    for(var i=0; i<11; ++i){
+                        var unit = i * 10;
+                        obj['r' + unit] = unit  * scale;
+                    }
+                    return obj;
+                }
+
+                //-----------------------------------
+                // Scale 연산
+                //-----------------------------------
+
+                var scaleMode = new ScaleMode({
+                    sourceWidth: sourceWidth,
+                    sourceHeight: sourceHeight,
+                    compareWidth: Math.max(0, $element.width() - margin),
+                    compareHeight: Math.max(0, $element.height() - margin)
+                });
+                scaleMode.scale(ScaleMode.SCALE_WINDOW);
+
+                // 화면 사이즈에 따라 scale을 조정한다.
+                // transform: scale({{transform.scale}}) translate({{transform.x}}px,{{transform.y}}px) ;
+                // transform-origin: 0 0;" 
+                function __onLayoutUpdating(e, data){
+                    compareWidth = Math.max(0, data.center.width - margin);
+                    compareHeight = Math.max(0, data.center.height - margin);
+
+                    // $digest already in progress when calling $scope.$apply()
+                    // http://stackoverflow.com/questions/12729122/prevent-error-digest-already-in-progress-when-calling-scope-apply
+                    $scope.$evalAsync( setSize );
+                    // out('onLayoutUpdating---------------------->', scaleMode, data.center.width, data.center.height);
+                }
+
+                function getSize(scale){
+                    var sizeObj={
+                        scale: scale,
+                        sourceWidth: sourceWidth,
+                        sourceHeight: sourceHeight,
+                        width: Math.ceil(sourceWidth*scale),
+                        height: Math.ceil(sourceHeight*scale)
+                    };
+                    return sizeObj;
+                }
+
+                function setSize(){
+                    scaleMode.set({
+                        sourceWidth: sourceWidth,
+                        sourceHeight: sourceHeight,
+                        compareWidth: compareWidth,
+                        compareHeight: compareHeight
+                    });
+
+                    var scale = scaleMode.scale();
+                    $scope.size = getSize(scale);
+                }
+
+                ////////////////////////////////////////
+                // TREE 데이터 이벤트
+                ////////////////////////////////////////
+
+                /*
+                // 1. 이벤트를 받는다.
+                var self = this;
+                $scope.$on('#Project.changed-TREE', function(e, data){
+                    if(data.name == 'TREE'){
+                        out('#Project.changed-TREE (screen) : ', arguments);
+
+                        // 2. 변경 내용을 scope에 적용한다.
+                        var tree = Project.current.project('TREE');
+                        $scope.tree = (tree)? tree.items : [];
+                    }
+                });
+                
+                // 3. scope이 변경되었음을 감지한다.
+                $scope.$watch('tree', function(newValue, oldValue) {
+                    if (newValue === oldValue) { return; }
+                    out('# $scope.tree changed (screen) : ', $scope.tree);
+                    
+                }, true);
+                //*/
+
                 ////////////////////////////////////////
                 // DOCUMENT 데이터
                 ////////////////////////////////////////
+            
+                // 1. 이벤트를 받는다.
+                // var self = this;
+                $scope.$on('#Project.changed-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.changed-DOCUMENT (screen) : ', arguments);
+
+                        // Tree는 이미 로드 완료된 상태임
+                        // var tree = Project.current.project('TREE');
+                        // $scope.tree = (tree)? tree.items : [];
+
+                        // Document
+                        // $scope.documents = Project.current.project('DOCUMENT');
+
+                        // var documents = data.newValue;
+
+                        var selectUID = Project.current.getSelectDocument();
+                        __documentSelected(selectUID);
+                    }
+                });
                 
+                /*
+                $scope.$watch('document', function(newValue, oldValue) {
+                    if (newValue === oldValue) { return; }
+                    out('# $scope.document changed (screen) : ', $scope.document);
+                    // updatedocumentList();
+                }, true);
+                */
+
                 /*
                 #Project.added-DOCUMENT
                 #Project.removed-DOCUMENT
@@ -66,17 +203,23 @@ define(
 
                 // var data = {data:project};
                 $scope.$on('#Project.initialized', function(e, data){
-                    
                     // $scope.tree = Project.current.project('TREE');
                     // $scope.document = Project.current.project('DOCUMENT');
+                });
 
+                //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
+                $scope.$on('#Project.selected-DOCUMENT', function(e, data){
+                    if(data.name == 'DOCUMENT'){
+                        out('#Project.selected-DOCUMENT (screen) : ', data);
+                        __onSelectDocument(data.newValue, data.oldValue);
+                    }
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.added-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.added-DOCUMENT (screen) : ', data);
-                        __onAddDocument(data.item);
+                        __onAddDocument(data.item, data.param);
                     }
                 });
 
@@ -84,7 +227,7 @@ define(
                 $scope.$on('#Project.removed-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.removed-DOCUMENT (screen) : ', data);
-                        __onRemoveDocument(data.item);
+                        __onRemoveDocument(data.item, data.param);
                     }
                 });
 
@@ -92,21 +235,20 @@ define(
                 $scope.$on('#Project.modified-DOCUMENT', function(e, data){
                     if(data.name == 'DOCUMENT'){
                         out('#Project.modified-DOCUMENT (screen) : ', data);
-                        __onModifyDocument(data.item);
-                    }
-                });
-
-                //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
-                $scope.$on('#Project.selected-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.selected-DOCUMENT (screen) : ', data);
-                        _onSelectDocument(data.item, data.oldValue);
+                        __onModifyDocument(data.item, data.param);
                     }
                 });
 
                 //-------------------------------------
                 // DOM 업데이트
                 //-------------------------------------
+                
+                function __onSelectDocument(newValue, oldValue){
+                    out(' - oldValue : ', oldValue);
+                    out(' - newValue : ', newValue);
+
+                    __documentSelected(newValue);
+                }
 
                 function __onAddDocument(item){
 
@@ -120,81 +262,99 @@ define(
                     
                 }
 
-                function _onSelectDocument(newItem, oldItem){
-                    out(' - oldValue : ', oldItem);
-                    out(' - newValue : ', newItem);
-                    //uid로 DOM 찾아내기
+                function __documentSelected(uid){
+                    
+                    var documentItem;
+                    if(uid){
+                        //uid로 DOM 찾아내기
+                        documentItem = Project.current.getDocument(uid);
+                    }else{
+                        documentItem = null;
+                    }
+
                     //out('current select : ', Project.current.getSelectDocument());
+
+                    
+                    $scope.loadComplete = (documentItem && documentItem.document.content);
+                    // $scope.documents = [documentItem];
+                    if(documentItem == null) return;
+
+                    var htmlString = documentItem.document.content;
+                    // var html = angular.element(htmlString);
+
+                    // $scope.documents = [htmlString];
+                    // http://stackoverflow.com/questions/19415394/with-ng-bind-html-unsafe-removed-how-do-i-inject-html
+                    // var bindHTML = __getHTMLContent(htmlString);
+                    $scope.documents = [htmlString];
+
+                    /*
+                    // 파일로드
+                    //var iframeDocument = self.bookContainer.contentWindow.document || self.bookContainer.contentDocument;
+                    var iframeDocument = self.bookContainer.contentDocument;
+                    iframeDocument.open('text/html', 'replace');
+                    iframeDocument.write(result);
+                    iframeDocument.close();
+                    
+                    // _onLoadComplete 이벤트 발생함
+                    */
                 }
-/*
-depth 0 - index
-            -
-    depth 1 - index
-*/
+                
+                $scope.getHTMLContent = function (htmlString) {
+                    return $sce.trustAsHtml(htmlString);
+                }
+
+                ////////////////////////////////////////////////////////////////////////////////
+                // DOM 인터렉션
+                ////////////////////////////////////////////////////////////////////////////////
+                
+                //-----------------------
+                // 메뉴 클릭 이벤트 처리
+                //-----------------------
+
+                // 메뉴 항목을 클릭한 경우 호출되는 함수
+                $scope.callAPI = function(){
+                    
+                    var arg = U.toArray(arguments);
+                    var funcName = arg.shift();
+                    out(' * MENU item : ', funcName);
+
+                    if(funcName){
+                        eval(funcName).apply(null, arg);
+                    }
+
+                };
 
                 ////////////////////////////////////////
-                // TREE, DOCUMENT 데이터
+                // API
                 ////////////////////////////////////////
 
-                /*
-                updatedocumentList();
-
-                //------------------
-                // 데이터 변경 감지 순서 - OpenCommand
-                //------------------
-                
-                // 1. 이벤트를 받는다.
-                var self = this;
-                $scope.$on('#Project.changed-TREE', function(e, data){
-                    if(data.name == 'TREE'){
-                        out('#Project.changed-TREE (screen) : ', arguments);
-                        self.updateTree();
+                function toggleScaleMode() {
+                    var style;
+                    var mode = scaleMode.mode();
+                    if(mode == ScaleMode.SCALE_WINDOW){
+                        scaleMode.scale(1);
+                        style = {overflow:'auto'};
+                    }else{
+                        scaleMode.scale(ScaleMode.SCALE_WINDOW);
+                        style = {overflow:'hidden'};
                     }
-                });
+                    
+                    var scale = scaleMode.scale();
+                    $scope.size = getSize(1);
 
-                // 2. 변경 내용을 scope에 적용한다.
-                this.updateTree = function(){
-                    $scope.tree = Project.current.project('TREE');
-                }
-                
-                // 3. scope이 변경되었음을 감지한다.
-                $scope.$watch('tree', function(newValue, oldValue) {
-                    if (newValue === oldValue) { return; }
-                    out('#tree changed (screen) : ', $scope.tree);
-                    updatedocumentList();
-                }, true);
+                    // scroll 정책 변경
+                    $scope.overflow_style = style;
 
-                //------------------
-                // 데이터 변경 감지 순서 - OpenCommand
-                //------------------
-
-                // 1. 이벤트를 받는다.
-                var self = this;
-                $scope.$on('#Project.changed-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.changed-DOCUMENT (screen) : ', arguments);
-                        self.updateDocument();
-                    }
-                });
-
-                // 2. 변경 내용을 scope에 적용한다.
-                this.updateDocument = function(){
-                    $scope.document = Project.current.project('DOCUMENT');
-                }
-                
-                // 3. scope이 변경되었음을 감지한다.
-                $scope.$watch('document', function(newValue, oldValue) {
-                    if (newValue === oldValue) { return; }
-                    out('# $scope.document changed (screen) : ', $scope.document);
-                    updatedocumentList();
-                }, true);
-                */
-                
+                    // layout 갱신
+                    // $element.trigger('#view.layoutUpdate');
+                    $scope.$evalAsync( setSize );
+                };
 
                 ////////////////////////////////////////
                 // DOM 인터렉션
                 ////////////////////////////////////////
 
+                /*
                 // Document 선택
                 $scope.selectDocument = function(item, index){
                     var param = {
@@ -207,6 +367,7 @@ depth 0 - index
                         out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
                     });
                 };
+                */
                 
                 ////////////////////////////////////////
                 // End Controller

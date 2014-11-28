@@ -84,6 +84,7 @@ define(
                 var offset = U.toNumber(attrs.verticalCenter);
 
                 var pos = (H-h)/2 + offset;
+                pos = Math.max(pos, 0);
                 el.css('top', pos);
         }
 
@@ -99,7 +100,7 @@ define(
 
                 controller: function( $scope, $element, $attrs ) {
                     $scope.$watch(function () {
-                       _verticalPosition($scope, $element, $attrs, $document);
+                       _horizontalCenter($scope, $element, $attrs, $document);
                     });
                     
                     // 리사이징 이벤트
@@ -127,6 +128,7 @@ define(
                 var offset = U.toNumber(attrs.horizontalCenter);
 
                 var pos = (W-w)/2 + offset;
+                pos = Math.max(pos, 0);
                 el.css('left', pos);
         }
 

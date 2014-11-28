@@ -1,18 +1,18 @@
 ﻿<div class="menuContainer" style="padding:10px;border-bottom: 1px solid #DDD;">
 
 
-    <span class="label label-success" ng-click="onClick('addDocument', 'prev')">add Prev</span>
-    <span class="label label-success" ng-click="onClick('addDocument', 'next')">add Next</span>
-    <span class="label label-success" ng-click="onClick('addDocument', 'sub')">add Sub</span>
+    <span class="label label-success" ng-click="callAPI('addDocument', 'prev')">add Prev</span>
+    <span class="label label-success" ng-click="callAPI('addDocument', 'next')">add Next</span>
+    <span class="label label-success" ng-click="callAPI('addDocument', 'sub')">add Sub</span>
 
     |
     
-    <span class="label label-default" ng-click="onClick('undo')">undo</span>
-    <span class="label label-default" ng-click="onClick('redo')">redo</span>
+    <span class="label label-default" ng-click="callAPI('undo')">undo</span>
+    <span class="label label-default" ng-click="callAPI('redo')">redo</span>
 
     |
     
-    <span class="label label-default" ng-click="onClick('play')">play</span>
+    <span class="label label-default" ng-click="callAPI('play')">play</span>
 
 
 </div>

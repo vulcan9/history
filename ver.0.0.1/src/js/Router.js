@@ -251,6 +251,8 @@ define( [], function() {
 		        				_PATH.DATA + 'Data',
 		        				_PATH.DATA + 'Tool',
 		        				_PATH.DATA + 'Project',
+		        				
+						_PATH.FACTORY + 'ScaleMode',
 						
 						//SERVICE
 						_PATH.SERVICE + 'CommandService',

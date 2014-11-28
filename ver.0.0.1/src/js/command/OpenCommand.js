@@ -184,7 +184,7 @@ define(
                         angular.forEach( node.items, function( value, key ) {
                             
                             var _depth = dep;
-                            out( '---> ', _depth, '[', key, '] : ', value.name, '::', value.uid );
+                            out( '---> ', _depth, '[', key, '] : ', value.uid );
 
                             var documentURL = _PATH.ROOT + 'data/' + value.uid + '.json';
                             var promise = HttpService.load( {

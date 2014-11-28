@@ -50,6 +50,29 @@ var out = window.out || function() {
 console.log( "# Application By Vulcan." );
 
 ////////////////////////////////////////
+// 렌더링 타이밍
+////////////////////////////////////////
+
+//  requestAnimationFrame();
+//    requestAnimationFrame Polyfill
+//    More info:
+//    http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+
+var requestAnimationFrame = window.requestAnimationFrame || (function () {
+    return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function (callback, element) {
+            // callback : function FrameRequestCallback
+            // element : DOMElement Element
+            window.setTimeout(callback, 1000 / 60);
+        };
+}());
+
+
+////////////////////////////////////////
 // Global 속성
 ////////////////////////////////////////
 
@@ -68,6 +91,7 @@ var _PATH = {
     CONTROLLER:    _PATH_ROOT_FOLDER + 'js/controllers/',
     DIRECTIVE:         _PATH_ROOT_FOLDER + 'js/directives/',
     SERVICE:           _PATH_ROOT_FOLDER + 'js/services/',
+    FACTORY:           _PATH_ROOT_FOLDER + 'js/factory/',
     FILTER:               _PATH_ROOT_FOLDER + 'js/filters/',
     COMMAND:         _PATH_ROOT_FOLDER + 'js/command/'
 };

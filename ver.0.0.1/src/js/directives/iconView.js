@@ -77,7 +77,7 @@ define(
                 //-----------------------
 
                 // 메뉴 항목을 클릭한 경우 호출되는 함수
-                $scope.onClick = function(){
+                $scope.callAPI = function(){
                     
                     var arg = U.toArray(arguments);
                     var funcName = arg.shift();

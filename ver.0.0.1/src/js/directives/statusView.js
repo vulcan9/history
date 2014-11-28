@@ -39,16 +39,38 @@ define(
 
                 // 다른 디렉티브들과 통신하기 위한 역할을 하는 controller명칭을 정의.
                 // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
-                controller: function( $scope, $element, VersionService ) {
-                    //$scope.version = VersionService;
-                    
-                    $scope.$watch(function(){
-                        $element.trigger('#view.layoutUpdate'); 
-                    });
-                }
+                controller: Controller,
 
+                link: function( scope, el, attrs ) {
+                    // el.text( "propertyView" );
+                    // el.trigger('#view.layoutUpdate'); 
+                }
+                
             };
 
+            function Controller( $scope, $element, VersionService, $timeout ) {
+                //$scope.version = VersionService;
+                $element.trigger('#view.layoutUpdate');
+
+                $scope.$evalAsync( function(){
+                    // $element.trigger('#view.layoutUpdate');
+                } );
+                
+                $timeout (function() {
+                    $element.trigger('#view.layoutUpdate');
+                }, 100);
+
+                $scope.$watch(function(){
+                    // $element.trigger('#view.layoutUpdate'); 
+                });
+                
+
+                ////////////////////////////////////////
+                // End Controller
+                ////////////////////////////////////////
+            }
+
+            // end directive
         }
 
         // 리턴

@@ -77,6 +77,22 @@ define(
 
                 $element.trigger('#view.layoutUpdate');
 
+                // 너비 초기 설정값
+                var $dock = $element.parent('.dock');
+                $dock.width(250);
+
+                // pannel 열기/닫기
+                $scope.pannelToggle = function(scope) {
+                    var $dock = $element.parent('.dock');
+                    var w = $dock.outerWidth();
+                    w = (w>300) ? 250:400;
+                    $dock.css({
+                        'width': w + 'px',
+                        'min-width': w + 'px'
+                    });
+                    $element.trigger('#view.layoutUpdate');
+                };
+
                 ////////////////////////////////////////
                 // TREE 데이터 이벤트
                 ////////////////////////////////////////
@@ -300,9 +316,9 @@ define(
                         buttons: ['예', '아니오']
                         // templateUrl: _PATH.TEMPLATE + 'popup/notice.html'
                     };
-                    
+
                     var callback = {
-                        /*
+                        
                         opened: function( element, scope ) {
                             out( 'opened : ', element, scope );
                             // scope.templateID = template;
@@ -310,8 +326,13 @@ define(
                             // content scope 초기화
                             // scope.removeOption = 'all';
                             // scope.showDeleteButton = item.items && (item.items.length > 0);
+                            
+                            scope.$watch('removeOption', function(newValue, oldValue) {
+                                $scope.removeOption = newValue;
+                                out('removeOption : ', newValue);
+                            });
                         },
-                        */
+                        
                         closed: function( result, element, scope ) {
                             // result : -1:cancel, 1:yes, 0:no
                             if ( result > 0 ) {
@@ -330,6 +351,9 @@ define(
                         }
                     };
                     
+                    // 삭제 대상이되는 uid 표시
+                    $scope.removeUID = item.uid;
+
                     // 팝업창 띄우기
                     NoticeService.open( config, callback );
 
@@ -343,10 +367,12 @@ define(
                         
                             var uid = item.uid;
                             __removeDocument(optionValue, uid);
-                            
+                            $scope.removeUID = null;
                         }, 
                         function reject(){
                             out('- 삭제 : 작업 취소');
+                            $scope.removeUID = null;
+                            $scope.removeOption = null;
                         } 
                     );
                 };
@@ -409,9 +435,9 @@ define(
                     */
                     
                     // command 호출
-                    var selectUID = uid || Project.current.getSelectDocument();
+                    var removeUID = uid || Project.current.getSelectDocument();
                     var param = {
-                        uid : selectUID,
+                        uid : removeUID,
                         option : option
                     };
 

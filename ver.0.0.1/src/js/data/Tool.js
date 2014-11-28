@@ -84,8 +84,7 @@ define(
                             // 문서별 undo/redo 데이터
                             // history: {},
                             
-                            // 현재 선택 문서 (uid)
-                            //__SELECT_DOCUMENT: null,
+                            // 현재 Tool 실행시 중요한 state값 저장
                             __CURRENT: null,
 
                             // 메뉴 구성 정보
@@ -96,6 +95,7 @@ define(
                     // 현재 실행 state를 기록한다.
                     this.tool('CURRENT', {
                         document:{
+                            // 현재 선택 문서 (uid)
                             selectUID:null
                         },
                         element:{

@@ -7,7 +7,11 @@
 
 
         <!--//검색 기능-->
-        <div style="position: fixed;top: 120px;z-index: 1;background-color: #DDD;">필터링 검색 : <input type="text" name="search" placeholder="기능 구현 안됨"></div>
+        <div style="position: fixed;top: 120px;z-index: 1;background-color: #DDD;">
+            필터링 검색 : <input type="text" name="search" placeholder="기능 구현 안됨">
+            <span class="label label-success" ng-click="pannelToggle();">toggle</span>
+        </div>
+        
 
 
     <div class="tree">
@@ -74,8 +78,9 @@
         <script type="text/ng-template" id="tree_renderer.html">
             
 
-            <div class="paper" style="width:150px;" 
-                ui-tree-handle uid="{{item.uid}}" ng-class="{selected: item.uid==selectUID}" 
+            <div class="paper"
+                ui-tree-handle uid="{{item.uid}}" 
+                ng-class="{selected: item.uid==selectUID, remove:(item.uid==removeUID)&&(removeOption=='only'), removeAll:(item.uid==removeUID)&&(removeOption=='all')}" 
                 ng-mouseover="hover=true" ng-mouseleave="hover=false" ng-model="hover" ng-init="hover=false">
 
                 <div class="tree-node-content" ng-click="selectDocument(item)"></div>
@@ -110,7 +115,11 @@
 
         </script>
 
-        <div ui-tree
+
+
+
+        <!--// ROOT -->
+        <div ui-tree ng-show="(tree && tree.length>0)"
             drag-delay="10" drag-distance="10" drag-enabled="true">
             <ol ui-tree-nodes ng-model="tree">
                 <li ng-repeat="item in tree" ui-tree-node ng-include="'tree_renderer.html'"></li>

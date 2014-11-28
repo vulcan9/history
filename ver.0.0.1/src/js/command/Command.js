@@ -66,7 +66,7 @@ define(
 
                 // Override 하여 사용할것
                 _run: function( param ) {
-                    out( '_run : ', param );
+                    out( 'command run : ', param );
 
                     /*
                     // 속성 사용
@@ -87,7 +87,7 @@ define(
 
                 _success: function( data ) {
 
-                    out( 'success : ', data );
+                    out( 'command success : ', data||'(ok)' );
 
                     var isPrevented = false;
                     if ( this._callback ) {
@@ -112,7 +112,7 @@ define(
                     out( 'ERROR [command error] : ', data );
                     out( '\n\n\n');
 
-alert('* command ERROR : ' + data);
+                    alert('* command ERROR : ' + data);
 
                     var isPrevented = false;
                     if ( this._callback ) {

@@ -48,6 +48,15 @@ define(
             // angular의 Injection 활용을 위해 이곳에서 Prototype을 정의한다.
             //------------------------------------------
             
+            // 용지 크기 설정
+            // A4 : 842x595, 
+            // MS ppt : 1193x671
+            // Google docs는 화면 비율로 맞춤 - 4:3, 16:9, 16:10 (960x540)
+            Project.paper = {
+                width:960, 
+                height:540
+            };
+
             // Prototype 상속
             angular.extend( 
                 Project.prototype,  _super, {
@@ -73,10 +82,10 @@ define(
                                 __DOCUMENT : null,
 
                                 // Presentation 데이터
-                                __PRESENTATION : null
+                                __PRESENTATION : null,
 
-                                // 현재 선택 문서 (uid)
-                                //__SELECT_DOCUMENT: null
+                                // paper 정보
+                                // __PAPER: null
 
                             }
                         );
@@ -177,7 +186,7 @@ define(
 
                         // Root Element (Overview)
                         this.__checkRootDocument();
-                        
+
                         Tool.current.dataChanged = false;
                     },
 
@@ -188,6 +197,7 @@ define(
 
                         // 선택 상태 표시 (Root  Document를 초기 선택 상태로 표시)
                         out('TODO : 저장된 마지막 선택 문서를 선택상태로 표시하기');
+
                         //var uid = this.project( 'TREE').items[0].uid;
                         var uid = data.items[0].uid;
                         this.setSelectDocument(uid);
@@ -196,6 +206,8 @@ define(
                         // Tool.current.dataChanged = false;
                     },
                     closeProject: function(){
+                        this.setSelectDocument(null);
+
                         this.project( 'TREE', null );
                         this.project( 'PRESENTATION', null );
                         this.project( 'DOCUMENT', null );
@@ -443,7 +455,8 @@ define(
                         }else{
                             // option == 'all' : 하위 노드의 Document 목록 모두 제거
                             // Document 리스트 작성, 하위 노드 document 삭제
-                            setSubItems(item.items, list_info, list_uid, info.depth+1);
+                            //setSubItems(item.items, list_info, list_uid, info.depth+1);
+                            this._getTreeToArray(item.items, list_info, list_uid, info.depth+1);
                             
                             // 해당 document 삭제
                             list_info.push(info);
@@ -455,6 +468,7 @@ define(
                         //----------
 
                         // 선택노드가 제거 리스트에 있다면 선택Document를을 변경
+                        var isSelectChange = false;
                         var selectUID = this.getSelectDocument();
                         var result = list_uid.indexOf(selectUID);
                         if(result > -1){
@@ -476,6 +490,7 @@ define(
                                 // 이전 item을 선택
                                 nextSelectUID = info.items[selectIndex - 1].uid;
                             }
+                            isSelectChange = true;
                         }
 
                         //----------
@@ -486,17 +501,20 @@ define(
                         remove.apply(this, [list_info]);
 
                         // select 적용
-                        if(nextSelectUID == undefined){
-                            var root = this.project('TREE').items;
-                            nextSelectUID = (root && root.length > 0)? root[0].uid : null;
+                        if(isSelectChange){
+                            if(nextSelectUID == undefined){
+                                var root = this.project('TREE').items;
+                                nextSelectUID = (root && root.length > 0)? root[0].uid : null;
+                            }
+                            out('# 선택 item을 자동 변경 : ', nextSelectUID);
+                            this.setSelectDocument(nextSelectUID);
                         }
-                        out('# 선택 item을 자동 변경 : ', nextSelectUID);
-                        this.setSelectDocument(nextSelectUID);
 
                         //----------
                         // function define
                         //----------
 
+                        /*
                         // 역순으로 리스트 작성(하위 노드, 아래쪽 노드순서로)
                         function setSubItems(items, list, list_uid, dep){
 
@@ -523,6 +541,7 @@ define(
                                 list_uid.push(item.uid);
                             }
                         }
+                        */
 
                         function remove (list){
                             var len = list.length;
@@ -541,6 +560,33 @@ define(
                         }
 
                         //end
+                    },
+
+                    // Tree에 속한 Item들을 역순으로 리스트 작성(하위 노드, 아래쪽 노드순서로)
+                    _getTreeToArray: function (items, list, list_uid, dep){
+
+                        var _depth = dep;
+                        var len = items.length - 1;
+
+                        for(var index=len; index>=0; --index)
+                        {
+                            var item = items[index];
+
+                            // 재귀 호출 (depth로 진행)
+                            if(item.items && item.items.length > 0){
+                                this.__getTreeToArray(item.items, list, list_uid, (_depth+1));
+                            }
+
+                            // out( '# remove Document ---> ', _depth, '[', index, '] : ', item.uid );
+                            var pos = {
+                                parent: item,
+                                items: items,
+                                depth: _depth, 
+                                index: index
+                            };
+                            list.push(pos);
+                            list_uid.push(item.uid);
+                        }
                     },
 
                     //---------------------

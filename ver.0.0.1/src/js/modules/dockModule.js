@@ -268,6 +268,10 @@ define(
 
         function _dock_layout(dock){
 
+            window.requestAnimationFrame(watchRender);
+
+            function watchRender(){
+
                 // 각각의 dock Frame에 대하여 크기를 설정한다.
                 var owner = dock['owner'];
                 if(owner === undefined) return;
@@ -288,7 +292,17 @@ define(
                 var rightW = (right)? right.width() : 0;
 
                 var centerH = maxH - (topH + bottomH);
-                var centerW = maxW - (leftW + rightW);
+                var centerW = maxW - (leftW + rightW)-4; // border : 4
+
+                var $document = angular.element(window.document);
+                var data = {
+                    top : {width:maxW, height:topH},
+                    left : {width:leftW, height:centerH},
+                    right : {width:rightW, height:centerH},
+                    center : {width:centerW, height:centerH},
+                    bottom : {width:maxW, height:bottomH}
+                };
+                $document.trigger('#dock.layoutUpdating', data);
 
                 if(left){
                     left.width(leftW);
@@ -304,6 +318,12 @@ define(
                     center.width(centerW);
                     center.height(centerH);
                 }
+
+                out('_dock_layout : ', data);
+                // var $document = angular.element(window.document);
+                // $document.trigger('#window.layoutUpdated');
+                $document.trigger('#dock.layoutUpdated');
+            }
         }
 
         ////////////////////////////////////////
