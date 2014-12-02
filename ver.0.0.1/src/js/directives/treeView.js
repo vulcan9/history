@@ -404,20 +404,20 @@ define(
                 }
 
                 // Document 추가 
-                // option : 'next', 'sub', 'prev'
-                function __addDocument (option, selectUID){
+                // position : 'next', 'sub', 'prev'
+                function __addDocument (position, selectUID){
 
                     if(Project.current == null) return;
 
                     // 현재 선택 상태의 Document uid 의  nextSibling에 추가한다.
                     // selectUID에 해당되는 tree item 노드 찾기
                     // var selectUID = selectUID || Project.current.getSelectDocument();
-                    // var position = Project.current.getTreePosition(selectUID, option);
+                    // var position = Project.current.getTreePosition(selectUID, position);
                     
                     // command 호출
                     var param = {
                         option: {
-                            position: option,
+                            position: position,
                             selectUID: selectUID || Project.current.getSelectDocument()
                         }
                     };

@@ -271,6 +271,11 @@ define( [], function() {
 						_PATH.COMMAND + 'document/ModifyDocumentCommand',
 						_PATH.COMMAND + 'document/SelectDocumentCommand',
 
+						_PATH.COMMAND + 'element/AddElementCommand',
+						_PATH.COMMAND + 'element/RemoveElementCommand',
+						_PATH.COMMAND + 'element/ModifyElementCommand',
+						_PATH.COMMAND + 'element/SelectElementCommand',
+
 						_PATH.COMMAND + 'PlayCommand',
 						// _PATH.COMMAND + 'EditCommand'
 					]

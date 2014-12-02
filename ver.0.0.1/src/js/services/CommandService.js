@@ -23,6 +23,7 @@ define(
             $q, 
             NewCommand, OpenCommand, SaveCommand, SaveAsCommand, CloseCommand, ExitCommand,
             AddDocumentCommand, RemoveDocumentCommand, ModifyDocumentCommand, SelectDocumentCommand,
+            AddElementCommand, RemoveElementCommand, ModifyElementCommand, SelectElementCommand,
             Project, Tool, NoticeService, ProgressService
 
         ) {
@@ -226,9 +227,9 @@ define(
                 // deferred.promise를 리턴한다.
                 //  then 결과값으로는 Command 배열이 리턴됨
 
-                ////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////
                 // File 메뉴
-                ////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////
 
                 command_close: function( param ) {
                     var self = this;
@@ -288,7 +289,7 @@ define(
                 //-----------------------------------
 
                 command_new: function( param ) {
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -321,7 +322,7 @@ define(
                 //-----------------------------------
 
                 command_open: function( param ) {
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -364,7 +365,7 @@ define(
 
                     if(Project.current == null) return;
 
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -384,7 +385,7 @@ define(
 
                     if(Project.current == null) return;
 
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -409,7 +410,7 @@ define(
                 // 새로고침 또는 창닫기 이벤트에 의한 닫기는 ToolController에 구현되어 있음
 
                 command_exit: function( param ) {
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -438,9 +439,9 @@ define(
                     return deferred.promise;
                 },
 
-                ////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////
                 // Edit 메뉴
-                ////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////
 
                 command_undo: function( param ) {
                     alert('command_undo');
@@ -452,9 +453,9 @@ define(
                     //if(Project.current == null) return;
                 },
 
-                //-----------------------------------
+                ////////////////////////////////////////
                 // Document
-                //-----------------------------------
+                ////////////////////////////////////////
 
                 command_addDocument: function( param ) {
                     
@@ -466,7 +467,7 @@ define(
                         param.uid = Project.current.createDocumentUID();
                     }
 
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -493,7 +494,7 @@ define(
                         return null;
                     }
 
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -514,7 +515,7 @@ define(
                         return null;
                     }
 
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -537,12 +538,110 @@ define(
                         return;
                     }
 
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
                     // 추가
                     var command = new SelectDocumentCommand();
+                    macro.push( command );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+
+                ////////////////////////////////////////
+                // Element
+                ////////////////////////////////////////
+
+                command_addElement: function( param ) {
+                    
+                    if(Project.current == null) return;
+
+                    // 삽입할 type이 정해지지 않은 경우
+                    if(!param || !param.type) return;
+
+                    // 삽입할 Document
+                    if(param.documentUID === undefined){
+                        param.documentUID = Project.current.getSelectDocument();
+                    }
+
+                    // 아이디 체크
+                    if(param.uid === undefined){
+                        param.uid = Project.current.createElementUID();
+                    }
+
+                    // var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 추가
+                    var command = new AddElementCommand();
+                    macro.push( command );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+
+                command_removeElement: function( param ) {
+
+                    if(Project.current == null) return;
+
+                    // 아이디 체크
+                    if(!param || param.uid === undefined){
+                        return null;
+                    }
+
+                    // var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 제거
+                    var command = new RemoveElementCommand();
+                    macro.push( command );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+
+                command_modifyElement: function( param ) {
+
+                    if(Project.current == null) return;
+
+                    // 아이디 체크
+                    if(!param || param.uid === undefined){
+                        return null;
+                    }
+
+                    // var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 수정
+                    var command = new ModifyElementCommand();
+                    macro.push( command );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+
+                command_selectElement: function( param ) {
+                    
+                    if(Project.current == null) return;
+
+                    // 아이디 체크
+                    if(param === undefined) param = {};
+                    if(param.uid === undefined){
+                        throw '선택할 Document의 uid가 정해지지 않았습니다.';
+                        return;
+                    }
+
+                    // var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 추가
+                    var command = new SelectElementCommand();
                     macro.push( command );
 
                     deferred.resolve( macro );
@@ -591,12 +690,12 @@ define(
 
 
 
-                ////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////
                 // View 메뉴
-                ////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////
 
                 command_play: function( param ) {
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -606,7 +705,7 @@ define(
                 },
 
                 command_edit: function( param ) {
-                    var self = this;
+                    // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
@@ -615,6 +714,7 @@ define(
                     return deferred.promise;
                 }
 
+                // _service end
             };
 
             // 서비스 객체 리턴

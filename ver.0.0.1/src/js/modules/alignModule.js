@@ -64,7 +64,7 @@ define(
                     $scope.verticalCenter = __lastVertical;
 
                     $scope.$watch('verticalCenter', function (newValue, oldValue) {
-                        out('verticalCenter : ', newValue, oldValue);
+                        // out('verticalCenter : ', newValue, oldValue);
                         if(newValue === undefined) return;
                         __lastVertical = newValue;
                        $element.css('top', newValue + 'px');

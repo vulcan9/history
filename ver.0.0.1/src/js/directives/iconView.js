@@ -81,7 +81,7 @@ define(
                     
                     var arg = U.toArray(arguments);
                     var funcName = arg.shift();
-                    out(' * MENU item : ', funcName);
+                    out(' * ICON MENU item : ', funcName);
 
                     if(funcName){
                         eval(funcName).apply(null, arg);
@@ -128,17 +128,21 @@ define(
                 ////////////////////////////////////////
 
                 // Document 추가 
-                // option : 'next', 'sub', 'prev'
-                function addDocument (option, uid){
+                // position : 'next', 'sub', 'prev'
+                function addDocument (position, documentUID, selectUID){
 
                     if(Project.current == null) return;
                     
                     // command 호출
                     var param = {
                         //document : null,
+                        // uid: uid가 지정되지 않았으면 자동 생성됨
+                        uid : documentUID || Project.current.createDocumentUID(),
+
                         option: {
-                            position: option,
-                            selectUID: uid || Project.current.getSelectDocument()
+                            position: position,
+                            // 현재 선택 상태의 document
+                            selectUID: selectUID || Project.current.getSelectDocument()
                         }
                     };
 
@@ -149,9 +153,10 @@ define(
                 // Element
                 ////////////////////////////////////////
                 
-                function addElement (type){
+                function addElement (type, elementUID, documentUID){
 
                     if(Project.current == null) return;
+                    
                     /*
                     switch(type){
                         case 'text':
@@ -161,13 +166,26 @@ define(
                         break;
                     }
                     */
+
+                    // 1. 현재 선택상태의 document를 찾는다.
+
+
+                    out('TODO : // 마우스 위치로 삽입 위치를 결정한다.');
+                    
+
                     var param = {
-                        //document : null,
-                        option: {
-                            // uid: uid,
-                            type: type
-                        }
+                        
+                        // 삽입될 문서
+                        documentUID : documentUID || Project.current.getSelectDocument(),
+                        
+                        // uid가 지정되지 않았으면 command에서 자동 생성됨
+                        uid: elementUID || Project.current.createElementUID(),
+                        type: type,
+
+                        // element 설정값
+                        option: {}
                     };
+
                     CommandService.exe(CommandService.ADD_ELEMENT, param);
                 }
 

@@ -35,7 +35,7 @@ define(
             _superClass.apply(this, arguments);
         }
 
-        function _factory( Data, VersionService, $rootScope ){
+        function _factory( Data, VersionService, $rootScope, $sce ){
 
             /////////////////////////////////////
             // Prototype 상속
@@ -243,22 +243,11 @@ define(
                         this.addDocument(param);
                     },
 
-                    createDocumentUID: function(){
-                        var uid = 'document-' + U.createUID();
-                        return uid;
-                    },
-
                     //////////////////////////////////////////////////////////////////////////
-                    //
-                    // 데이터 조작 API
-                    // 
-                    //////////////////////////////////////////////////////////////////////////
-                    
-                    /////////////////////////////////////
                     //
                     // Tree
                     //
-                    /////////////////////////////////////
+                    //////////////////////////////////////////////////////////////////////////
 
                     // tree 관련 메서드는 treeView.js 에서 이벤트 받아 실행 시킨다.
 
@@ -378,12 +367,17 @@ define(
                         return definition;
                     },
                     
-                    /////////////////////////////////////
+                    //////////////////////////////////////////////////////////////////////////
                     //
                     // Document
                     //
-                    /////////////////////////////////////
+                    //////////////////////////////////////////////////////////////////////////
                     
+                    createDocumentUID: function(){
+                        var uid = 'document-' + U.createUID();
+                        return uid;
+                    },
+
                     // uid : document uid
                     getDocument : function(uid){
                         return this.__get('DOCUMENT', this.PROJECT.DOCUMENT, uid);
@@ -391,9 +385,9 @@ define(
                     
                     // addDocumentList: function(param){}
 
-                    //---------------------
+                    //-----------------------------------
                     // add
-                    //---------------------
+                    //-----------------------------------
                     
                     addDocument: function(param){
                         Tool.current.dataChanged = true;
@@ -417,9 +411,9 @@ define(
                         this.setSelectDocument(uid);
                     },
 
-                    //---------------------
+                    //-----------------------------------
                     // remove
-                    //---------------------
+                    //-----------------------------------
                     
                     // removeDocumentList: function(param){}
 
@@ -589,9 +583,9 @@ define(
                         }
                     },
 
-                    //---------------------
+                    //-----------------------------------
                     // Select Document
-                    //---------------------
+                    //-----------------------------------
 
                     getSelectDocument : function(){
                         // var uid = this.project('DOCUMENT').selectUID;
@@ -620,54 +614,152 @@ define(
                         $rootScope.$broadcast(eventName, args); 
                     },
 
-                    //---------------------
+                    //-----------------------------------
                     // modify
-                    //---------------------
+                    //-----------------------------------
                     
                     // itemObject.uid 값이 있어야함
-                    modifyDocument: function(uid){
+                    modifyDocument: function(param){
                         Tool.current.dataChanged = true;
 
                         // tree에 수정
                         //var treeItem = this.getDefinitionTree(uid);
                         // this.modify('TREE', this.PROJECT.TREE, treeItem);
 
-                        out('TODO : 기능 확인 필요');
+                        alert('TODO : 기능 구현 필요');
 
                         var documentItem = this.getDocument(uid);
                         this.modify('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
                     },
                     
-                    /////////////////////////////////////
+                    //////////////////////////////////////////////////////////////////////////
                     //
                     // Element
                     //
-                    /////////////////////////////////////
+                    //////////////////////////////////////////////////////////////////////////
                     
-                    //---------------------
-                    // Element
-                    //---------------------
+                    createElementUID: function(){
+                        var uid = 'element-' + U.createUID();
+                        return uid;
+                    },
 
-                    addElement: function(el){
+                    /*
+                    // uid : element uid
+                    getElement : function(uid){
+                        return this.__get('DOCUMENT', this.PROJECT.DOCUMENT, uid);
+                    },
+                    */
+                    
+                    //-----------------------------------
+                    // add Element
+                    //-----------------------------------
+
+                    /*
+                    var param = {
+                        // 삽입될 문서
+                        documentUID : documentUID || Project.current.getSelectDocument(),
+                        
+                        // uid가 지정되지 않았으면 command에서 자동 생성됨
+                        uid: elementUID || Project.current.createElementUID(),
+                        type: type,
+
+                        // element 설정값 (config)
+                        option: {}
+                    };
+                    */
+
+                    addElement: function(param){
                         Tool.current.dataChanged = true;
 
+                        var uid = param.uid;
+                        var documentUID = param.documentUID;
+                        var type = param.type;
+                        var config = param.option;
+                        
+                        // param으로 넘어온 값(open)을 document에 적용
+                        var documentItem = this.getDocument(documentUID);
+
+                        // 하위 Object들을 직접 extend 해주어야 한다.
+                        // angular.extend({}, config);
+
+                        // document 추가
+                        // this.add('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
+                        // out('# 추가 된 Document : ', documentItem);
+
+                        // 선택 표시
+                        // this.setSelectDocument(uid);
+
+
+                        // 2. document에 데이터를 추가한다.
+                        var content = documentItem.document.content;
+
+                        out('param : ', param);
+                        out('content : ', content);
+
+                        // alert('TODO : addElement 기능 구현 필요');
+                        content = content + '<div id="' + uid + '">aaa</div>';
+                        documentItem.document.content = content;
+                        out('---> ', this.getDocument(documentUID));
+
+                        //---------------------
+                        
+                        // this.add('ELEMENT', this.PROJECT.DOCUMENT, documentItem, param);
+                        // this.PROJECT.DOCUMENT.items[documentUID];
+
+                        // var htmlString = documentItem.document.content;
+                        // var dom = $sce.trustAsHtml(content);
+
+                        // ele.html(html);
+                        // $compile(ele.contents())(scope);
+
+
+
+                        //---------------------
+                        var propertyName = 'ELEMENT';
+                        var dataOwner;
+                        var itemObject = documentItem;
+                        
+                        // 이벤트 발송
+                        var eventName = '#' + this.eventPrefix + '.added-' + propertyName;
+                        out('# 이벤트 발생 : ', eventName);
+
+                        var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
                     },
+
+                    //-----------------------------------
+                    // remove Element
+                    //-----------------------------------
 
                     // uid : element uid
                     removeElement: function(uid){
                         Tool.current.dataChanged = true;
 
+                        alert('TODO : removeElement 기능 구현 필요');
+
                     },
+
+                    //-----------------------------------
+                    // modify Element
+                    //-----------------------------------
 
                     // uid : element uid
                     modifyElement: function(uid){
                         Tool.current.dataChanged = true;
 
+                        alert('TODO : modifyElement 기능 구현 필요');
+
                     },
+
+                    //-----------------------------------
+                    // select Element
+                    //-----------------------------------
 
                     // uid : element uid
                     selectElement: function(uid){
                         // Tool.current.dataChanged = true;
+
+                        alert('TODO : selectElement 기능 구현 필요');
 
                     },
 
