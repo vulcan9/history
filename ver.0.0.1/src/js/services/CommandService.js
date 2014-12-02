@@ -41,6 +41,8 @@ define(
 
                 // const
                 // 싱클톤으로 사용되므로 상수도 여기에서 정의해준다
+                
+                // FILE
                 NEW: 'new',
                 OPEN: 'open',
                 SAVE: 'save',
@@ -48,13 +50,39 @@ define(
                 CLOSE: 'close',
                 EXIT: 'exit',
 
+                // EDIT
                 UNDO: 'undo',
                 REDO: 'redo',
 
+                // DOCUMENT
                 ADD_DOCUMENT: 'addDocument',
                 REMOVE_DOCUMENT: 'removeDocument',
-                MODIFY_DOCUMENT: 'modifyDocument',
+                // MODIFY_DOCUMENT: 'modifyDocument',
                 SELECT_DOCUMENT: 'selectDocument',
+
+                // ELEMENT
+                ADD_ELEMENT: 'addElement',
+                // REMOVE_ELEMENT: 'removeElement',
+                // MODIFY_ELEMENT: 'modifyElement',
+                // SELECT_ELEMENT: 'selectElement',
+                
+                /*
+                CommandService._exe(CommandService.OPEN, param, function callback(isSuccess, result){
+                    //
+                });
+                */
+
+                exe: function (command, param, callback){
+                    out('\n# [ ', command, ' ] 명령 실행');
+                    
+                    this._execute(command, param, function (isSuccess, result){
+                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
+
+                        if(callback){
+                            callback.apply(null, arguments);
+                        }
+                    });
+                },
 
                 ////////////////////////////////////////////////////////////////////////////////
                 //
@@ -62,13 +90,7 @@ define(
                 // 
                 ////////////////////////////////////////////////////////////////////////////////
 
-                /*
-                CommandService.execute(CommandService.OPEN, param, function callback(isSuccess, result){
-
-                });
-                */
-
-                execute: function() {
+                _execute: function() {
 
                     ProgressService.init(true);
 

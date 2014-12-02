@@ -99,20 +99,10 @@ define(
                         return;
                     }
 
-                    var param = {
-                        // scope : $scope, 
-                        // element : $element, 
-                        // attrs : $attrs
-                    };
-
                     // 메뉴 클릭 이벤트 처리
                     var command = item.command;
-                    out('\n# [ ', command, ' ] 명령 실행');
-                    
-                    CommandService.execute(command, param, function callback(isSuccess, result){
-                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
-                        // ProgressService.complete();
-                    });
+                    var param = {};
+                    CommandService.exe(command, param);
                     
                 };
 

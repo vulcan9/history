@@ -48,13 +48,6 @@ define(
             
             function Controller ( $scope, $element, $attrs, Project , CommandService, $document, ScaleMode, $sce, $timeout) {
 
-                out('TODO : 로드된 데이터에 따라 screen에 각 document를 생성한다. (ui-canvas, Impress 적용)');
-
-                $element.trigger('#view.layoutUpdate');
-
-                // layout이 변경이 완료된 후 이벤트 받음
-                $document.on('#dock.layoutUpdating', __onLayoutUpdating);
-                
                 //-----------------------------------
                 // Background Pattern
                 // Svg Attribute (ng-attr-xxx 사용해야함)
@@ -68,12 +61,12 @@ define(
                 // A4 : 595x842, ppt : 1193x671
 
                 // margin은 (.paper) class 설정치를 참고할것
-                var margin = 35 * 2;
-
+                var marginH = 70;
+                var marginV = 70;
                 var sourceWidth = Project.paper.width;
                 var sourceHeight = Project.paper.height;
-                var compareWidth = Math.max(0, sourceWidth - margin);
-                var compareHeight = Math.max(0, sourceHeight - margin);
+                var compareWidth = Math.max(0, sourceWidth - marginH);
+                var compareHeight = Math.max(0, sourceHeight - marginV);
 
                 $scope.size = getSize(1);
                 $scope.stroke = 1;
@@ -96,31 +89,23 @@ define(
                 var scaleMode = new ScaleMode({
                     sourceWidth: sourceWidth,
                     sourceHeight: sourceHeight,
-                    compareWidth: Math.max(0, $element.width() - margin),
-                    compareHeight: Math.max(0, $element.height() - margin)
+                    compareWidth: Math.max(0, $element.width() - marginH),
+                    compareHeight: Math.max(0, $element.height() - marginV)
                 });
                 scaleMode.scale(ScaleMode.SCALE_WINDOW);
-
-                // 화면 사이즈에 따라 scale을 조정한다.
-                // transform: scale({{transform.scale}}) translate({{transform.x}}px,{{transform.y}}px) ;
-                // transform-origin: 0 0;" 
-                function __onLayoutUpdating(e, data){
-                    compareWidth = Math.max(0, data.center.width - margin);
-                    compareHeight = Math.max(0, data.center.height - margin);
-
-                    // $digest already in progress when calling $scope.$apply()
-                    // http://stackoverflow.com/questions/12729122/prevent-error-digest-already-in-progress-when-calling-scope-apply
-                    $scope.$evalAsync( setSize );
-                    // out('onLayoutUpdating---------------------->', scaleMode, data.center.width, data.center.height);
-                }
 
                 function getSize(scale){
                     var sizeObj={
                         scale: scale,
                         sourceWidth: sourceWidth,
                         sourceHeight: sourceHeight,
+                        compareWidth: compareWidth,
+                        compareHeight: compareHeight,
+
                         width: Math.ceil(sourceWidth*scale),
-                        height: Math.ceil(sourceHeight*scale)
+                        height: Math.ceil(sourceHeight*scale),
+                        marginH : marginH,
+                        marginV : marginV
                     };
                     return sizeObj;
                 }
@@ -135,6 +120,43 @@ define(
 
                     var scale = scaleMode.scale();
                     $scope.size = getSize(scale);
+
+                    // 위치 업데이트 호출 (alignModule)
+                    $document.trigger('#window.resize'); 
+                }
+
+                //-----------------------------------
+                // layout 바뀔때 size 재조정
+                //-----------------------------------
+
+                /*
+                $document.on('#dock.layoutUpdated', __onLayoutUpdated);
+                function __onLayoutUpdated(){
+                    $document.trigger('#window.resize'); 
+                }
+                */
+
+                // layout이 변경이 완료된 후 이벤트 받음
+                $document.on('#dock.layoutUpdating', __onLayoutUpdating);
+                $scope.$on("$destroy", function() {
+                    $document.off('#dock.layoutUpdating', __onLayoutUpdating);
+                });
+
+                $scope.$evalAsync( function(){
+                    $element.trigger('#view.layoutUpdate');
+                } );
+
+                // 화면 사이즈에 따라 scale을 조정한다.
+                // transform: scale({{transform.scale}}) translate({{transform.x}}px,{{transform.y}}px) ;
+                // transform-origin: 0 0;" 
+                function __onLayoutUpdating(e, data){
+                    compareWidth = Math.max(0, data.center.width - marginH);
+                    compareHeight = Math.max(0, data.center.height - marginV);
+
+                    // $digest already in progress when calling $scope.$apply()
+                    // http://stackoverflow.com/questions/12729122/prevent-error-digest-already-in-progress-when-calling-scope-apply
+                    $scope.$evalAsync( setSize );
+                    // out('onLayoutUpdating---------------------->', scaleMode, data.center.width, data.center.height);
                 }
 
                 ////////////////////////////////////////
@@ -285,10 +307,10 @@ define(
                     // $scope.documents = [htmlString];
                     // http://stackoverflow.com/questions/19415394/with-ng-bind-html-unsafe-removed-how-do-i-inject-html
                     // var bindHTML = __getHTMLContent(htmlString);
-                    $scope.documents = [htmlString];
+                    $scope.documents = [{content:htmlString}];
 
                     /*
-                    // 파일로드
+                    // IFrame 파일로드
                     //var iframeDocument = self.bookContainer.contentWindow.document || self.bookContainer.contentDocument;
                     var iframeDocument = self.bookContainer.contentDocument;
                     iframeDocument.open('text/html', 'replace');
@@ -299,7 +321,8 @@ define(
                     */
                 }
                 
-                $scope.getHTMLContent = function (htmlString) {
+                $scope.getHTMLContent = function (item) {
+                    var htmlString = item.content;
                     return $sce.trustAsHtml(htmlString);
                 }
 
@@ -363,9 +386,7 @@ define(
                     var command = CommandService.SELECT_DOCUMENT;
                     out('\n# [ ', command, ' ] 명령 실행');
 
-                    CommandService.execute(command, param, function callback(isSuccess, result){
-                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
-                    });
+                    CommandService.exe(command, param);
                 };
                 */
                 

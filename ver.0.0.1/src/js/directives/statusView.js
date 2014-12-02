@@ -50,20 +50,21 @@ define(
 
             function Controller( $scope, $element, VersionService, $timeout ) {
                 //$scope.version = VersionService;
-                $element.trigger('#view.layoutUpdate');
+                // $element.trigger('#view.layoutUpdate');
 
-                $scope.$evalAsync( function(){
-                    // $element.trigger('#view.layoutUpdate');
-                } );
-                
                 $timeout (function() {
                     $element.trigger('#view.layoutUpdate');
                 }, 100);
 
+                /*
+                $scope.$evalAsync( function(){
+                    // $element.trigger('#view.layoutUpdate');
+                } );
+                
                 $scope.$watch(function(){
                     // $element.trigger('#view.layoutUpdate'); 
                 });
-                
+                */
 
                 ////////////////////////////////////////
                 // End Controller

@@ -88,10 +88,24 @@ define(
                             __CURRENT: null,
 
                             // 메뉴 구성 정보
-                            __MENU : null
+                            __MENU : null,
+
+                            __CONFIG : null
                         }
                     );
 
+                    // Tool 설정치
+                    this.tool('CONFIG', {
+                        transition : {
+                            // second
+                            TICK : 0.2,
+                            SHORTEST : 0.5,
+                            SHORT : 1,
+                            LONG : 2,
+                            LONGEST : 0
+                        }
+                    });
+                    
                     // 현재 실행 state를 기록한다.
                     this.tool('CURRENT', {
                         document:{

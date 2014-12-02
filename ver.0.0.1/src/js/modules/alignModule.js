@@ -49,19 +49,42 @@ define(
         // 세로 정렬 - position: absolute 인 경우 권장
         //-----------------------------------
         
+        // 이전값 기록
+        var __lastVertical = 0;
+        var __lastHorizontal = 0;
+
         function verticalCenter($window, $document, $rootScope) {
 
             return {
                 restrict: 'A',
                 // scope: {},
 
-                controller: function( $scope, $element, $attrs ) {
-                    $scope.$watch(function () {
-                       _verticalPosition($scope, $element, $attrs, $document);
+                link: function( $scope, $element, $attrs ) {
+                    
+                    $scope.verticalCenter = __lastVertical;
+
+                    $scope.$watch('verticalCenter', function (newValue, oldValue) {
+                        out('verticalCenter : ', newValue, oldValue);
+                        if(newValue === undefined) return;
+                        __lastVertical = newValue;
+                       $element.css('top', newValue + 'px');
                     });
                     
+                    /*
+                    $attrs.$observe('positionInfo', function (newValue) {
+                        out('positionInfo H : ', newValue, newValue.width);
+                        _verticalPosition($scope, $element, $attrs, $document);
+                    });
+                    */
+
+                    $scope.$watch($attrs.positionInfo, function (newValue) {
+                        // out('positionInfo watch : ', newValue);
+                        // out('positionInfo watch V : ', $scope.$eval($attrs.positionInfo));
+                        _verticalPosition($scope, $element, $attrs, $document);
+                    }, true);
+
                     // 리사이징 이벤트
-                    $document.on('#window.resizeing',function () {
+                    $document.on('#window.resize',function () {
                        _verticalPosition($scope, $element, $attrs, $document);
                     }); 
                 }
@@ -70,22 +93,35 @@ define(
         }
 
         function _verticalPosition(scope, el, attrs, $document){
-                
+            
+            var renderFunc = render;
+            window.requestAnimationFrame(renderFunc);
+
+            function render(){
+                var size = scope.$eval(attrs.positionInfo);
+
                 var H = 0;
                 var position = _setPositionCSS(el);
                 if(position == 'fixed'){
                     H = $document.height();
                 }else{
                     var parent = el.parent();
-                    H = parent.height() + (U.toNumber(parent.css('padding-top')) + U.toNumber(parent.css('padding-bottom')));
+                    if(!parent || parent.length < 1) return;
+                    H = (size === undefined) ? parent.height() : size.compareHeight + size.marginV;
                 }
                 
-                var h = el.height() + U.toNumber(el.css('margin-top')) + U.toNumber(el.css('margin-bottom'));
+                var targetH = (size === undefined) ? el.height() : size.height + size.marginV;
                 var offset = U.toNumber(attrs.verticalCenter);
 
-                var pos = (H-h)/2 + offset;
+                var pos = (H-targetH)/2 + offset;
                 pos = Math.max(pos, 0);
-                el.css('top', pos);
+                // el.css('top', pos);
+
+                scope.$evalAsync( function(){
+                    // out('_verticalPosition : ', pos, H, targetH);
+                    scope.verticalCenter = pos;
+                } );
+            }
         }
 
         //-----------------------------------
@@ -98,22 +134,44 @@ define(
                 restrict: 'A',
                 // scope: {},
 
-                controller: function( $scope, $element, $attrs ) {
-                    $scope.$watch(function () {
-                       _horizontalCenter($scope, $element, $attrs, $document);
+                link: function( $scope, $element, $attrs ) {
+
+                    $scope.horizontalCenter = __lastHorizontal;
+
+                    $scope.$watch('horizontalCenter', function (newValue) {
+                       // out('horizontalCenter : ', newValue);
+                       if(newValue === undefined) return;
+                       __lastHorizontal = newValue;
+                       $element.css('left', newValue + 'px');
                     });
                     
+                    /*
+                    $attrs.$observe('positionInfo', function (newValue) {
+                        out('positionInfo W : ', newValue);
+                        _horizontalCenter($scope, $element, $attrs, $document);
+                    });
+                    */
+
+                    $scope.$watch($attrs.positionInfo, function (newValue) {
+                        _horizontalCenter($scope, $element, $attrs, $document);
+                    }, true);
+
                     // 리사이징 이벤트
-                    $document.on('#window.resizeing',function () {
+                    $document.on('#window.resize',function () {
                        _horizontalCenter($scope, $element, $attrs, $document);
                     }); 
                 }
-
             };
 
         }
 
         function _horizontalCenter(scope, el, attrs, $document){
+            
+            var renderFunc = render;
+            window.requestAnimationFrame(renderFunc);
+
+            function render(){
+                var size = scope.$eval(attrs.positionInfo);
 
                 var W = 0;
                 var position = _setPositionCSS(el);
@@ -121,17 +179,42 @@ define(
                     W = $document.width();
                 }else{
                     var parent = el.parent();
-                    W = parent.width() + (U.toNumber(parent.css('padding-left')) + U.toNumber(parent.css('padding-right')));
+                    if(!parent || parent.length < 1) return;
+                    W = (size === undefined) ? parent.width() : size.compareWidth + size.marginH;
                 }
-                
-                var w = el.width() + U.toNumber(el.css('margin-left')) + U.toNumber(el.css('margin-right'));
+
+                var targetW = (size === undefined) ? el.width() : size.width + size.marginH;
                 var offset = U.toNumber(attrs.horizontalCenter);
 
-                var pos = (W-w)/2 + offset;
+                var pos = (W-targetW)/2 + offset;
                 pos = Math.max(pos, 0);
-                el.css('left', pos);
-        }
+                // el.css('left', pos);
+                
+                scope.$evalAsync( function(){
+                    // out('_horizontalCenter : ', pos, W, targetW);
+                    scope.horizontalCenter = pos;
+                } );
+            }
 
+        }
+        
+        /*
+        var _stepEnterTimeout;
+        function delayExecute(func, context, argArray){
+
+            if(func) func.apply(context, argArray);
+            return;
+
+            window.clearTimeout(_stepEnterTimeout);
+            _stepEnterTimeout = setTimeout(function () {
+                
+                if(func) func.apply(context, argArray);
+                _stepEnterTimeout = null;
+
+            }, 10);
+        }
+        */
+        
         ////////////////////////////////////////
         // END
         ////////////////////////////////////////

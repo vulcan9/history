@@ -105,9 +105,8 @@ define(
         //-----------------------------------
 
         function showApplication() {
-            angular.element( 'body' ).css( {
-                opacity: 1,
-                transition: 'opacity 1s'
+            angular.element( '.applicationContainer' ).css( {
+                opacity: 1
             } );
         }
 

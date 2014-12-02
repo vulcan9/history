@@ -89,29 +89,43 @@ define(
 
                 };
 
+                ////////////////////////////////////////////////////////////////////////////////
+                //
+                // 메뉴 명령 실행
+                //
+                ////////////////////////////////////////////////////////////////////////////////
+
                 ////////////////////////////////////////
-                // 메뉴 설정 데이터 로드
+                // Project
+                ////////////////////////////////////////
+
+                function newProject (){
+                    CommandService.exe(CommandService.NEW, {});
+                }
+
+                function openProject (){
+                    CommandService.exe(CommandService.OPEN, {});
+                }
+
+                function saveProject (){
+                    CommandService.exe(CommandService.SAVE, {});
+                }
+
+                ////////////////////////////////////////
+                // 편집
                 ////////////////////////////////////////
 
                 function undo(){
-                    var param = {};
-                    var command = CommandService.UNDO;
-                    out('\n# [ ', command, ' ] 명령 실행');
-
-                    CommandService.execute(command, param, function callback(isSuccess, result){
-                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
-                    });
+                    CommandService.exe(CommandService.UNDO, {});
                 }
 
                 function redo(){
-                    var param = {};
-                    var command = CommandService.REDO;
-                    out('\n# [ ', command, ' ] 명령 실행');
-
-                    CommandService.execute(command, param, function callback(isSuccess, result){
-                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
-                    });
+                    CommandService.exe(CommandService.REDO, {});
                 }
+
+                ////////////////////////////////////////
+                // Document
+                ////////////////////////////////////////
 
                 // Document 추가 
                 // option : 'next', 'sub', 'prev'
@@ -128,14 +142,39 @@ define(
                         }
                     };
 
-                    var command = CommandService.ADD_DOCUMENT;
-                    out('\n# [ ', command, ' ] 명령 실행');
-
-                    CommandService.execute(command, param, function callback(isSuccess, result){
-                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
-                    });
+                    CommandService.exe(CommandService.ADD_DOCUMENT, param);
                 }
+
+                ////////////////////////////////////////
+                // Element
+                ////////////////////////////////////////
                 
+                function addElement (type){
+
+                    if(Project.current == null) return;
+                    /*
+                    switch(type){
+                        case 'text':
+                        break;
+
+                        case 'image':
+                        break;
+                    }
+                    */
+                    var param = {
+                        //document : null,
+                        option: {
+                            // uid: uid,
+                            type: type
+                        }
+                    };
+                    CommandService.exe(CommandService.ADD_ELEMENT, param);
+                }
+
+                ////////////////////////////////////////
+                // Presentation
+                ////////////////////////////////////////
+
                 function play(){
                     alert('play 구현안됨');
                 }

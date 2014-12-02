@@ -33,34 +33,41 @@ define(
                 replace: true,
                 scope: {},
                 
-                controller: Controller,
-
-                link: function( scope, el, attrs ) {
-                    // el.text( "propertyView" );
-                    //$element.trigger('#view.layoutUpdate'); 
-                }
-                
+                controller: Controller
             };
 
             function Controller ( $scope, $element, $attrs, Project , CommandService, NoticeService, $q) {
 
-                $element.trigger('#view.layoutUpdate');
+                // $element.trigger('#view.layoutUpdate');
 
                 // 너비 초기 설정값
-                var $dock = $element.parent('.dock');
-                $dock.width(250);
+                __pannelToggle(250);
+                // $scope.$evalAsync( __pannelToggle );
+                // $timeout(__pannelToggle, 500);
 
                 // pannel 열기/닫기
                 $scope.pannelToggle = function(scope) {
-                    var $dock = $element.parent('.dock');
-                    var w = $dock.outerWidth();
-                    w = (w>300) ? 250:400;
-                    $dock.css({
-                        'width': w + 'px',
-                        'min-width': w + 'px'
-                    });
-                    $element.trigger('#view.layoutUpdate');
+                    __pannelToggle();
                 };
+
+                function __pannelToggle(w){
+                    var $dock = $element.parent('.dock');
+                    if(w === undefined){
+                        w = $dock.outerWidth();
+                        w = (w>300) ? 250:400;
+                    }
+                    
+                    $dock.css({
+                        'min-width': w + 'px',
+                        'width': w + 'px'
+                    });
+                    
+                    $element.trigger('#view.layoutUpdate', {
+                        targetCSS:{
+                            width : w
+                        }
+                    });
+                }
 
                 ////////////////////////////////////////////////////////////////////////////////
                 // DOM 인터렉션

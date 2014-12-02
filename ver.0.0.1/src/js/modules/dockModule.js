@@ -110,7 +110,7 @@ define(
                     // dock member instance
                     this.addDockFrame = function(key, el){
                         $scope.dock[key] = el;
-                        _dock_layout($scope.dock);
+                        _dock_layout($scope);
                     };
 
                     $element.addClass('dockOwner');
@@ -124,7 +124,7 @@ define(
                     */
                     
                     $document.on('#window.resizeing', function(){
-                       _dock_layout($scope.dock); 
+                       _dock_layout($scope); 
                         // DOM 갱신
                         //$rootScope.$apply();
                     }); 
@@ -157,8 +157,8 @@ define(
                     element.addClass('top');
                     ownerController.addDockFrame('top', element);
 
-                    element.on('#view.layoutUpdate', function(){
-                        _dock_layout(scope.dock);
+                    element.on('#view.layoutUpdate', function(e, data){
+                        _dock_layout(scope, 'top');
                     }); 
                 }
 
@@ -179,8 +179,8 @@ define(
                     element.addClass('left');
                     ownerController.addDockFrame('left', element);
 
-                    element.on('#view.layoutUpdate', function(){
-                        _dock_layout(scope.dock);
+                    element.on('#view.layoutUpdate', function(e, data){
+                        _dock_layout(scope, 'left', data);
                     }); 
                 }
 
@@ -201,8 +201,8 @@ define(
                     element.addClass('center');
                     ownerController.addDockFrame('center', element);
 
-                    element.on('#view.layoutUpdate', function(){
-                        _dock_layout(scope.dock);
+                    element.on('#view.layoutUpdate', function(e, data){
+                        _dock_layout(scope, 'center');
                     }); 
                 }
 
@@ -223,8 +223,8 @@ define(
                     element.addClass('right');
                     ownerController.addDockFrame('right', element);
 
-                    element.on('#view.layoutUpdate', function(){
-                        _dock_layout(scope.dock);
+                    element.on('#view.layoutUpdate', function(e, data){
+                        _dock_layout(scope, 'right', data);
                     }); 
                 }
 
@@ -245,8 +245,8 @@ define(
                     element.addClass('bottom');
                     ownerController.addDockFrame('bottom', element);
 
-                    element.on('#view.layoutUpdate', function(){
-                        _dock_layout(scope.dock);
+                    element.on('#view.layoutUpdate', function(e, data){
+                        _dock_layout(scope, 'bottom');
                     }); 
                 }
 
@@ -257,20 +257,38 @@ define(
         ////////////////////////////////////////
         // 레이아웃
         ////////////////////////////////////////
-        
-        /*
-        var dockTop = el.find('.dockTop');
-        var dockLeft = el.find('.menuContainer');
-        var dockCenter = el.find('.progressContainer');
-        var dockRight = el.find('.screenContainer');
-        var dockBottom = el.find('.statusContainer');
-        */
+    
+        // millisecond 후에 최종 호출되는 function을 실행시킨다.
+        // millisecond안에 중복 호출되는 function은 무시된다.
+        var __stepEnterTimeout;
+        function __delayExecute (millisecond, func, context, argArray){
 
-        function _dock_layout(dock){
+                window.clearTimeout(__stepEnterTimeout);
+                __stepEnterTimeout = setTimeout(function () {
+                    
+                    if(func) func.apply(context, argArray);
+                    __stepEnterTimeout = null;
 
-            window.requestAnimationFrame(watchRender);
+                }, millisecond);
+        }
 
-            function watchRender(){
+        function _dock_layout(scope, key, data){
+
+            var renderFunc = render();
+            window.requestAnimationFrame(renderFunc);
+            // window.requestAnimationFrame(watchRender);
+            
+            // 종료 시점에 transition 기능 적용
+            __delayExecute (100, function(){
+                var time = Tool.current.tool('CONFIG').transition.TICK;
+                angular.element(window.document).find('.dock').css({
+                    'transition': 'all ' + time + 's ease 0s'
+                });
+            }, null);
+
+            function render(){
+                var dock = scope.dock;
+                var targetCSS = (data) ? data.targetCSS : {};
 
                 // 각각의 dock Frame에 대하여 크기를 설정한다.
                 var owner = dock['owner'];
@@ -287,43 +305,122 @@ define(
 
                 var topH = (top) ? top.height() : 0;
                 var bottomH = (bottom) ? bottom.height() : 0;
+                
+                var targetW = (targetCSS && 'width' in targetCSS) ? targetCSS.width : undefined;
+                // var targetH = (targetCSS && 'height' in targetCSS) ? targetCSS.height : undefined;
 
+                // left
                 var leftW = (left)? left.width() : 0;
-                var rightW = (right)? right.width() : 0;
+                if (key == 'left' && targetW !== undefined) leftW = targetW;
+                // if (key == 'left' && targetH !== undefined) leftH = targetH;
 
+                // right
+                var rightW = (right)? ((key == 'right') ? targetCSS.width : right.width()) : 0;
+                if (key == 'right' && targetW !== undefined) rightW = targetW;
+                // if (key == 'right' && targetH !== undefined) rightH = targetH;
+
+                // center
                 var centerH = maxH - (topH + bottomH);
-                var centerW = maxW - (leftW + rightW)-4; // border : 4
+                var centerW = maxW - (leftW + rightW) - 4; // border : 4
 
-                var $document = angular.element(window.document);
-                var data = {
-                    top : {width:maxW, height:topH},
-                    left : {width:leftW, height:centerH},
-                    right : {width:rightW, height:centerH},
-                    center : {width:centerW, height:centerH},
-                    bottom : {width:maxW, height:bottomH}
+                // 최종값
+                var topRect = { 
+                    x:0, 
+                    y:0, 
+                    width: maxW, 
+                    height: topH 
                 };
-                $document.trigger('#dock.layoutUpdating', data);
+                var bottomRect = { 
+                    x:0, 
+                    y: maxH - bottomH, 
+                    width: maxW, 
+                    height: bottomH 
+                };
+                var leftRect = { 
+                    x: 0, 
+                    y: topH, 
+                    width: leftW, 
+                    height: centerH 
+                };
+                var rightRect = { 
+                    x: maxW - rightW, 
+                    y: topH, 
+                    width: rightW, 
+                    height: centerH 
+                };
+                var centerRect = { 
+                    x: leftW, 
+                    y: topH, 
+                    width: centerW, 
+                    height: centerH 
+                };
+                
+                // 연산 최종 결정값
+                var $document = angular.element(window.document);
+                var resultData = {
+                    top : topRect,
+                    left : leftRect,
+                    right : rightRect,
+                    center : centerRect,
+                    bottom : bottomRect
+                };
 
-                if(left){
-                    left.width(leftW);
-                    left.height(centerH);
+                
+
+                return watchRender;
+
+                function watchRender(){
+
+                    $document.trigger('#dock.layoutUpdating', resultData);
+
+                    // 적용
+                    if(top){
+                        top.css({
+                            // width: topRect.width, height: topRect.height,
+                            // left: topRect.x, top: topRect.y
+                            left: 0, top: 0,
+                            position: 'relative'
+                        });
+                    }
+                    if(bottom){
+                        bottom.css({
+                            // width: bottomRect.width, height: bottomRect.height,
+                            // left: bottomRect.x, top: bottomRect.y
+                            left: 0, top: 0,
+                            position: 'relative'
+                        });
+                    }
+                    if(left){
+                        left.css({
+                            width: leftRect.width, height: leftRect.height,
+                            // left: leftRect.x, top: leftRect.y,
+                            left: 0, top: 0,
+                            position: 'relative'
+                        });
+                    }
+                    if(right){
+                        right.css({
+                            width: rightRect.width, height: rightRect.height,
+                            left: rightRect.x, top: rightRect.y,
+                            position: 'absolute'
+                        });
+                    }
+                    if(center){
+                        center.css({
+                            width: centerRect.width, height: centerRect.height,
+                            // left: centerRect.x, top: centerRect.y
+                            left: 0, top: 0,
+                            position: 'relative'
+                        });
+                    }
+
+                    out('_dock_layout : ', resultData);
+                    // var $document = angular.element(window.document);
+                    $document.trigger('#dock.layoutUpdated');
                 }
-
-                if(right){
-                    right.width(rightW);
-                    right.height(centerH);
-                }
-
-                if(center){
-                    center.width(centerW);
-                    center.height(centerH);
-                }
-
-                out('_dock_layout : ', data);
-                // var $document = angular.element(window.document);
-                // $document.trigger('#window.layoutUpdated');
-                $document.trigger('#dock.layoutUpdated');
             }
+
+            // end
         }
 
         ////////////////////////////////////////

@@ -116,7 +116,7 @@ define(
 
                 //*
                 
-                CommandService.execute ( CommandService.CLOSE, param, function callback(isSuccess, result) {
+                CommandService.exe ( CommandService.CLOSE, param, function callback(isSuccess, result) {
                     out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
                     ProgressService.complete();
                 });
@@ -124,7 +124,7 @@ define(
                 /*/
 
                 // 새문서 열기
-                CommandService.execute(CommandService.NEW, param, function callback(isSuccess, result) {
+                CommandService.exe(CommandService.NEW, param, function callback(isSuccess, result) {
                     out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
                     ProgressService.complete();
 

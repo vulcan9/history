@@ -31,8 +31,6 @@
 }
 
 body {
-    /*App 로드 완료 후 visible로 바뀜*/
-    opacity: 0;
     width: 100%;
     height: 100%;
     /*line-height: 1;*/

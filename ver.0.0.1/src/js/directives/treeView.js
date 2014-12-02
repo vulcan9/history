@@ -75,23 +75,36 @@ define(
             
             function Controller ( $scope, $element, $attrs, Project , CommandService, NoticeService, $q) {
 
-                $element.trigger('#view.layoutUpdate');
+                // $element.trigger('#view.layoutUpdate');
 
                 // 너비 초기 설정값
-                var $dock = $element.parent('.dock');
-                $dock.width(250);
+                __pannelToggle(250);
+                // $scope.$evalAsync( __pannelToggle );
+                // $timeout(__pannelToggle, 500);
 
                 // pannel 열기/닫기
                 $scope.pannelToggle = function(scope) {
-                    var $dock = $element.parent('.dock');
-                    var w = $dock.outerWidth();
-                    w = (w>300) ? 250:400;
-                    $dock.css({
-                        'width': w + 'px',
-                        'min-width': w + 'px'
-                    });
-                    $element.trigger('#view.layoutUpdate');
+                    __pannelToggle();
                 };
+
+                function __pannelToggle(w){
+                    var $dock = $element.parent('.dock');
+                    if(w === undefined){
+                        w = $dock.outerWidth();
+                        w = (w>300) ? 250:400;
+                    }
+                    
+                    $dock.css({
+                        'min-width': w + 'px',
+                        'width': w + 'px'
+                    });
+                    
+                    $element.trigger('#view.layoutUpdate', {
+                        targetCSS:{
+                            width : w
+                        }
+                    });
+                }
 
                 ////////////////////////////////////////
                 // TREE 데이터 이벤트
@@ -386,12 +399,8 @@ define(
                     var param = {
                         uid : item.uid
                     };
-                    var command = CommandService.SELECT_DOCUMENT;
-                    out('\n# [ ', command, ' ] 명령 실행');
 
-                    CommandService.execute(command, param, function callback(isSuccess, result){
-                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
-                    });
+                    CommandService.exe(CommandService.SELECT_DOCUMENT, param);
                 }
 
                 // Document 추가 
@@ -413,12 +422,7 @@ define(
                         }
                     };
 
-                    var command = CommandService.ADD_DOCUMENT;
-                    out('\n# [ ', command, ' ] 명령 실행');
-
-                    CommandService.execute(command, param, function callback(isSuccess, result){
-                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
-                    });
+                    CommandService.exe(CommandService.ADD_DOCUMENT, param);
                 }
 
                 // option: 'all', 'only'
@@ -441,12 +445,7 @@ define(
                         option : option
                     };
 
-                    var command = CommandService.REMOVE_DOCUMENT;
-                    out('\n# [ ', command, ' ] 명령 실행');
-
-                    CommandService.execute(command, param, function callback(isSuccess, result){
-                        out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
-                    });
+                    CommandService.exe(CommandService.REMOVE_DOCUMENT, param);
                 }
 
                 ////////////////////////////////////////
