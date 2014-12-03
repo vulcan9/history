@@ -150,34 +150,26 @@ define(
 
                 //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
                 $scope.$on('#Project.selected-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.selected-DOCUMENT (tree) : ', data);
-                        __onSelectDocument(data.newValue, data.oldValue);
-                    }
+                    out('#Project.selected-DOCUMENT (tree) : ', data);
+                    __onSelectDocument(data.newValue, data.oldValue);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.added-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.added-DOCUMENT (tree) : ', data);
-                        __onAddDocument(data.item, data.param);
-                    }
+                    out('#Project.added-DOCUMENT (tree) : ', data);
+                    __onAddDocument(data.item, data.param);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.removed-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.removed-DOCUMENT (tree) : ', data);
-                        __onRemoveDocument(data.item, data.param);
-                    }
+                    out('#Project.removed-DOCUMENT (tree) : ', data);
+                    __onRemoveDocument(data.item, data.param);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.modified-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.modified-DOCUMENT (tree) : ', data);
-                        __onModifyDocument(data.item, data.param);
-                    }
+                    out('#Project.modified-DOCUMENT (tree) : ', data);
+                    __onModifyDocument(data.item, data.param);
                 });
 
                 //-------------------------------------

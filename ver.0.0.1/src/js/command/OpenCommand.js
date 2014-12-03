@@ -243,6 +243,19 @@ define(
                                     // 로드 실패한 경우 파일의 uid를 리턴한다.
                                     dataMap[ response ] = null;
                                 } else {
+
+                                    //******************************************
+
+                                    // 최신 기능 지원 위해 데이터 구조 업데이트
+                                    response = Project.current.updateDocumentVersion(response.uid, response);
+                                    
+                                    // html String를 DOM 구조로 바꾸어 놓는다.
+                                    var htmlString = response.document.content;
+                                    var dom = Project.current.stringToHtml(htmlString);
+                                    response.document.content = dom;
+
+                                    //******************************************
+
                                     dataMap[ response.uid ] = response;
                                 }
 

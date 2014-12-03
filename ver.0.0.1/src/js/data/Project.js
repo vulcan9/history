@@ -131,7 +131,7 @@ define(
                                 "uid": uid,
 
                                 "id": "overview",
-                                "content": "<div id='overview' data-scale='10' data-x='0' data-y='0'></div>"
+                                "content": "<div id='overview' data-scale='10' data-x='0' data-y='0'>TEST</div>"
 
                             },
 
@@ -167,10 +167,31 @@ define(
                             "todos": {
                                 "uid": uid,
                                 "items":{}
+                            },
+
+                            // element 관련 정보를 저장한다. (Tool)
+                            "element": {
+                                // 현재(마지막) 선택 상태의 element uid
+                                "selectUID": ""
                             }
                         };
 
+                        // html String를 DOM 구조로 바꾸어 놓는다.
+                        var htmlString = definition.document.content;
+                        var dom = this.stringToHtml(htmlString);
+                        definition.document.content = dom;
+
                         return definition;
+                    },
+
+                    htmlToString: function(dom){
+                        var html = dom.outerHTML;
+                        return html;
+                    },
+
+                    stringToHtml: function(htmlString){
+                        var dom = angular.element(htmlString);
+                        return dom[0];
                     },
 
                     //////////////////////////////////////////////////////////////////////////
@@ -221,9 +242,7 @@ define(
                         var treeData = this.project('TREE');
                         if(treeData.items && treeData.items.length > 0) return;
 
-                        //var documentItem = this.getDefinitionDocument(uid);
                         var uid = this.createDocumentUID();
-
                         var param = {
                             uid: uid,
                             /* add option
@@ -396,12 +415,7 @@ define(
                         var document = param.document || {};
 
                         // param으로 넘어온 값(open)을 document에 적용
-                        var documentItem = this.getDefinitionDocument(uid);
-
-                        // 하위 Object들을 직접 extend 해주어야 한다.
-                        angular.extend(documentItem.document, document.document);
-                        angular.extend(documentItem.configuration, document.configuration);
-                        angular.extend(documentItem.todos, document.todos);
+                        var documentItem = this.updateDocumentVersion(uid, document);
 
                         // document 추가
                         this.add('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
@@ -409,6 +423,21 @@ define(
 
                         // 선택 표시
                         this.setSelectDocument(uid);
+                    },
+
+                    // 문서 내용(기능)을 최신 개발 버전으로  강제 업데이트
+                    updateDocumentVersion: function(uid, documentObj){
+
+                        // param으로 넘어온 값(open)을 document에 적용
+                        var documentItem = this.getDefinitionDocument(uid);
+
+                        // 하위 Object들을 직접 extend 해주어야 한다.
+                        angular.extend(documentItem.document, documentObj.document);
+                        angular.extend(documentItem.configuration, documentObj.configuration);
+                        angular.extend(documentItem.todos, documentObj.todos);
+                        angular.extend(documentItem.element, documentObj.element);
+
+                        return documentItem;
                     },
 
                     //-----------------------------------
@@ -595,12 +624,13 @@ define(
 
                     setSelectDocument: function(uid){
                         if(uid === undefined){
-                            throw 'uid 값이 없습니다. (modify)';
+                            throw 'uid 값이 없습니다. (document)';
                         }
 
                         // GET
                         var oldValue = this.getSelectDocument();
                         var newValue = uid;
+                        if(oldValue == newValue) return;
 
                         // SET
                         Tool.current._setSelectDocument(uid);
@@ -671,60 +701,61 @@ define(
                     addElement: function(param){
                         Tool.current.dataChanged = true;
 
+                        // document에 데이터를 추가한다.
+                        // out('param : ', param);
+
                         var uid = param.uid;
                         var documentUID = param.documentUID;
                         var type = param.type;
                         var config = param.option;
                         
+                        //---------------------
+                        // DOM 추가
+
                         // param으로 넘어온 값(open)을 document에 적용
                         var documentItem = this.getDocument(documentUID);
-
-                        // 하위 Object들을 직접 extend 해주어야 한다.
-                        // angular.extend({}, config);
-
-                        // document 추가
-                        // this.add('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
-                        // out('# 추가 된 Document : ', documentItem);
-
-                        // 선택 표시
-                        // this.setSelectDocument(uid);
-
-
-                        // 2. document에 데이터를 추가한다.
                         var content = documentItem.document.content;
+                        var $content = angular.element(content);
 
-                        out('param : ', param);
-                        out('content : ', content);
+                        out('TODO : type에 따른 샘플 태그 정의할것');
 
-                        // alert('TODO : addElement 기능 구현 필요');
-                        content = content + '<div id="' + uid + '">aaa</div>';
-                        documentItem.document.content = content;
-                        out('---> ', this.getDocument(documentUID));
+                        // 추가
+                        var $comp = this.__getCompContent(type, uid, config);
+                        $content.append($comp);
 
-                        //---------------------
-                        
-                        // this.add('ELEMENT', this.PROJECT.DOCUMENT, documentItem, param);
-                        // this.PROJECT.DOCUMENT.items[documentUID];
-
-                        // var htmlString = documentItem.document.content;
-                        // var dom = $sce.trustAsHtml(content);
-
-                        // ele.html(html);
-                        // $compile(ele.contents())(scope);
-
-
+                        // 데이터 갱신
+                        documentItem.document.content = $content[0];
 
                         //---------------------
-                        var propertyName = 'ELEMENT';
-                        var dataOwner;
-                        var itemObject = documentItem;
-                        
                         // 이벤트 발송
+
+                        // #Project.added-ELEMENT
+                        var propertyName = 'ELEMENT';
                         var eventName = '#' + this.eventPrefix + '.added-' + propertyName;
                         out('# 이벤트 발생 : ', eventName);
 
-                        var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
+                        var args = {data:documentItem, item:documentItem.document.content, name:propertyName, param:param};
                         $rootScope.$broadcast(eventName, args); 
+
+                        //---------------------
+                        // 선택 표시
+
+                        // Document 선택 표시
+                        this.setSelectDocument(documentUID);
+
+                        // 현재 선택 상태의 문서이면 Element 선택 표시
+                        this.setSelectElement(documentUID, uid);
+                    },
+
+                    // 유형에 따라 comp 내용을 구성
+                    __getCompContent: function(type, uid, config){
+                        var comp = '<div uid="' + uid + '">aaa</div>';
+                        var $comp = angular.element(comp);
+
+                        out('TODO : // Element 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
+                        // angular.extend({}, config);
+
+                        return $comp;
                     },
 
                     //-----------------------------------
@@ -755,13 +786,56 @@ define(
                     // select Element
                     //-----------------------------------
 
-                    // uid : element uid
-                    selectElement: function(uid){
-                        // Tool.current.dataChanged = true;
+                    getSelectElement: function(documentUID){
+                        documentUID = documentUID || this.getSelectDocument();
+                        var documentItem = this.getDocument(documentUID);
 
-                        alert('TODO : selectElement 기능 구현 필요');
-
+                        var elementUID = documentItem.element.selectUID;
+                        return elementUID;
                     },
+
+                    // uid : element uid
+                    setSelectElement: function(documentUID, elementUID){
+
+                        if(documentUID === undefined){
+                            throw '지정된 document의 uid 값이 없습니다. (element)';
+                        }
+                        
+                        documentUID = documentUID || this.getSelectDocument();
+
+                        // GET
+                        var oldValue = this.getSelectElement(documentUID);
+                        var newValue = elementUID;
+                        if(oldValue == newValue) return;
+
+                        // SET
+                        // Document 선택 표시
+                        // this.setSelectDocument(documentUID);
+
+                        // Element 선택 표시값 갱신
+                        var documentItem = this.getDocument(documentUID);
+                        documentItem.element.selectUID = elementUID;
+
+                        // 데ㅔ이터 변경됨을 기록
+                        Tool.current.dataChanged = true;
+
+                        //---------------------
+                        // 이벤트 발송
+
+                        // #Project.selected-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.selected-' + propertyName;
+                        out('# 이벤트 발생 : ', eventName);
+
+                        var args = {
+                            name:propertyName, 
+                            newValue:newValue, 
+                            oldValue:oldValue, 
+                            // element: documentItem.document.content,
+                            documentUID:documentUID
+                        };
+                        $rootScope.$broadcast(eventName, args); 
+                    }
 
                     // end prototype
                 }

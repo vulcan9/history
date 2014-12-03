@@ -10,10 +10,35 @@
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
+.transition{
+    transition: all 0.5s ease 0s;
+}
+.visible{
+    visibility: visible;
+}
+.hidden{
+    visibility: hidden;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .applicationContainer{
     /*application 설정 완료 후 1로 변경되는 js 코드 있음*/
-    opacity: 0;
-    transition: all 1s ease 0s;
+    /*opacity: 0;
+    transition: all 1s ease 0s;*/
+    visibility: hidden;
 
     position: absolute;
     /*border: 1px solid #FF0000;*/
@@ -519,6 +544,84 @@
     padding: 10px 10px;
     cursor: crosshair;
 }
+
+.screen .paper .loading{
+    position: absolute;
+    border: 1px solid #FF0000;
+    padding: 10px 10px;
+    top: 0px;
+    left: 0px;
+}
+
+/*------------------------------------
+// Element
+------------------------------------*/
+
+.screen .paper .content div[uid] {
+    border: 1px dotted #EEE;
+    display: inline-block;
+
+    /*font-size: 1em;*/
+}
+.screen .paper .content div[uid]:hover {
+    border: 1px solid #CCC;
+}
+.screen .paper .content div[uid].selectedElement {
+    border: 1px dotted red;
+}
+.screen .paper .content div[uid].selectedElement:hover {
+    border: 1px solid red;
+}
+.screen .paper .content div[contenteditable=true].selectedElement {
+    border: 1px solid yellow;
+}
+
+/*텍스트 옵션, 
+<element contenteditable="true|false">
+
+text-align : left|right|center|justify;
+text-decoration: none|underline|overline|line-through|initial|inherit;
+text-indent: px, pt, cm, em, %
+text-overflow: clip|ellipsis|string|initial|inherit; (width 지정되고 overflow: hidden;인 경우)
+text-shadow: h-shadow v-shadow blur color|none|initial|inherit;
+text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문자 변환)
+
+폰트 옵션
+font
+@font-face
+font-family
+font-size
+font-size-adjust
+font-stretch
+font-style
+font-variant
+font-weight
+
+Paragraphs 옵션
+letter-spacing
+line-height
+list-style
+list-style-image
+list-style-position
+list-style-type
+
+여백 (layout)
+margin
+margin-bottom
+margin-left
+margin-right
+margin-top
+padding
+padding-bottom
+padding-left
+padding-right
+padding-top
+
+객체 align (IE11이상 지원)
+justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
+*/
+
+
 
 /*------------------------------------
 // 편집모드 전환 버튼

@@ -123,12 +123,13 @@ define(
                     });
                     */
                     
-                    $document.on('#window.resizeing', function(){
-                       _dock_layout($scope); 
-                        // DOM 갱신
-                        //$rootScope.$apply();
-                    }); 
+                    $document.on('#window.resizeing', call_dock_layout); 
                     
+                    function call_dock_layout(){
+                       _dock_layout($scope);
+                       $scope.$apply();
+                    }
+
                     /*
                     $document.ready(function () {  
                         _dock_layout($scope.dock);
@@ -138,6 +139,13 @@ define(
                         _dock_layout($scope.dock);
                     }); 
                     */
+
+                    // 제거
+                    $scope.$on("$destroy", function () {
+                        $document.off('#window.resizeing', call_dock_layout); 
+                    });
+
+                    // end controller
                 }
 
             };

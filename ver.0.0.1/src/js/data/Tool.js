@@ -111,9 +111,6 @@ define(
                         document:{
                             // 현재 선택 문서 (uid)
                             selectUID:null
-                        },
-                        element:{
-                            selectUID:null
                         }
                     });
 
@@ -123,7 +120,6 @@ define(
                     function onDataChanged(e, data){
                         
                         out('# 필요한 모든 데이터 로드가 완료 되었는지 확인');
-                        
                         out('------->TODO : $q.defer(); tnen 이용');
                         // http://blog.naver.com/youmasan/130189628570
 
@@ -152,19 +148,11 @@ define(
                 // Tool 
                 //---------------------
                 
-                /*
-                getUID : function(){
-                    return this.PROJECT.uid;
-                },
-                */
-                
-                /*
-                setTool: function(project){
-                    this.__PROJECT = project;
-                },
-                */
-                //
 
+                //---------------------
+                // Document 
+                //---------------------
+                
                 _getSelectDocument: function(){
                     return this.tool('CURRENT').document.selectUID;
                 },
@@ -174,6 +162,19 @@ define(
                     this.dataChanged = true;
                 }
 
+                //---------------------
+                // Element 
+                //---------------------
+                /*
+                _getSelectElement: function(){
+                    return this.tool('CURRENT').element.selectUID;
+                },
+
+                _setSelectElement: function(uid){
+                    this.tool('CURRENT').element.selectUID = uid;
+                    this.dataChanged = true;
+                }
+                */
                 
                 
 

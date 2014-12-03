@@ -65,10 +65,8 @@ define(
                 // 1. 이벤트를 받는다.
                 var self = this;
                 $scope.$on('#Tool.changed-MENU', function(e, data){
-                    if(data.name == 'MENU'){
-                        out(data.name, '#Tool.changed-MENU : ', arguments);
-                        self.updateMenu();
-                    }
+                    out(data.name, '#Tool.changed-MENU : ', arguments);
+                    self.updateMenu();
                 });
 
                 // 2. 변경 내용을 scope에 적용한다.

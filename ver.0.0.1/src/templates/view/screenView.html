@@ -1,7 +1,7 @@
 <div class="screenContainer">
 
     <!--// overflow_style : 스크롤 생성 여부 결정-->
-    <div class="screen" ng-style="overflow_style" ng-repeat="item in documents">
+    <div class="screen" ng-style="overflow_style" ng-repeat="item in documents" uid="{{item.uid}}">
     
 
 
@@ -15,7 +15,7 @@
         
 
 
-    <!---paper의 가로/세로 비율을 유지한 scale 변화
+    <!---paper의 가로/세로 비율을 유지한 scale 변화 transition: all 0.2s ease 0s;
     <div style="position: absolute; background-color:#DDD;width:50%;height:50%" horizontal-center="0" vertical-center="0">
         <iframe id="result" style="width:100%; height:100%;"
             src="http://www.youtube.com/embed/ylLzyHk54Z0" 
@@ -24,19 +24,30 @@
     -->
 
     <span class="label label-info" ng-click="callAPI('toggleScaleMode')">Toggle ScaleMode</span>
+    <div>Document : {{item.uid}}</div>
     <div>
     scale : {{size.scale}}, width : {{size.sourceWidth}}/{{size.width}}, height : {{size.sourceHeight}}/{{size.height}}, 격자 크기 : {{10/size.scale}}
     </div>
     
+
     <!---// size object : paper의 가로/세로 비율을 유지한 scale 변화-->
     <!--전체 스크롤 크기를 가늠하기 위한 dummy-->
-    <div horizontal-center="0" vertical-center="0"
-        position-info="{{size}}"
-        style="transition: all 0.2s ease 0s;
-        width:{{size.width}}px; height:{{size.height}}px; left:{{horizontal-center}}px; top:{{vertical-center}}px;
-        position: absolute; margin: 35px 35px;
-        
-        pointer-events:auto;">
+    <!-- 
+        BUG : angular에서 style에 바인딩하여 값을 지정할때 정상적으로 바인딩되지 않는 경우가 IE에서 발생한다.
+        따라서 ng-style을 통해 바인딩 시킨다.
+        https://github.com/angular/angular.js/issues/2186
+        http://plnkr.co/edit/rl7D9GWSMLehMnFmvHa7?p=preview
+
+        ng-style,  ng-attr-style 둘다 작동한것을 확인함
+     -->
+    <div align-center="{horizontal:'paper_horizontalPosition', vertical:'paper_verticalPosition'}" size="size"
+        ng-class="{transition: (paper_horizontalPosition && paper_verticalPosition)}"
+
+        ng-style="{     width: (size.width+'px'), height: (size.height+'px'), left: (paper_horizontalPosition+'px'), top: (paper_verticalPosition + 'px' )     }"
+
+        style="position: absolute; margin: 35px 35px;pointer-events:auto;">
+
+            
 
         <!--///////////////////////////////////////-->
         <!--// 페이지 그리기-->
@@ -86,7 +97,7 @@
             <!--// 페이지 내용 -->
             <!--//----------------------------------------->
 
-            <!--내용 컨테이너 : 
+            <!--내용 컨테이너 :  ng-bind-html="getHTMLContent(item)"
             paper의 가로/세로 비율을 유지한 scale 변화 적용해야함
             size.width * size.scale 로 크기 지정 후 scale만큼 transform 적용
             -->
@@ -98,7 +109,7 @@
                 transform: scale({{size.scale}});">
 
                 <!--컨텐츠 그룹-->
-                <div class="content" style="width:100%;height:100%;" ng-bind-html="getHTMLContent(item)">
+                <div id="contentContainer" class="content" style="width:100%;height:100%;" ng-init="getHTMLContent(item)">
                     <!-- 
                     {{$index}} : {{document.items[item.uid].document}} 
                     {{item.uid.substring(item.uid.lastIndexOf('-')+1)}}
@@ -116,7 +127,22 @@
             <!--//----------------------------------------->
 
             <!--로딩중 표시-->
-            <div class="loading" ng-hide="loadComplete">로딩중</div>
+            <!-- 
+            ng-style="{     left: (loading_horizontalPosition+'px'), top: (loading_verticalPosition+'px' ), visibility: (loading_visible)     }"
+            or
+            ng-attr-style="left:{{loading_horizontalPosition}}px; top:{{loading_verticalPosition}}px; visibility:{{loading_visible}};"
+            둘다 작동함
+             -->
+            <div class="loading" 
+                align-center="{horizontal:'loading_horizontalPosition', vertical:'loading_verticalPosition', visibleDelay: 'loading_visible', visibleDelayTime:500}"
+
+                ng-class="{transition: (loading_horizontalPosition && loading_verticalPosition)}"
+
+                ng-attr-style="left:{{loading_horizontalPosition}}px; top:{{loading_verticalPosition}}px; visibility:{{loading_visible}};"
+
+                ng-hide="loadComplete">
+                    로딩중
+            </div>
 
             <!-- 영역표시(투명표시)
             <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>
@@ -131,12 +157,13 @@
             <div id="guide-v" class="guide vertical" style="left: 500px; display: block;"></div>
              -->
 
-            <!-- 편집모드로 전환 버튼-->
-            <div class="modeHandle edit"></div>
+            <!-- 편집모드로 전환 버튼
+            <div class="modeHandle edit"></div>-->
             <!--<div class="modeHandle play" style="top:0"></div>-->
 
-            <!--선택 표시 핸들러 컨테이너-->
+            <!--선택 표시 핸들러 컨테이너
             <div ui-controller class="content"></div>
+            -->
         
         <!--paper end-->
         </div>

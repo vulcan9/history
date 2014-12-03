@@ -45,8 +45,11 @@ define(
             ////////////////////////////////////////
             // Controller
             ////////////////////////////////////////
-            
-            function Controller ( $scope, $element, $attrs, Project , CommandService, $document, ScaleMode, $sce, $timeout) {
+
+            function Controller ( $scope, $element, $attrs, Project , CommandService, $document, ScaleMode, $sce, $timeout, $compile) {
+
+                // 로드 완료 체크
+                $scope.loadComplete = false;
 
                 //-----------------------------------
                 // Background Pattern
@@ -129,13 +132,6 @@ define(
                 // layout 바뀔때 size 재조정
                 //-----------------------------------
 
-                /*
-                $document.on('#dock.layoutUpdated', __onLayoutUpdated);
-                function __onLayoutUpdated(){
-                    $document.trigger('#window.resize'); 
-                }
-                */
-
                 // layout이 변경이 완료된 후 이벤트 받음
                 $document.on('#dock.layoutUpdating', __onLayoutUpdating);
                 $scope.$on("$destroy", function() {
@@ -156,33 +152,12 @@ define(
                     // $digest already in progress when calling $scope.$apply()
                     // http://stackoverflow.com/questions/12729122/prevent-error-digest-already-in-progress-when-calling-scope-apply
                     $scope.$evalAsync( setSize );
-                    // out('onLayoutUpdating---------------------->', scaleMode, data.center.width, data.center.height);
                 }
-
-                ////////////////////////////////////////
-                // TREE 데이터 이벤트
-                ////////////////////////////////////////
-
-                /*
-                // 1. 이벤트를 받는다.
-                var self = this;
-                $scope.$on('#Project.changed-TREE', function(e, data){
-                    if(data.name == 'TREE'){
-                        out('#Project.changed-TREE (screen) : ', arguments);
-
-                        // 2. 변경 내용을 scope에 적용한다.
-                        var tree = Project.current.project('TREE');
-                        $scope.tree = (tree)? tree.items : [];
-                    }
-                });
                 
-                // 3. scope이 변경되었음을 감지한다.
-                $scope.$watch('tree', function(newValue, oldValue) {
-                    if (newValue === oldValue) { return; }
-                    out('# $scope.tree changed (screen) : ', $scope.tree);
-                    
-                }, true);
-                //*/
+                // 제거
+                $scope.$on("$destroy", function () {
+                    $document.off('#dock.layoutUpdating', __onLayoutUpdating);
+                });
 
                 ////////////////////////////////////////
                 // DOCUMENT 데이터
@@ -191,38 +166,20 @@ define(
                 // 1. 이벤트를 받는다.
                 // var self = this;
                 $scope.$on('#Project.changed-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.changed-DOCUMENT (screen) : ', arguments);
+                    out('#Project.changed-DOCUMENT (screen) : ', arguments);
 
-                        // Tree는 이미 로드 완료된 상태임
-                        // var tree = Project.current.project('TREE');
-                        // $scope.tree = (tree)? tree.items : [];
+                    // Tree는 이미 로드 완료된 상태임
+                    // var tree = Project.current.project('TREE');
+                    // $scope.tree = (tree)? tree.items : [];
 
-                        // Document
-                        // $scope.documents = Project.current.project('DOCUMENT');
-
-                        // var documents = data.newValue;
-
-                        var selectUID = Project.current.getSelectDocument();
-                        __documentSelected(selectUID);
-                    }
+                    var selectUID = Project.current.getSelectDocument();
+                    __documentSelected(selectUID);
                 });
                 
-                /*
-                $scope.$watch('document', function(newValue, oldValue) {
-                    if (newValue === oldValue) { return; }
-                    out('# $scope.document changed (screen) : ', $scope.document);
-                    // updatedocumentList();
-                }, true);
-                */
-
-                /*
-                #Project.added-DOCUMENT
-                #Project.removed-DOCUMENT
-                #Project.modified-DOCUMENT
-                #Project.selected-DOCUMENT
-                */
-
+                //-------------------------------------
+                // DOM 업데이트
+                //-------------------------------------
+                
                 // var data = {data:project};
                 $scope.$on('#Project.initialized', function(e, data){
                     // $scope.tree = Project.current.project('TREE');
@@ -231,39 +188,27 @@ define(
 
                 //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
                 $scope.$on('#Project.selected-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.selected-DOCUMENT (screen) : ', data);
-                        __onSelectDocument(data.newValue, data.oldValue);
-                    }
+                    out('#Project.selected-DOCUMENT (screen) : ', data);
+                    __onSelectDocument(data.newValue, data.oldValue);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.added-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.added-DOCUMENT (screen) : ', data);
-                        __onAddDocument(data.item, data.param);
-                    }
+                    out('#Project.added-DOCUMENT (screen) : ', data);
+                    __onAddDocument(data.item, data.param);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.removed-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.removed-DOCUMENT (screen) : ', data);
-                        __onRemoveDocument(data.item, data.param);
-                    }
+                    out('#Project.removed-DOCUMENT (screen) : ', data);
+                    __onRemoveDocument(data.item, data.param);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.modified-DOCUMENT', function(e, data){
-                    if(data.name == 'DOCUMENT'){
-                        out('#Project.modified-DOCUMENT (screen) : ', data);
-                        __onModifyDocument(data.item, data.param);
-                    }
+                    out('#Project.modified-DOCUMENT (screen) : ', data);
+                    __onModifyDocument(data.item, data.param);
                 });
-
-                //-------------------------------------
-                // DOM 업데이트
-                //-------------------------------------
                 
                 function __onSelectDocument(newValue, oldValue){
                     out(' - oldValue : ', oldValue);
@@ -285,30 +230,7 @@ define(
                 }
 
                 function __documentSelected(uid){
-                    
-                    var documentItem;
-                    if(uid){
-                        //uid로 DOM 찾아내기
-                        documentItem = Project.current.getDocument(uid);
-                    }else{
-                        documentItem = null;
-                    }
-
-                    //out('current select : ', Project.current.getSelectDocument());
-
-                    
-                    $scope.loadComplete = (documentItem && documentItem.document.content);
-                    // $scope.documents = [documentItem];
-                    if(documentItem == null) return;
-
-                    var htmlString = documentItem.document.content;
-                    // var html = angular.element(htmlString);
-
-                    // $scope.documents = [htmlString];
-                    // http://stackoverflow.com/questions/19415394/with-ng-bind-html-unsafe-removed-how-do-i-inject-html
-                    // var bindHTML = __getHTMLContent(htmlString);
-                    $scope.documents = [{content:htmlString}];
-
+                    contentRefresh(uid);
                     /*
                     // IFrame 파일로드
                     //var iframeDocument = self.bookContainer.contentWindow.document || self.bookContainer.contentDocument;
@@ -320,16 +242,155 @@ define(
                     // _onLoadComplete 이벤트 발생함
                     */
                 }
+
+                // 내용 갱신
+                function contentRefresh(documentUID){
+
+                    //uid로 DOM 찾아내기
+                    var documentItem = documentUID ? Project.current.getDocument(documentUID) : null;
+                    $scope.loadComplete = (documentItem && documentItem.document.content);
+                    
+                    if(documentItem == null) {
+                        $scope.documents = [];
+                        return;
+                    }
+
+                    var dom = documentItem.document.content;
+                    var html = Project.current.htmlToString(dom);
+                    
+                    $scope.documents = [{
+                        uid: documentUID, 
+                        content: dom,
+                        originalHTML: html
+                    }];
+
+                    /*
+                    // 랜더링 타임을 기다렸다가 DOM 적용함
+                    $timeout(function(){
+                        $element.find('#contentContainer').html(dom);
+                    });
+                    */
+                }
                 
+                // HTML Content 바인딩
                 $scope.getHTMLContent = function (item) {
-                    var htmlString = item.content;
-                    return $sce.trustAsHtml(htmlString);
+                    // var htmlString = item.content;
+                    // return $sce.trustAsHtml(htmlString);
+
+                    // attribute에 uid값이 아직 적용되지 않은 경우일 수 있으므로 $evalAsync로 실행한다.
+                    $scope.$evalAsync(function(){
+                        
+                        var documentUID = item.uid
+                        var $contentContainer = getContentContainer(documentUID);
+                        
+                        var dom = item.content;
+                        $contentContainer.html(dom);
+                    });
+                }
+
+                /*
+                $scope.$watch('documents', function(newValue, oldValue) {
+                    if (newValue === oldValue) { return; }
+                    __onDocumentChanged(newValue, oldValue);
+                }, true);
+                
+                function __onDocumentChanged(newValue, oldValue){
+                    out('__onDocumentChanged : ', newValue);
+                }
+                */
+
+                // 로드 내용 container DOM 찾기
+                function getContentContainer(documentUID){
+                    var $document = $element.find('[uid=' + documentUID + ']');
+                    var $content = $document.find('#contentContainer');
+                    return $content;
+                }
+
+                // 해당 문서의 Element DOM 찾기
+                function getContentElement(elementUID, documentUID){
+                    var $contentContainer = getContentContainer(documentUID);
+                    var $el = $contentContainer.find('[uid=' + elementUID + ']');
+                    return $el;
+                }
+
+                //-------------------------------------
+                // Element 업데이트
+                //-------------------------------------
+                
+                // {newValue: "element-18d53f95-2ffa-433a-9a9a-c57ca1534f04", name: "ELEMENT", oldValue: "element-c2d5091c-3d06-470c-b7b0-343a8bd41c88", document: "document-9c2bd172-edbe-4ed3-a145-c7e25dc515d1"}
+                $scope.$on('#Project.selected-ELEMENT', function(e, data){
+                    out('#Project.selected-ELEMENT (screen) : ', data);
+                    __onSelectElement(data.newValue, data.oldValue, data.documentUID);
+                });
+
+                $scope.$on('#Project.added-ELEMENT', function(e, data){
+                    out('#Project.addeded-ELEMENT (screen) : ', data);
+                    __onAddElement(data.item, data.param);
+                });
+                
+                function __onSelectElement(newValue, oldValue, documentUID){
+                    out(' - oldValue (element) : ', oldValue);
+                    out(' - newValue (element) : ', newValue);
+
+                    // 해당 문서에 선택 표시
+
+                    // addElement 후 바로 선택되는 경우 $element에 아직 렌더링 되지 않은 상황일 수 있다.
+                    var $el_old = getContentElement(oldValue, documentUID)
+                    $el_old.removeClass('selectedElement');
+
+                    var $el_new = getContentElement(newValue, documentUID)
+                    $el_new.addClass('selectedElement');
+
+
+
+
+
+
+                    // // 편집 UI를 구성한다.
+                    // var editBoundary = {
+                    //     x: 0,
+                    //     y: 0,
+                    //     width: 100,
+                    //     height: 100,
+                    //     elementUID: newValue,
+                    //     documentUID: 
+                    // }
+
+                    // $scope.edit = editBoundary;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                }
+
+                function __onAddElement(item, param){
+                    contentRefresh(param.documentUID);
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////
                 // DOM 인터렉션
                 ////////////////////////////////////////////////////////////////////////////////
-                
+
                 //-----------------------
                 // 메뉴 클릭 이벤트 처리
                 //-----------------------

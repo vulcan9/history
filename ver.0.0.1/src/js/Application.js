@@ -106,7 +106,8 @@ define(
 
         function showApplication() {
             angular.element( '.applicationContainer' ).css( {
-                opacity: 1
+                // opacity: 1
+                visibility: 'visible'
             } );
         }
 
