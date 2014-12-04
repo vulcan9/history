@@ -20,34 +20,44 @@ user strict 명령은 엄격하게 JavaScript 룰을 적용하라는 의미이�
 잘못된 부분에 대한 검증도 보다 엄격하게 동작한다.
 하지만, 일부 라이브러리의 경우 use strict 명령을 사용하면 동작하지 않는 경우도 있으므로 주의해야 한다.
 */
-'use strict';
 
-console.log ('TODO : // 디버깅용으로 노출된 속성 비활성화 시킬것 (window.debug=false)');
-window.debug = true;
+'use strict';
 
 ////////////////////////////////////////
 // 로그 출력
 ////////////////////////////////////////
 
-// IE 7, 8
-if ( typeof console === 'undefined' || typeof console.log === 'undefined' ) {
-    var console = {
-        log: function() {}
-    };
-}
+window.debug = true;
 
-var out = window.out || function() {
-    if( !window.debug ) return;
-    if ( !arguments || arguments.length < 1 ) return;
+(function() {
 
-    if ( window.out && window.out.$log ) {
-        window.out.$log.info.apply( window.out.$log, arguments );
-    } else {
-        console.log.apply( window.console, arguments );
+    // IE 7, 8
+    if ( typeof window.console === 'undefined' || typeof window.console.log === 'undefined' ) {
+        window.console = {};
+        // union of Chrome, FF, IE, and Safari console methods
+        var m = [ "log", "info", "warn", "error", "debug", "trace", "dir", "group", "groupCollapsed", "groupEnd", "time", "timeEnd", "profile", "profileEnd", "dirxml", "assert", "count", "markTimeline", "timeStamp", "clear" ];
+        for (var i = 0; i < m.length; i++) {
+            if (!window.console[m[i]]) {
+                window.console[m[i]] = function() {};
+            }    
+        }
     }
-}
 
-console.log( "# Application By Vulcan." );
+    window.out = window.out || function() {
+        if( !window.debug ) return;
+        if ( !arguments || arguments.length < 1 ) return;
+
+        if ( window.out && window.out.$log ) {
+            window.out.$log.info.apply( window.out.$log, arguments );
+        } else {
+            console.log.apply( window.console, arguments );
+        }
+    }
+
+})();
+
+console.log ('TODO : // 디버깅용으로 노출된 속성 비활성화 시킬것 (window.debug=false)');
+console.log( '# Application By Vulcan.' );
 
 ////////////////////////////////////////
 // 렌더링 타이밍

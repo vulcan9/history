@@ -19,7 +19,12 @@
 .hidden{
     visibility: hidden;
 }
-
+.active{
+    opacity: 1;
+}
+.deactive{
+    opacity: 0.5;
+}
 
 
 
@@ -37,7 +42,7 @@
 .applicationContainer{
     /*application 설정 완료 후 1로 변경되는 js 코드 있음*/
     /*opacity: 0;
-    transition: all 1s ease 0s;*/
+    transition: opacity 1s;*/
     visibility: hidden;
 
     position: absolute;
@@ -539,7 +544,7 @@
 }
 
 .screen .paper .content{
-    position: absolute;
+    position: relative;
     /*border: 1px solid #FF0000;*/
     padding: 10px 10px;
     cursor: crosshair;

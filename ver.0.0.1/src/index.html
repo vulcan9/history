@@ -55,10 +55,10 @@
             일부 페이지마다 필요한 CSS은 컨트롤러에서 설정해서 로드 (IE8 에서도 정상동작)
             http://plnkr.co/edit/KzjIMN
         -->
-        <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" />
+        <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" >
 
 
-        <script data-main="js/main" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.14/require.min.js"></script>
+        <script data-main="js/main" src="./libs/require/require.js"></script>        
 
 
     </head>
@@ -68,6 +68,8 @@
 
 
         <div ng-view class="applicationContainer"></div>
+
+
 
         <!--
             Split Bar :
