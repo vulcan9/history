@@ -146,7 +146,7 @@ define(
             return {
 
                 restrict: 'EA',
-                scope: false,
+                scope: true,
                 
                 controller: function ($scope, $element, $attrs){
 

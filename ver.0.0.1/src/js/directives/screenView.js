@@ -52,28 +52,31 @@ define(
                 $scope.loadComplete = false;
 
                 //-----------------------------------
-                // Background Pattern
+                // Background Pattern, align-center 데이터
                 // Svg Attribute (ng-attr-xxx 사용해야함)
                 // bug patch : http://alexandros.resin.io/angular-d3-svg/
                 //-----------------------------------
 
                 $scope.$watch('size', function(newValue, oldValue) {
                     $scope.ratio = getRatio(newValue.scale);
+                    $scope.alignInfo_paper = getAlignInfo_paper(newValue);
+                    $scope.alignInfo_loading = getAlignInfo_loading(newValue);
                 }, true);
 
                 // A4 : 595x842, ppt : 1193x671
 
                 // margin은 (.paper) class 설정치를 참고할것
+                var marginW = 70;
                 var marginH = 70;
-                var marginV = 70;
                 var sourceWidth = Project.paper.width;
                 var sourceHeight = Project.paper.height;
-                var compareWidth = Math.max(0, sourceWidth - marginH);
-                var compareHeight = Math.max(0, sourceHeight - marginV);
+                var compareWidth = Math.max(0, sourceWidth - marginW);
+                var compareHeight = Math.max(0, sourceHeight - marginH);
 
                 $scope.size = getSize(1);
                 $scope.stroke = 1;
                 
+                // 배경 패턴을 그리기 위한 위치 정보
                 function getRatio(scale){
                     var obj = {
                         value: scale
@@ -86,14 +89,70 @@ define(
                 }
 
                 //-----------------------------------
+                // Align 연산
+                //-----------------------------------
+
+                // 가로/세로 중앙 정렬을 위한 위치 정보
+                function getAlignInfo_paper(scale){
+                    var parent = $element.parent();
+                    var paddingW = (U.toNumber(parent.css('padding-left')) || 0) + (U.toNumber(parent.css('padding-right')) || 0);
+                    var paddingH = (U.toNumber(parent.css('padding-top')) || 0) + (U.toNumber(parent.css('padding-bottom')) || 0);
+
+                    var marginW = (U.toNumber($element.css('margin-left')) || 0)  + (U.toNumber($element.css('margin-right')) || 0);
+                    var marginH = (U.toNumber($element.css('margin-top')) || 0) + (U.toNumber($element.css('margin-bottom')) || 0);
+
+                    var alignInfo={
+                        
+                        // 가로/세로 적용 및 데이터 저장  변수명 지정
+                        // type: 'both', // horizontal | vertical | both | undefined (=both)
+                        // visibleDelayTime:500,
+
+                        parentWidth: compareWidth - paddingW,
+                        parentHeight: compareHeight - paddingH,
+                        width: scale.width + marginW,
+                        height: scale.height + marginH
+                    };
+
+                    // out('alignInfo : ', alignInfo);
+                    return alignInfo;
+                }
+
+                // 가로/세로 중앙 정렬을 위한 위치 정보
+                function getAlignInfo_loading(scale){
+                    var parent = $element.parent();
+                    var paddingW = (U.toNumber(parent.css('padding-left')) || 0) + (U.toNumber(parent.css('padding-right')) || 0);
+                    var paddingH = (U.toNumber(parent.css('padding-top')) || 0) + (U.toNumber(parent.css('padding-bottom')) || 0);
+
+                    var alignInfo={
+                        
+                        // 가로/세로 적용 및 데이터 저장  변수명 지정 (default=both)
+                        // type: 'both', // horizontal | vertical | both | undefined (=both)
+
+                        // 초기 visible 설정 지연 millisecond (default=0)
+                        visibleDelayTime:500,
+
+                         // 아래 설정값은 생략 가능 
+                         // 생략시 현재 dom 상태 기준으로 자동 계산 되어짐
+                         // 따라서 transition이 적용되고 있다면 아래값들을 설정하여  최종 결과값을 알려주어야함
+                        parentWidth: scale.width - paddingW,
+                        parentHeight: scale.height - paddingH
+                        // width: scale.width + marginW,
+                        // height: scale.height + marginH
+                    };
+
+                    // out('loading alignInfo : ', alignInfo);
+                    return alignInfo;
+                }
+
+                //-----------------------------------
                 // Scale 연산
                 //-----------------------------------
 
                 var scaleMode = new ScaleMode({
                     sourceWidth: sourceWidth,
                     sourceHeight: sourceHeight,
-                    compareWidth: Math.max(0, $element.width() - marginH),
-                    compareHeight: Math.max(0, $element.height() - marginV)
+                    compareWidth: Math.max(0, $element.width() - marginW),
+                    compareHeight: Math.max(0, $element.height() - marginH)
                 });
                 scaleMode.scale(ScaleMode.SCALE_WINDOW);
 
@@ -107,8 +166,8 @@ define(
 
                         width: Math.ceil(sourceWidth*scale),
                         height: Math.ceil(sourceHeight*scale),
-                        marginH : marginH,
-                        marginV : marginV
+                        marginW : marginW,
+                        marginH : marginH
                     };
                     return sizeObj;
                 }
@@ -146,8 +205,8 @@ define(
                 // transform: scale({{transform.scale}}) translate({{transform.x}}px,{{transform.y}}px) ;
                 // transform-origin: 0 0;" 
                 function __onLayoutUpdating(e, data){
-                    compareWidth = Math.max(0, data.center.width - marginH);
-                    compareHeight = Math.max(0, data.center.height - marginV);
+                    compareWidth = Math.max(0, data.center.width - marginW);
+                    compareHeight = Math.max(0, data.center.height - marginH);
 
                     // $digest already in progress when calling $scope.$apply()
                     // http://stackoverflow.com/questions/12729122/prevent-error-digest-already-in-progress-when-calling-scope-apply

@@ -288,9 +288,9 @@ define(
             
             // 종료 시점에 transition 기능 적용
             __delayExecute (100, function(){
-                var time = Tool.current.tool('CONFIG').transition.TICK;
+                var transitionTime = Tool.current.tool('CONFIG').transition.TICK;
                 angular.element(window.document).find('.dock').css({
-                    'transition': 'all ' + time + 's ease 0s'
+                    'transition': 'all ' + transitionTime + 's ease 0s'
                 });
             }, null);
 

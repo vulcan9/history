@@ -38,14 +38,22 @@
         https://github.com/angular/angular.js/issues/2186
         http://plnkr.co/edit/rl7D9GWSMLehMnFmvHa7?p=preview
 
-        ng-style,  ng-attr-style 둘다 작동한것을 확인함
-     -->
-    <div align-center="{horizontal:'paper_horizontalPosition', vertical:'paper_verticalPosition'}" size="size"
-        ng-class="{transition: (paper_horizontalPosition && paper_verticalPosition)}"
-
+        ng-style,  ng-attr-style 둘다 작동한것을 확인함 
+        - ng-attr-style은 style attribute를 덮어쓰므로 함께 사용하지 않는것이 좋음
+        - ng-style은 style attribute가 있으면 merge시켜줌
         ng-style="{     width: (size.width+'px'), height: (size.height+'px'), left: (paper_horizontalPosition+'px'), top: (paper_verticalPosition + 'px' )     }"
+        ng-attr-style="width:{{size.width}}px; height:{{size.height}}px; left: {{paper_horizontalPosition}}px; top: {{paper_verticalPosition}}px;"
 
-        style="position: absolute; margin: 35px 35px;pointer-events:auto;">
+
+            visibility: {{alignInfo_paper.visible?'visible':'hidden'}};
+     -->
+    <div align-center="{{alignInfo_paper}}" align-result="alignPaper"
+        
+        ng-attr-style="width:{{alignInfo_paper.width}}px; height:{{alignInfo_paper.height}}px; 
+            left: {{alignPaper.horizontal}}px; top: {{alignPaper.vertical}}px;
+            position: absolute; margin: 35px 35px;"
+
+        class="transition">
 
             
 
@@ -60,7 +68,8 @@
             <!--//----------------------------------------->
 
             <!--배경 패턴-->
-            <div class="background">
+            <div class="background" style="margin: -1px;" class="transition">
+
                 <svg zoomAndPan="disable" currentscale="1" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position: absolute;">
                     <pattern id="grid-pattern" patternUnits="userSpaceOnUse" x="0" y="0" ng-attr-width="{{ratio.r100}}" ng-attr-height="{{ratio.r100}}">
                     <g id="sharp" transform="translate(-0.5,-0.5)">
@@ -90,6 +99,7 @@
                     
                     <rect id="grid" fill="url(#grid-pattern)" width="100%" height="100%" opacity="0.1"></rect>
                 </svg>
+
             </div>
             <!--배경 패턴 끝-->
 
@@ -101,14 +111,16 @@
             paper의 가로/세로 비율을 유지한 scale 변화 적용해야함
             size.width * size.scale 로 크기 지정 후 scale만큼 transform 적용
 
-            ng-attr-style="width:{{size.sourceWidth}}px; height:{{size.sourceHeight}}px; transform: scale({{size.scale}});"
+            ng-style="{     width: (size.sourceWidth+'px'), height: (size.sourceHeight+'px'), transform: 'scale('+size.scale+')', transformOrigin: '0 0'     }"
+            ng-attr-style="width:{{size.sourceWidth}}px; height:{{size.sourceHeight}}px; transform: scale({{size.scale}}); transform-origin: 0 0;"
             -->
-            <div ui-canvas
+            <div ng-attr-style="width:{{size.sourceWidth}}px; height:{{size.sourceHeight}}px; 
+                transform: scale({{size.scale}}); transform-origin: 0 0;
+                margin: -1px; display:inline-block;position: absolute;" 
 
-                ng-attr-style="width:{{size.sourceWidth}}px; height:{{size.sourceHeight}}px; transform: scale({{size.scale}}); transform-origin: 0 0;"
-
-                style="margin: -1px; display:inline-block;
-                    background-color:rgba(255,255,0,0);">
+                class="transition"
+                
+                style="/*background-color:rgba(255,255,0,0.5);*/">
 
                 <!--컨텐츠 그룹-->
                 <div id="contentContainer" class="content" style="width:100%;height:100%;" ng-init="getHTMLContent(item)">
@@ -128,23 +140,60 @@
             <!--// 페이지 인터렉션 -->
             <!--//----------------------------------------->
 
+            <!--UI 표시-->
+            <div  ui-canvas
+                style="width:100px; height:100px;
+                    margin: -1px; display:inline-block;
+                    background-color:rgba(255,255,0,0.5);
+                    position: absolute; 
+                    top: 0px; left: 0px;
+                    /*border: 1px solid #FF0000;*/">UI</div>
+
+<!-- 
+UI 아래쪽에 마우스 이벤트가 전달되어야 한다 (SVG)
+canvas - paper 표시(배경)
+ui -  UI표시만 한다. (단일 표시 또는 그룹표시)
+
+position: absolute;
+width: 100%;
+height: 100%;
+top: 0px;
+border: 1px solid #FF0000;
+left: 0px;
+pointer-events: none;
+ -->
+
+
             <!--로딩중 표시-->
             <!-- 
             ng-style="{     left: (loading_horizontalPosition+'px'), top: (loading_verticalPosition+'px' ), visibility: (loading_visible)     }"
             or
             ng-attr-style="left:{{loading_horizontalPosition}}px; top:{{loading_verticalPosition}}px; visibility:{{loading_visible}};"
             둘다 작동함
-             -->
-            <div class="loading" 
+
+
+
+            <div class="loading" id="aa"
                 align-center="{horizontal:'loading_horizontalPosition', vertical:'loading_verticalPosition', visibleDelay: 'loading_visible', visibleDelayTime:500}"
 
                 ng-class="{transition: (loading_horizontalPosition && loading_verticalPosition)}"
 
-                ng-attr-style="left:{{loading_horizontalPosition}}px; top:{{loading_verticalPosition}}px; visibility:{{loading_visible}};"
+                ng-hide="loadComplete == false">
+             -->
+
+            <div class="loading"
+
+                align-center="{{alignInfo_loading}}" align-result="alignLoading"
+
+                ng-class="{transition: alignLoading.visible};"
+                
+                ng-attr-style="left: {{alignLoading.horizontal}}px; top: {{alignLoading.vertical}}px; 
+                    visibility: {{alignLoading.visible?'visible':'hidden'}};"
 
                 ng-hide="loadComplete == false">
                     로딩중
             </div>
+
 
             <!-- 영역표시(투명표시)
             <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>

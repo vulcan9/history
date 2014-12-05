@@ -11,7 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 .transition{
-    transition: all 0.5s ease 0s;
+    transition: all 0.2s ease;
 }
 .visible{
     visibility: visible;
@@ -91,7 +91,7 @@
     border-left: 1px solid #DDD; 
     /*margin-left: -1px;*/
 
-    /*transition: all 0.5s ease 0s;*/
+    /*transition: all 0.5s ease;*/
 }
 
 .dock.top{
@@ -540,7 +540,7 @@
     width:100%;
     height:100%;
     /*1px 눈금위치 차이남*/
-    margin: 1px;
+    /*margin: 1px;*/
 }
 
 .screen .paper .content{
