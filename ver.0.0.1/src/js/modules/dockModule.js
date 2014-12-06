@@ -416,9 +416,9 @@ define(
                     if(center){
                         center.css({
                             width: centerRect.width, height: centerRect.height,
-                            // left: centerRect.x, top: centerRect.y
-                            left: 0, top: 0,
-                            position: 'relative'
+                            left: centerRect.x, top: centerRect.y,
+                            // left: 0, top: 0,
+                            position: 'absolute'
                         });
                     }
 

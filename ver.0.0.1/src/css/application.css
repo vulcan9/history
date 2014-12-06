@@ -110,7 +110,7 @@
     /*background-color: rgba(150,150,255,0.6);*/
     /*float: left;*/
     box-sizing: content-box;
-    margin-left: -1px;
+    margin-left: 1px;
 }
 
 .dock.right{
