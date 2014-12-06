@@ -2,20 +2,9 @@
 
     <!--// overflow_style : 스크롤 생성 여부 결정-->
     <div class="screen" ng-style="overflow_style" ng-repeat="item in documents" uid="{{item.uid}}">
-    
 
 
-    <!--
-    <ul>
-        <li ng-repeat="item in tree">
-            {{$index + 1}} : {{document.items[item.uid].document}}
-        </li>
-    </ul>
-    -->
-        
-
-
-    <!---paper의 가로/세로 비율을 유지한 scale 변화 transition: all 0.2s ease 0s;
+    <!---paper의 가로/세로 비율을 유지한 scale 변화
     <div style="position: absolute; background-color:#DDD;width:50%;height:50%" horizontal-center="0" vertical-center="0">
         <iframe id="result" style="width:100%; height:100%;"
             src="http://www.youtube.com/embed/ylLzyHk54Z0" 
@@ -30,6 +19,10 @@
     </div>
     
 
+    <!--///////////////////////////////////////-->
+    <!--// 페이지 그리기-->
+    <!--///////////////////////////////////////-->
+
     <!---// size object : paper의 가로/세로 비율을 유지한 scale 변화-->
     <!--전체 스크롤 크기를 가늠하기 위한 dummy-->
     <!-- 
@@ -43,9 +36,6 @@
         - ng-style은 style attribute가 있으면 merge시켜줌
         ng-style="{     width: (size.width+'px'), height: (size.height+'px'), left: (paper_horizontalPosition+'px'), top: (paper_verticalPosition + 'px' )     }"
         ng-attr-style="width:{{size.width}}px; height:{{size.height}}px; left: {{paper_horizontalPosition}}px; top: {{paper_verticalPosition}}px;"
-
-
-            visibility: {{alignInfo_paper.visible?'visible':'hidden'}};
      -->
     <div align-center="{{alignInfo_paper}}" align-result="alignPaper"
         
@@ -55,12 +45,7 @@
 
         class="transition">
 
-            
-
-        <!--///////////////////////////////////////-->
-        <!--// 페이지 그리기-->
-        <!--///////////////////////////////////////-->
-
+        
         <div class="paper">
 
             <!--//----------------------------------------->
@@ -68,7 +53,7 @@
             <!--//----------------------------------------->
 
             <!--배경 패턴-->
-            <div class="background" style="margin: -1px;" class="transition">
+            <div class="background" class="transition">
 
                 <svg zoomAndPan="disable" currentscale="1" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" style="position: absolute;">
                     <pattern id="grid-pattern" patternUnits="userSpaceOnUse" x="0" y="0" ng-attr-width="{{ratio.r100}}" ng-attr-height="{{ratio.r100}}">
@@ -119,11 +104,11 @@
                 margin: -1px; display:inline-block;position: absolute;" 
 
                 class="transition"
-                
+
                 style="/*background-color:rgba(255,255,0,0.5);*/">
 
                 <!--컨텐츠 그룹-->
-                <div id="contentContainer" class="content" style="width:100%;height:100%;" ng-init="getHTMLContent(item)">
+                <div id="contentContainer" class="content" style="width:100%;height:100%;" ng-init="callAPI('getHTMLContent', item)">
                     <!-- 
                     {{$index}} : {{document.items[item.uid].document}} 
                     {{item.uid.substring(item.uid.lastIndexOf('-')+1)}}
@@ -137,50 +122,18 @@
             <!--내용 컨테이너 끝-->
 
             <!--//----------------------------------------->
-            <!--// 페이지 인터렉션 -->
+            <!--// Element 편집 UI -->
             <!--//----------------------------------------->
 
             <!--UI 표시-->
-            <div  ui-canvas
-                style="width:100px; height:100px;
-                    margin: -1px; display:inline-block;
-                    background-color:rgba(255,255,0,0.5);
-                    position: absolute; 
-                    top: 0px; left: 0px;
-                    /*border: 1px solid #FF0000;*/">UI</div>
+            <div  ui-control></div>
 
-<!-- 
-UI 아래쪽에 마우스 이벤트가 전달되어야 한다 (SVG)
-canvas - paper 표시(배경)
-ui -  UI표시만 한다. (단일 표시 또는 그룹표시)
 
-position: absolute;
-width: 100%;
-height: 100%;
-top: 0px;
-border: 1px solid #FF0000;
-left: 0px;
-pointer-events: none;
- -->
-
+            <!--//----------------------------------------->
+            <!--// 로딩중 표시 -->
+            <!--//----------------------------------------->
 
             <!--로딩중 표시-->
-            <!-- 
-            ng-style="{     left: (loading_horizontalPosition+'px'), top: (loading_verticalPosition+'px' ), visibility: (loading_visible)     }"
-            or
-            ng-attr-style="left:{{loading_horizontalPosition}}px; top:{{loading_verticalPosition}}px; visibility:{{loading_visible}};"
-            둘다 작동함
-
-
-
-            <div class="loading" id="aa"
-                align-center="{horizontal:'loading_horizontalPosition', vertical:'loading_verticalPosition', visibleDelay: 'loading_visible', visibleDelayTime:500}"
-
-                ng-class="{transition: (loading_horizontalPosition && loading_verticalPosition)}"
-
-                ng-hide="loadComplete == false">
-             -->
-
             <div class="loading"
 
                 align-center="{{alignInfo_loading}}" align-result="alignLoading"
@@ -194,6 +147,10 @@ pointer-events: none;
                     로딩중
             </div>
 
+
+            <!--//----------------------------------------->
+            <!--// 기타 요소 표시 -->
+            <!--//----------------------------------------->
 
             <!-- 영역표시(투명표시)
             <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>

@@ -26,14 +26,57 @@ define(
             return {
 
                 restrict: 'EA',
-                
-                link: function( scope, el, attrs ) {
-                    el.text( "timelineView" );
-                    $element.trigger('#view.layoutUpdate'); 
-                }
 
+                controller: Controller,
+
+                link: Link
+                
             };
 
+            ////////////////////////////////////////////////////////////////////////////////
+            //
+            // Controller
+            //
+            ////////////////////////////////////////////////////////////////////////////////
+            
+            function Controller( $scope, $element, $attrs) {
+                //$scope.version = VersionService;
+                // $element.trigger('#view.layoutUpdate');
+
+
+
+                /*
+                $scope.$evalAsync( function(){
+                    // $element.trigger('#view.layoutUpdate');
+                } );
+                
+                $scope.$watch(function(){
+                    // $element.trigger('#view.layoutUpdate'); 
+                });
+                */
+
+                ////////////////////////////////////////
+                // End Controller
+                ////////////////////////////////////////
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            //
+            // Link
+            //
+            ////////////////////////////////////////////////////////////////////////////////
+            
+            function Link ( $scope, $element, $attrs) {
+                
+                $element.text( "timelineView" );
+                $element.trigger('#view.layoutUpdate'); 
+
+                ////////////////////////////////////////
+                // End Controller
+                ////////////////////////////////////////
+            }
+
+            // end directive
         }
 
         // 리턴

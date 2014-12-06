@@ -19,7 +19,7 @@ define(
         application.directive( 'menuView', _directive );
 
         // 선언
-        function _directive() {
+        function _directive(HttpService, $location, CommandService, Tool) {
 
             //out( 'version' );
 
@@ -40,24 +40,23 @@ define(
 
                 // 다른 디렉티브들과 통신하기 위한 역할을 하는 controller명칭을 정의.
                 // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
-                controller: Controller
+                controller: Controller,
+
+                link: Link
 
                 // end config
             };
 
             return config;
 
-            ////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////
+            //
             // Controller
-            ////////////////////////////////////////
+            //
+            ////////////////////////////////////////////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, $location, CommandService, Tool, HttpService, $timeout ) {
+            function Controller( $scope, $element, $attrs ) {
                 
-                // 데이터 로드
-                if (Tool.current.TOOL.MENU == undefined){
-                    setMenu();
-                }
-
                 //------------------
                 // 데이터 변경 감지 순서
                 //------------------
@@ -74,41 +73,20 @@ define(
                     $scope.menu = Tool.current.tool('MENU');
                 }
                 
+                /*
                 // 3. scope이 변경되었음을 감지한다.
                 // 메뉴 설정 : 데이터가 있으면 다시 로드하지 않음
                 $scope.$watch('menu', function(newValue, oldValue) {
                     if (newValue === oldValue) { return; }
                     out('#menu changed : ', $scope.menu);
                 }, true);
-                
-                //-----------------------
-                // 메뉴 클릭 이벤트 처리
-                //-----------------------
-
-                // 메뉴 항목을 클릭한 경우 호출되는 함수
-                $scope.onClick = function(item){
-                    out(' * MENU item : ', item);
-                    
-                    // 링크
-                    var link = item.link;
-                    if(link){
-                        //out('* link : ', link);
-                        $location.path(link);
-                        return;
-                    }
-
-                    // 메뉴 클릭 이벤트 처리
-                    var command = item.command;
-                    var param = {};
-                    CommandService.exe(command, param);
-                    
-                };
+                */
 
                 ////////////////////////////////////////
                 // 메뉴 설정 데이터 로드
                 ////////////////////////////////////////
                 
-                function setMenu(){
+                this.setMenu = function (){
 
                     var menuURL = _PATH.ROOT + 'data/menu.json';
                     
@@ -146,6 +124,48 @@ define(
                 ////////////////////////////////////////
             }
 
+            ////////////////////////////////////////////////////////////////////////////////
+            //
+            // Link
+            //
+            ////////////////////////////////////////////////////////////////////////////////
+            
+            function Link( $scope, $element, $attrs, controller) {
+
+                // 데이터 로드
+                if (Tool.current.TOOL.MENU == undefined){
+                    controller.setMenu();
+                }
+
+                //-----------------------
+                // 메뉴 클릭 이벤트 처리
+                //-----------------------
+
+                // 메뉴 항목을 클릭한 경우 호출되는 함수
+                $scope.onClick = function(item){
+                    out(' * MENU item : ', item);
+                    
+                    // 링크
+                    var link = item.link;
+                    if(link){
+                        //out('* link : ', link);
+                        $location.path(link);
+                        return;
+                    }
+
+                    // 메뉴 클릭 이벤트 처리
+                    var command = item.command;
+                    var param = {};
+                    CommandService.exe(command, param);
+                    
+                };
+
+                ////////////////////////////////////////
+                // End Link
+                ////////////////////////////////////////
+            }
+
+            // end _directive
         }
 
         // 리턴

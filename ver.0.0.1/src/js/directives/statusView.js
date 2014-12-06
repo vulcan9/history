@@ -19,7 +19,7 @@ define(
         application.directive( 'statusView', _directive );
 
         // 선언
-        function _directive() {
+        function _directive( $timeout ) {
 
             //out( 'version' );
 
@@ -41,20 +41,21 @@ define(
                 // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
                 controller: Controller,
 
-                link: function( scope, el, attrs ) {
-                    // el.text( "propertyView" );
-                    // el.trigger('#view.layoutUpdate'); 
-                }
+                link: Link
                 
             };
 
-            function Controller( $scope, $element, VersionService, $timeout ) {
+            ////////////////////////////////////////////////////////////////////////////////
+            //
+            // Controller
+            //
+            ////////////////////////////////////////////////////////////////////////////////
+            
+            function Controller( $scope, $element, $attrs) {
                 //$scope.version = VersionService;
                 // $element.trigger('#view.layoutUpdate');
 
-                $timeout (function() {
-                    $element.trigger('#view.layoutUpdate');
-                }, 100);
+
 
                 /*
                 $scope.$evalAsync( function(){
@@ -65,6 +66,23 @@ define(
                     // $element.trigger('#view.layoutUpdate'); 
                 });
                 */
+
+                ////////////////////////////////////////
+                // End Controller
+                ////////////////////////////////////////
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            //
+            // Link
+            //
+            ////////////////////////////////////////////////////////////////////////////////
+            
+            function Link ( $scope, $element, $attrs) {
+
+                $timeout (function() {
+                    $element.trigger('#view.layoutUpdate');
+                }, 100);
 
                 ////////////////////////////////////////
                 // End Controller

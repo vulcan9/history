@@ -269,9 +269,11 @@ define(
         // millisecond 후에 최종 호출되는 function을 실행시킨다.
         // millisecond안에 중복 호출되는 function은 무시된다.
         var __stepEnterTimeout;
+
         function __delayExecute (millisecond, func, context, argArray){
 
                 window.clearTimeout(__stepEnterTimeout);
+                
                 __stepEnterTimeout = setTimeout(function () {
                     
                     if(func) func.apply(context, argArray);

@@ -19,7 +19,7 @@ define(
         application.directive( 'iconView', _directive );
 
         // 선언
-        function _directive() {
+        function _directive(CommandService, Tool) {
 
             //out( 'version' );
 
@@ -40,18 +40,32 @@ define(
 
                 // 다른 디렉티브들과 통신하기 위한 역할을 하는 controller명칭을 정의.
                 // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
-                controller: Controller
+                controller: Controller,
+
+                link: Link
 
                 // end config
             };
 
             return config;
 
-            ////////////////////////////////////////
-            // Controller
-            ////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////
+            //
+            // Link
+            //
+            ////////////////////////////////////////////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, $location, CommandService, Tool, HttpService, $timeout ) {
+            function Link( $scope, $element, $attrs ) {
+                //
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            //
+            // Controller
+            //
+            ////////////////////////////////////////////////////////////////////////////////
+            
+            function Controller( $scope, $element, $attrs ) {
 
                 //------------------
                 // 데이터 변경 감지 순서
@@ -88,9 +102,7 @@ define(
                 };
 
                 ////////////////////////////////////////////////////////////////////////////////
-                //
                 // 메뉴 명령 실행
-                //
                 ////////////////////////////////////////////////////////////////////////////////
 
                 ////////////////////////////////////////
@@ -196,10 +208,11 @@ define(
                 }
 
                 ////////////////////////////////////////
-                // End Controller
+                // End Link
                 ////////////////////////////////////////
             }
 
+            // end _directive
         }
 
         // 리턴

@@ -597,7 +597,7 @@ define(
 
                             // 재귀 호출 (depth로 진행)
                             if(item.items && item.items.length > 0){
-                                this.__getTreeToArray(item.items, list, list_uid, (_depth+1));
+                                this._getTreeToArray(item.items, list, list_uid, (_depth+1));
                             }
 
                             // out( '# remove Document ---> ', _depth, '[', index, '] : ', item.uid );

@@ -19,7 +19,7 @@ define(
         application.directive( 'screenView', _directive );
 
         // 선언
-        function _directive() {
+        function _directive($document, ScaleMode) {
 
             //out( 'version' );
 
@@ -38,24 +38,267 @@ define(
 
                 terminal: false,
                 
-                controller: Controller
+                controller: Controller,
+                link: Link
 
             };
 
-            ////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////
+            //
             // Controller
-            ////////////////////////////////////////
+            //
+            ////////////////////////////////////////////////////////////////////////////////
 
-            function Controller ( $scope, $element, $attrs, Project , CommandService, $document, ScaleMode, $sce, $timeout, $compile) {
+            function Controller ( $scope, $element, $attrs, Project , CommandService) {
+
+                ////////////////////////////////////////
+                // DOCUMENT 데이터
+                ////////////////////////////////////////
+
+                // 1. 이벤트를 받는다.
+                // var self = this;
+                $scope.$on('#Project.changed-DOCUMENT', function(e, data){
+                    out('#Project.changed-DOCUMENT (screen) : ', arguments);
+
+                    // Tree는 이미 로드 완료된 상태임
+                    // var tree = Project.current.project('TREE');
+                    // $scope.tree = (tree)? tree.items : [];
+
+                    var selectUID = Project.current.getSelectDocument();
+                    __documentSelected(selectUID);
+                });
+                
+                // var data = {data:project};
+                $scope.$on('#Project.initialized', function(e, data){
+                    // $scope.tree = Project.current.project('TREE');
+                    // $scope.document = Project.current.project('DOCUMENT');
+                });
+
+                ////////////////////////////////////////////////////////////////////////////////
+                // Document
+                ////////////////////////////////////////////////////////////////////////////////
+                
+                //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
+                $scope.$on('#Project.selected-DOCUMENT', function(e, data){
+                    out('#Project.selected-DOCUMENT (screen) : ', data);
+                    __onSelectDocument(data.newValue, data.oldValue);
+                });
+
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.added-DOCUMENT', function(e, data){
+                    out('#Project.added-DOCUMENT (screen) : ', data);
+                    __onAddDocument(data.item, data.param);
+                });
+
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.removed-DOCUMENT', function(e, data){
+                    out('#Project.removed-DOCUMENT (screen) : ', data);
+                    __onRemoveDocument(data.item, data.param);
+                });
+
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.modified-DOCUMENT', function(e, data){
+                    out('#Project.modified-DOCUMENT (screen) : ', data);
+                    __onModifyDocument(data.item, data.param);
+                });
+                
+                ////////////////////////////////////////
+                // DOM 업데이트
+                ////////////////////////////////////////
+                
+                function __onSelectDocument(newValue, oldValue){
+                    out(' - oldValue : ', oldValue);
+                    out(' - newValue : ', newValue);
+
+                    __documentSelected(newValue);
+                }
+
+                function __onAddDocument(item){
+
+                }
+
+                function __onRemoveDocument(item){
+                    
+                }
+
+                function __onModifyDocument(item){
+                    
+                }
+
+                function __documentSelected(uid){
+                    contentRefresh(uid);
+                    /*
+                    // IFrame 파일로드
+                    //var iframeDocument = self.bookContainer.contentWindow.document || self.bookContainer.contentDocument;
+                    var iframeDocument = self.bookContainer.contentDocument;
+                    iframeDocument.open('text/html', 'replace');
+                    iframeDocument.write(result);
+                    iframeDocument.close();
+                    
+                    // _onLoadComplete 이벤트 발생함
+                    */
+                }
+
+                //-------------------------------------
+                // 내용 갱신
+                //-------------------------------------
+
+                function contentRefresh(documentUID){
+
+                    //uid로 DOM 찾아내기
+                    var documentItem = documentUID ? Project.current.getDocument(documentUID) : null;
+                    $scope.loadComplete = (documentItem && documentItem.document.content);
+                    
+                    if(documentItem == null) {
+                        $scope.documents = [];
+                        return;
+                    }
+
+                    var dom = documentItem.document.content;
+                    var html = Project.current.htmlToString(dom);
+                    
+                    $scope.documents = [{
+                        uid: documentUID, 
+                        content: dom,
+                        originalHTML: html
+                    }];
+
+                    /*
+                    // 랜더링 타임을 기다렸다가 DOM 적용함
+                    $timeout(function(){
+                        $element.find('#contentContainer').html(dom);
+                    });
+                    */
+                }
+                
+                /*
+                $scope.$watch('documents', function(newValue, oldValue) {
+                    if (newValue === oldValue) { return; }
+                    __onDocumentChanged(newValue, oldValue);
+                }, true);
+                
+                function __onDocumentChanged(newValue, oldValue){
+                    out('__onDocumentChanged : ', newValue);
+                }
+                */
+
+                // 로드 내용 container DOM 찾기
+                this._getContentContainer = function (documentUID){
+                    var $document = $element.find('[uid=' + documentUID + ']');
+                    var $content = $document.find('#contentContainer');
+                    return $content;
+                }
+
+                // 해당 문서의 Element DOM 찾기
+                this._getContentElement = function (elementUID, documentUID){
+                    var $contentContainer = _getContentContainer(documentUID);
+                    var $el = $contentContainer.find('[uid=' + elementUID + ']');
+                    return $el;
+                }
+
+                ////////////////////////////////////////////////////////////////////////////////
+                // Element
+                ////////////////////////////////////////////////////////////////////////////////
+                
+                // {newValue: "element-18d53f95-2ffa-433a-9a9a-c57ca1534f04", name: "ELEMENT", oldValue: "element-c2d5091c-3d06-470c-b7b0-343a8bd41c88", document: "document-9c2bd172-edbe-4ed3-a145-c7e25dc515d1"}
+                $scope.$on('#Project.selected-ELEMENT', function(e, data){
+                    out('#Project.selected-ELEMENT (screen) : ', data);
+                    __onSelectElement(data.newValue, data.oldValue, data.documentUID);
+                });
+
+                $scope.$on('#Project.added-ELEMENT', function(e, data){
+                    out('#Project.addeded-ELEMENT (screen) : ', data);
+                    __onAddElement(data.item, data.param);
+                });
+                
+                ////////////////////////////////////////
+                // Element 업데이트
+                ////////////////////////////////////////
+                
+                function __onSelectElement(newValue, oldValue, documentUID){
+                    out(' - oldValue (element) : ', oldValue);
+                    out(' - newValue (element) : ', newValue);
+
+                    // 해당 문서에 선택 표시
+
+                    // addElement 후 바로 선택되는 경우 $element에 아직 렌더링 되지 않은 상황일 수 있다.
+                    var $el_old = this._getContentElement(oldValue, documentUID)
+                    $el_old.removeClass('selectedElement');
+
+                    var $el_new = this._getContentElement(newValue, documentUID)
+                    $el_new.addClass('selectedElement');
+
+
+
+
+
+
+                    // // 편집 UI를 구성한다.
+                    // var editBoundary = {
+                    //     x: 0,
+                    //     y: 0,
+                    //     width: 100,
+                    //     height: 100,
+                    //     elementUID: newValue,
+                    //     documentUID: 
+                    // }
+
+                    // $scope.edit = editBoundary;
+
+                    // 1. 선택된 uid를 ui-canvas directive에 전달한다.
+                    // 2. 선택 uid를 가지고 boundary를 구한다.
+                    // 3. boundary에 따라 ui를 세팅한다.
+                    // 4. 사용자 동작을 구성한다.(마우스)
+                    // 5. 사용자 동작에 따라 command를 실행한다.
+                    // 6. 선택상태를 바꾼다
+                    // 7. 그룹 선택을 지원한다.
+
+                    // ---> directive로 구성할것
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                }
+
+                function __onAddElement(item, param){
+                    contentRefresh(param.documentUID);
+                }
+
+                ////////////////////////////////////////
+                // End Controller
+                ////////////////////////////////////////
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////
+            //
+            // Link
+            //
+            ////////////////////////////////////////////////////////////////////////////////
+
+            function Link($scope, $element, $attrs, controller){
 
                 // 로드 완료 체크
                 $scope.loadComplete = false;
-
-                //-----------------------------------
-                // Background Pattern, align-center 데이터
-                // Svg Attribute (ng-attr-xxx 사용해야함)
-                // bug patch : http://alexandros.resin.io/angular-d3-svg/
-                //-----------------------------------
 
                 $scope.$watch('size', function(newValue, oldValue) {
                     $scope.ratio = getRatio(newValue.scale);
@@ -73,9 +316,58 @@ define(
                 var compareWidth = Math.max(0, sourceWidth - marginW);
                 var compareHeight = Math.max(0, sourceHeight - marginH);
 
+                $scope.scaleMode = new ScaleMode({
+                    sourceWidth: sourceWidth,
+                    sourceHeight: sourceHeight,
+                    compareWidth: Math.max(0, $element.width() - marginW),
+                    compareHeight: Math.max(0, $element.height() - marginH)
+                });
+
+                $scope.scaleMode.scale(ScaleMode.SCALE_WINDOW);
                 $scope.size = getSize(1);
                 $scope.stroke = 1;
                 
+                //-----------------------------------
+                // Scale 연산
+                //-----------------------------------
+
+                function getSize(scale){
+                    var sizeObj={
+                        scale: scale,
+                        sourceWidth: sourceWidth,
+                        sourceHeight: sourceHeight,
+                        compareWidth: compareWidth,
+                        compareHeight: compareHeight,
+
+                        width: Math.ceil(sourceWidth*scale),
+                        height: Math.ceil(sourceHeight*scale),
+                        marginW : marginW,
+                        marginH : marginH
+                    };
+                    return sizeObj;
+                }
+
+                function setSize(){
+                    $scope.scaleMode.set({
+                        sourceWidth: sourceWidth,
+                        sourceHeight: sourceHeight,
+                        compareWidth: compareWidth,
+                        compareHeight: compareHeight
+                    });
+
+                    var scale = $scope.scaleMode.scale();
+                    $scope.size = getSize(scale);
+
+                    // 위치 업데이트 호출 (alignModule)
+                    $document.trigger('#window.resize'); 
+                }
+
+                //-----------------------------------
+                // Background Pattern, align-center 데이터
+                // Svg Attribute (ng-attr-xxx 사용해야함)
+                // bug patch : http://alexandros.resin.io/angular-d3-svg/
+                //-----------------------------------
+
                 // 배경 패턴을 그리기 위한 위치 정보
                 function getRatio(scale){
                     var obj = {
@@ -145,49 +437,6 @@ define(
                 }
 
                 //-----------------------------------
-                // Scale 연산
-                //-----------------------------------
-
-                var scaleMode = new ScaleMode({
-                    sourceWidth: sourceWidth,
-                    sourceHeight: sourceHeight,
-                    compareWidth: Math.max(0, $element.width() - marginW),
-                    compareHeight: Math.max(0, $element.height() - marginH)
-                });
-                scaleMode.scale(ScaleMode.SCALE_WINDOW);
-
-                function getSize(scale){
-                    var sizeObj={
-                        scale: scale,
-                        sourceWidth: sourceWidth,
-                        sourceHeight: sourceHeight,
-                        compareWidth: compareWidth,
-                        compareHeight: compareHeight,
-
-                        width: Math.ceil(sourceWidth*scale),
-                        height: Math.ceil(sourceHeight*scale),
-                        marginW : marginW,
-                        marginH : marginH
-                    };
-                    return sizeObj;
-                }
-
-                function setSize(){
-                    scaleMode.set({
-                        sourceWidth: sourceWidth,
-                        sourceHeight: sourceHeight,
-                        compareWidth: compareWidth,
-                        compareHeight: compareHeight
-                    });
-
-                    var scale = scaleMode.scale();
-                    $scope.size = getSize(scale);
-
-                    // 위치 업데이트 호출 (alignModule)
-                    $document.trigger('#window.resize'); 
-                }
-
-                //-----------------------------------
                 // layout 바뀔때 size 재조정
                 //-----------------------------------
 
@@ -218,234 +467,6 @@ define(
                     $document.off('#dock.layoutUpdating', __onLayoutUpdating);
                 });
 
-                ////////////////////////////////////////
-                // DOCUMENT 데이터
-                ////////////////////////////////////////
-            
-                // 1. 이벤트를 받는다.
-                // var self = this;
-                $scope.$on('#Project.changed-DOCUMENT', function(e, data){
-                    out('#Project.changed-DOCUMENT (screen) : ', arguments);
-
-                    // Tree는 이미 로드 완료된 상태임
-                    // var tree = Project.current.project('TREE');
-                    // $scope.tree = (tree)? tree.items : [];
-
-                    var selectUID = Project.current.getSelectDocument();
-                    __documentSelected(selectUID);
-                });
-                
-                //-------------------------------------
-                // DOM 업데이트
-                //-------------------------------------
-                
-                // var data = {data:project};
-                $scope.$on('#Project.initialized', function(e, data){
-                    // $scope.tree = Project.current.project('TREE');
-                    // $scope.document = Project.current.project('DOCUMENT');
-                });
-
-                //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
-                $scope.$on('#Project.selected-DOCUMENT', function(e, data){
-                    out('#Project.selected-DOCUMENT (screen) : ', data);
-                    __onSelectDocument(data.newValue, data.oldValue);
-                });
-
-                // var data = {data:dataOwner, item:itemObject, name:propertyName};
-                $scope.$on('#Project.added-DOCUMENT', function(e, data){
-                    out('#Project.added-DOCUMENT (screen) : ', data);
-                    __onAddDocument(data.item, data.param);
-                });
-
-                // var data = {data:dataOwner, item:itemObject, name:propertyName};
-                $scope.$on('#Project.removed-DOCUMENT', function(e, data){
-                    out('#Project.removed-DOCUMENT (screen) : ', data);
-                    __onRemoveDocument(data.item, data.param);
-                });
-
-                // var data = {data:dataOwner, item:itemObject, name:propertyName};
-                $scope.$on('#Project.modified-DOCUMENT', function(e, data){
-                    out('#Project.modified-DOCUMENT (screen) : ', data);
-                    __onModifyDocument(data.item, data.param);
-                });
-                
-                function __onSelectDocument(newValue, oldValue){
-                    out(' - oldValue : ', oldValue);
-                    out(' - newValue : ', newValue);
-
-                    __documentSelected(newValue);
-                }
-
-                function __onAddDocument(item){
-
-                }
-
-                function __onRemoveDocument(item){
-                    
-                }
-
-                function __onModifyDocument(item){
-                    
-                }
-
-                function __documentSelected(uid){
-                    contentRefresh(uid);
-                    /*
-                    // IFrame 파일로드
-                    //var iframeDocument = self.bookContainer.contentWindow.document || self.bookContainer.contentDocument;
-                    var iframeDocument = self.bookContainer.contentDocument;
-                    iframeDocument.open('text/html', 'replace');
-                    iframeDocument.write(result);
-                    iframeDocument.close();
-                    
-                    // _onLoadComplete 이벤트 발생함
-                    */
-                }
-
-                // 내용 갱신
-                function contentRefresh(documentUID){
-
-                    //uid로 DOM 찾아내기
-                    var documentItem = documentUID ? Project.current.getDocument(documentUID) : null;
-                    $scope.loadComplete = (documentItem && documentItem.document.content);
-                    
-                    if(documentItem == null) {
-                        $scope.documents = [];
-                        return;
-                    }
-
-                    var dom = documentItem.document.content;
-                    var html = Project.current.htmlToString(dom);
-                    
-                    $scope.documents = [{
-                        uid: documentUID, 
-                        content: dom,
-                        originalHTML: html
-                    }];
-
-                    /*
-                    // 랜더링 타임을 기다렸다가 DOM 적용함
-                    $timeout(function(){
-                        $element.find('#contentContainer').html(dom);
-                    });
-                    */
-                }
-                
-                // HTML Content 바인딩
-                $scope.getHTMLContent = function (item) {
-                    // var htmlString = item.content;
-                    // return $sce.trustAsHtml(htmlString);
-
-                    // attribute에 uid값이 아직 적용되지 않은 경우일 수 있으므로 $evalAsync로 실행한다.
-                    $scope.$evalAsync(function(){
-                        
-                        var documentUID = item.uid
-                        var $contentContainer = getContentContainer(documentUID);
-                        
-                        var dom = item.content;
-                        $contentContainer.html(dom);
-                    });
-                }
-
-                /*
-                $scope.$watch('documents', function(newValue, oldValue) {
-                    if (newValue === oldValue) { return; }
-                    __onDocumentChanged(newValue, oldValue);
-                }, true);
-                
-                function __onDocumentChanged(newValue, oldValue){
-                    out('__onDocumentChanged : ', newValue);
-                }
-                */
-
-                // 로드 내용 container DOM 찾기
-                function getContentContainer(documentUID){
-                    var $document = $element.find('[uid=' + documentUID + ']');
-                    var $content = $document.find('#contentContainer');
-                    return $content;
-                }
-
-                // 해당 문서의 Element DOM 찾기
-                function getContentElement(elementUID, documentUID){
-                    var $contentContainer = getContentContainer(documentUID);
-                    var $el = $contentContainer.find('[uid=' + elementUID + ']');
-                    return $el;
-                }
-
-                //-------------------------------------
-                // Element 업데이트
-                //-------------------------------------
-                
-                // {newValue: "element-18d53f95-2ffa-433a-9a9a-c57ca1534f04", name: "ELEMENT", oldValue: "element-c2d5091c-3d06-470c-b7b0-343a8bd41c88", document: "document-9c2bd172-edbe-4ed3-a145-c7e25dc515d1"}
-                $scope.$on('#Project.selected-ELEMENT', function(e, data){
-                    out('#Project.selected-ELEMENT (screen) : ', data);
-                    __onSelectElement(data.newValue, data.oldValue, data.documentUID);
-                });
-
-                $scope.$on('#Project.added-ELEMENT', function(e, data){
-                    out('#Project.addeded-ELEMENT (screen) : ', data);
-                    __onAddElement(data.item, data.param);
-                });
-                
-                function __onSelectElement(newValue, oldValue, documentUID){
-                    out(' - oldValue (element) : ', oldValue);
-                    out(' - newValue (element) : ', newValue);
-
-                    // 해당 문서에 선택 표시
-
-                    // addElement 후 바로 선택되는 경우 $element에 아직 렌더링 되지 않은 상황일 수 있다.
-                    var $el_old = getContentElement(oldValue, documentUID)
-                    $el_old.removeClass('selectedElement');
-
-                    var $el_new = getContentElement(newValue, documentUID)
-                    $el_new.addClass('selectedElement');
-
-
-
-
-
-
-                    // // 편집 UI를 구성한다.
-                    // var editBoundary = {
-                    //     x: 0,
-                    //     y: 0,
-                    //     width: 100,
-                    //     height: 100,
-                    //     elementUID: newValue,
-                    //     documentUID: 
-                    // }
-
-                    // $scope.edit = editBoundary;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                }
-
-                function __onAddElement(item, param){
-                    contentRefresh(param.documentUID);
-                }
-
                 ////////////////////////////////////////////////////////////////////////////////
                 // DOM 인터렉션
                 ////////////////////////////////////////////////////////////////////////////////
@@ -454,12 +475,15 @@ define(
                 // 메뉴 클릭 이벤트 처리
                 //-----------------------
 
+                // DOM에서 API 호출하는 방법
+                // callAPI('toggleScaleMode')
+
                 // 메뉴 항목을 클릭한 경우 호출되는 함수
                 $scope.callAPI = function(){
                     
                     var arg = U.toArray(arguments);
                     var funcName = arg.shift();
-                    out(' * MENU item : ', funcName);
+                    out(' * Call api : ', funcName);
 
                     if(funcName){
                         eval(funcName).apply(null, arg);
@@ -471,18 +495,22 @@ define(
                 // API
                 ////////////////////////////////////////
 
+                //-----------------------
+                // Scale Mode 변경
+                //-----------------------
+                
                 function toggleScaleMode() {
                     var style;
-                    var mode = scaleMode.mode();
+                    var mode = $scope.scaleMode.mode();
                     if(mode == ScaleMode.SCALE_WINDOW){
-                        scaleMode.scale(1);
+                        $scope.scaleMode.scale(1);
                         style = {overflow:'auto'};
                     }else{
-                        scaleMode.scale(ScaleMode.SCALE_WINDOW);
+                        $scope.scaleMode.scale(ScaleMode.SCALE_WINDOW);
                         style = {overflow:'hidden'};
                     }
                     
-                    var scale = scaleMode.scale();
+                    var scale = $scope.scaleMode.scale();
                     $scope.size = getSize(1);
 
                     // scroll 정책 변경
@@ -493,31 +521,45 @@ define(
                     $scope.$evalAsync( setSize );
                 };
 
-                ////////////////////////////////////////
-                // DOM 인터렉션
-                ////////////////////////////////////////
-
-                /*
-                // Document 선택
-                $scope.selectDocument = function(item, index){
-                    var param = {
-                        uid : item.uid
-                    };
-                    var command = CommandService.SELECT_DOCUMENT;
-                    out('\n# [ ', command, ' ] 명령 실행');
-
-                    CommandService.exe(command, param);
-                };
-                */
+                //-----------------------
+                // HTML Content 바인딩
+                //-----------------------
                 
+                function getHTMLContent (item) {
+                    // var htmlString = item.content;
+                    // return $sce.trustAsHtml(htmlString);
+
+                    // attribute에 uid값이 아직 적용되지 않은 경우일 수 있으므로 $evalAsync로 실행한다.
+                    $scope.$evalAsync(function(){
+                        
+                        var documentUID = item.uid
+                        var $contentContainer = controller._getContentContainer(documentUID);
+                        
+                        var dom = item.content;
+                        $contentContainer.html(dom);
+                    });
+                }
+
                 ////////////////////////////////////////
-                // End Controller
+                // End Link
                 ////////////////////////////////////////
             }
 
+            // end _directive
+        }
+
+        // 리턴
+        return _directive;
+
+        ////////////////////////////////////////
+        // END
+        ////////////////////////////////////////
+    }
+);
 
 
-
+// 드래그 예제
+// https://code.angularjs.org/1.2.23/docs/guide/compiler
 
 
 
@@ -533,7 +575,7 @@ define(
                     // 데이터 변경된 경우 화면 업데이트
                     //------------------
 
-                    function updatedocumentList(){
+                    // function updatedocumentList(){
                         
                         /*
                         <li ng-repeat="item in tree.items">
@@ -583,31 +625,5 @@ define(
                         // 데이터 적용
                         api.init(documents);
                         */
-                    }
+                    // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-        }
-
-        // 리턴
-        return _directive;
-
-        ////////////////////////////////////////
-        // END
-        ////////////////////////////////////////
-    }
-);
-
-
-// 드래그 예제
-// https://code.angularjs.org/1.2.23/docs/guide/compiler

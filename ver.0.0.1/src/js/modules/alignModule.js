@@ -170,7 +170,7 @@ define(
                         visible: true
                     };
 
-                    // setting값ㅅ변동 감시
+                    // setting 값 변동 감시
                     $scope.$watch(function(){
                             var option = $scope.$eval($scope.setting);
                             return angular.extend(defaultInfo, option);
@@ -223,12 +223,12 @@ define(
                         if(_timeoutPromise) $timeout.cancel(_timeoutPromise);
                     });
 
-                    // end controller
+                    // end link
                 },
 
                 /*
-                link: function(scope){
-                    // end link
+                controller: function(scope){
+                    // end controller
                 }
                 */
             };
