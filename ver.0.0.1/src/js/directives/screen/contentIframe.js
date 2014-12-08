@@ -19,7 +19,7 @@ define(
         application.directive( 'contentIframe', _directive );
 
         // 선언
-        function _directive() {
+        function _directive($sce) {
 
             //out( 'content' );
 
@@ -87,12 +87,19 @@ define(
                         
                         // $contentContainer.html(dom);
 
-                        
+
 
                         // IFrame에 해당 내용을 로드한다.
-                        $contentContainer.attr('src', 'http://localhost/history/ver.0.0.1/src/#/tool/');
+                        var url = 'http://localhost/history/ver.0.0.1/src/#/tool/s';
+                        // $contentContainer.attr('src', url);
+                        $scope.url = $sce.trustAsResourceUrl(url);
+
+                        // body는 투명처리할것
+                        // style="background-color: transparent;"
 
                         //****************************************
+
+                        // 로드 완료 이벤트 등록
 
                         // 랜더링 까지 완료되었음을 알림
                         $scope.onLoadComplete({
@@ -102,6 +109,18 @@ define(
                         //****************************************
                     });
                 }
+
+                /*
+                scope.getIframeSrc = function() {
+                  // One should think about their particular case and sanitize accordingly
+                  var qs = ["a", "b"].map(function(value, name) {
+                      return encodeURIComponent(name) + "=" +
+                             encodeURIComponent(value);
+                    }).join("&");
+                  // `baseUrl` isn't exposed to a user's control, so we don't have to worry about escaping it.
+                  return baseUrl + "?" + qs;
+                };
+                */
 
                 ////////////////////////////////////////
                 // End Controller
