@@ -9,7 +9,7 @@
         "uid": "document-b16fea9c-d10a-413b-ba20-08344f937339",
 
         "id": "bored",
-        "content": "<div id='bored' data-scale='2' data-x='-2000' data-y='0'><div uid='element-d167f449-57cb-4c8f-8984-4492b293f485'><h1>프로젝트 주제 : 사이트 기획</h1><br>디자인 자료 준비해야 함<br><br><a href='#bored1'>메인 컨셉 디자인 진행</a><br><a href='#bored1-2'>서브 컨셉 디자인 진행</a></div></div>"
+        "content": "<div id='bored' data-scale='2' data-x='-2000' data-y='0' style='display: inline-block;border: 20px solid #FF6FBC;margin:10px;padding:10px;'><h1>프로젝트 주제 : 사이트 기획</h1><br>디자인 자료 준비해야 함<br><br><a href='#bored1'>메인 컨셉 디자인 진행</a><br><a href='#bored1-2'>서브 컨셉 디자인 진행</a></div>"
     },
 
     "configuration": {

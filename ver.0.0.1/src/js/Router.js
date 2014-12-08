@@ -247,6 +247,11 @@ define( [], function() {
 						_PATH.DIRECTIVE + 'propertyView',
 						_PATH.DIRECTIVE + 'statusView',
 
+						_PATH.DIRECTIVE + 'screen/loading',
+						_PATH.DIRECTIVE + 'screen/background',
+						// _PATH.DIRECTIVE + 'screen/content',
+						_PATH.DIRECTIVE + 'screen/contentIframe',
+
 		        				// FACTORY
 		        				_PATH.DATA + 'Data',
 		        				_PATH.DATA + 'Tool',

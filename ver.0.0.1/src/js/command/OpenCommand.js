@@ -252,10 +252,17 @@ define(
                                     // html String를 DOM 구조로 바꾸어 놓는다.
                                     var htmlString = response.document.content;
                                     var dom = Project.current.stringToHtml(htmlString);
-                                    response.document.content = dom;
 
+                                    //-------------------
+                                    // 호환성 일부 지원
+                                    //-------------------
+
+                                    dom = supportToolFunction(dom);
+                                    
                                     //******************************************
 
+                                    // 데이터에 적용
+                                    response.document.content = dom;
                                     dataMap[ response.uid ] = response;
                                 }
 
@@ -329,18 +336,105 @@ define(
                     // 저장 체크 변경
                     Tool.current.dataChanged = false;
 
-                    // out( 'dataMap : ', dataMap );
+                    // out( 'documentMap : ', documentMap );
 
                     //*****************************************
                     
                     // 결과 리턴
                     var self = this;
                     $timeout(function(){
-                        self._success( dataMap );
+                        self._success( documentMap );
                     });
                 }
 
             } );
+
+            //-------------------
+            // 호환성 일부 지원
+            //-------------------
+
+            // Tool에서 사용 가능한 Tag 구조로 바꾼다.
+            function supportToolFunction(dom, config){
+
+                // return dom;
+                var $dom = angular.element(dom);
+                
+                // document : uid 가 없다면 지원해 준다.
+                if($dom.attr('uid') === undefined){
+
+                    // width를 미리 알아내는 방법
+                    var $temp = angular.element('body').find('.screenContainer #temp');
+                    $temp.css('visibility', 'hidden');
+                    $temp.append($dom);
+
+                    var display = $dom.css('display');
+                    $dom.css({
+                        'display': 'inline-block'
+                    });
+                    var borderW = U.toNumber($dom.css('border-left-width')) + U.toNumber($dom.css('border-right-width'));
+                    var borderH = U.toNumber($dom.css('border-top-width')) + U.toNumber($dom.css('border-bottom-width'));
+                    var paddingL = U.toNumber($dom.css('padding-left'));
+                    var paddingR = U.toNumber($dom.css('padding-right'));
+                    var paddingT = U.toNumber($dom.css('padding-top'));
+                    var paddingB = U.toNumber($dom.css('padding-bottom'));
+                    var marginL = U.toNumber($dom.css('margin-left'));
+                    var marginR = U.toNumber($dom.css('margin-right'));
+                    var marginT = U.toNumber($dom.css('margin-top'));
+                    var marginB = U.toNumber($dom.css('margin-bottom'));
+                    var w = $dom.width() + marginL + marginR + paddingL + paddingR + borderW;
+                    var h = $dom.height() + marginT + marginB + paddingT + paddingB + borderH;
+                    
+                    $dom.remove();
+
+                    // element로 기능 업데이트
+                    // element : 하위 모든 태그를 element 노드로 감싼다.
+                    var elementUID = Project.current.createElementUID();
+                    var $comp = Project.current.createElementContent('tag', elementUID, config);
+                    
+                    // element의 가상 border 체크
+                    $temp.append($comp);
+                    var bL = U.toNumber($comp.css('border-left-width'));
+                    var bR = U.toNumber($comp.css('border-right-width'));
+                    var bT = U.toNumber($comp.css('border-top-width'));
+                    var bB = U.toNumber($comp.css('border-bottom-width'));
+                    $comp.remove();
+
+                    //---------------------
+                    // 값 적용
+
+                    out('BUG: (임시 처리)1px 차이로 인해 wordwrape 현상이 일어나는 경우가 있어서 left -1px를 적용해 준다.');
+                    
+                    $dom.css({
+                        'display': display,
+                        'position': 'absolute',
+                        'top': '0px',
+                        'left': '0px',
+                        // 'margin': '0px',
+                        // 'padding': (paddingW/2 + paddingH/2) + 'px',
+                        'pointer-events': 'none'
+                    });
+
+                    // element style의 border값 = 2
+                    $comp.css({
+                        'width': w + bL + bR,
+                        'height': h + bT + bB
+                    });
+
+                    // document로 감싼다.
+                    var documentUID = Project.current.createDocumentUID();
+                    var document = Project.current.createDocumentContent(documentUID);
+
+                    // DOM 구성
+                    $comp.html($dom);
+                    angular.element(document).html($comp);
+
+                    return document;
+                }
+                
+                out('TODO : // Element 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
+                // angular.extend({}, config);
+                return dom;
+            }
 
             // 서비스 객체 리턴
             return OpenCommand;

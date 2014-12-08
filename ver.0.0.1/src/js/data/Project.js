@@ -114,10 +114,21 @@ define(
                     // 
                     //////////////////////////////////////////////////////////////////////////
                     
+                    createDocumentContent: function(uid, config){
+                        var doc = "<div uid='" + uid + "'></div>";
+                        var $doc = angular.element(doc);
+
+                        out('TODO : // Document 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
+                        // angular.extend({}, config);
+
+                        return $doc[0];
+                    },
+
                     // content --> element.outerHTML
                     getDefinitionDocument : function (uid){
 
                         var version = VersionService.version();
+                        var dom = this.createDocumentContent(uid);
                         
                         var definition = {
                             "version": version,
@@ -130,8 +141,8 @@ define(
 
                                 "uid": uid,
 
-                                "id": "overview",
-                                "content": "<div id='overview' data-scale='10' data-x='0' data-y='0' uid='" + uid +"'></div>"
+                                "id": "",
+                                "content": dom
 
                             },
 
@@ -140,7 +151,7 @@ define(
 
                                 "uid": uid,
 
-                                "id": "overview",
+                                "id": "",
                                 "subject": "문서 제목",
                                 "descripty": "문서 요약",
 
@@ -177,9 +188,9 @@ define(
                         };
 
                         // html String를 DOM 구조로 바꾸어 놓는다.
-                        var htmlString = definition.document.content;
-                        var dom = this.stringToHtml(htmlString);
-                        definition.document.content = dom;
+                        // var htmlString = definition.document.content;
+                        // var dom = this.stringToHtml(htmlString);
+                        // definition.document.content = dom;
 
                         return definition;
                     },
@@ -735,10 +746,10 @@ define(
                         var content = documentItem.document.content;
                         var $content = angular.element(content);
 
-                        out('TODO : type에 따른 샘플 태그 정의할것');
+                        out('TODO : type에 따른 샘플 태그 정의할것 : ', type);
 
                         // 추가
-                        var $comp = this.__getCompContent(type, uid, config);
+                        var $comp = this.createElementContent(type, uid, config);
                         $content.append($comp);
 
                         // 데이터 갱신
@@ -770,8 +781,9 @@ define(
                     },
 
                     // 유형에 따라 comp 내용을 구성
-                    __getCompContent: function(type, uid, config){
-                        var comp = '<div uid="' + uid + '" style="left:50px; top:100px;">position:absolute; </div>';
+                    // type : html(문서), tag(태그묶음), text(글상자)...
+                    createElementContent: function(type, uid, config){
+                        var comp = '<div uid="' + uid + '" style="left:50px; top:100px;">TEXT</div>';
                         var $comp = angular.element(comp);
 
                         out('TODO : // Element 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');

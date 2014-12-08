@@ -11,8 +11,8 @@
 ////////////////////////////////////////////////////////////////////////////////*/
 
 * {
-    margin: 0;
-    padding: 0;
+    margin: 0px;
+    padding: 0px;
     /*border: 0;*/
 
     box-sizing: border-box;
@@ -28,6 +28,14 @@
     /*vertical-align: middle;*/
 
     list-style: none;
+
+    /*
+    white-space: normal;
+    word-spacing: normal;
+    letter-spacing: normal;    
+    word-wrap: break-word;
+    vertical-align: top;
+    */
 }
 
 body {

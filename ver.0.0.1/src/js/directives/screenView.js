@@ -180,8 +180,8 @@ define(
 
                 // 로드 내용 container DOM 찾기
                 this._getContentContainer = function (documentUID){
-                    var $document = $element.find('[uid=' + documentUID + ']');
-                    var $content = $document.find('#contentContainer');
+                    // var $document = $element.find('[uid=' + documentUID + ']');
+                    var $content = $element.find('#contentContainer');
                     return $content;
                 }
 
@@ -303,14 +303,22 @@ define(
 
             function Link($scope, $element, $attrs, controller){
 
+                //-----------------------------------
                 // 로드 완료 체크
+                //-----------------------------------
+                
                 $scope.loadComplete = false;
 
-                $scope.$watch('size', function(newValue, oldValue) {
-                    $scope.ratio = getRatio(newValue.scale);
-                    $scope.alignInfo_paper = getAlignInfo_paper(newValue);
-                    $scope.alignInfo_loading = getAlignInfo_loading(newValue);
+                $scope.onLoadComplete = function(success){
+                    $scope.loadComplete = success;
+                };
 
+                //-----------------------------------
+                // 용지 크기 체크
+                //-----------------------------------
+
+                $scope.$watch('size', function(newValue, oldValue) {
+                    $scope.alignInfo_paper = getAlignInfo_paper(newValue);
                     controller._updateSelectUI();
                 }, true);
 
@@ -333,7 +341,6 @@ define(
 
                 $scope.scaleMode.scale(ScaleMode.SCALE_WINDOW);
                 $scope.size = getSize(1);
-                $scope.stroke = 1;
                 
                 //-----------------------------------
                 // Scale 연산
@@ -373,24 +380,6 @@ define(
                 }
 
                 //-----------------------------------
-                // Background Pattern, align-center 데이터
-                // Svg Attribute (ng-attr-xxx 사용해야함)
-                // bug patch : http://alexandros.resin.io/angular-d3-svg/
-                //-----------------------------------
-
-                // 배경 패턴을 그리기 위한 위치 정보
-                function getRatio(scale){
-                    var obj = {
-                        value: scale
-                    };
-                    for(var i=0; i<11; ++i){
-                        var unit = i * 10;
-                        obj['r' + unit] = unit  * scale;
-                    }
-                    return obj;
-                }
-
-                //-----------------------------------
                 // Align 연산
                 //-----------------------------------
 
@@ -416,33 +405,6 @@ define(
                     };
 
                     // out('alignInfo : ', alignInfo);
-                    return alignInfo;
-                }
-
-                // 가로/세로 중앙 정렬을 위한 위치 정보
-                function getAlignInfo_loading(scale){
-                    var parent = $element.parent();
-                    var paddingW = (U.toNumber(parent.css('padding-left')) || 0) + (U.toNumber(parent.css('padding-right')) || 0);
-                    var paddingH = (U.toNumber(parent.css('padding-top')) || 0) + (U.toNumber(parent.css('padding-bottom')) || 0);
-
-                    var alignInfo={
-                        
-                        // 가로/세로 적용 및 데이터 저장  변수명 지정 (default=both)
-                        // type: 'both', // horizontal | vertical | both | undefined (=both)
-
-                        // 초기 visible 설정 지연 millisecond (default=0)
-                        visibleDelayTime:500,
-
-                         // 아래 설정값은 생략 가능 
-                         // 생략시 현재 dom 상태 기준으로 자동 계산 되어짐
-                         // 따라서 transition이 적용되고 있다면 아래값들을 설정하여  최종 결과값을 알려주어야함
-                        parentWidth: scale.width - paddingW,
-                        parentHeight: scale.height - paddingH
-                        // width: scale.width + marginW,
-                        // height: scale.height + marginH
-                    };
-
-                    // out('loading alignInfo : ', alignInfo);
                     return alignInfo;
                 }
 
@@ -540,32 +502,6 @@ define(
 
                     // layout 갱신
                     $scope.$evalAsync( setSize );
-                }
-
-                //-----------------------
-                // HTML Content 바인딩
-                //-----------------------
-                
-                function getHTMLContent (item) {
-                    // var htmlString = item.content;
-                    // return $sce.trustAsHtml(htmlString);
-
-                    // attribute에 uid값이 아직 적용되지 않은 경우일 수 있으므로 $evalAsync로 실행한다.
-                    $scope.$evalAsync(function(){
-                        
-                        var documentUID = item.uid
-                        var $contentContainer = controller._getContentContainer(documentUID);
-                        
-                        var dom = item.content;
-                        $contentContainer.html(dom);
-
-                        //****************************************
-
-                        // 랜더링 까지 완료되었음을 알림
-                        $scope.loadComplete = true;
-
-                        //****************************************
-                    });
                 }
 
                 ////////////////////////////////////////

@@ -16,12 +16,12 @@ define(
     function( application ) {
 
         // 등록
-        application.directive( 'version', _directive );
+        application.directive( 'background', _directive );
 
         // 선언
         function _directive() {
 
-            //out( 'version' );
+            //out( 'background' );
 
             return {
 
@@ -30,13 +30,14 @@ define(
                 restrict: 'EA',
 
                 // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
-                //template: '<span><span ng-transclude></span> {{version}} </span>',
-                templateUrl: _PATH.TEMPLATE + 'version.html',
+                //template: '<span><span ng-transclude></span> {{background}} </span>',
+                templateUrl: _PATH.TEMPLATE + 'screen/background.html',
                 
                 replace: true,
-                priority: 0,
                 transclude: true,
-                scope: {},
+                scope: {
+                    scale: "@scale"
+                },
                 
                 controller: Controller,
                 link: Link
@@ -48,9 +49,43 @@ define(
             //
             ////////////////////////////////////////////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, VersionService) {
+            function Controller( $scope, $element, $attrs) {
+                $scope.ratio = 1;
+                $scope.stroke = 1;
+
+
+                $scope.$watch('scale', function(newValue, oldValue) {
+                    var scale = $scope.$eval(newValue);
+                    $scope.ratio = getRatio(scale);
+                }, true);
+
+                /*
+                $scope.$evalAsync( function(){
+                    // $element.trigger('#view.layoutUpdate');
+                } );
                 
-                $scope.version = VersionService;
+                $scope.$watch(function(){
+                    // $element.trigger('#view.layoutUpdate'); 
+                });
+                */
+
+                //-----------------------------------
+                // Background Pattern, align-center 데이터
+                // Svg Attribute (ng-attr-xxx 사용해야함)
+                // bug patch : http://alexandros.resin.io/angular-d3-svg/
+                //-----------------------------------
+
+                // 배경 패턴을 그리기 위한 위치 정보
+                function getRatio(scale){
+                    var obj = {
+                        value: scale
+                    };
+                    for(var i=0; i<11; ++i){
+                        var unit = i * 10;
+                        obj['r' + unit] = unit  * scale;
+                    }
+                    return obj;
+                }
 
                 ////////////////////////////////////////
                 // End Controller

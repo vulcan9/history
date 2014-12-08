@@ -16,12 +16,12 @@ define(
     function( application ) {
 
         // 등록
-        application.directive( 'version', _directive );
+        application.directive( 'background', _directive );
 
         // 선언
         function _directive() {
 
-            //out( 'version' );
+            //out( 'background' );
 
             return {
 
@@ -30,11 +30,10 @@ define(
                 restrict: 'EA',
 
                 // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
-                //template: '<span><span ng-transclude></span> {{version}} </span>',
-                templateUrl: _PATH.TEMPLATE + 'version.html',
+                //template: '<span><span ng-transclude></span> {{background}} </span>',
+                templateUrl: _PATH.TEMPLATE + 'ui/background.html',
                 
                 replace: true,
-                priority: 0,
                 transclude: true,
                 scope: {},
                 
@@ -48,9 +47,21 @@ define(
             //
             ////////////////////////////////////////////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, VersionService) {
+            function Controller( $scope, $element, $attrs) {
+                $scope.ratio = 1;
+                $scope.stroke = 1;
+
+
+
+                /*
+                $scope.$evalAsync( function(){
+                    // $element.trigger('#view.layoutUpdate');
+                } );
                 
-                $scope.version = VersionService;
+                $scope.$watch(function(){
+                    // $element.trigger('#view.layoutUpdate'); 
+                });
+                */
 
                 ////////////////////////////////////////
                 // End Controller

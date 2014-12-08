@@ -523,8 +523,9 @@
     background-clip: padding-box;
     
     /*border: 1px solid #ccc;*/
-    border: 1px solid rgba(0,0,0,0.15);
+    /*border: 1px solid rgba(0,0,0,0.15);*/
     /*border-radius: 4px;*/
+    outline: rgba(0, 0, 0, 0.15) solid 1px;
     
     box-shadow: 0 0px 10px rgba(0,0,0,.175);
     /*-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);*/
@@ -561,40 +562,49 @@
 // Element
 ------------------------------------*/
 
-.screen .paper .content div[uid] {
-    border: 1px solid #6FDEFF;
+.screenContainer div[uid] {
+    /*border: 20px solid #6FDEFF;*/
+    /*border: 20px solid rgba(0, 255, 245, 0.2);*/
+    outline: rgba(0, 255, 245, 0.2) solid 20px;
     display: inline-block;
 
     /*font-size: 1em;*/
 }
-.screen .paper .content div[uid]:hover {
-    border: 1px solid #28B6FF;
+.screenContainer div[uid]:hover {
+    /*border: 1px solid #28B6FF;*/
+    outline: rgba(0, 255, 245, 0.2) solid 20px;
 }
-.screen .paper .content div[uid].selectedElement {
-    border: 1px solid rgb(0, 255, 245);
+.screenContainer div[uid].selectedElement {
+    /*border: 1px solid rgb(0, 255, 245);*/
+    outline: rgba(0, 255, 245, 0.2) solid 1px;
 }
-.screen .paper .content div[uid].selectedElement:hover {
-    border: 1px solid rgb(255, 194, 0);
+.screenContainer div[uid].selectedElement:hover {
+    /*border: 1px solid rgb(255, 194, 0);*/
+    outline: rgba(255, 194, 0, 0.2) solid 1px;
 }
-.screen .paper .content div[contenteditable=true].selectedElement {
-    border: 1px solid rgb(255, 194, 0);
+.screenContainer div[contenteditable=true].selectedElement {
+    /*border: 1px solid rgb(255, 194, 0);*/
+    outline: rgba(255, 194, 0, 0.2) solid 1px;
 }
 
 /* document 요소 */
-.screen .paper .content div[uid^="document-"],
-.screen .paper .content div[uid^="document-"]:hover
-.screen .paper .content div[uid^="document-"].selectedElement
-.screen .paper .content div[uid^="document-"].selectedElement:hover {
+.screenContainer div[uid^="document-"],
+.screenContainer div[uid^="document-"]:hover
+.screenContainer div[uid^="document-"].selectedElement
+.screenContainer div[uid^="document-"].selectedElement:hover {
     position: absolute;
-    border: 0px;
+    /*border: 0px;*/
+    outline-width: 0px;
 }
-.screen .paper .content div[uid^="document-"]:hover {
-    border: 0px;
+.screenContainer div[uid^="document-"]:hover {
+    /*border: 0px;*/
+    outline-width: 0px;
 }
 
 /* element 요소 */
-.screen .paper .content div[uid^="element-"] {
+.screenContainer div[uid^="element-"] {
     position: absolute;
+    /*padding: 1px;*/
 }
 
 
