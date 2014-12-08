@@ -66,7 +66,7 @@ define(
                             self.presentationLoad( uid, function(presentationData) {
 
                                 // 로드 종료
-                                self._loadComplete( dataMap );
+                                self._loadComplete( treeData, dataMap, presentationData );
 
                                 // end presentation load
                             } );
@@ -130,7 +130,7 @@ define(
                                 
                                 // 데이터 변경
                                 Project.current = new Project();
-                                Project.current.openProject(data);
+                                // Project.current.openProject(data);
 
                                 //*****************************************
                                 
@@ -149,7 +149,7 @@ define(
 
                                 // 데이터 변경
                                 Project.current = new Project();
-                                Project.current.openProject(null);
+                                // Project.current.openProject(null);
 
                                 return null;
                             }
@@ -246,7 +246,7 @@ define(
 
                                     //******************************************
 
-                                    // 최신 기능 지원 위해 데이터 구조 업데이트
+                                    out('# 최신 기능 지원 위해 로드된 document 데이터 구조 업데이트');
                                     response = Project.current.updateDocumentVersion(response.uid, response);
                                     
                                     // html String를 DOM 구조로 바꾸어 놓는다.
@@ -289,16 +289,16 @@ define(
                         } )
                         .then(
                             function success( data ) {
-                                out( '# Presentation 로드 완료 : ', data );
 
                                 // 데이터 변경
-                                Project.current.project( 'PRESENTATION', data );
+                                // Project.current.project( 'PRESENTATION', data );
+                                out( '# Presentation 로드 완료 : ', data );
 
                                 return data;
                             },
                             function error( data ) {
-                                Project.current.project( 'PRESENTATION', null );
 
+                                // Project.current.project( 'PRESENTATION', null );
                                 out( '# 로드 에러 : ', presentationUID, '\n-url : ', url, data );
 
                                 // 결과 리턴
@@ -319,12 +319,12 @@ define(
                 // 데이터 로드 종료
                 //-----------------------------------
 
-                _loadComplete: function( dataMap ) {
+                _loadComplete: function( treeData, documentMap, presentationData ) {
 
                     //*****************************************
                     
                     // 데이터 저장
-                    Project.current.project( 'DOCUMENT', {items:dataMap} );
+                    Project.current.openProject(treeData, documentMap, presentationData);
 
                     // 저장 체크 변경
                     Tool.current.dataChanged = false;

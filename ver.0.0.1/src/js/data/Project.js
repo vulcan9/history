@@ -131,7 +131,7 @@ define(
                                 "uid": uid,
 
                                 "id": "overview",
-                                "content": "<div id='overview' data-scale='10' data-x='0' data-y='0'>TEST</div>"
+                                "content": "<div id='overview' data-scale='10' data-x='0' data-y='0' uid='" + uid +"'></div>"
 
                             },
 
@@ -212,15 +212,20 @@ define(
                     },
 
                     // data : tree-uid.json 파일 내용
-                    openProject: function(data){
+                    openProject: function(treeData, dataMap, presentationData){
                         this.initialize();
-                        this.project( 'TREE', data );
+
+                        this.project( 'TREE', treeData );
+                        this.project( 'DOCUMENT', {
+                            items: dataMap
+                        } );
+                        this.project( 'PRESENTATION', presentationData );
 
                         // 선택 상태 표시 (Root  Document를 초기 선택 상태로 표시)
                         out('TODO : 저장된 마지막 선택 문서를 선택상태로 표시하기');
 
                         //var uid = this.project( 'TREE').items[0].uid;
-                        var uid = data.items[0].uid;
+                        var uid = treeData.items[0].uid;
                         this.setSelectDocument(uid);
 
                         // OpenComman에서 처리
@@ -412,10 +417,10 @@ define(
                         Tool.current.dataChanged = true;
 
                         var uid = param.uid;
-                        var document = param.document || {};
+                        var documentObj = param.document || {};
 
                         // param으로 넘어온 값(open)을 document에 적용
-                        var documentItem = this.updateDocumentVersion(uid, document);
+                        var documentItem = this.updateDocumentVersion(uid, documentObj);
 
                         // document 추가
                         this.add('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
@@ -642,6 +647,19 @@ define(
 
                         var args = {newValue:newValue, name:propertyName, oldValue:oldValue};
                         $rootScope.$broadcast(eventName, args); 
+
+                        //---------------------
+                        // 선택 표시
+
+                        //*******************************************************
+
+                        if(uid == null) return;
+
+                        // 현재 선택 상태의 문서이면 Element 선택 표시
+                        var elementUID = this.getSelectElement(uid);
+                        this.setSelectElement(uid, elementUID, true);
+
+                        //*******************************************************
                     },
 
                     //-----------------------------------
@@ -740,16 +758,20 @@ define(
                         //---------------------
                         // 선택 표시
 
+                        //*******************************************************
+
                         // Document 선택 표시
-                        this.setSelectDocument(documentUID);
+                        // this.setSelectDocument(documentUID);
 
                         // 현재 선택 상태의 문서이면 Element 선택 표시
-                        this.setSelectElement(documentUID, uid);
+                        this.setSelectElement(documentUID, uid, true);
+
+                        //*******************************************************
                     },
 
                     // 유형에 따라 comp 내용을 구성
                     __getCompContent: function(type, uid, config){
-                        var comp = '<div uid="' + uid + '">aaa</div>';
+                        var comp = '<div uid="' + uid + '" style="left:50px; top:100px;">position:absolute; </div>';
                         var $comp = angular.element(comp);
 
                         out('TODO : // Element 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
@@ -795,7 +817,7 @@ define(
                     },
 
                     // uid : element uid
-                    setSelectElement: function(documentUID, elementUID){
+                    setSelectElement: function(documentUID, elementUID, forced){
 
                         if(documentUID === undefined){
                             throw '지정된 document의 uid 값이 없습니다. (element)';
@@ -806,7 +828,7 @@ define(
                         // GET
                         var oldValue = this.getSelectElement(documentUID);
                         var newValue = elementUID;
-                        if(oldValue == newValue) return;
+                        if(!forced && oldValue == newValue) return;
 
                         // SET
                         // Document 선택 표시

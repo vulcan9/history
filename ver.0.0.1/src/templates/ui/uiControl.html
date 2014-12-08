@@ -1,9 +1,13 @@
-                
-<div class="wire ui-draggable ui-resizable ui-rotatable ui-selected" 
+
+<div ng-class="{ 'wire': true, 'ui-draggable': draggable, 'ui-resizable': resizable, 'ui-rotatable': rotatable, 'ui-selected': selected }" 
+    ng-attr-style="top: {{result.y}}px; left: {{result.x}}px; width: {{result.width}}px; height: {{result.height}}px; 
+    background-color:rgba(255,255,0,0.5);">
+
+    <!-- class="wire ui-draggable ui-resizable ui-rotatable ui-selected" 
     style="top: 0px; left: 0px; width: 240px; height: 160px; 
         background-color:rgba(255,255,0,0.5);">
-
-   <!--선택 표시-->
+     -->
+    <!--선택 표시-->
     <div class="ui-resizable-handle ui-resizable-n"></div>
     <div class="ui-resizable-handle ui-resizable-e"></div>
     <div class="ui-resizable-handle ui-resizable-s"></div>

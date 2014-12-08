@@ -255,7 +255,7 @@ define(
                 ////////////////////////////////////////
 
                 // Document 선택
-                this.__selectDocument = function  (item){
+                this.selectDocument = function  (item){
                     var param = {
                         uid : item.uid
                     };
@@ -265,7 +265,7 @@ define(
 
                 // Document 추가 
                 // position : 'next', 'sub', 'prev'
-                this.__addDocument = function (position, selectUID){
+                this.addDocument = function (position, selectUID){
 
                     if(Project.current == null) return;
 
@@ -285,7 +285,7 @@ define(
                     CommandService.exe(CommandService.ADD_DOCUMENT, param);
                 }
 
-                this.__showRemoveDocumentPopup = function (item){
+                this.showRemoveDocumentPopup = function (item){
 
                     if(Project.current == null) return;
                     
@@ -373,7 +373,7 @@ define(
                         function resolve( optionValue ) {
                         
                             var uid = item.uid;
-                            self.__removeDocument(optionValue, uid);
+                            self.removeDocument(optionValue, uid);
                             $scope.removeUID = null;
                         }, 
                         function reject(){
@@ -385,7 +385,7 @@ define(
                 }
 
                 // option: 'all', 'only'
-                this.__removeDocument = function (option, uid){
+                this.removeDocument = function (option, uid){
                     
                     if(Project.current == null) return;
 
@@ -482,7 +482,7 @@ define(
 
                 // Document 선택
                 $scope.selectDocument = function(item){
-                    controller.__selectDocument(item);
+                    controller.selectDocument(item);
                 };
                 
                 $scope.addDocument = function(item) {
@@ -491,11 +491,11 @@ define(
                     // nodeData.items.push({새로운 Documnt - tree item});
 
                     var uid = item.uid;
-                    controller.__addDocument('sub', uid);
+                    controller.addDocument('sub', uid);
                 };
 
                 $scope.removeDocument = function(item) {
-                    controller.__showRemoveDocumentPopup(item);
+                    controller.showRemoveDocumentPopup(item);
                 };
 
                 ////////////////////////////////////////

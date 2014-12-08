@@ -36,8 +36,6 @@ define(
                 transclude: true,
                 scope: {},
 
-                terminal: false,
-                
                 controller: Controller,
                 link: Link
 
@@ -56,7 +54,7 @@ define(
                 ////////////////////////////////////////
 
                 // 1. 이벤트를 받는다.
-                // var self = this;
+                var self = this;
                 $scope.$on('#Project.changed-DOCUMENT', function(e, data){
                     out('#Project.changed-DOCUMENT (screen) : ', arguments);
 
@@ -65,7 +63,7 @@ define(
                     // $scope.tree = (tree)? tree.items : [];
 
                     var selectUID = Project.current.getSelectDocument();
-                    __documentSelected(selectUID);
+                    self._updateDocumentContent(selectUID);
                 });
                 
                 // var data = {data:project};
@@ -81,7 +79,7 @@ define(
                 //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
                 $scope.$on('#Project.selected-DOCUMENT', function(e, data){
                     out('#Project.selected-DOCUMENT (screen) : ', data);
-                    __onSelectDocument(data.newValue, data.oldValue);
+                    self.__onSelectDocument(data.newValue, data.oldValue);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
@@ -106,11 +104,12 @@ define(
                 // DOM 업데이트
                 ////////////////////////////////////////
                 
-                function __onSelectDocument(newValue, oldValue){
+                this.__onSelectDocument = function (newValue, oldValue){
                     out(' - oldValue : ', oldValue);
                     out(' - newValue : ', newValue);
 
-                    __documentSelected(newValue);
+                    $scope.loadComplete = false;
+                    self._updateDocumentContent(newValue);
                 }
 
                 function __onAddDocument(item){
@@ -125,29 +124,15 @@ define(
                     
                 }
 
-                function __documentSelected(uid){
-                    contentRefresh(uid);
-                    /*
-                    // IFrame 파일로드
-                    //var iframeDocument = self.bookContainer.contentWindow.document || self.bookContainer.contentDocument;
-                    var iframeDocument = self.bookContainer.contentDocument;
-                    iframeDocument.open('text/html', 'replace');
-                    iframeDocument.write(result);
-                    iframeDocument.close();
-                    
-                    // _onLoadComplete 이벤트 발생함
-                    */
-                }
-
                 //-------------------------------------
                 // 내용 갱신
                 //-------------------------------------
 
-                function contentRefresh(documentUID){
+                this._updateDocumentContent = function (documentUID){
 
                     //uid로 DOM 찾아내기
                     var documentItem = documentUID ? Project.current.getDocument(documentUID) : null;
-                    $scope.loadComplete = (documentItem && documentItem.document.content);
+                    // $scope.loadComplete = (documentItem && documentItem.document.content);
                     
                     if(documentItem == null) {
                         $scope.documents = [];
@@ -168,6 +153,17 @@ define(
                     $timeout(function(){
                         $element.find('#contentContainer').html(dom);
                     });
+                    */
+
+                    /*
+                    // IFrame 파일로드
+                    //var iframeDocument = self.bookContainer.contentWindow.document || self.bookContainer.contentDocument;
+                    var iframeDocument = self.bookContainer.contentDocument;
+                    iframeDocument.open('text/html', 'replace');
+                    iframeDocument.write(result);
+                    iframeDocument.close();
+                    
+                    // _onLoadComplete 이벤트 발생함
                     */
                 }
                 
@@ -191,7 +187,7 @@ define(
 
                 // 해당 문서의 Element DOM 찾기
                 this._getContentElement = function (elementUID, documentUID){
-                    var $contentContainer = _getContentContainer(documentUID);
+                    var $contentContainer = this._getContentContainer(documentUID);
                     var $el = $contentContainer.find('[uid=' + elementUID + ']');
                     return $el;
                 }
@@ -203,19 +199,19 @@ define(
                 // {newValue: "element-18d53f95-2ffa-433a-9a9a-c57ca1534f04", name: "ELEMENT", oldValue: "element-c2d5091c-3d06-470c-b7b0-343a8bd41c88", document: "document-9c2bd172-edbe-4ed3-a145-c7e25dc515d1"}
                 $scope.$on('#Project.selected-ELEMENT', function(e, data){
                     out('#Project.selected-ELEMENT (screen) : ', data);
-                    __onSelectElement(data.newValue, data.oldValue, data.documentUID);
+                    self.__onSelectElement(data.newValue, data.oldValue, data.documentUID);
                 });
 
                 $scope.$on('#Project.added-ELEMENT', function(e, data){
                     out('#Project.addeded-ELEMENT (screen) : ', data);
-                    __onAddElement(data.item, data.param);
+                    self.__onAddElement(data.item, data.param);
                 });
                 
                 ////////////////////////////////////////
                 // Element 업데이트
                 ////////////////////////////////////////
                 
-                function __onSelectElement(newValue, oldValue, documentUID){
+                this.__onSelectElement = function (newValue, oldValue, documentUID){
                     out(' - oldValue (element) : ', oldValue);
                     out(' - newValue (element) : ', newValue);
 
@@ -228,22 +224,47 @@ define(
                     var $el_new = this._getContentElement(newValue, documentUID)
                     $el_new.addClass('selectedElement');
 
+                    // UI 크기 업데이트
+                   this._updateSelectUI();
+                }
+
+                this._updateSelectUI = function (){
+                    if(Project.current == null) return;
+                    var selectUID = Project.current.getSelectElement();
+                    var documentUID = Project.current.getSelectDocument();
+
+                    out('_updateSelectUI : ', selectUID);
+                    // $scope.documentUID = documentUID;
+                    $scope.selectInfo = {
+                        uid: selectUID,
+                        scale: $scope.size.scale
+                    };
+
+                    /*
+                    var $select = this._getContentElement(selectUID, documentUID);
+                    if($select.length < 1){
+                        $scope.boundary = null;
+                        return;
+                    }
+
+                    // 편집 UI를 구성한다.
+                    var boundary = {
+                        elementUID: selectUID,
+                        documentUID: documentUID,
+
+                        // scale: $scope.size.scale,
+
+                        x: U.toNumber($select.css('left')),
+                        y: U.toNumber($select.css('top')),
+                        
+                        width: $select.outerWidth(),
+                        height: $select.outerHeight()
+                    }
+
+                    $scope.boundary = boundary;
+                    */
 
 
-
-
-
-                    // // 편집 UI를 구성한다.
-                    // var editBoundary = {
-                    //     x: 0,
-                    //     y: 0,
-                    //     width: 100,
-                    //     height: 100,
-                    //     elementUID: newValue,
-                    //     documentUID: 
-                    // }
-
-                    // $scope.edit = editBoundary;
 
                     // 1. 선택된 uid를 ui-canvas directive에 전달한다.
                     // 2. 선택 uid를 가지고 boundary를 구한다.
@@ -254,34 +275,19 @@ define(
                     // 7. 그룹 선택을 지원한다.
 
                     // ---> directive로 구성할것
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 }
 
-                function __onAddElement(item, param){
-                    contentRefresh(param.documentUID);
+                $scope.getBoundary = function(uid){
+                    return ('getBoundary : ' + uid);
+                }
+
+                this.__onAddElement = function (item, param){
+                    // this._updateDocumentContent(param.documentUID);
+
+                    // var self = this;
+                    // $scope.$evalAsync(function(){
+                    //     self._updateSelectUI();
+                    // });
                 }
 
                 ////////////////////////////////////////
@@ -304,6 +310,8 @@ define(
                     $scope.ratio = getRatio(newValue.scale);
                     $scope.alignInfo_paper = getAlignInfo_paper(newValue);
                     $scope.alignInfo_loading = getAlignInfo_loading(newValue);
+
+                    controller._updateSelectUI();
                 }, true);
 
                 // A4 : 595x842, ppt : 1193x671
@@ -339,6 +347,8 @@ define(
                         compareWidth: compareWidth,
                         compareHeight: compareHeight,
 
+                        // width: sourceWidth*scale,
+                        // height: sourceHeight*scale,
                         width: Math.ceil(sourceWidth*scale),
                         height: Math.ceil(sourceHeight*scale),
                         marginW : marginW,
@@ -510,8 +520,8 @@ define(
                         style = {overflow:'hidden'};
                     }
                     
-                    var scale = $scope.scaleMode.scale();
-                    $scope.size = getSize(1);
+                    // var scale = $scope.scaleMode.scale();
+                    // $scope.size = getSize(1);
 
                     // scroll 정책 변경
                     $scope.overflow_style = style;
@@ -520,6 +530,17 @@ define(
                     // $element.trigger('#view.layoutUpdate');
                     $scope.$evalAsync( setSize );
                 };
+
+                function setScaleMode(scaleNum){
+                    $scope.scaleMode.scale(scaleNum);
+
+                    // scroll 정책 변경
+                    var style = {overflow:'auto'};
+                    $scope.overflow_style = style;
+
+                    // layout 갱신
+                    $scope.$evalAsync( setSize );
+                }
 
                 //-----------------------
                 // HTML Content 바인딩
@@ -537,6 +558,13 @@ define(
                         
                         var dom = item.content;
                         $contentContainer.html(dom);
+
+                        //****************************************
+
+                        // 랜더링 까지 완료되었음을 알림
+                        $scope.loadComplete = true;
+
+                        //****************************************
                     });
                 }
 

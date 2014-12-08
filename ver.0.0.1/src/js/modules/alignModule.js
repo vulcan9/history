@@ -19,7 +19,7 @@ define(
         var _module = angular.module('alignModule', []);
 
         // 등록
-        _module.directive( 'resizeEvent', resizeEvent );
+        // _module.directive( 'resizeEvent', resizeEvent );
         _module.directive( 'alignCenter', alignCenter );
 
         /*
@@ -32,6 +32,7 @@ define(
         // 리턴
         return _module;
 
+        /*
         // resizeEvent = "이벤트 trigger delay time (millisecond)"
         function resizeEvent(){
 
@@ -73,6 +74,7 @@ define(
                 }
             }
         }
+        */
 
         ////////////////////////////////////////
         // 레이아웃

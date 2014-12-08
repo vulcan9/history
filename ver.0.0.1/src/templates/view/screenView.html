@@ -13,6 +13,12 @@
     -->
 
     <span class="label label-info" ng-click="callAPI('toggleScaleMode')">Toggle ScaleMode</span>
+
+    <span class="label label-info" ng-click="callAPI('setScaleMode', 0.5)">Scale : 0.5</span>
+    <span class="label label-info" ng-click="callAPI('setScaleMode', 0.75)">Scale : 0.75</span>
+    <span class="label label-info" ng-click="callAPI('setScaleMode', 2)">Scale : 2</span>
+    <span class="label label-info" ng-click="callAPI('setScaleMode', 3)">Scale : 3</span>
+
     <div>Document : {{item.uid}}</div>
     <div>
     scale : {{size.scale}}, width : {{size.sourceWidth}}/{{size.width}}, height : {{size.sourceHeight}}/{{size.height}}, 격자 크기 : {{10/size.scale}}
@@ -101,11 +107,9 @@
             -->
             <div ng-attr-style="width:{{size.sourceWidth}}px; height:{{size.sourceHeight}}px; 
                 transform: scale({{size.scale}}); transform-origin: 0 0;
-                margin: -1px; display:inline-block;position: absolute;" 
+                margin: 0px !important; position: absolute;" 
 
-                class="transition"
-
-                style="/*background-color:rgba(255,255,0,0.5);*/">
+                class="transition">
 
                 <!--컨텐츠 그룹-->
                 <div id="contentContainer" class="content" style="width:100%;height:100%;" ng-init="callAPI('getHTMLContent', item)">
@@ -126,7 +130,8 @@
             <!--//----------------------------------------->
 
             <!--UI 표시-->
-            <div  ui-control></div>
+            <div  ui-control select-info="{{selectInfo}}" rendered="{{loadComplete}}" get-boundary="getBoundary(uid)"
+                class="transition"></div>
 
 
             <!--//----------------------------------------->
@@ -143,7 +148,7 @@
                 ng-attr-style="left: {{alignLoading.horizontal}}px; top: {{alignLoading.vertical}}px; 
                     visibility: {{alignLoading.visible?'visible':'hidden'}};"
 
-                ng-hide="loadComplete == false">
+                ng-hide="loadComplete">
                     로딩중
             </div>
 
