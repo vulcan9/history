@@ -35,7 +35,12 @@ window.debug = true;
     if ( typeof window.console === 'undefined' || typeof window.console.log === 'undefined' ) {
         window.console = {};
         // union of Chrome, FF, IE, and Safari console methods
-        var m = [ "log", "info", "warn", "error", "debug", "trace", "dir", "group", "groupCollapsed", "groupEnd", "time", "timeEnd", "profile", "profileEnd", "dirxml", "assert", "count", "markTimeline", "timeStamp", "clear" ];
+        var m = [ 
+            "log", "info", "warn", "error", "debug", "trace", "dir", 
+            "group", "groupCollapsed", "groupEnd", "time", "timeEnd", 
+            "profile", "profileEnd", "dirxml", "assert", "count", 
+            "markTimeline", "timeStamp", "clear" 
+        ];
         for (var i = 0; i < m.length; i++) {
             if (!window.console[m[i]]) {
                 window.console[m[i]] = function() {};
@@ -103,7 +108,9 @@ var _PATH = {
     SERVICE:           _PATH_ROOT_FOLDER + 'js/services/',
     FACTORY:           _PATH_ROOT_FOLDER + 'js/factory/',
     FILTER:               _PATH_ROOT_FOLDER + 'js/filters/',
-    COMMAND:         _PATH_ROOT_FOLDER + 'js/command/'
+    COMMAND:         _PATH_ROOT_FOLDER + 'js/command/',
+
+    EDITOR:                 _PATH_ROOT_FOLDER + 'editor/'
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,9 +144,12 @@ require.config( {
         // 'text':                     _PATH.LIB + 'require/text',
         // 'jquery':                 _PATH.LIB + 'jquery/jquery',
         // 'jquery-ui':             _PATH.LIB + 'jquery/jquery-ui-1.10.2.min',
+
+        // 'angular':                '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular',
+        // 'angular-route':       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular-route',
         
-        'angular':                '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular',
-        'angular-route':       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular-route',
+        'angular':                _PATH.LIB + 'angular/angular.1.2.23',
+        'angular-route':       _PATH.LIB + 'angular/angular-route.1.2.24',
         'angular-collection':       _PATH.LIB + 'angular/angular-collection',
 
         // http://angular-ui.github.io/bootstrap/
@@ -151,7 +161,7 @@ require.config( {
         // 모듈
         'dockModule':         _PATH.MODULE + 'dockModule',
         'alignModule':         _PATH.MODULE + 'alignModule',
-        'uiModule':             _PATH.MODULE + 'uiModule',
+        // 'uiModule':             _PATH.MODULE + 'uiModule',
 
         'Application':          _PATH.JS + 'Application',
         'Router':                 _PATH.JS + 'Router',
@@ -196,11 +206,13 @@ require.config( {
         'alignModule': {
             deps: [ 'angular']
         },
+        /*
         'uiModule': {
             deps: [ 'angular', 'angular-collection']
         },
+        */
         'Application': {
-            deps: [ 'angular', 'angular-route', 'dockModule', 'alignModule', 'uiModule', 'ui-bootstrap', 'ui.tree']
+            deps: [ 'angular', 'angular-route', 'dockModule', 'alignModule', 'ui-bootstrap', 'ui.tree']
         },
 
         'Space':{

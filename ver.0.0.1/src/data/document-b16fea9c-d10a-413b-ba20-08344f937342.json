@@ -9,7 +9,7 @@
         "uid": "document-b16fea9c-d10a-413b-ba20-08344f937342",
 
         "id": "bored-2",
-        "content": "<div id='bored-2' data-scale='1' data-x='-1500' data-y='200'><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>"
+        "content": "<div id='bored-2' data-scale='1' data-x='-1500' data-y='200' style='border: 20px solid rgb(255, 111, 0);'><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>"
 
     },
 

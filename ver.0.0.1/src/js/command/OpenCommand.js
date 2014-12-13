@@ -358,82 +358,119 @@ define(
 
                 // return dom;
                 var $dom = angular.element(dom);
+                if($dom.attr('uid') !== undefined){
+                    return dom;
+                }
                 
                 // document : uid 가 없다면 지원해 준다.
-                if($dom.attr('uid') === undefined){
+                // BUG: 
+                // width의 소수점 이하 처리 문제로 인해 wordwrape 현상이 일어나는 경우가 있어서 별도로 사이즈 지정하지 않는다.
+                // wrap 하더라도 따로 상즈를 설정하지 않는다. (대신 CSS로 크기, 위치 문제 해결한다.)
 
-                    // width를 미리 알아내는 방법
-                    var $temp = angular.element('body').find('.screenContainer #temp');
-                    $temp.css('visibility', 'hidden');
-                    $temp.append($dom);
+                // element로 기능 업데이트
+                // element : 하위 모든 태그를 element 노드로 감싼다.
+                var elementUID = Project.current.createElementUID();
+                var $comp = Project.current.createElementContent('tag', elementUID, config);
+                
+                out('TODO : // Element 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
 
-                    var display = $dom.css('display');
-                    $dom.css({
-                        'display': 'inline-block'
-                    });
-                    var borderW = U.toNumber($dom.css('border-left-width')) + U.toNumber($dom.css('border-right-width'));
-                    var borderH = U.toNumber($dom.css('border-top-width')) + U.toNumber($dom.css('border-bottom-width'));
-                    var paddingL = U.toNumber($dom.css('padding-left'));
-                    var paddingR = U.toNumber($dom.css('padding-right'));
-                    var paddingT = U.toNumber($dom.css('padding-top'));
-                    var paddingB = U.toNumber($dom.css('padding-bottom'));
-                    var marginL = U.toNumber($dom.css('margin-left'));
-                    var marginR = U.toNumber($dom.css('margin-right'));
-                    var marginT = U.toNumber($dom.css('margin-top'));
-                    var marginB = U.toNumber($dom.css('margin-bottom'));
-                    var w = $dom.width() + marginL + marginR + paddingL + paddingR + borderW;
-                    var h = $dom.height() + marginT + marginB + paddingT + paddingB + borderH;
-                    
-                    $dom.remove();
+                // DOM 구성
+                $comp.html($dom);
 
-                    // element로 기능 업데이트
-                    // element : 하위 모든 태그를 element 노드로 감싼다.
-                    var elementUID = Project.current.createElementUID();
-                    var $comp = Project.current.createElementContent('tag', elementUID, config);
-                    
-                    // element의 가상 border 체크
-                    $temp.append($comp);
-                    var bL = U.toNumber($comp.css('border-left-width'));
-                    var bR = U.toNumber($comp.css('border-right-width'));
-                    var bT = U.toNumber($comp.css('border-top-width'));
-                    var bB = U.toNumber($comp.css('border-bottom-width'));
-                    $comp.remove();
+                // document로 감싼다.
+                var documentUID = Project.current.createDocumentUID();
+                var docNode = Project.current.createDocumentContent(documentUID);
+                angular.element(docNode).html($comp);
+                return docNode;
 
-                    //---------------------
-                    // 값 적용
+                // return $comp;
 
-                    out('BUG: (임시 처리)1px 차이로 인해 wordwrape 현상이 일어나는 경우가 있어서 left -1px를 적용해 준다.');
-                    
-                    $dom.css({
-                        'display': display,
-                        'position': 'absolute',
-                        'top': '0px',
-                        'left': '0px',
-                        // 'margin': '0px',
-                        // 'padding': (paddingW/2 + paddingH/2) + 'px',
-                        'pointer-events': 'none'
-                    });
 
-                    // element style의 border값 = 2
-                    $comp.css({
-                        'width': w + bL + bR,
-                        'height': h + bT + bB
-                    });
+                /*
+                // width를 미리 알아내는 방법
+                var $temp = angular.element('body').find('.screenContainer #temp');
+                $temp.css('visibility', 'hidden');
 
-                    // document로 감싼다.
-                    var documentUID = Project.current.createDocumentUID();
-                    var document = Project.current.createDocumentContent(documentUID);
+                var $document = angular.element('<div>').attr('uid', 'document-temp');
+                var $element = angular.element('<div>').attr('uid', 'element-temp');
 
-                    // DOM 구성
-                    $comp.html($dom);
-                    angular.element(document).html($comp);
+                $element.append($dom)
+                $document.append($element)
+                $temp.append($document);
 
-                    return document;
-                }
+                var display = $dom.css('display');
+                $dom.css({
+                    // 'fontFamily': '맑은 고딕',
+                    // 'display': 'inline-block'
+                });
+
+                var borderW = U.toNumber($dom.css('border-left-width')) + U.toNumber($dom.css('border-right-width'));
+                var borderH = U.toNumber($dom.css('border-top-width')) + U.toNumber($dom.css('border-bottom-width'));
+                var paddingL = U.toNumber($dom.css('padding-left'));
+                var paddingR = U.toNumber($dom.css('padding-right'));
+                var paddingT = U.toNumber($dom.css('padding-top'));
+                var paddingB = U.toNumber($dom.css('padding-bottom'));
+                var marginL = U.toNumber($dom.css('margin-left'));
+                var marginR = U.toNumber($dom.css('margin-right'));
+                var marginT = U.toNumber($dom.css('margin-top'));
+                var marginB = U.toNumber($dom.css('margin-bottom'));
+                
+                var w = $dom.width() + marginL + marginR + paddingL + paddingR + borderW;
+                var h = $dom.height() + marginT + marginB + paddingT + paddingB + borderH;
+                
+                $dom.remove();
+
+                //---------------------
+                // 값 적용
+                
+                $dom.css({
+                    // 'display': display,
+                    // 'position': 'absolute',
+                    'top': '0px',
+                    'left': '0px',
+                    // 'margin': '0px',
+                    // 'padding': (paddingW/2 + paddingH/2) + 'px',
+                    'pointer-events': 'none'
+                });
+
+                // element로 기능 업데이트
+                // element : 하위 모든 태그를 element 노드로 감싼다.
+                var elementUID = Project.current.createElementUID();
+                var $comp = Project.current.createElementContent('tag', elementUID, config);
                 
                 out('TODO : // Element 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
                 // angular.extend({}, config);
-                return dom;
+
+                //***************************************
+                // BUG: 
+                // (임시 처리) width의 소수점 이하 처리 문제로 인해 wordwrape 현상이 일어나는 경우가 있어서 별도로 사이즈 지정하지 않는다.
+                
+                // element의 가상 border 체크
+                $temp.append($comp);
+                
+                var bL = U.toNumber($comp.css('border-left-width'));
+                var bR = U.toNumber($comp.css('border-right-width'));
+                var bT = U.toNumber($comp.css('border-top-width'));
+                var bB = U.toNumber($comp.css('border-bottom-width'));
+                $comp.remove();
+
+                $comp.css({
+                    'width': w + bL + bR,
+                    'height': h + bT + bB
+                });
+
+                //***************************************
+
+                // DOM 구성
+                $comp.html($dom);
+
+                // document로 감싼다.
+                var documentUID = Project.current.createDocumentUID();
+                var document = Project.current.createDocumentContent(documentUID);
+                angular.element(document).html($comp);
+
+                return document;
+                */
             }
 
             // 서비스 객체 리턴

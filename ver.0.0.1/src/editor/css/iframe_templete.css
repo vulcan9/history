@@ -44,7 +44,7 @@ html {
 body {
     width: 100%;
     height: 100%;
-    /*line-height: 1;*/
+    background-color: transparent;
 
     /*
     background: rgb(215, 215, 215);
@@ -54,6 +54,13 @@ body {
     background: -ms-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
     background: -o-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
     background: radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
+    
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
     */
 }
 
@@ -82,12 +89,79 @@ b, strong {font-weight: bold;}
 i, em {font-style: italic;}
 
 
+/*------------------------------------
+// Element
+------------------------------------*/
 
-/*//////////////////////////////////////
-// UI Bootstrap 커스트마이징
-// http://angular-ui.github.io/bootstrap/
-//////////////////////////////////////*/
-
-.btn{
-    min-width: 80px;
+/* element 요소 */
+.screenContainer div[uid^="element-"] {
+    outline: rgba(0, 255, 245, 0.2) solid 20px;
+    position: absolute;
 }
+.screenContainer div[uid^="element-"]:hover {
+    outline: rgba(0, 255, 245, 0.5) solid 20px;
+}
+.screenContainer div[uid^="element-"].selectedElement {
+    outline: rgba(0, 255, 245, 0.2) solid 1px;
+}
+.screenContainer div[uid^="element-"].selectedElement:hover {
+    outline: rgba(255, 194, 0, 0.2) solid 1px;
+}
+.screenContainer div[contenteditable=true].selectedElement {
+    outline: rgba(255, 194, 0, 0.2) solid 1px;
+}
+
+/* document 요소 */
+.screenContainer div[uid^="document-"],
+.screenContainer div[uid^="document-"]:hover
+.screenContainer div[uid^="document-"].selectedElement
+.screenContainer div[uid^="document-"].selectedElement:hover {
+    outline: none;
+    position: relative;
+}
+
+
+/*텍스트 옵션, 
+<element contenteditable="true|false">
+
+text-align : left|right|center|justify;
+text-decoration: none|underline|overline|line-through|initial|inherit;
+text-indent: px, pt, cm, em, %
+text-overflow: clip|ellipsis|string|initial|inherit; (width 지정되고 overflow: hidden;인 경우)
+text-shadow: h-shadow v-shadow blur color|none|initial|inherit;
+text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문자 변환)
+
+폰트 옵션
+font
+@font-face
+font-family
+font-size
+font-size-adjust
+font-stretch
+font-style
+font-variant
+font-weight
+
+Paragraphs 옵션
+letter-spacing
+line-height
+list-style
+list-style-image
+list-style-position
+list-style-type
+
+여백 (layout)
+margin
+margin-bottom
+margin-left
+margin-right
+margin-top
+padding
+padding-bottom
+padding-left
+padding-right
+padding-top
+
+객체 align (IE11이상 지원)
+justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
+*/

@@ -146,8 +146,8 @@ define(
                     // command 호출
                     var param = {
                         //document : null,
-                        // uid: uid가 지정되지 않았으면 자동 생성됨
-                        uid : documentUID || Project.current.createDocumentUID(),
+                        // documentUID: uid가 지정되지 않았으면 자동 생성됨
+                        documentUID : documentUID || Project.current.createDocumentUID(),
 
                         option: {
                             position: position,
@@ -189,7 +189,7 @@ define(
                         documentUID : documentUID || Project.current.getSelectDocument(),
                         
                         // uid가 지정되지 않았으면 command에서 자동 생성됨
-                        uid: elementUID || Project.current.createElementUID(),
+                        elementUID: elementUID || Project.current.createElementUID(),
                         type: type,
 
                         // element 설정값

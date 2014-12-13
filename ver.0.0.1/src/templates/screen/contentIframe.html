@@ -1,8 +1,11 @@
 
-            
-<iframe id="iframe" 
-    width="100%" height="100%" scrolling="no" seamless frameborder="0" allowfullscreen 
-    ng-init="getContent(item)" ng-src="{{url}}">
+<!-- 마우스 이벤트가 IFrame 영역에서는 발생되지 않으므로 IFrame을 사용하지 않는다. -->
+
+<iframe id="iframe"
+    width="100%" height="100%" scrolling="no" frameborder="0" allowfullscreen
+    ng-src="{{url}}"
+    ng-init="loadContent()">
+    <!-- sandbox="allow-same-origin allow-scripts allow-top-navigation" -->
 
     <p>This website does not supports IFrame</p>
     <!-- <div class="content" style="width:100%;height:100%;" ng-init="getContent(item)"></div> -->

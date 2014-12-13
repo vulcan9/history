@@ -258,6 +258,7 @@ define( [], function() {
 		        				_PATH.DATA + 'Project',
 		        				
 						_PATH.FACTORY + 'ScaleMode',
+						_PATH.FACTORY + 'Drager',
 						
 						//SERVICE
 						_PATH.SERVICE + 'CommandService',
@@ -282,7 +283,11 @@ define( [], function() {
 						_PATH.COMMAND + 'element/SelectElementCommand',
 
 						_PATH.COMMAND + 'PlayCommand',
-						// _PATH.COMMAND + 'EditCommand'
+						// _PATH.COMMAND + 'EditCommand',
+
+						
+						// _PATH.EDITOR + 'element/element',
+						_PATH.EDITOR + 'uiControl'
 					]
 				}
 				/*

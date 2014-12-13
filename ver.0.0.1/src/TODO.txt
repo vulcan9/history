@@ -6,3 +6,18 @@
 * Element UI Command
 
 * UNDO/REDO 기능
+
+
+
+
+
+
+[Screen]
+- 마우스 이벤트가 IFrame 영역에서는 발생되지 않으므로 IFrame을 사용하지 않는다.
+IFrame으로 컨텐츠를 삽입한 경우 UI핸들을 드래그할때 IFrame위에서는 마우스이벤트가 더이상 발생하지 않으며
+이는 Tree 항목을 드래그하는 경우에도 마찬가지 현상이 나타난다.
+따라서 DIV내에서 컨텐츠를 랜더링한다. (Context를 제한할수 없는 문제는 있음)
+
+[Tree]
+- 아이템 드래그 상태일때 Drop zone이 없어지는 현상 있음
+- 마우스 이벤트를 Drag&Drop으로 바꿀 필요가 있어보임

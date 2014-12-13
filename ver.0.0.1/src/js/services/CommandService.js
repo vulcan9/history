@@ -65,7 +65,7 @@ define(
                 ADD_ELEMENT: 'addElement',
                 // REMOVE_ELEMENT: 'removeElement',
                 // MODIFY_ELEMENT: 'modifyElement',
-                // SELECT_ELEMENT: 'selectElement',
+                SELECT_ELEMENT: 'selectElement',
                 
                 /*
                 CommandService._exe(CommandService.OPEN, param, function callback(isSuccess, result){
@@ -109,6 +109,7 @@ define(
 
                         out( '\n=================================================' );
                         out( ' Macro 생성 : ', commandName, ' --> ', funcName, '\n' );
+                        // out( ' resultCallback : ', resultCallback);
 
                         args = [ param ];
 
@@ -152,13 +153,14 @@ define(
                             return;
                         }
 
+                        // macro = [{command:command, param:param},.....]
                         macroPromise.then( function( macro ) {
                             
                             // Macro 실행
                             out( '\n=================================================' );
                             out('# Macro 실행 : ', arguments);
 
-                            self._runMacro( macro, param, resultCallback );
+                            self._runMacro( macro, resultCallback );
 
                         }, function(){
 
@@ -176,12 +178,17 @@ define(
                     }
                 },
 
-                _runMacro: function( macro, param, resultCallback ) {
+                _runMacro: function( macro, resultCallback ) {
 
                     out( '\n----------------------------//start' );
                     
                     // macro 강제 종료
                     var macroCanceled = false;
+
+                    // macro = [{command:command, param:param},.....]
+                    var item = macro.shift();
+                    var command = item.command;
+                    var param = item.param;
 
                     // args => [param]
                     var callback = angular.bind( this, function( isSuccess, result, isStopPropergation ) {
@@ -210,10 +217,9 @@ define(
                         }
 
                         // 다음 command 실행
-                        this._runMacro( macro, param, resultCallback );
+                        this._runMacro( macro, resultCallback );
                     } )
 
-                    var command = macro.shift();
                     out( '# Command 호출 : ', command );
                     command.execute.apply( command, [ param, callback ] );
                 },
@@ -276,7 +282,7 @@ define(
                     function resove() {
                         // 닫기
                         var command = new CloseCommand();
-                        macro.push( command );
+                        macro.push( {command:command, param:param} );
                         deferred.resolve( macro );
                         // deferred.reject(failData);
                     }
@@ -309,7 +315,7 @@ define(
 
                     function resove() {
                         var command = new NewCommand();
-                        macro.push( command );
+                        macro.push( {command:command, param:param} );
                         deferred.resolve( macro );
                         // deferred.reject(failData);
                     }
@@ -349,7 +355,7 @@ define(
                     function resove() {
                         // 프로젝트 열기
                         var command = new OpenCommand();
-                        macro.push( command );
+                        macro.push( {command:command, param:param} );
                         deferred.resolve( macro );
                         // deferred.reject(failData);
                     }
@@ -371,7 +377,7 @@ define(
 
                     // 저장
                     var command = new SaveCommand();
-                    macro.push( command );
+                    macro.push( {command:command, param:param} );
 
                     deferred.resolve( macro );
                     return deferred.promise;
@@ -397,7 +403,7 @@ define(
                     
                     // 다른 이름으로 저장
                     var command = new SaveAsCommand();
-                    macro.push( command );
+                    macro.push( {command:command, param:param} );
 
                     deferred.resolve( macro );
                     return deferred.promise;
@@ -431,7 +437,7 @@ define(
                     function resove() {
                         // 종료
                         var command = new ExitCommand();
-                        macro.push( command );
+                        macro.push( {command:command, param:param} );
                         deferred.resolve( macro );
                         // deferred.reject(failData);
                     }
@@ -463,8 +469,8 @@ define(
 
                     // 아이디 체크
                     if(param === undefined) param = {};
-                    if(param.uid === undefined){
-                        param.uid = Project.current.createDocumentUID();
+                    if(param.documentUID === undefined){
+                        param.documentUID = Project.current.createDocumentUID();
                     }
 
                     // var self = this;
@@ -473,7 +479,7 @@ define(
 
                     // 추가
                     var command = new AddDocumentCommand();
-                    macro.push( command );
+                    macro.push( {command:command, param:param} );
 
                     deferred.resolve( macro );
                     return deferred.promise;
@@ -490,7 +496,7 @@ define(
                     if(Project.current == null) return;
 
                     // 아이디 체크
-                    if(!param || param.uid === undefined){
+                    if(!param || param.documentUID === undefined){
                         return null;
                     }
 
@@ -500,7 +506,7 @@ define(
 
                     // 제거
                     var command = new RemoveDocumentCommand();
-                    macro.push( command );
+                    macro.push( {command:command, param:param} );
 
                     deferred.resolve( macro );
                     return deferred.promise;
@@ -511,7 +517,7 @@ define(
                     if(Project.current == null) return;
 
                     // 아이디 체크
-                    if(!param || param.uid === undefined){
+                    if(!param || param.documentUID === undefined){
                         return null;
                     }
 
@@ -521,7 +527,7 @@ define(
 
                     // 수정
                     var command = new ModifyDocumentCommand();
-                    macro.push( command );
+                    macro.push( {command:command, param:param} );
 
                     deferred.resolve( macro );
                     return deferred.promise;
@@ -533,27 +539,86 @@ define(
 
                     // 아이디 체크
                     if(param === undefined) param = {};
-                    if(param.uid === undefined){
+                    if(param.documentUID === undefined){
                         throw '선택할 Document의 uid가 정해지지 않았습니다.';
                         return;
                     }
+
+                    var documentUID = Project.current.getSelectDocument();
+                    if(param.documentUID === documentUID) return null;
 
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
+                    /*
                     // 추가
                     var command = new SelectDocumentCommand();
                     macro.push( command );
 
                     deferred.resolve( macro );
                     return deferred.promise;
+                    */
+
+                    function sub_command(){
+                        var macro = [];
+                        var deferred = $q.defer();
+                        
+                        var command = new SelectDocumentCommand();
+                        macro.push( {command:command, param:param} );
+                        deferred.resolve( macro );
+
+                        return deferred.promise;
+                    }
+
+                    var promise = sub_command();
+
+                    //---------------------
+                    // 현재 선택 상태의 문서이면 Element 선택 표시
+                    //---------------------
+                    
+                    promise.then( function( macro_sub ) {
+                        // macro 추가
+                        macro = macro.concat( macro_sub );
+                        resove();
+
+                    }, function(result){
+                        deferred.reject(result);
+
+                    } );
+
+                    function resove() {
+                        // Element 선택 macro 추가
+                        var newParam = {
+                            documentUID: param.documentUID,
+                            elementUID: Project.current.getSelectElement(param.documentUID)
+                        };
+                        var command = new SelectElementCommand();
+                        macro.push( {command:command, param:newParam} );
+
+                        deferred.resolve( macro );
+                    }
+
+                    return deferred.promise;
                 },
 
                 ////////////////////////////////////////
                 // Element
                 ////////////////////////////////////////
+                /*
+                var param = {
+                    
+                    // 삽입될 문서
+                    documentUID : documentUID || Project.current.getSelectDocument(),
+                    
+                    // uid가 지정되지 않았으면 command에서 자동 생성됨
+                    elementUID: elementUID || Project.current.createElementUID(),
+                    type: type,
 
+                    // element 설정값
+                    option: {}
+                };
+                */
                 command_addElement: function( param ) {
                     
                     if(Project.current == null) return;
@@ -567,19 +632,61 @@ define(
                     }
 
                     // 아이디 체크
-                    if(param.uid === undefined){
-                        param.uid = Project.current.createElementUID();
+                    if(param.elementUID === undefined){
+                        param.elementUID = Project.current.createElementUID();
                     }
 
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
+                    /*
                     // 추가
                     var command = new AddElementCommand();
                     macro.push( command );
 
                     deferred.resolve( macro );
+                    return deferred.promise;
+                    */
+
+                    function sub_command(){
+                        var macro = [];
+                        var deferred = $q.defer();
+                        var command = new AddElementCommand();
+                        macro.push( {command:command, param:param} );
+
+                        deferred.resolve( macro );
+                        return deferred.promise;
+                    }
+
+                    var promise = sub_command();
+
+                    //---------------------
+                    // 현재 선택 상태의 문서이면 Element 선택 표시
+                    //---------------------
+                    
+                    promise.then( function( macro_sub ) {
+                        // macro 추가
+                        macro = macro.concat( macro_sub );
+                        resove();
+
+                    }, function(result){
+                        deferred.reject(result);
+
+                    } );
+
+                    function resove() {
+                        // Element 선택 macro 추가
+                        var newParam = {
+                            documentUID: param.documentUID,
+                            elementUID: param.elementUID
+                        };
+                        var command = new SelectElementCommand();
+                        macro.push( {command:command, param:newParam} );
+
+                        deferred.resolve( macro );
+                    }
+
                     return deferred.promise;
                 },
 
@@ -588,7 +695,7 @@ define(
                     if(Project.current == null) return;
 
                     // 아이디 체크
-                    if(!param || param.uid === undefined){
+                    if(!param || param.elementUID === undefined){
                         return null;
                     }
 
@@ -598,7 +705,7 @@ define(
 
                     // 제거
                     var command = new RemoveElementCommand();
-                    macro.push( command );
+                    macro.push( {command:command, param:param} );
 
                     deferred.resolve( macro );
                     return deferred.promise;
@@ -609,7 +716,7 @@ define(
                     if(Project.current == null) return;
 
                     // 아이디 체크
-                    if(!param || param.uid === undefined){
+                    if(!param || param.elementUID === undefined){
                         return null;
                     }
 
@@ -619,30 +726,39 @@ define(
 
                     // 수정
                     var command = new ModifyElementCommand();
-                    macro.push( command );
+                    macro.push( {command:command, param:param} );
 
                     deferred.resolve( macro );
                     return deferred.promise;
                 },
-
+                
+                /*
+                var param = {
+                    documentUID: Project.current.getSelectDocument(),
+                    elementUID: Project.current.getSelectElement()
+                };
+                */
                 command_selectElement: function( param ) {
                     
                     if(Project.current == null) return;
 
                     // 아이디 체크
                     if(param === undefined) param = {};
-                    if(param.uid === undefined){
+                    if(param.elementUID === undefined){
                         throw '선택할 Document의 uid가 정해지지 않았습니다.';
                         return;
                     }
+
+                    var elementUID = Project.current.getSelectElement();
+                    if(param.elementUID === elementUID) return null;
 
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
-                    // 추가
+                    // Element 선택
                     var command = new SelectElementCommand();
-                    macro.push( command );
+                    macro.push( {command:command, param:param} );
 
                     deferred.resolve( macro );
                     return deferred.promise;

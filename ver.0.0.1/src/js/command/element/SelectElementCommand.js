@@ -52,7 +52,9 @@ define(
                     // 데이터 세팅
                     //-----------------------
                     
-                    Project.current.setSelectElement(param.uid);
+                    var documentUID = param.documentUID;
+                    var elementUID = param.elementUID;
+                    Project.current.setSelectElement(documentUID, elementUID);
 
                     // 결과 리턴
                     _super._run.apply(this, arguments);

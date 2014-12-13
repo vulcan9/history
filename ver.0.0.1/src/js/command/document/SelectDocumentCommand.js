@@ -52,7 +52,7 @@ define(
                     // 데이터 세팅
                     //-----------------------
                     
-                    Project.current.setSelectDocument(param.uid);
+                    Project.current.setSelectDocument(param.documentUID);
 
                     // 결과 리턴
                     _super._run.apply(this, arguments);

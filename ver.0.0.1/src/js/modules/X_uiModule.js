@@ -48,12 +48,12 @@ define(
                 
                 replace: true,
                 transclude: true,
-                scope: {
-                    selectInfo: '@selectInfo',
-                    // boundary: '@boundary',
-                    rendered: '@rendered', //DOM 렌더링이 완료됬는지 여부
-                    getBoundary: '&getBoundary' // boundary 가죠오는 메서드
-                },
+                // scope: {
+                //     selectInfo: '@selectInfo',
+                //     // boundary: '@boundary',
+                //     rendered: '@rendered', //DOM 렌더링이 완료됬는지 여부
+                //     getBoundary: '&getBoundary' // boundary 가죠오는 메서드
+                // },
 
                 // 다른 디렉티브들과 통신하기 위한 역할을 하는 controller명칭을 정의.
                 // this로 정의된 data 및 function은 3.9의’require’ rule을 사용하여 다른 디렉티브에서 엑세스 할 수 있게 합니다.
@@ -80,13 +80,16 @@ define(
                     // $element.trigger('#view.layoutUpdate');
                 } );
                 */
-                out('---------------------------------------------->', $scope.selectInfo);
 
                 var self = this;
                 var _infoChanged = false;
                 var _rendered = false;
                 
-                
+                $scope.$watch('selectInfo',  function (newValue, oldValue){
+                    self.__updateBoundary();
+                }, true);
+
+                /*
                 // boundary
                 $scope.$watch('selectInfo',  function (newValue, oldValue){
                     $scope.info = $scope.$eval(newValue);
@@ -94,21 +97,25 @@ define(
                 
                 $scope.$watch('info', function (newValue, oldValue){
                     _infoChanged = true;
+
+                    out('UIControl info change');
+
                     if(_infoChanged && _rendered){
                         _infoChanged = false;
                         self.__updateBoundary();
                     }
                 });
+*/
 
-                $scope.$watch('rendered',  function (newValue, oldValue){
+                $scope.$watch('loadComplete',  function (newValue, oldValue){
                     
-                    _rendered = $scope.$eval(newValue);
-                    out('change rendered : ', _rendered);
+                    // _rendered = $scope.$eval(newValue);
+                    // out('change rendered : ', _rendered);
 
-                    if(_infoChanged && _rendered){
-                        _infoChanged = false;
+                    // if(_infoChanged && _rendered){
+                        // _infoChanged = false;
                         self.__updateBoundary();
-                    }
+                    // }
                 });
 
                 /*
@@ -118,12 +125,33 @@ define(
                 */
                 this.__updateBoundary = function (){
 
-                    out('* change selectUID : ', $scope.info);
-                    var info = $scope.info;
+                    out('* change selectUID : ', $scope.selectInfo);
+                    var info = $scope.selectInfo;
+                    if(info === undefined || !info.uid){
+                        $scope.selected = false;
+                        $scope.result = null;
+                        return;
+                    }
+
                     var selectUID = info.uid;
 
+
+
+
+
+
+
+
+
+
+
+                    
+
+
+
                     // 해당 문서의 Element DOM 찾기
-                    var content = $scope.$parent.item.content;
+                    // var content = $scope.$parent.item.content;
+                    var content = $scope.item.content;
                     var $content = angular.element(content);
                     var $select = (selectUID) ? $content.find('[uid=' + selectUID + ']') : null;
 
@@ -133,7 +161,7 @@ define(
                     // out('$contentContainer : ', $contentContainer);
 
                     // out('$select : ', $scope.rendered, $select);
-                    if($select == null){
+                    if($select == null || $select.length < 1){
                         $scope.selected = false;
                         $scope.result = null;
                         return;
@@ -187,7 +215,7 @@ define(
             function Link ( $scope, $element, $attrs) {
 
                 // $element.trigger('#view.layoutUpdate');
-                out('boundary : ', $scope.boundary);
+                // out('boundary : ', $scope.boundary);
 
                 ////////////////////////////////////////
                 // End Controller

@@ -19,7 +19,7 @@ define(
         application.directive( 'contentIframe', _directive );
 
         // 선언
-        function _directive($sce) {
+        function _directive( $templateCache, $sce ) {
 
             //out( 'content' );
 
@@ -33,13 +33,14 @@ define(
                 //template: '<span><span ng-transclude></span> {{content}} </span>',
                 templateUrl: _PATH.TEMPLATE + 'screen/contentIframe.html',
                 
-                replace: true,
+                replace: false,
                 transclude: true,
 
-                scope: {
-                    onLoadComplete: '&onLoadComplete',
-                    item: '=item'
-                },
+                // scope: {
+                //     onLoadComplete: '&onLoadComplete',
+                //     item: '=item',
+                //     size: '=size'
+                // },
                 
                 controller: Controller,
                 link: Link
@@ -51,65 +52,315 @@ define(
             //
             ////////////////////////////////////////////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs) {
+            function Controller( $scope, $element, $attrs, $timeout, $compile, Project) {
 
-                // 로드 내용 container DOM 찾기
-                this._getContentContainer = function (documentUID){
-                    // var $content = $element.find('#contentContainer');
-                    // return $content;
-                    return $element;
+                // 제거
+                $scope.$on("$destroy", function () {
+                    var $contentContainer = $scope.getContentContainer();
+                    $contentContainer.off('load', _onLoadIFrame);
+                    // API_remove();
+                });
+                
+                ////////////////////////////////////////////////////////////////////////////////
+                // Element
+                ////////////////////////////////////////////////////////////////////////////////
+                /*
+                // {newValue: "element-18d53f95-2ffa-433a-9a9a-c57ca1534f04", name: "ELEMENT", oldValue: "element-c2d5091c-3d06-470c-b7b0-343a8bd41c88", document: "document-9c2bd172-edbe-4ed3-a145-c7e25dc515d1"}
+                $scope.$on('#Project.selected-ELEMENT', function(e, data){
+                    out('#Project.selected-ELEMENT (screen) : ', data);
+                    __onSelectElement(data.newValue, data.oldValue, data.documentUID);
+                });
+                
+                $scope.$on('#Project.added-ELEMENT', function(e, data){
+                    out('#Project.addeded-ELEMENT (screen) : ', data);
+                    __onAddElement(data.item, data.param);
+                });
+
+                $scope.$on('#Project.removed-ELEMENT', function(e, data){
+                    out('#Project.removed-ELEMENT (screen) : ', data);
+                    __onRemoveElement(data.item, data.param);
+                });
+                
+                $scope.$on('#Project.modified-ELEMENT', function(e, data){
+                    out('#Project.modified-ELEMENT (screen) : ', data);
+                    __onModifyElement(data.item, data.param);
+                });
+                
+                function __onAddElement(item, param){
+                    // IFrame에 Element 알림
+                    IFRAME_onAddedElement (param);
                 }
 
-                /*
-                // 해당 문서의 Element DOM 찾기
-                this._getContentElement = function (elementUID, documentUID){
-                    var $contentContainer = this._getContentContainer(documentUID);
-                    var $el = $contentContainer.find('[uid=' + elementUID + ']');
-                    return $el;
+                function __onRemoveElement(item, param){
+                    // IFrame에 Element 알림
+                    IFRAME_onRemovedElement (param);
+                }
+
+                function __onModifyElement(item, param){
+                    // IFrame에 Element 알림
+                    IFRAME_onModifiedElement (param);
+                }
+
+                function __onSelectElement(newValue, oldValue, documentUID){
+                    out(' - oldValue (element) : ', oldValue);
+                    out(' - newValue (element) : ', newValue);
+
+                    // 해당 문서에 선택 표시
+
+                    // addElement 후 바로 선택되는 경우 $element에 아직 렌더링 되지 않은 상황일 수 있다.
+                    // var $el_old = this._getContentElement(oldValue, documentUID)
+                    // $el_old.removeClass('selectedElement');
+
+                    // var $el_new = this._getContentElement(newValue, documentUID)
+                    // $el_new.addClass('selectedElement');
+
+                    // UI 크기 업데이트 (selectInfo 값이 변경됨)
+                   $scope.updateSelectUI();
                 }
                 */
 
-                //-----------------------
-                // HTML Content 바인딩
-                //-----------------------
-                
-                var self = this;
-                $scope.getContent = function (item) {
+                ////////////////////////////////////////
+                // IFrame 컨텐츠 적용
+                ////////////////////////////////////////
+
+                // DOM 초기화시 호출됨 (ng-init)
+                $scope.loadContent = function () {
                     // var htmlString = item.content;
                     // return $sce.trustAsHtml(htmlString);
 
                     // attribute에 uid값이 아직 적용되지 않은 경우일 수 있으므로 $evalAsync로 실행한다.
-                    $scope.$evalAsync(function(){
-                        
-                        var documentUID = item.uid
-                        var dom = item.content;
-                        var $contentContainer = self._getContentContainer(documentUID);
-                        
-                        // $contentContainer.html(dom);
-
-
-
-                        // IFrame에 해당 내용을 로드한다.
-                        var url = 'http://localhost/history/ver.0.0.1/src/#/tool/s';
-                        // $contentContainer.attr('src', url);
-                        $scope.url = $sce.trustAsResourceUrl(url);
-
-                        // body는 투명처리할것
-                        // style="background-color: transparent;"
-
-                        //****************************************
-
-                        // 로드 완료 이벤트 등록
-
-                        // 랜더링 까지 완료되었음을 알림
-                        $scope.onLoadComplete({
-                            success:true
-                        });
-
-                        //****************************************
-                    });
+                    // $scope.$evalAsync(function(){
+                        loadIFrame();
+                    // });
                 }
 
+                //-----------------------
+                // IFrame 로드
+                //-----------------------
+                
+                function loadIFrame(){
+
+                    // 로드 완료 이벤트 등록
+                    var $contentContainer = $scope.getContentContainer();
+                    $contentContainer.on('load', _onLoadIFrame);
+
+                    // IFrame과 통신 연결
+                    // http://charemza.name/blog/posts/angularjs/iframe/same-domain-iframe-communication/
+                    // http://newtriks.com/2013/05/13/using-postmessage-in-an-angularjs-application/
+                    createMessageInterface();
+
+                    var url = _PATH.EDITOR + 'template/iframe.html';
+                    $scope.url = $sce.trustAsResourceUrl(url);
+
+                    /*
+                    var url = 'iframe.template';
+                    var htmlString = $templateCache.get(url);
+                    var iframeDocument = $contentContainer[0].contentDocument;
+                    iframeDocument.open('text/html', 'replace');
+                    iframeDocument.write(htmlString);
+                    iframeDocument.close();
+                    */
+
+                    // IFrame에 해당 내용을 로드한다.
+                    // var url = 'template_iframe.html';
+                    // $contentContainer.attr('src', url);
+                    // $scope.url = $sce.trustAsResourceUrl(url);
+                }
+
+                //-----------------------
+                // 로드 완료 리스너
+                //-----------------------
+                
+                function _onLoadIFrame(){
+                    var $contentContainer = $scope.getContentContainer();
+                    $contentContainer.off('load', _onLoadIFrame);
+
+                    //****************************************
+
+                    // DOM Content 랜더링
+                    // IFRAME_render($scope.item);
+
+                    // APP_renderComplete 함수 콜백됨
+
+                    //****************************************
+                    
+                    // Element 클릭시 선택상태로 전환
+                    // createEvent();
+                }
+
+                ////////////////////////////////////////////////////////////////////////////////
+                // Element
+                ////////////////////////////////////////////////////////////////////////////////
+                /*
+                // 로드 내용 container DOM 찾기
+                this._$scope.getContentContainer = function (documentUID){
+                    // var $document = $element.find('[uid=' + documentUID + ']');
+                    var $iframe = $element.find('#iframe');
+                    var $content = $iframe.contents();
+                    return $content;
+                }
+
+                // 해당 문서의 Element DOM 찾기
+                this._getContentElement = function (elementUID, documentUID){
+                    var $contentContainer = this._$scope.getContentContainer(documentUID);
+                    var $el = $contentContainer.find('[uid=' + elementUID + ']');
+                    return $el;
+                }
+                */
+                
+                ////////////////////////////////////////////////////////////////////////////////
+                // IFrame과 통신 인터페이스
+                ////////////////////////////////////////////////////////////////////////////////
+                
+                /*
+                <p><button ng-click="message()">Send --> iframe</button></p>
+                <ul>
+                    <li ng-repeat="message in messages track by $index">{{message}}</li>
+                </ul>
+                */
+
+                function createMessageInterface(){
+                    $scope.$on('#MessageInterface-iframe', function(e, message) {
+                        _receiveAPI(message);
+                        // $scope.$apply();
+                    });
+                }
+            
+                /*
+                message = {
+                    api: 'render', 
+                    args: [item]
+                }
+                _callAPI(message);
+                */
+                function _callAPI(message){
+                    $scope.$broadcast('#MessageInterface-application', message);
+                    // $scope.$apply();
+                }
+                
+                function _receiveAPI(message){
+                    out('\n\n# _receiveAPI (from iframe) : ', message);
+                    if(message === undefined || !message.api) return;
+
+                    var apiName = message.api;
+                    var args = message.args;
+                    //
+                    eval(apiName).apply(null, args);
+                }
+
+                ////////////////////////////////////////
+                // Send API
+                ////////////////////////////////////////
+                
+                /*
+                // 최초 기존 DOM을 랜더링을 요청함
+                function IFRAME_render (item){
+                    var message = {
+                        api: 'IFRAME_render', 
+                        args: [item]
+                    }
+                    _callAPI(message);
+                }
+                
+                function IFRAME_onAddedElement (param){
+                    var message = {
+                        api: 'IFRAME_onAddedElement', 
+                        args: [param]
+                    }
+                    _callAPI(message);
+                }
+
+                function IFRAME_onRemovedElement (param){
+                    var message = {
+                        api: 'IFRAME_onRemovedElement', 
+                        args: [param]
+                    }
+                    _callAPI(message);
+                }
+
+                function IFRAME_onModifiedElement (param){
+                    var message = {
+                        api: 'IFRAME_onModifiedElement', 
+                        args: [param]
+                    }
+                    _callAPI(message);
+                }
+                */
+
+                ////////////////////////////////////////
+                // Receive API
+                ////////////////////////////////////////
+                
+                /*
+                // 최초 HTML 컨텐츠 렌더링이 완료된 후 호출됨
+                function APP_renderComplete(){
+
+                    // out('TODO: IFrame 시간지연 없앨것');
+                    // $timeout(function(){
+                        $scope.onLoadComplete(true);
+                    // }, 1000);
+
+                }
+
+                // element 선택했을때 호출됨
+                function APP_selectUI(selectUID){
+                    $scope.selectElement(selectUID);
+                }
+                */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                /*
+                // content 랜더링
+                function API_add(){
+                    if(!$scope.item) return;
+                    
+                    var dom = $scope.item.content;
+                    var $contentContainer = $scope.getContentContainer();
+                    var iframeDocument = $contentContainer[0].contentDocument;
+                    // angular.element(iframeDocument).find('.screenContainer').html(dom);
+                    // var $parent = angular.element(iframeDocument).find('.screenContainer div[uid=' + $scope.item.uid + ']');
+                    // var $parent = angular.element(iframeDocument).find('.screenContainer').find('div');
+                    // $parent.html(dom);
+
+                    // $compile($parent[0])($scope);
+                    // angular.element('.ng-scope').each(function(e, t) {
+                    //   console.log('>>>', t,angular.element(t).scope());
+                    // });
+                }
+
+                function API_remove(){
+                    if(!$scope.item) return;
+
+                    // var $contentContainer = $scope.getContentContainer();
+                    // var iframeDocument = $contentContainer[0].contentDocument;
+                    // angular.element(iframeDocument).find('.screenContainer').first().remove();
+                    
+                    var dom = $scope.item.content;
+                    angular.element(dom).remove();
+                }
+                */
                 /*
                 scope.getIframeSrc = function() {
                   // One should think about their particular case and sanitize accordingly
@@ -121,6 +372,11 @@ define(
                   return baseUrl + "?" + qs;
                 };
                 */
+
+
+
+
+
 
                 ////////////////////////////////////////
                 // End Controller
@@ -139,13 +395,13 @@ define(
 
                 // $scope.loadComplete = false;
 
-                // $scope.$watch('size', function(newValue, oldValue) {
-                //     $scope.alignInfo_content = getAlignInfo_content(newValue);
+                // $scope.$watch('item', function(newValue, oldValue) {
+                //     getContent(newValue);
                 // }, true);
-                
-                // $scope.$watch('loadComplete', function(newValue, oldValue) {
-                //     $scope.complete = $scope.$eval(newValue);
-                // });
+
+
+
+
 
 
                 ////////////////////////////////////////

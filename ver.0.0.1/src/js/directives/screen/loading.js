@@ -77,7 +77,9 @@ define(
                 }, true);
                 
                 // $scope.$watch('loadComplete', function(newValue, oldValue) {
-                //     $scope.complete = $scope.$eval(newValue);
+                //     if(newValue){
+                //         $scope.alignInfo_loading = getAlignInfo_loading($scope.size);
+                //     }
                 // });
 
                 // 가로/세로 중앙 정렬을 위한 위치 정보

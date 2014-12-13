@@ -257,7 +257,7 @@ define(
                 // Document 선택
                 this.selectDocument = function  (item){
                     var param = {
-                        uid : item.uid
+                        documentUID : item.uid
                     };
 
                     CommandService.exe(CommandService.SELECT_DOCUMENT, param);
@@ -400,7 +400,7 @@ define(
                     // command 호출
                     var removeUID = uid || Project.current.getSelectDocument();
                     var param = {
-                        uid : removeUID,
+                        documentUID : removeUID,
                         option : option
                     };
 
