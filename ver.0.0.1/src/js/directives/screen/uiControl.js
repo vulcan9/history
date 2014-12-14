@@ -48,7 +48,10 @@ define(
                 
                 replace: true,
                 transclude: true,
-                // scope: {},
+                scope: {
+                    selectInfo: '=selectInfo',
+                    item: '=item'
+                },
                 
                 controller: Controller,
                 link: Link
@@ -63,6 +66,8 @@ define(
             function Controller( $scope, $element, $attrs, VersionService, $document) {
                 
                 var self = this;
+                $scope.transition = true;
+                $scope.selected = false;
 
                 $scope.$watch('selected',  function (newValue, oldValue){
                     //**************************
@@ -164,12 +169,15 @@ define(
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////
-                // 동작
+                // 마우스 동작
                 ////////////////////////////////////////////////////////////////////////////////
 
                 // 제거
                 $scope.$on("$destroy", function () {
                     $scope.selected = false;
+
+                    // 마우스 이벤트 제거할것
+                    _dragUtil = null;
                 });
 
                 //-----------------------------------
@@ -186,51 +194,14 @@ define(
                 // 드래그 기능
                 //-----------------------------------
 
-                /*
                 function __updateDraggable(usable) {
-                    var eventOwner = $element;
-                    var eventTarget;
+                    var eventOwner = $element.find('.ui-draggable-handle');
+                    var dragTarget = $element;
 
-                    if(!usable){
-                        $element.off('mousedown', onMousedown);
-                        $document.off('mousemove', onMousemove);
-                        $document.off('mouseup', onMouseup);
-                        return;
-                    }
-
-                    $element.on('mousedown', onMousedown);
-                }
-                
-                function onMousedown(e){
-                    // Prevent default dragging of selected content
-                    out("mousedown");
-
-                    // var $target = angular.element(e.currentTarget);
-                    $document.on('mousemove', onMousemove);
-                    $document.on('mouseup', onMouseup);
-                }
-
-                function onMousemove(e){
-                    out("onMousemove");
-                }
-
-                function onMouseup(e){
-                    out("onMouseup");
-
-                    // var $target = angular.element(e.currentTarget);
-                    $document.off('mousemove', onMousemove);
-                    $document.off('mouseup', onMouseup);
-                }
-                */
-
-                function __updateDraggable(usable) {
-                    var eventOwner = $element;
-                    var eventTarget;
-
-                    clearDrag(eventOwner);
+                    clearDrag(eventOwner, dragTarget);
                     if(!usable) return;
 
-                    setDrag(eventOwner);
+                    setDrag(eventOwner, dragTarget);
                 }
 
                 //-----------------------------------
@@ -250,104 +221,44 @@ define(
                 }
 
                 ////////////////////////////////////////
-                // 마우스 동작
+                // 드래그 동작
                 ////////////////////////////////////////
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                // IFrame에서 이벤트 캐치가 안되므로 마우스 이벤트를 받을수 있도록 IFeame 위에 임시 레이어를 하나 만든다.
-                // Drop기능을 살펴본다.
-
-
-// http://stackoverflow.com/questions/17423328/jquery-handle-mouse-events-inside-iframe
-// http://78.110.163.229/angDnd/outer.html
-// http://css.dzone.com/articles/all-mouse-events-javascript
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                // http://stackoverflow.com/questions/17423328/jquery-handle-mouse-events-inside-iframe
+                // http://78.110.163.229/angDnd/outer.html
+                // http://css.dzone.com/articles/all-mouse-events-javascript
 
                 var _dragUtil = new Drager();
 
-                function clearDrag(eventOwner){
+                function clearDrag(eventOwner, dragTarget){
                     if(!_dragUtil) return;
                     _dragUtil.removeEvent("dragStart", _onDragStart );
                     _dragUtil.removeEvent("dragEnd", _onDragEnd );
                     _dragUtil.removeEvent("drag", _onDrag );
                     _dragUtil.removeEvent("clicked", _onClick );
                     // _dragUtil = null;
-                    
-                    // var $splitBar = this.$el.find("#splitBar");
-                    // $splitBar.css({"cursor":"default"});
-
-                    var $iframe = $scope.getContentContainer ();
-                    // $iframe.css('pointer-events', 'auto');
-                    angular.element($iframe[0].contentDocument).find(".body").off("mouseup", function() { alert("Hello"); });
                 }
                 
-                function setDrag(eventOwner){
+                function setDrag(eventOwner, dragTarget){
                     clearDrag();
                     // var $iframe = $scope.getContentContainer ();
                     // $iframe.css('pointer-events', 'none');
 
                     var initObj = {
-                        //direction : "x"
-                        dragLimitOption : "inner"
+                        //direction : "x", // x, y, both
+                        dragLimitOption : "inner", // inner, center, outter, none
                         // 한계치 지정하지 않으려면 반드시 null을 설정한다.
-                        ,minX : null
-                        ,minY : null
-                        ,maxX : null
-                        ,maxY : null
+                        minX : null,
+                        minY : null,
+                        maxX : null,
+                        maxY : null,
+                        // move 감도 지정
+                        delay : 0,
+                        swapIndex: false,
+                        // 드래그 적용 대상
+                        dragTarget: dragTarget
                     };
-                    
+
                     // var $splitBar = this.$el.find("#splitBar");
                     // $splitBar.css({"cursor":"e-resize"});
                     
@@ -359,35 +270,72 @@ define(
                     _dragUtil.addEvent("drag", _onDrag );
                     _dragUtil.addEvent("clicked", _onClick );
 
-                    var $iframe = $scope.getContentContainer ();
-                    angular.element($iframe[0].contentDocument).find(".body").on("mouseup", function() { alert("Hello"); });
+                    // var $iframe = $scope.getContentContainer ();
+                    // angular.element($iframe[0].contentDocument).find(".body").on("mouseup", function() { alert("Hello"); });
                 }
 
                 function _onDragStart(e){
-                    // if(!this._splitBarDragable){
-                    //     e.preventDefault();
-                    //     return;
-                    // }
-                    out("_onDragStart : ", e);
+                    out("_onDragStart : ", e.distX, e.distY);
+                    // transition이 적용되어 있으면 drag가 정상적으로 업데이트 되지 않는다.
+                    $scope.$apply(function (){
+                        $scope.transition = false;
+                    });
                 }
 
                 function _onDrag(e){
-                    // if(!this._splitBarDragable){
-                    //     e.preventDefault();
-                    //     return;
-                    // }
-                    out("_onDrag : ", e);
+                    out("_onDrag : ", e.distX, e.distY);
+                    // e.preventDefault();
+
+                    // Element 속성값 수정
+                    var scale = $scope.selectInfo.scale;
+                    var selectUID = $scope.selectInfo.uid;
+                    var documentUID = Project.current.getSelectDocument();
+                    var el = Project.current.getElement(documentUID, selectUID);
+                    var $el = angular.element(el);
+                    out("_onDrag : ", $el);
+
+                    $el.css({
+                        'left': e.x * (1/scale),
+                        'top': e.y * (1/scale)
+                    });
+
+
+
+
+
+
+// Command 호출
+// Property창 내용 구성
+// 리사이징 기능 구현
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }
                 
                 // 앵커 드래그(위치변경)로 인한 데이터 갱신
                 function _onDragEnd(e){
-                    // if(!this._splitBarDragable){
-                    //     return;
-                    // }
-                    out("_onDragEnd : ", e);
+                    $scope.$apply(function (){
+                        $scope.transition = true;
+                    });
+                    out("_onDragEnd : ", e.distX, e.distY);
                 }
 
                 function _onClick(e){
+                    $scope.$apply(function (){
+                        $scope.transition = true;
+                    });
                     out("_onClick : ", e);
                 }
 /*

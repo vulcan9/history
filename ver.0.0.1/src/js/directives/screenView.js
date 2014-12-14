@@ -214,6 +214,7 @@ define(
                 }
                 */
 
+                /*
                 // 로드 내용 container DOM 찾기
                 $scope.getContentContainer = function (){
                     // var documentUID = $scope.item.uid
@@ -223,7 +224,6 @@ define(
                     return $iframe;
                 }
 
-                /*
                 // 해당 문서의 Element DOM 찾기
                 function getContentElement(elementUID, documentUID){
                     var $contentContainer = $scope.getContentContainer(documentUID);

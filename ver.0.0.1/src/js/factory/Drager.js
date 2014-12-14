@@ -25,7 +25,7 @@ define(
         application.factory( 'Drager', _factory );
 	
         // 선언
-        function _factory($document) {
+        function _factory() {
         	
         		out( 'Drager 등록 : ' );
 
@@ -42,7 +42,7 @@ define(
 				minX:0,
 				minY:0,
 				maxX:0,
-				maxY:0,
+				maxY:0
 			};
 			
 			// "inner" : 한계 영역밖으로 벗어나지 않음
@@ -65,6 +65,12 @@ define(
 			
 			// 드래그 감지 Dealy 오프셋 (pixel)
 			this.delay = 0;
+
+			// 최상위 depth로 이동 (true)
+			this.swapIndex = false,
+
+			// 드래그 적용 대상 ($객체임)
+			this.dragTarget = null
 		}
 		
 		////////////////////////////////////
@@ -132,14 +138,13 @@ define(
 				this.dragUtil._tempX = event.pageX;
 				this.dragUtil._tempY = event.pageY;
 				
-				// var target = $(document);
-				var target = $document;
+				var target = $(document);
 				target.on("mousemove", $.proxy(this._onMouseMove_drag, this));
 				target.on("mouseup", $.proxy(this._onMouseUp_drag, this));
 				
 				// 복수개의 창이 떠 있는 경우 최상위 뎁스로 이동
 				// (click 이벤트 발생 안하는 경우가 있어 mouseumove에서 설정하는 것으로 변경함)
-				//this.setTopIndex();
+				// if(this.swapIndex) this.setTopIndex();
 
 				// 드래그 범위 지정
 				this._setDragLimit();
@@ -155,10 +160,17 @@ define(
 
 			_onMouseMove_drag : function (event){
 				
+				var $dragTarget = this.dragTarget || this.$dragger;
+
 				// 이동 거리
 				var distX = event.pageX - this.dragUtil._tempX;
 				var distY = event.pageY - this.dragUtil._tempY;
 
+				var x = $dragTarget.css("left");
+				var y = $dragTarget.css("top");
+				x = Math.round(this.getPureNumber(x));
+				y = Math.round(this.getPureNumber(y));
+				
 				if(!this._isMoved)
 				{
 					// 드래그 delay 감지
@@ -168,30 +180,30 @@ define(
 						}
 					}
 					
-					var event = $.Event({type:"dragStart", mouseEvent:event});
-					this.$dragger.trigger(event);
-					if(event.isDefaultPrevented()){
+					var startEvent = $.Event("dragStart", {distX:distX, distY:distY, x:x, y:y});
+					this.$dragger.trigger(startEvent);
+					
+					this._isMoved = true;
+
+					if(event.isDefaultPrevented() || startEvent.isDefaultPrevented()){
 						// 드래그 중지
 						// var target = $(event.currentTarget);
-						var target = $document;
-						target.off("mousemove", $.proxy(this._onMouseMove_drag, this));
-						target.off("mouseup", $.proxy(this._onMouseUp_drag, this));
+						// var target = $(document);
+						// target.off("mousemove", $.proxy(this._onMouseMove_drag, this));
+						// target.off("mouseup", $.proxy(this._onMouseUp_drag, this));
 						return;
 					}
 					
-					this._isMoved = true;
-					
 					// 복수개의 창이 떠 있는 경우 최상위 뎁스로 이동
-					this.setTopIndex();
+					if(this.swapIndex) this.setTopIndex();
 				}
 
-				var x = this.$dragger.css("left");
-				var y = this.$dragger.css("top");
-				x = Math.round(this.getPureNumber(x));
-				y = Math.round(this.getPureNumber(y));
-				
-				x = x + distX;
-				y = y + distY;
+				if(this.direction == 'both' || this.direction == 'x'){
+					x = x + distX;
+				}
+				if(this.direction == 'both' || this.direction == 'y'){
+					y = y + distY;
+				}
 				
 				// 한계 설정
 				if(this.dragLimitOption !== 'none'){
@@ -200,34 +212,52 @@ define(
 					y = limit.y;
 				}
 				
-				// 위치 갱신
-				if(this.direction == 'both' || this.direction == 'x'){
-					this.$dragger.css("left", x);
-				}
-				if(this.direction == 'both' || this.direction == 'y'){
-					this.$dragger.css("top", y);
-				}
-				//console.log(x, y);
-				
 				this.dragUtil._tempX = event.pageX;
 				this.dragUtil._tempY = event.pageY;
 				
 				// 이벤트 발송
-				this.$dragger.trigger({type:"drag", mouseEvent:event});
+				var newEvent = $.Event("drag", {distX:distX, distY:distY, x:x, y:y});
+				this.$dragger.trigger(newEvent);
+
+				if(event.isDefaultPrevented() || newEvent.isDefaultPrevented()){
+					return;
+				}
+
+				// 위치 갱신
+				$dragTarget.css({
+					"left": x,
+					"top": y
+				});
+				//console.log(x, y);
 			},
 			
 			_onMouseUp_drag : function (event){
 				// var target = $(event.currentTarget);
-				var target = $document;
+				var target = $(document);
 				target.off("mousemove", $.proxy(this._onMouseMove_drag, this));
 				target.off("mouseup", $.proxy(this._onMouseUp_drag, this));
 				
 				if(this._isMoved){
 					this._isMoved = false;
 					
+					// 이동 거리
+					var distX = event.pageX - this.dragUtil._tempX;
+					var distY = event.pageY - this.dragUtil._tempY;
+
+					var $dragTarget = this.dragTarget || this.$dragger;
+					var x = $dragTarget.css("left");
+					var y = $dragTarget.css("top");
+					x = Math.round(this.getPureNumber(x));
+					y = Math.round(this.getPureNumber(y));
+					
 					// 이벤트 발송
 					//this.dispatchChangeEvent();
-					this.$dragger.trigger({type:"dragEnd", mouseEvent:event});
+					var newEvent = $.Event("dragEnd", {distX:distX, distY:distY, x:x, y:y});
+					this.$dragger.trigger(newEvent);
+
+					if(event.isDefaultPrevented() || newEvent.isDefaultPrevented()){
+						return;
+					}
 				}
 			},
 			
@@ -238,7 +268,12 @@ define(
 					event.stopImmediatePropagation();
 					this._isMoved = false;
 				}else{
-					this.$dragger.trigger({type:"clicked", mouseEvent:event});
+					var newEvent = $.Event("clicked");
+					this.$dragger.trigger(newEvent);
+
+					if(event.isDefaultPrevented() || newEvent.isDefaultPrevented()){
+						return;
+					}
 				}
 			},
 
@@ -248,13 +283,14 @@ define(
 			
 			// 복수개의 창이 떠 있는 경우 최상위 뎁스로 이동
 			setTopIndex : function(){
-				this.$dragger.appendTo(this.$dragger.parent());
+				var $dragTarget = this.dragTarget || this.$dragger;
+				$dragTarget.appendTo($dragTarget.parent());
 			},
 
 			// 드래그 허용 범위 설정
 			_setDragLimit : function (){
 				
-				var $dragTarget = this.$dragger;
+				var $dragTarget = this.dragTarget || this.$dragger;
 				var $parent = $dragTarget.parent();
 				
 				var offsetX = $dragTarget.width();

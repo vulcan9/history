@@ -67,23 +67,24 @@
             <background scale="{{size.scale}}"></background>
 
             <!--내용 컨테이너 : paper의 가로/세로 비율을 유지한 scale 변화 적용해야함-->
-            <div class="transition"
+            <content class="transition" item="item" size="size" on-load-complete="onLoadComplete(success)"
                 ng-attr-style="width:{{size.sourceWidth}}px; height:{{size.sourceHeight}}px; 
                 transform: scale({{size.scale}}); transform-origin: 0 0;
                 margin: 0px !important; position: absolute;">
 
-                <!--컨텐츠 그룹-->
+                <!--컨텐츠 그룹
                 <content-iframe id="contentContainer" on-load-complete="onLoadComplete(success)" item="item" size="size"
                     style="position: absolute; width: 100%; height: 100%;"></content-iframe>
-                <!-- <content id="contentContainer" on-load-complete="onLoadComplete(success)" item="item"></content> -->
+                -->
+                <!-- <div id="contentContainer" class="content" ng-init="loadContent()"></div> -->
                 <!--<div id="contentContainer" class="content" style="width:100%;height:100%;" ng-init="callMethod('getHTMLContent', item)"></div>-->
 
-            </div>
+            </content>
 
-            <!--// Element 편집 UI 표시
-             get-boundary="getBoundary(uid)"-->
-            <ui-control class="transition"></ui-control>
-
+            <!--선택 표시 핸들러 컨테이너-->
+            <ui-control select-info="selectInfo" item="item"></ui-control>
+            
+        
             <!--로딩중 표시-->
             <loading ng-hide="loadComplete"></loading>
 
@@ -109,10 +110,6 @@
             <div class="modeHandle edit"></div>
             <div class="modeHandle play" style="top:0"></div>
 
-            <!--선택 표시 핸들러 컨테이너
-            <div ui-controller class="content"></div>
-            -->
-        
         <!--paper end-->
         </div>
 

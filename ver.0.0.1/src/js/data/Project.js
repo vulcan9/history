@@ -717,7 +717,7 @@ define(
                     // uid : element uid
                     getElement : function(documentUID, elementUID){
                         var item = this.__get('DOCUMENT', this.PROJECT.DOCUMENT, documentUID);
-                        var $dom = angular.element(item.content);
+                        var $dom = angular.element(item.document.content);
                         var $element = $dom.find("[uid='" + elementUID + "']");
                         return $element[0];
                     },

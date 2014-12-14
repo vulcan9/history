@@ -287,12 +287,12 @@
     border: 1px solid #5cb85c;
 }
 
+/*
 .tree .paper .content{
     position: absolute;
-    /*border: 1px solid #FF0000;*/
     padding: 10px 10px;
-    cursor: crosshair;
 }
+*/
 
 /*----------------
 // Tree
@@ -544,9 +544,11 @@
 }
 
 .screen .paper .content{
-    position: relative;
+    position: absolute;
     /*border: 1px solid #FF0000;*/
     padding: 0px !important;
+    width:100%;
+    height:100%;
     cursor: crosshair;
 }
 
@@ -562,7 +564,78 @@
 // Element
 ------------------------------------*/
 
+/* element 요소 */
+.screen #contentContainer  div[uid^="element-"] {
+    outline: rgba(0, 255, 245, 0.2) solid 20px;
+    position: absolute;
+}
+.screen #contentContainer div[uid^="element-"]:hover {
+    outline: rgba(0, 255, 245, 0.5) solid 20px;
+}
+.screen #contentContainer div[uid^="element-"].selectedElement {
+    outline: rgba(0, 255, 245, 0.2) solid 1px;
+}
+.screen #contentContainer div[uid^="element-"].selectedElement:hover {
+    outline: rgba(255, 194, 0, 0.2) solid 1px;
+}
+.screen #contentContainer div[contenteditable=true].selectedElement {
+    outline: rgba(255, 194, 0, 0.2) solid 1px;
+}
 
+/* document 요소 */
+.screen #contentContainer div[uid^="document-"],
+.screen #contentContainer div[uid^="document-"]:hover
+.screen #contentContainer div[uid^="document-"].selectedElement
+.screen #contentContainer div[uid^="document-"].selectedElement:hover {
+    outline: none;
+    position: relative;
+}
+
+
+/*텍스트 옵션, 
+<element contenteditable="true|false">
+
+text-align : left|right|center|justify;
+text-decoration: none|underline|overline|line-through|initial|inherit;
+text-indent: px, pt, cm, em, %
+text-overflow: clip|ellipsis|string|initial|inherit; (width 지정되고 overflow: hidden;인 경우)
+text-shadow: h-shadow v-shadow blur color|none|initial|inherit;
+text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문자 변환)
+
+폰트 옵션
+font
+@font-face
+font-family
+font-size
+font-size-adjust
+font-stretch
+font-style
+font-variant
+font-weight
+
+Paragraphs 옵션
+letter-spacing
+line-height
+list-style
+list-style-image
+list-style-position
+list-style-type
+
+여백 (layout)
+margin
+margin-bottom
+margin-left
+margin-right
+margin-top
+padding
+padding-bottom
+padding-left
+padding-right
+padding-top
+
+객체 align (IE11이상 지원)
+justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
+*/
 
 /*------------------------------------
 // 편집모드 전환 버튼
@@ -633,7 +706,7 @@
     z-index: 1001;
 }
 
-/*선택 상태 표시*/
+/*선택 상태 표시 (=.ui-draggable-handle)
 .ui-selected:after   {
     position:absolute;
     display:block;
@@ -649,6 +722,7 @@
     left:0px;
     pointer-events:none;
 }
+*/
 .ui-selected:not(.ui-draggable):hover{
     cursor:default !important;
 }
@@ -661,6 +735,20 @@
 
 .ui-draggable {
     cursor: move;
+}
+.ui-draggable-handle {
+    position:absolute;
+    display:block;
+    width:100%;
+    height:100%;
+
+    padding:0px;
+    
+    border:1px dashed #E42806;
+    z-index: 1001 !important;
+    top:0px;
+    left:0px;
+    /*pointer-events:none;*/
 }
 
 /*------------------------------------

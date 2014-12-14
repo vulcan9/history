@@ -249,8 +249,10 @@ define( [], function() {
 
 						_PATH.DIRECTIVE + 'screen/loading',
 						_PATH.DIRECTIVE + 'screen/background',
-						// _PATH.DIRECTIVE + 'screen/content',
-						_PATH.DIRECTIVE + 'screen/contentIframe',
+						_PATH.DIRECTIVE + 'screen/content',
+						// _PATH.DIRECTIVE + 'screen/contentIframe',
+						_PATH.DIRECTIVE + 'screen/element',
+						_PATH.DIRECTIVE + 'screen/uiControl',
 
 		        				// FACTORY
 		        				_PATH.DATA + 'Data',
@@ -282,12 +284,11 @@ define( [], function() {
 						_PATH.COMMAND + 'element/ModifyElementCommand',
 						_PATH.COMMAND + 'element/SelectElementCommand',
 
-						_PATH.COMMAND + 'PlayCommand',
+						_PATH.COMMAND + 'PlayCommand'
 						// _PATH.COMMAND + 'EditCommand',
 
 						
-						// _PATH.EDITOR + 'element/element',
-						_PATH.EDITOR + 'uiControl'
+						
 					]
 				}
 				/*

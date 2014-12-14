@@ -101,6 +101,8 @@ var _PATH = {
     LIB:                    _PATH_ROOT_FOLDER + 'libs/',
     DATA:                 _PATH_ROOT_FOLDER + 'js/data/',
 
+    // EDITOR:                 _PATH_ROOT_FOLDER + 'editor/',
+
     JS:                     _PATH_ROOT_FOLDER + 'js/',
     MODULE:            _PATH_ROOT_FOLDER + 'js/modules/',
     CONTROLLER:    _PATH_ROOT_FOLDER + 'js/controllers/',
@@ -108,9 +110,7 @@ var _PATH = {
     SERVICE:           _PATH_ROOT_FOLDER + 'js/services/',
     FACTORY:           _PATH_ROOT_FOLDER + 'js/factory/',
     FILTER:               _PATH_ROOT_FOLDER + 'js/filters/',
-    COMMAND:         _PATH_ROOT_FOLDER + 'js/command/',
-
-    EDITOR:                 _PATH_ROOT_FOLDER + 'editor/'
+    COMMAND:         _PATH_ROOT_FOLDER + 'js/command/'
 };
 
 ////////////////////////////////////////////////////////////////////////////////
