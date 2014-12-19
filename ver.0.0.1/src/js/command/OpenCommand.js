@@ -354,7 +354,7 @@ define(
             //-------------------
 
             // Tool에서 사용 가능한 Tag 구조로 바꾼다.
-            function supportToolFunction(dom, config){
+            function supportToolFunction(dom){
 
                 // return dom;
                 var $dom = angular.element(dom);
@@ -370,7 +370,7 @@ define(
                 // element로 기능 업데이트
                 // element : 하위 모든 태그를 element 노드로 감싼다.
                 var elementUID = Project.current.createElementUID();
-                var $comp = Project.current.createElementContent('tag', elementUID, config);
+                var $comp = Project.current.createElementContent('tag', elementUID);
                 
                 out('TODO : // Element 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
 

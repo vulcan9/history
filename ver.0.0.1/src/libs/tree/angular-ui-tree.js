@@ -1993,6 +1993,18 @@
                   if (angular.isDefined(selectedElementScope)) {
                     selectedElementScope.$$apply = true;
                   }
+
+//*************************************************
+// 2014.12.15 : placeholder가 업ㅅ어지면서 드래그된 노드 전체가 사라지는 현상 패치
+
+// placeHoldersWrapperClass 가 selectedElement 내부에 있는 경우는 cancel
+var placeholder = selectedElement.find("."+config.placeHoldersWrapperClass)
+if(placeholder.length > 0){
+  dragEnd(e, true);
+}
+
+//*************************************************
+
                 }
               });
 

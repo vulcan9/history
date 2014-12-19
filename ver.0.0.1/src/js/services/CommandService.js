@@ -64,7 +64,7 @@ define(
                 // ELEMENT
                 ADD_ELEMENT: 'addElement',
                 // REMOVE_ELEMENT: 'removeElement',
-                // MODIFY_ELEMENT: 'modifyElement',
+                MODIFY_ELEMENT: 'modifyElement',
                 SELECT_ELEMENT: 'selectElement',
                 
                 /*

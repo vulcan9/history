@@ -36,8 +36,8 @@ define(
 		function Drager (){
 			this.dragUtil = {
 				// 위치 이동 저장
-				_tempX : 0,
-				_tempY : 0,
+				_startX : 0,
+				_startY : 0,
 				// 최대, 최소 이동 가능한 값
 				minX:0,
 				minY:0,
@@ -67,10 +67,16 @@ define(
 			this.delay = 0;
 
 			// 최상위 depth로 이동 (true)
-			this.swapIndex = false,
+			this.swapIndex = false;
 
 			// 드래그 적용 대상 ($객체임)
-			this.dragTarget = null
+			this.dragTarget = null;
+
+			// 현재 마우스 이벤트를 받고있는 이벤트 리스너 ownwr
+			this.$currentEventTarget = null;
+
+			// snap 조사 객체
+			this.snap = null;
 		}
 		
 		////////////////////////////////////
@@ -118,16 +124,22 @@ define(
 			getPureNumber : function (value) {
 				if (typeof value == "number") return value;
 				
+				/*
 				var regNum = /^\d+$/;	// numeric check
 				var regPx = /px$/i;		// ends with 'px'
 				// parse to integer.
 				var numVal = 0;
 				if (regNum.test(value)) {
-					numVal = parseInt(value, 10);
+					numVal = parseFloat(value, 10);
 				} else if (regPx.test(value)) {
-					numVal = parseInt(value.substring(0, value.length - 2), 10);
+					numVal = parseFloat(value.substring(0, value.length - 2), 10);
 				}
 				return numVal;
+				*/
+
+		                var num = parseFloat(value, 10);
+		                return isNaN(num) ? (fallback || 0) : num;
+		                return num;
 			},
 
 			////////////////////////////////////
@@ -135,8 +147,20 @@ define(
 			////////////////////////////////////
 
 			_onMouseDown_drag : function (event){
-				this.dragUtil._tempX = event.pageX;
-				this.dragUtil._tempY = event.pageY;
+
+				this.$currentEventTarget = $(event.target);
+
+				this.dragUtil._startX = event.pageX;
+				this.dragUtil._startY = event.pageY;
+				
+				var $dragTarget = this.dragTarget || this.$currentEventTarget;
+				var x = $dragTarget.css("left");
+				var y = $dragTarget.css("top");
+				x = this.getPureNumber(x);
+				y = this.getPureNumber(y);
+
+				this._origin = { x: x, y: y };
+				this._last = { x: x, y: y };
 				
 				var target = $(document);
 				target.on("mousemove", $.proxy(this._onMouseMove_drag, this));
@@ -160,16 +184,13 @@ define(
 
 			_onMouseMove_drag : function (event){
 				
-				var $dragTarget = this.dragTarget || this.$dragger;
+				var $dragTarget = this.dragTarget || this.$currentEventTarget;
 
 				// 이동 거리
-				var distX = event.pageX - this.dragUtil._tempX;
-				var distY = event.pageY - this.dragUtil._tempY;
-
-				var x = $dragTarget.css("left");
-				var y = $dragTarget.css("top");
-				x = Math.round(this.getPureNumber(x));
-				y = Math.round(this.getPureNumber(y));
+				var distX = event.pageX - this.dragUtil._startX;
+				var distY = event.pageY - this.dragUtil._startY;
+				var x = this._origin.x;
+				var y = this._origin.y;
 				
 				if(!this._isMoved)
 				{
@@ -180,8 +201,8 @@ define(
 						}
 					}
 					
-					var startEvent = $.Event("dragStart", {distX:distX, distY:distY, x:x, y:y});
-					this.$dragger.trigger(startEvent);
+					var startEvent = $.Event("Drager.dragStart", {distX:distX, distY:distY, x:x, y:y});
+					this.$currentEventTarget.trigger(startEvent);
 					
 					this._isMoved = true;
 
@@ -198,26 +219,38 @@ define(
 					if(this.swapIndex) this.setTopIndex();
 				}
 
+				//--------------------
+				// Snap 체크
+				//--------------------
+				
 				if(this.direction == 'both' || this.direction == 'x'){
-					x = x + distX;
+					// var newX = x + distX;
+					var snapX = this.snap.snapToPixel(x, distX);
+					x = snapX;
+
 				}
 				if(this.direction == 'both' || this.direction == 'y'){
-					y = y + distY;
+					// var newY = y + distY;
+					var snapY = this.snap.snapToPixel(y, distY);
+					y = snapY;
 				}
-				
-				// 한계 설정
+			
+				//--------------------
+				// 이동 제한 체크
+				//--------------------
+
 				if(this.dragLimitOption !== 'none'){
-					var limit = this._checkLimit.apply(this, [x,y]);
+					var limit = this._checkLimit.apply(this, [x, y, distX, distY]);
 					x = limit.x;
 					y = limit.y;
 				}
 				
-				this.dragUtil._tempX = event.pageX;
-				this.dragUtil._tempY = event.pageY;
-				
+				// 최종값 저장
+				this._last = { x: x, y: y };
+
 				// 이벤트 발송
-				var newEvent = $.Event("drag", {distX:distX, distY:distY, x:x, y:y});
-				this.$dragger.trigger(newEvent);
+				var newEvent = $.Event("Drager.drag", {distX:distX, distY:distY, x:x, y:y});
+				this.$currentEventTarget.trigger(newEvent);
 
 				if(event.isDefaultPrevented() || newEvent.isDefaultPrevented()){
 					return;
@@ -241,24 +274,22 @@ define(
 					this._isMoved = false;
 					
 					// 이동 거리
-					var distX = event.pageX - this.dragUtil._tempX;
-					var distY = event.pageY - this.dragUtil._tempY;
-
-					var $dragTarget = this.dragTarget || this.$dragger;
-					var x = $dragTarget.css("left");
-					var y = $dragTarget.css("top");
-					x = Math.round(this.getPureNumber(x));
-					y = Math.round(this.getPureNumber(y));
+					var distX = event.pageX - this.dragUtil._startX;
+					var distY = event.pageY - this.dragUtil._startY;
+					var x = this._last.x;
+					var y = this._last.y;
 					
 					// 이벤트 발송
 					//this.dispatchChangeEvent();
-					var newEvent = $.Event("dragEnd", {distX:distX, distY:distY, x:x, y:y});
-					this.$dragger.trigger(newEvent);
+					var newEvent = $.Event("Drager.dragEnd", {distX:distX, distY:distY, x:x, y:y});
+					this.$currentEventTarget.trigger(newEvent);
 
 					if(event.isDefaultPrevented() || newEvent.isDefaultPrevented()){
+						this.$currentEventTarget = null;
 						return;
 					}
 				}
+				this.$currentEventTarget = null;
 			},
 			
 			// 마우스가 이동한 경우 Click 이벤트 막음
@@ -268,29 +299,35 @@ define(
 					event.stopImmediatePropagation();
 					this._isMoved = false;
 				}else{
-					var newEvent = $.Event("clicked");
-					this.$dragger.trigger(newEvent);
+					var newEvent = $.Event("Drager.clicked");
+					$(event.target).trigger(newEvent);
 
 					if(event.isDefaultPrevented() || newEvent.isDefaultPrevented()){
+						this.$currentEventTarget = null;
 						return;
 					}
 				}
+				this.$currentEventTarget = null;
 			},
 
 			////////////////////////////////////
-			// Exports
+			// Util
 			////////////////////////////////////
 			
 			// 복수개의 창이 떠 있는 경우 최상위 뎁스로 이동
 			setTopIndex : function(){
-				var $dragTarget = this.dragTarget || this.$dragger;
-				$dragTarget.appendTo($dragTarget.parent());
+
+				this.$currentEventTarget.appendTo(this.$currentEventTarget.parent());
+
+				if(this.resizeTarget){
+					this.resizeTarget.appendTo(this.resizeTarget.parent());
+				}
 			},
 
 			// 드래그 허용 범위 설정
 			_setDragLimit : function (){
 				
-				var $dragTarget = this.dragTarget || this.$dragger;
+				var $dragTarget = this.dragTarget || this.$currentEventTarget;
 				var $parent = $dragTarget.parent();
 				
 				var offsetX = $dragTarget.width();
@@ -327,14 +364,14 @@ define(
 			},
 
 			// 드래그 허용 범위내의 값으로 변환
-			_checkLimit : function (x,y){
+			_checkLimit : function (x, y, distX, distY){
 				//console.log(x,y,this.dragUtil.maxX, this.dragUtil.maxY);
 				if(this.dragUtil.minX > x) x = this.dragUtil.minX;
 				if(this.dragUtil.maxX < x) x = this.dragUtil.maxX;
 				
 				if(this.dragUtil.minY > y) y = this.dragUtil.minY;
 				if(this.dragUtil.maxY < y) y = this.dragUtil.maxY;
-				
+
 				return {x:x, y:y};
 			}
 
@@ -343,7 +380,6 @@ define(
 			////////////////////////////////
 			// _factory  end
 		};
-
 
 		////////////////////////////////////////
 		// END

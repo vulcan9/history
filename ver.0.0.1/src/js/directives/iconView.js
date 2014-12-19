@@ -182,7 +182,10 @@ define(
 
                     out('TODO : // 마우스 위치로 삽입 위치를 결정한다.');
                     
-
+                    var css = {
+                        'left':155,
+                        'top':115
+                    };
                     var param = {
                         
                         // 삽입될 문서
@@ -193,7 +196,8 @@ define(
                         type: type,
 
                         // element 설정값
-                        option: {}
+                        option: {},
+                        css: css
                     };
 
                     CommandService.exe(CommandService.ADD_ELEMENT, param);

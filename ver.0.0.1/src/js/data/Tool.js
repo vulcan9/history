@@ -95,26 +95,21 @@ define(
                     );
 
                     // Tool 설정치
-                    this.tool('CONFIG', {
-                        transition : {
-                            // second
-                            TICK : 0.2,
-                            SHORTEST : 0.5,
-                            SHORT : 1,
-                            LONG : 2,
-                            LONGEST : 0
-                        }
-                    });
-                    
-                    // 현재 실행 state를 기록한다.
-                    this.tool('CURRENT', {
-                        document:{
-                            // 현재 선택 문서 (uid)
-                            selectUID:null
-                        }
-                    });
+                    this._config_default();
 
                     // 데이터 로드 상태 확인
+                    this._setMenu(callback);
+
+                    // end initialize
+                },
+                
+                ////////////////////////////////////////
+                // MENU
+                ////////////////////////////////////////
+                
+                // 데이터 로드 상태 확인
+                _setMenu: function(callback){
+
                     var removeHandler = $rootScope.$on('#Tool.changed-MENU', angular.bind(this, onDataChanged)); 
                     
                     function onDataChanged(e, data){
@@ -133,21 +128,11 @@ define(
                             }
                         }
                     }
-                    // end initialize
                 },
 
-                
-
-                /*
-                setTool: function(config){
-                    angular.extend(this.__TOOL, config);
-                },
-                */
-               
-                //---------------------
-                // Tool 
-                //---------------------
-                
+                ////////////////////////////////////////
+                // END
+                ////////////////////////////////////////
 
                 //---------------------
                 // Document 
@@ -160,7 +145,7 @@ define(
                 _setSelectDocument: function(uid){
                     this.tool('CURRENT').document.selectUID = uid;
                     this.dataChanged = true;
-                }
+                },
 
                 //---------------------
                 // Element 
@@ -176,15 +161,77 @@ define(
                 }
                 */
                 
-                
-
                 //////////////////////////////////////////////////////////////////////////
                 //
-                // 데이터 조작 API
+                // 옵션 설정
                 // 
                 //////////////////////////////////////////////////////////////////////////
 
-                // end
+                _config_default: function(){
+                    
+                    this.tool('CONFIG', {
+
+                        transition : {
+                            // second
+                            TICK : 0.2,
+                            SHORTEST : 0.5,
+                            SHORT : 1,
+                            LONG : 2,
+                            LONGEST : 0
+                        },
+
+                        display : {
+                            
+                            //마지막 설정된 스케일 값 저장
+                            // display_scale: 1,
+
+                            // 텍스트 outline 맞춤 옵션 (true: text에 맞춤, false: 박스에 맞춤)
+                            // display_size_toText: false,
+
+                            // snap 크기 (pixel >= 1)
+                            display_snap_pixel: 10,
+                            // grid 보이기
+                            display_grid: true
+                        }
+                    });
+
+                    // 현재 실행 state를 기록한다.
+                    this.tool('CURRENT', {
+                        document:{
+                            // 현재 선택 문서 (uid)
+                            selectUID:null
+                        }
+                    });
+
+                },
+
+                //---------------------
+                // Tool Config
+                //---------------------
+                
+                config_display: function(name, value){
+                    if(value === undefined){
+                        //GET
+                        return this.tool('CONFIG').display[name];
+                    }
+
+                    // this.dataChanged = true;
+
+                    // SET
+                    var oldValue = this.tool('CONFIG').display[name];
+                    this.tool('CONFIG').display[name] = value;
+
+                    if(oldValue == value) return;
+
+                    // EVENT
+                    var eventName = '#Tool.changed-CONFIG.display.' + name;
+                    out('# 이벤트 발생 : ', eventName);
+
+                    var args = {newValue:value, oldValue:oldValue};
+                    $rootScope.$broadcast(eventName, args); 
+                }
+
+                // _factory end
             });
 
             return Tool;

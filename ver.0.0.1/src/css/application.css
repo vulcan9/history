@@ -566,15 +566,16 @@
 
 /* element 요소 */
 .screen #contentContainer  div[uid^="element-"] {
-    outline: rgba(0, 255, 245, 0.2) solid 20px;
+    outline: rgba(0, 216, 255, 0.2) solid 1px;
     position: absolute;
 }
 .screen #contentContainer div[uid^="element-"]:hover {
-    outline: rgba(0, 255, 245, 0.5) solid 20px;
+    outline: rgba(0, 216, 255, 0.1) solid 10px;
 }
 .screen #contentContainer div[uid^="element-"].selectedElement {
-    outline: rgba(0, 255, 245, 0.2) solid 1px;
+    outline: rgba(0, 216, 255, 0.2) solid 1px;
 }
+
 .screen #contentContainer div[uid^="element-"].selectedElement:hover {
     outline: rgba(255, 194, 0, 0.2) solid 1px;
 }
@@ -767,7 +768,7 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
 .ui-resizable-e { cursor: e-resize; width: 7px; height: 100%; right: -5px; top: 0px; }
 .ui-resizable-w { cursor: w-resize; width: 7px; height: 100%; left: -5px; top: 0px; }
 .ui-resizable-n, .ui-resizable-s , .ui-resizable-e , .ui-resizable-w{
-    background-color: rgba(255,0,0,0.1);
+    /*background-color: rgba(255,0,0,0.1);*/
 }
 /*변 (line handle)*/
 .ui-resizable-se { cursor: se-resize; width: 8px; height: 8px; right: -10px; bottom: -10px; }

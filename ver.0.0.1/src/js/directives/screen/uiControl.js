@@ -32,7 +32,7 @@ define(
         // _module.directive( 'uiRotatable', uiResizable );
 
         // 선언
-        function _directive(Drager) {
+        function _directive(Drager, Resizer, Snap, CommandService, Project, Tool, $timeout) {
 
             //out( 'version' );
 
@@ -63,7 +63,59 @@ define(
             //
             ////////////////////////////////////////////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, VersionService, $document) {
+            function Controller( $scope, $element, $attrs, VersionService) {
+                
+                ////////////////////////////////////////
+                // 환경 설정값
+                ////////////////////////////////////////
+                
+                //-------------------
+                // 텍스트 크기 맞춤 옵션
+                //-------------------
+
+                $scope.$on('#Project.changed-element.option.display_size_toText' , function(e, data){
+                    $scope.display_size_toText = data.newValue;
+                });
+
+                //-------------------
+                // snap 크기
+                //-------------------
+
+                $scope.$watch('display_snap_pixel',  function (newValue, oldValue){
+                    Tool.current.config_display('display_snap_pixel', newValue);
+                });
+
+                $scope.$on('#Tool.changed-CONFIG.display.display_snap_pixel' , function(e, data){
+                    $scope.display_snap_pixel = data.newValue;
+                });
+
+                //-------------------
+                // snap 크기
+                //-------------------
+
+                $scope.$watch('display_snap_pixel',  function (newValue, oldValue){
+                    // snap 속성 업데이트
+                    var sensitive = (newValue || newValue > 1) ? newValue : 1;
+                    _snap.update('sensitive', sensitive);
+                });
+
+                $scope.$on('#Tool.changed-CONFIG.display.display_snap_pixel' , function(e, data){
+                    $scope.display_snap_pixel = data.newValue;
+                });
+
+                function _setElementOption(){
+                    
+                    // Tool 지정값
+                    $scope.display_snap_pixel = Tool.current.config_display('display_snap_pixel');
+
+                    // 개별 지정 옵션
+                    var api = Project.current.elementAPI ();
+                    $scope.display_size_toText = api.option('display_size_toText');
+                }
+
+                ////////////////////////////////////////
+                // 기능 설정
+                ////////////////////////////////////////
                 
                 var self = this;
                 $scope.transition = true;
@@ -77,6 +129,11 @@ define(
                     $scope.rotatable = newValue;
 
                     //**************************
+                    
+                    if(!newValue) return;
+
+                    // 설정값 갱신
+                    _setElementOption();
                 });
 
                 $scope.$watch('draggable',  function (newValue, oldValue){
@@ -95,8 +152,20 @@ define(
                 // 선택 상태 표시 업데이트
                 ////////////////////////////////////////
                 
+                // 선택 변경 작업 중에는 transition 없앰
+                var _notUseTransition = false;
+
+                $scope.$on('#Project.selected-ELEMENT', function(e, data){
+                    _notUseTransition = true;
+                });
+                
                 $scope.$watch('selectInfo',  function (newValue, oldValue){
-                    __updateBoundary(newValue);
+
+                    // snap 속성 업데이트
+                    var scale = newValue ? newValue.scale : 1;
+                    _snap.update('scale', scale);
+
+                    __updateBoundary();
                 }, true);
 
                 /*
@@ -112,6 +181,11 @@ define(
                         $scope.selected = false;
                         $scope.boundary = null;
                         return;
+                    }
+
+                    // 선택 변경 작업 중에는 transition 업앰
+                    if(_notUseTransition){
+                        $scope.transition = false;
                     }
 
                     var selectUID = info.uid;
@@ -139,14 +213,14 @@ define(
                     }
 
                     // // 편집 UI를 구성한다.
-                    var boundary = {
+                    var rect = {
                         x: U.toNumber($select.css('left')),
                         y: U.toNumber($select.css('top')),
                         
                         width: $select.outerWidth(),
                         height: $select.outerHeight()
                     };
-                    // boundary = $scope.getBoundary({uid:selectUID});
+                    // rect = $scope.getBoundary({uid:selectUID});
 
                     // scale 적용
                     var scale = info.scale;
@@ -154,18 +228,27 @@ define(
                         elementUID: selectUID,
                         scale: scale,
 
-                        width: Math.ceil(boundary.width * scale),
-                        height: Math.ceil(boundary.height * scale),
-                        x: Math.ceil(boundary.x * scale),
-                        y: Math.ceil(boundary.y * scale)
-                        // width: boundary.width * scale,
-                        // height: boundary.height * scale,
-                        // x: boundary.x * scale,
-                        // y: boundary.y * scale
+                        width:  (rect.width * scale),
+                        height:  (rect.height * scale),
+                        x:  (rect.x * scale),
+                        y:  (rect.y * scale)
+                        // width: rect.width * scale,
+                        // height: rect.height * scale,
+                        // x: rect.x * scale,
+                        // y: rect.y * scale
                     }
 
                     $scope.boundary = boundary;
                     $scope.selected = true;
+
+                    // transition 되돌림
+                    if(_notUseTransition){
+                        var transitionTime = Tool.current.tool('CONFIG').transition.TICK;
+                        $timeout(function (){
+                            _notUseTransition = false;
+                            $scope.transition = true;
+                        }, transitionTime);
+                    }
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////
@@ -174,10 +257,13 @@ define(
 
                 // 제거
                 $scope.$on("$destroy", function () {
-                    $scope.selected = false;
 
-                    // 마우스 이벤트 제거할것
+                    // 마우스 이벤트 제거됨
+                    $scope.selected = false;
+                    
                     _dragUtil = null;
+                    _resizeUtil = null;
+                    _snap = null;
                 });
 
                 //-----------------------------------
@@ -209,7 +295,13 @@ define(
                 //-----------------------------------
                 
                 function __updateResizable(usable) {
+                    var eventOwner = $element.find('.ui-resizable-handle');
+                    var resizeTarget = $element;
 
+                    clearResize(eventOwner, resizeTarget);
+                    if(!usable) return;
+
+                    setResize(eventOwner, resizeTarget);
                 }
 
                 //-----------------------------------
@@ -217,7 +309,12 @@ define(
                 //-----------------------------------
                 
                 function __updateRotatable(usable) {
+                    out('TODO : 구현 안됨 (uiControl rotate)');
+                }
 
+                function toInt (num){
+                    return Math.round(num);
+                    // return num;
                 }
 
                 ////////////////////////////////////////
@@ -228,21 +325,23 @@ define(
                 // http://78.110.163.229/angDnd/outer.html
                 // http://css.dzone.com/articles/all-mouse-events-javascript
 
+                var _snap = new Snap();
                 var _dragUtil = new Drager();
+                // var _loop = false;
+                // var _dragEvent = null;
 
                 function clearDrag(eventOwner, dragTarget){
                     if(!_dragUtil) return;
-                    _dragUtil.removeEvent("dragStart", _onDragStart );
-                    _dragUtil.removeEvent("dragEnd", _onDragEnd );
-                    _dragUtil.removeEvent("drag", _onDrag );
-                    _dragUtil.removeEvent("clicked", _onClick );
+                    
+                    _dragUtil.removeEvent("Drager.dragStart", _onDragStart );
+                    _dragUtil.removeEvent("Drager.dragEnd", _onDragEnd );
+                    _dragUtil.removeEvent("Drager.drag", _onDrag );
+                    _dragUtil.removeEvent("Drager.clicked", _onClickDrag );
                     // _dragUtil = null;
                 }
                 
                 function setDrag(eventOwner, dragTarget){
                     clearDrag();
-                    // var $iframe = $scope.getContentContainer ();
-                    // $iframe.css('pointer-events', 'none');
 
                     var initObj = {
                         //direction : "x", // x, y, both
@@ -256,253 +355,363 @@ define(
                         delay : 0,
                         swapIndex: false,
                         // 드래그 적용 대상
-                        dragTarget: dragTarget
+                        dragTarget: dragTarget,
+                        snap : _snap
                     };
 
-                    // var $splitBar = this.$el.find("#splitBar");
-                    // $splitBar.css({"cursor":"e-resize"});
-                    
                     // _dragUtil = new Drager();
                     _dragUtil.initialize(eventOwner, initObj);
                     
-                    _dragUtil.addEvent("dragStart", _onDragStart );
-                    _dragUtil.addEvent("dragEnd", _onDragEnd );
-                    _dragUtil.addEvent("drag", _onDrag );
-                    _dragUtil.addEvent("clicked", _onClick );
-
-                    // var $iframe = $scope.getContentContainer ();
-                    // angular.element($iframe[0].contentDocument).find(".body").on("mouseup", function() { alert("Hello"); });
+                    _dragUtil.addEvent("Drager.dragStart", _onDragStart );
+                    _dragUtil.addEvent("Drager.dragEnd", _onDragEnd );
+                    _dragUtil.addEvent("Drager.drag", _onDrag );
+                    _dragUtil.addEvent("Drager.clicked", _onClickDrag );
                 }
 
+                //-----------------------------------
+                // 드래그 리스너
+                //-----------------------------------
+
                 function _onDragStart(e){
-                    out("_onDragStart : ", e.distX, e.distY);
+                    // out("_onDragStart : ", e.distX, e.distY);
                     // transition이 적용되어 있으면 drag가 정상적으로 업데이트 되지 않는다.
                     $scope.$apply(function (){
                         $scope.transition = false;
                     });
+
+                    // _loop = true;
+                    // _dragEvent = e;
+
+                    /*
+                    (function watchMoveLoop() {
+                        if (!_loop) return;
+                        dragHandler();
+                        requestAnimationFrame(watchMoveLoop);
+                    })();
+                    */
+                    dragHandler(e);
                 }
 
                 function _onDrag(e){
-                    out("_onDrag : ", e.distX, e.distY);
+                    // out("_onDrag : ", e.x, e.y);
                     // e.preventDefault();
+                    // _dragEvent = e;
 
+                    dragHandler(e);
+                }
+
+                function dragHandler(_dragEvent){
+                    if(!_dragEvent) return;
+
+                    //-----------------
                     // Element 속성값 수정
+                    //-----------------
+                    
                     var scale = $scope.selectInfo.scale;
                     var selectUID = $scope.selectInfo.uid;
                     var documentUID = Project.current.getSelectDocument();
                     var el = Project.current.getElement(documentUID, selectUID);
                     var $el = angular.element(el);
-                    out("_onDrag : ", $el);
+                    // out("_onDrag : ", $el);
+                    
+                    var x = toInt (_dragEvent.x * (1/scale));
+                    var y = toInt (_dragEvent.y * (1/scale));
 
                     $el.css({
-                        'left': e.x * (1/scale),
-                        'top': e.y * (1/scale)
+                        'left': x,
+                        'top': y
                     });
-
-
-
-
-
-
-// Command 호출
-// Property창 내용 구성
-// 리사이징 기능 구현
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    // __updateBoundary();
                 }
-                
+
                 // 앵커 드래그(위치변경)로 인한 데이터 갱신
                 function _onDragEnd(e){
+                    // out("_onDragEnd : ", e.x, e.y);
+                    // _loop = false;
+                    // _dragEvent = null;
+
                     $scope.$apply(function (){
                         $scope.transition = true;
                     });
-                    out("_onDragEnd : ", e.distX, e.distY);
+
+                    //-----------------
+                    // Command 호출
+                    //-----------------
+
+                    var scale = $scope.selectInfo.scale;
+                    var elementUID = $scope.selectInfo.uid;
+                    var documentUID = Project.current.getSelectDocument();
+                    
+                    var x = toInt (e.x * (1/scale));
+                    var y = toInt (e.y * (1/scale));
+
+                    var param = {
+                        // 삽입될 문서
+                        documentUID : documentUID,
+                        elementUID: elementUID,
+
+                        // element 설정값
+                        option: {},
+                        css: {
+                            'left': x,
+                            'top': y
+                        }
+                    };
+                    CommandService.exe(CommandService.MODIFY_ELEMENT, param, function(){
+                        // initial 인 경우 사이즈 원래대로
+                            $scope.$evalAsync(function(){
+                                __updateBoundary();
+                            });
+                    });
                 }
 
-                function _onClick(e){
+                function _onClickDrag(e){
                     $scope.$apply(function (){
                         $scope.transition = true;
                     });
-                    out("_onClick : ", e);
+                    // out("_onClickDrag : ", e);
                 }
-/*
-<div ng-class="{ 'wire': true, 'ui-draggable': draggable, 'ui-resizable': resizable, 'ui-rotatable': rotatable, 'ui-selected': selected }" 
-    ng-attr-style="top: {{boundary.y}}px; left: {{boundary.x}}px; width: {{boundary.width}}px; height: {{boundary.height}}px; 
-    background-color:rgba(255,255,0,0.5);">
 
-    <!-- class="wire ui-draggable ui-resizable ui-rotatable ui-selected" 
-    style="top: 0px; left: 0px; width: 240px; height: 160px; 
-        background-color:rgba(255,255,0,0.5);">
-     -->
-    <!--선택 표시-->
-    <div class="ui-resizable-handle ui-resizable-n"></div>
-    <div class="ui-resizable-handle ui-resizable-e"></div>
-    <div class="ui-resizable-handle ui-resizable-s"></div>
-    <div class="ui-resizable-handle ui-resizable-w"></div>
-    <div class="ui-resizable-handle ui-resizable-se"></div>
-    <div class="ui-resizable-handle ui-resizable-sw"></div>
-    <div class="ui-resizable-handle ui-resizable-ne"></div>
-    <div class="ui-resizable-handle ui-resizable-nw"></div>
+                ////////////////////////////////////////
+                // 리사이징 동작
+                ////////////////////////////////////////
 
-    <div class="ui-rotate-handle"></div>
-</div>
+                var _resizeUtil = new Resizer();
+                // var _resizeEvent = null;
 
-                    element.bind('mousedown', function (event) {
-                        // Prevent default dragging of selected content
-                        console.log("binding element to move.");
-                        startX = event.screenX - x;
-                        startY = event.screenY - y;
-                        $document.bind('mousemove', moveDiv);
-                        $document.bind('mouseup', mouseup);
+                function clearResize(eventOwner, resizeTarget){
+                    if(!_resizeUtil) return;
+                    _resizeUtil.removeEvent("Resizer.resizeStart", _onResizeStart );
+                    _resizeUtil.removeEvent("Resizer.resizeEnd", _onResizeEnd );
+                    _resizeUtil.removeEvent("Resizer.resize", _onResize );
+                    _resizeUtil.removeEvent("Resizer.clicked", _onClickResize );
+                    // _resizeUtil = null;
+                }
+                
+                function setResize(eventOwner, resizeTarget){
+                    clearResize();
+
+                    var initObj = {
+                        dragLimitOption : true, // true, false(=default)
+                        // 한계치 지정하지 않으려면 반드시 null을 설정한다.
+                        minX : null,
+                        minY : null,
+                        maxX : null,
+                        maxY : null,
+                        // move 감도 지정
+                        delay : 0,
+                        swapIndex: true,
+                        // 드래그 적용 대상
+                        resizeTarget: resizeTarget,
+                        snap : _snap
+                    };
+
+                    // _resizeUtil = new Resizer();
+                    _resizeUtil.initialize(eventOwner, initObj);
+                    
+                    _resizeUtil.addEvent("Resizer.resizeStart", _onResizeStart );
+                    _resizeUtil.addEvent("Resizer.resizeEnd", _onResizeEnd );
+                    _resizeUtil.addEvent("Resizer.resize", _onResize );
+                    _resizeUtil.addEvent("Resizer.clicked", _onClickResize );
+                }
+
+                //-----------------------------------
+                // 리사이즈 리스너
+                //-----------------------------------
+
+                // 취소 작업시 필요한 초기 좌표를 기억한다
+                // var _originalX = 0;
+                // var _originalY = 0;
+
+                function _onResizeStart(e){
+                    // out("_onResizeStart : ", e.distX, e.distY);
+                    // transition이 적용되어 있으면 drag가 정상적으로 업데이트 되지 않는다.
+                    $scope.$apply(function (){
+                        $scope.transition = false;
                     });
 
+                    var $anchor = angular.element(e.target);
+                    var direction;
+                    if ($anchor.hasClass('ui-resizable-n')){
+                        direction = "n";
+                    }else if($anchor.hasClass('ui-resizable-e')){
+                        direction = "e";
+                    }else if($anchor.hasClass('ui-resizable-s')){
+                        direction = "s";
+                    }else if($anchor.hasClass('ui-resizable-w')){
+                        direction = "w";
+                    }else if($anchor.hasClass('ui-resizable-se')){
+                        direction = "se";
+                    }else if($anchor.hasClass('ui-resizable-sw')){
+                        direction = "sw";
+                    }else if($anchor.hasClass('ui-resizable-ne')){
+                        direction = "ne";
+                    }else if($anchor.hasClass('ui-resizable-nw')){
+                        direction = "nw";
+                    }
 
-    PopupClass.prototype._setDrag = function(){
-        if(this._movable == false) return;
-        
-        // 드래그 대상
-        var $_dragTarget = (this._modal)? this.$_instance.find(".content"):this.$_instance;
-        
-        // 위치 이동 저장
-        var _tempX = 0;
-        var _tempY = 0;
-        
-        var mouseUtil = {
-            minX:0,
-            minY:0,
-            maxX:0,
-            maxY:0,
-            _onMouseDown : function (event){
-                _tempX = event.pageX;
-                _tempY = event.pageY;
-                
-                var target = $(document);
-                target.on("mousemove", angular.bind( this, Util._onMouseMove, this));
-                target.on("mouseup", angular.bind( this, Util._onMouseUp, this));
-                
-                var offset = $_dragTarget.offset();
-                
-                // position:fixed 일때 스크롤 위치에 영향받음
-                if(this.$_instance.css("position") =="fixed"){
-                    offset.left = offset.left - this.$_popupOwner.scrollLeft();
-                    offset.top = offset.top - this.$_popupOwner.scrollTop();
+                    _resizeUtil.direction = direction;
+                    
+                    // _loop = true;
+                    // _resizeEvent = e;
+
+                    /*
+                    // 초기 좌표 기억
+                    // var elementUID = $scope.selectInfo.uid;
+                    // var documentUID = Project.current.getSelectDocument();
+                    // var el = Project.current.getElement(documentUID, elementUID);
+                    // var $el = angular.element(el);
+
+                    // _originalX = toInt (U.toNumber($el.css("left")));
+                    // _originalY = toInt (U.toNumber($el.css("top")));
+
+                    // 랜더링 루프
+                    (function watchMoveLoop() {
+                        if (!_loop) return;
+                        resizeHandler();
+                        requestAnimationFrame(watchMoveLoop);
+                    })();
+                    */
+                    
+                    resizeHandler(e);
                 }
-                $_dragTarget.css("left", offset.left);
-                $_dragTarget.css("top", offset.top);
-                
-                // margin의 영향을 없앰
-                $_dragTarget.css("margin", "0px");
-                
-                // 복수개의 창이 떠 있는 경우 최상위 뎁스로 이동
-                this.setTopIndex();
 
-                // 드래그 범위 지정
-                mouseUtil._setLimit();
-                
-                // prevents text selection
-                return false;
-            },
-            _onMouseMove : function (event){
-                
-                var offset = $_dragTarget.offset();
-                var x = offset.left;
-                var y = offset.top;
-                
-                // 이동 거리
-                x += event.pageX - _tempX;
-                y += event.pageY - _tempY;
-                
-                // 한계 설정
-                var limit = mouseUtil._checkLimit(x,y);
-                x = limit.x;
-                y = limit.y;
-                
-                // 위치 갱신
-                $_dragTarget.css("left", x);
-                $_dragTarget.css("top", y);
-                
-                _tempX = event.pageX;
-                _tempY = event.pageY;
-            },
-            _onMouseUp : function (event){
-                var target = $(event.currentTarget);
-                target.off("mousemove", angular.bind( this, Util._onMouseMove, this));
-                target.off("mouseup", angular.bind( this, Util._onMouseUp, this));
-                
-                // 이벤트 발송
-                //this.dispatchChangeEvent();
-            },
-            
-            // 드래그 허용 범위 설정
-            _setLimit : function(){
-                var offsetX = $_dragTarget.width()/2;
-                var offsetY = $_dragTarget.height()/2;
-                
-                mouseUtil.minX = -offsetX;
-                mouseUtil.minY = 0;
-                mouseUtil.maxX = window.innerWidth - offsetX;
-                mouseUtil.maxY = window.innerHeight - offsetY;
-            },
-            // 드래그 허용 범위내의 값으로 변환
-            _checkLimit : function(x,y){
-                //console.log(x,y,mouseUtil.minX, mouseUtil.minY);
-                if(mouseUtil.minX > x) x = mouseUtil.minX;
-                if(mouseUtil.maxX < x) x = mouseUtil.maxX;
-                
-                if(mouseUtil.minY > y) y = mouseUtil.minY;
-                if(mouseUtil.maxY < y) y = mouseUtil.maxY;
-                
-                return {x:x, y:y};
-            }
-        };
+                function _onResize(e){
+                    // out("_onResize : ", e.x, e.y, e.width, e.height, e.distX, e.distY);
+                    // e.preventDefault();
+                    // _resizeEvent = e;
 
-        // 드래그 버튼 기능
-        var dragger = this.$_instance.find(".title");
-        dragger.on("mousedown", angular.bind( this, Util._onMouseDown, this));
-        
-    };
-    */
+                    resizeHandler(e);
+                }
 
+                function resizeHandler(_resizeEvent){
+                    if(!_resizeEvent) return;
+                    // out('_resizeEvent : ', _resizeEvent);
 
+                    //-----------------
+                    // Element 속성값 수정
+                    //-----------------
 
+                    var scale = $scope.selectInfo.scale;
+                    var elementUID = $scope.selectInfo.uid;
+                    var documentUID = Project.current.getSelectDocument();
+                    var el = Project.current.getElement(documentUID, elementUID);
+                    var $el = angular.element(el);
+                    // out("_onDrag : ", $el);
+                    
+                    var x = toInt (_resizeEvent.x * (1/scale));
+                    var y = toInt (_resizeEvent.y * (1/scale));
+                    var w = toInt (_resizeEvent.width * (1/scale));
+                    var h = toInt (_resizeEvent.height * (1/scale));
+                    
+                    var css;
+                    if($scope.display_size_toText){
+                        css = {
+                            'left': x,
+                            'top': y,
+                            'width': w,
+                            'height': h,
+                            'word-wrap': 'break-word'
+                        };
+                    }else{
+                        css = {
+                            'left': x,
+                            'top': y,
+                            'width': w,
+                            'height': h,
+                            'word-wrap': 'inherit'
+                        };
+                    }
 
+                    $el.css(css);
+                    __updateBoundary();
+                }
 
+                // 앵커 드래그(위치변경)로 인한 데이터 갱신
+                function _onResizeEnd(e){
+                    // out("_onResizeEnd : ", e);
+                    // _loop = false;
+                    // _resizeEvent = null;
 
+                    $scope.$apply(function (){
+                        $scope.transition = true;
+                    });
 
+                    //-----------------
+                    // Command 호출
+                    //-----------------
+                    
+                    var scale = $scope.selectInfo.scale;
+                    var elementUID = $scope.selectInfo.uid;
+                    var documentUID = Project.current.getSelectDocument();
 
+                    var x = toInt (e.x * (1/scale));
+                    var y = toInt (e.y * (1/scale));
+                    var w = toInt (e.width * (1/scale));
+                    var h = toInt (e.height * (1/scale));
 
+                    var css;
+                    if($scope.display_size_toText) {
+                        // text box 최대 너비값 구하기
+                        var el = Project.current.getElement(documentUID, elementUID);
+                        var $el = angular.element(el);
+                        $el.css({
+                            'width': 'initial',
+                            'word-wrap': 'inherit'
+                        });
+                        var maxW = toInt ($el.width());
+                        var wordWrap;
+                        if(maxW <= w){
+                            wordWrap = 'inherit';
+                            w = maxW;
+                        }else{
+                            wordWrap = 'break-word';
+                        }
 
+                        // text box에 크기 맞춤
+                        css = {
+                            'left': x,
+                            'top': y,
+                            'width': w,
+                            'height': 'initial',
+                            'word-wrap': wordWrap
+                        };
+                    }else{
+                        // 사용자 지정 크기에 text 크기 맞춤
+                        css = {
+                            'left': x,
+                            'top': y,
+                            'width': w,
+                            'height': h,
+                            'word-wrap': 'inherit'
+                        };
+                    }
 
+                    var param = {
+                        // 삽입될 문서
+                        documentUID : documentUID,
+                        elementUID: elementUID,
 
+                        // element 설정값
+                        option: {},
+                        css: css
+                    };
+                    CommandService.exe(CommandService.MODIFY_ELEMENT, param, function(){
+                        // initial 인 경우 사이즈 원래대로
+                        if($scope.display_size_toText) {
+                            $scope.$evalAsync(function(){
+                                __updateBoundary();
+                            });
+                        }
+                    });
+                }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                function _onClickResize(e){
+                    $scope.$apply(function (){
+                        $scope.transition = true;
+                    });
+                    out("_onClickResize : ", e);
+                }
 
                 ////////////////////////////////////////
                 // End Controller
@@ -533,3 +742,10 @@ define(
         return _directive;
     }
 );
+
+
+
+
+
+
+

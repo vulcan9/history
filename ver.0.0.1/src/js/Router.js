@@ -261,6 +261,8 @@ define( [], function() {
 		        				
 						_PATH.FACTORY + 'ScaleMode',
 						_PATH.FACTORY + 'Drager',
+						_PATH.FACTORY + 'Resizer',
+						_PATH.FACTORY + 'Snap',
 						
 						//SERVICE
 						_PATH.SERVICE + 'CommandService',

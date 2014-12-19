@@ -124,7 +124,10 @@ define(
                 }
 
                 function __onModifyElement(item, param){
-                    //
+                    // 현재 선택상태이면 UI를 업데이트 한다.
+
+                    // UI 크기 업데이트 (selectInfo 값이 변경됨)
+                   // $scope.updateSelectUI();
                 }
 
                 function __onSelectElement(newValue, oldValue, documentUID){

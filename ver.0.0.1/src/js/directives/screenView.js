@@ -19,7 +19,7 @@ define(
         application.directive( 'screenView', _directive );
 
         // 선언
-        function _directive($document, ScaleMode) {
+        function _directive($document, ScaleMode, Project , CommandService, Tool) {
 
             //out( 'version' );
 
@@ -47,7 +47,21 @@ define(
             //
             ////////////////////////////////////////////////////////////////////////////////
 
-            function Controller ( $scope, $element, $attrs, Project , CommandService) {
+            function Controller ( $scope, $element, $attrs) {
+
+                ////////////////////////////////////////
+                // 환경설정
+                ////////////////////////////////////////
+
+                //-------------------
+                // grid 보이기
+                //-------------------
+
+                $scope.display_grid = Tool.current.config_display('display_grid');
+
+                $scope.$on('#Tool.changed-CONFIG.display.display_grid' , function(e, data){
+                    $scope.display_grid = data.newValue;
+                });
 
                 ////////////////////////////////////////
                 // DOCUMENT 데이터
@@ -107,15 +121,15 @@ define(
                     _updateDocumentContent(newValue);
                 }
 
-                function __onAddDocument(item){
+                function __onAddDocument(item, param){
 
                 }
 
-                function __onRemoveDocument(item){
+                function __onRemoveDocument(item, param){
                     
                 }
 
-                function __onModifyDocument(item){
+                function __onModifyDocument(item, param){
                     
                 }
 
@@ -287,18 +301,6 @@ define(
 
                     $scope.boundary = boundary;
                     */
-
-
-
-                    // 1. 선택된 uid를 ui-canvas directive에 전달한다.
-                    // 2. 선택 uid를 가지고 boundary를 구한다.
-                    // 3. boundary에 따라 ui를 세팅한다.
-                    // 4. 사용자 동작을 구성한다.(마우스)
-                    // 5. 사용자 동작에 따라 command를 실행한다.
-                    // 6. 선택상태를 바꾼다
-                    // 7. 그룹 선택을 지원한다.
-
-                    // ---> directive로 구성할것
                 }
 
                 //-----------------------------------
@@ -345,8 +347,8 @@ define(
                 // A4 : 595x842, ppt : 1193x671
 
                 // margin은 (.paper) class 설정치를 참고할것
-                var marginW = 70;
-                var marginH = 70;
+                var marginW = 20;
+                var marginH = 20;
                 var sourceWidth = Project.paper.width;
                 var sourceHeight = Project.paper.height;
                 var compareWidth = Math.max(0, sourceWidth - marginW);

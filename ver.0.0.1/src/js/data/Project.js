@@ -114,16 +114,6 @@ define(
                     // 
                     //////////////////////////////////////////////////////////////////////////
                     
-                    createDocumentContent: function(uid, config){
-                        var doc = "<div uid='" + uid + "'></div>";
-                        var $doc = angular.element(doc);
-
-                        out('TODO : // Document 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
-                        // angular.extend({}, config);
-
-                        return $doc[0];
-                    },
-
                     // content --> element.outerHTML
                     getDefinitionDocument : function (documentUID){
 
@@ -183,7 +173,28 @@ define(
                             // element 관련 정보를 저장한다. (Tool)
                             "element": {
                                 // 현재(마지막) 선택 상태의 element uid
-                                "selectUID": ""
+                                "selectUID": "",
+
+                                // element 설정 정보를 가진 Map (elementUID:config option 설정 내용)
+                                "map": {
+                                    /*
+                                    // Tool에서 설정된 개별 element 설정들
+                                    "key (elementUID)": {
+
+                                        "uid": elementUID,
+                                        
+                                        // element type
+                                        "type": "text",
+                                        
+                                        "option":{
+
+                                            // 텍스트 outline 맞춤 옵션 (true: text에 맞춤, false: 박스에 맞춤)
+                                            "display_size_toText": true
+                                        },
+
+                                    }
+                                    */
+                                }
                             }
                         };
 
@@ -203,6 +214,111 @@ define(
                     stringToHtml: function(htmlString){
                         var dom = angular.element(htmlString);
                         return dom[0];
+                    },
+
+                    //---------------------
+                    // Element 옵션 설정
+                    //---------------------
+                    
+                    // element.map[elementUID].option 속성값
+                    
+                    // 미리 설정되어있지 않은 값은 default 값으로 대신 세팅해 준다.
+                    // (주의) 값은 객체를 사용하지 않는다. (참조값이 되버리므로)
+                    _default_element_option:{
+                            // 텍스트 outline 맞춤 옵션 (true: text에 맞춤, false: 박스에 맞춤)
+                            "display_size_toText": false
+                    },
+
+                    // param 지정하지 않으면 현재 선택 상태의 element에 적용됨
+                    // elementAPI(documentUID, elementUID).option(name);
+                    // elementAPI(documentUID, elementUID).option(name, value);
+                    // elementAPI()._type(value);
+                    // elementAPI().option(name, value);
+
+                    elementAPI: function(documentUID, elementUID){
+                        documentUID = documentUID || this.getSelectDocument();
+                        elementUID = elementUID || this.getSelectElement(documentUID);
+
+                        var documentItem = this.getDocument(documentUID);
+
+                        var self = this;
+                        return {
+                            _type: function(value){
+
+                                var map = documentItem.element.map || {};
+                                var key = map[elementUID] || {"uid": elementUID};
+                                var typeValue = key['type'];
+
+                                var oldValue = (typeValue === undefined) ? '' : typeValue;
+
+                                //GET
+                                if(value === undefined){
+                                    return oldValue;
+                                }
+
+                                // SET
+                                key['type'] = value;
+
+                                // 적용 확인
+                                map[elementUID] = key;
+                                documentItem.element.map = map;
+                            },
+
+                            option: function(name, value){
+                                
+                                var map = documentItem.element.map || {};
+                                var key = map[elementUID] || {"uid": elementUID};
+                                var option = key['option'] || {};
+
+                                var oldValue = (option[name] === undefined) ? self._default_element_option[name] : option[name];
+
+                                //GET
+                                if(value === undefined){
+                                    return oldValue;
+                                }
+
+                                // SET
+                                option[name] = value;
+
+                                // 적용 확인
+                                key['option'] = option;
+                                map[elementUID] = key;
+                                documentItem.element.map = map;
+
+                                if(oldValue == value) return;
+
+                                // EVENT
+                                var eventName = '#Project.changed-element.option.' + name;
+                                out('# 이벤트 발생 : ', eventName);
+
+                                var args = {newValue:value, oldValue:oldValue};
+                                $rootScope.$broadcast(eventName, args); 
+                            }
+                        };
+                    },
+
+                    // 객체 유형
+                    getType : function(documentUID, elementUID){
+                        /*
+                        if(!documentUID && !elementUID){
+                            throw '지정된 uid 값이 없어 type을 알아낼 수 없습니다. (Project)';
+                        }
+                        */
+
+                        var type;
+                        if(elementUID){
+                            // dom = this.getElement(documentUID, elementUID);
+                            // type = angular.element(dom).attr('type');
+                            type = this.elementAPI(documentUID, elementUID)._type();
+                        }else{
+                            // var documentItem = Project.current.getDocument(documentUID);
+                            // var dom = documentItem.document.content;
+                            // type = angular.element(dom).attr('type');
+                            type = 'document';
+                        }
+
+                        // return { type: type, dom: dom };
+                        return type;
                     },
 
                     //////////////////////////////////////////////////////////////////////////
@@ -411,6 +527,16 @@ define(
                     createDocumentUID: function(){
                         var documentUID = 'document-' + U.createUID();
                         return documentUID;
+                    },
+
+                    createDocumentContent: function(uid, config){
+                        var doc = '<div uid="' + uid + '"></div>';
+                        var $doc = angular.element(doc);
+
+                        out('TODO : // Document 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
+                        // angular.extend({}, config);
+
+                        return $doc[0];
                     },
 
                     // uid : document uid
@@ -685,6 +811,7 @@ define(
                         //var treeItem = this.getDefinitionTree(uid);
                         // this.modify('TREE', this.PROJECT.TREE, treeItem);
 
+                        out('modify param : ', param);
                         alert('TODO : 기능 구현 필요');
 
                         var documentItem = this.getDocument(uid);
@@ -704,9 +831,10 @@ define(
 
                     // 유형에 따라 comp 내용을 구성
                     // type : html(문서), tag(태그묶음), text(글상자)...
-                    createElementContent: function(type, elementUID, config){
-                        var comp = '<div uid="' + elementUID + '" style="left:50px; top:100px;">TEXT</div>';
+                    createElementContent: function(type, elementUID, option, css){
+                        var comp = '<div uid="' + elementUID + '">TEXT</div>';
                         var $comp = angular.element(comp);
+                        if(css) $comp.css(css);
 
                         out('TODO : // Element 설정값 적용 : 하위 Object들을 직접 extend 해주어야 한다.');
                         // angular.extend({}, config);
@@ -749,7 +877,8 @@ define(
                         var elementUID = param.elementUID;
                         var documentUID = param.documentUID;
                         var type = param.type;
-                        var config = param.option;
+                        var option = param.option;
+                        var css = param.css;
                         
                         //---------------------
                         // DOM 추가
@@ -759,15 +888,21 @@ define(
                         var content = documentItem.document.content;
                         var $content = angular.element(content);
 
-                        out('TODO : type에 따른 샘플 태그 정의할것 : ', type);
-
                         // 추가
-                        var $comp = this.createElementContent(type, elementUID, config);
+                        var $comp = this.createElementContent(type, elementUID, option, css);
                         $content.append($comp);
 
                         // 데이터 갱신
                         documentItem.document.content = $content[0];
 
+                        // type 추가
+                        this.elementAPI(documentUID, elementUID)._type(type);
+
+                        // option 추가
+                        for(var name in option){
+                            this.elementAPI(documentUID, elementUID).option(name, option[name]);
+                        }
+                        
                         //---------------------
                         // 이벤트 발송
 
@@ -794,6 +929,48 @@ define(
                     },
 
                     //-----------------------------------
+                    // modify Element
+                    //-----------------------------------
+                    /*
+                    var param = {
+                        // 삽입될 문서
+                        documentUID : Project.current.getSelectDocument(),
+                        elementUID: elementUID,
+                        // element 설정값
+                        option: {},
+                        css: {
+                            'width': e.width * (1/scale),
+                            'height': e.height * (1/scale)
+                        }
+                    };
+                    */
+                    modifyElement: function(param){
+                        Tool.current.dataChanged = true;
+
+                        out('modify param : ', param);
+                        var elementUID = param.elementUID;
+                        var documentUID = param.documentUID;
+                        var option = param.option;
+                        var css = param.css;
+
+                        // 데이터 갱신
+                        var documentItem = this.getDocument(documentUID);
+                        var element = this.getElement(documentUID, elementUID)
+                        angular.element(element).css(css);
+
+                        //---------------------
+                        // 이벤트 발송
+
+                        // #Project.added-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
+                        out('# 이벤트 발생 : ', eventName);
+
+                        var args = {data:documentItem, item:element, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
+                    },
+
+                    //-----------------------------------
                     // remove Element
                     //-----------------------------------
 
@@ -802,18 +979,6 @@ define(
                         Tool.current.dataChanged = true;
 
                         alert('TODO : removeElement 기능 구현 필요');
-
-                    },
-
-                    //-----------------------------------
-                    // modify Element
-                    //-----------------------------------
-
-                    // uid : element uid
-                    modifyElement: function(uid){
-                        Tool.current.dataChanged = true;
-
-                        alert('TODO : modifyElement 기능 구현 필요');
 
                     },
 

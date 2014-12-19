@@ -11,12 +11,67 @@
 
         
 
-        PropertyView : <span class="label label-success" ng-click="pannelToggle();">toggle</span>
+        <p> PropertyView : <span class="label label-success" ng-click="pannelToggle();">toggle</span> </p>
+
+
+<!--<input type="text"
+       ng-model=""
+       [name=""]
+       [required=""]
+       [ng-required=""]
+       [ng-minlength=""]
+       [ng-maxlength=""]
+       [pattern=""]
+       [ng-pattern=""]
+       [ng-change=""]
+       [ng-trim="true"]>-->
+
+<div style="padding: 10px;">
+
+    <div ng-show="type=='document'">
+        DOCUMENT PROPERTY
+
+        <div>width : <input type="text" name="width" value="{{properties.width}}" required ng-pattern="onlyNumbers"></div>
+        <div>height : <input type="text" name="height" value="{{properties.height}}" required ng-pattern="onlyNumbers"></div>
+
+        <!-- 화면 표시 -->
+        <br><br>
+        <div>* 그리드 표시 : <input type="checkbox" ng-model="display_grid"></div>
+        <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="display_guide" ng-true-value="Y" ng-false-value="N"></div>
+        <div>[*] 룰러 표시 (준비중) : <input type="checkbox" ng-model="display_ruler" ng-true-value="Y" ng-false-value="N"></div>
+        
+        <br>
+        <br>* snap 크기 (display_snap_pixel > 0)
+        <br><div>snap 크기 : <input type="text" name="display_snap_pixel" ng-model="display_snap_pixel" required ng-pattern="onlyNumbers"></div>
+
+    </div>
 
 
 
 
 
+
+
+
+
+
+
+    <div ng-show="type == 'text'">
+        ELEMENT ({{type}}) PROPERTY
+
+        <div>x : <input type="text" name="left" value="{{properties.left}}" required ng-pattern="onlyNumbers"></div>
+        <div>y : <input type="text" name="top" value="{{properties.top}}" required ng-pattern="onlyNumbers"></div>
+        <div>width : <input type="text" name="width" value="{{properties.width}}" required ng-pattern="onlyNumbers"></div>
+        <div>height : <input type="text" name="height" value="{{properties.height}}" required ng-pattern="onlyNumbers"></div>
+        
+        <!-- 화면 표시 -->
+        <br><br>
+        <br><div>* 텍스트 박스 크기에 맞춤 : <input type="checkbox" ng-model="display_size_toText"></div>
+        
+
+    </div>
+
+</div>
 
 
 
