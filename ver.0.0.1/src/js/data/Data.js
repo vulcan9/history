@@ -173,6 +173,12 @@ define(
                 
                 add: function(propertyName, dataOwner, itemObject, param){
 
+                    // 이벤트 발송
+                    var eventName = '#' + this.eventPrefix + '.add-' + propertyName;
+                    out('# 이벤트 발생 (before) : ', eventName);
+                    var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
+                    $rootScope.$broadcast(eventName, args); 
+
                     // Override 내용 구현
                     this.__add(propertyName, dataOwner, itemObject);
 
@@ -186,6 +192,12 @@ define(
 
                 remove: function(propertyName, dataOwner, itemObject, param){
 
+                    // 이벤트 발송
+                    var eventName = '#' + this.eventPrefix + '.remove-' + propertyName;
+                    out('# 이벤트 발생 (before) : ', eventName);
+                    var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
+                    $rootScope.$broadcast(eventName, args); 
+
                     // Override 내용 구현
                     this.__remove(propertyName, dataOwner, itemObject);
 
@@ -198,6 +210,12 @@ define(
                 },
 
                 modify: function(propertyName, dataOwner, itemObject, param){
+
+                    // 이벤트 발송
+                    var eventName = '#' + this.eventPrefix + '.modify-' + propertyName;
+                    out('# 이벤트 발생 (before) : ', eventName);
+                    var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
+                    $rootScope.$broadcast(eventName, args); 
 
                     // Override 내용 구현
                     this.__modify(propertyName, dataOwner, itemObject);

@@ -35,7 +35,7 @@ define(
             _superClass.apply(this, arguments);
         }
 
-        function _factory( Data, VersionService, $rootScope, $sce ){
+        function _factory( Data, VersionService, $rootScope, $sce, ELEMENT ){
 
             /////////////////////////////////////
             // Prototype 상속
@@ -184,7 +184,7 @@ define(
                                         "uid": elementUID,
                                         
                                         // element type
-                                        "type": "text",
+                                        "type": ELEMENT.TEXT,
                                         
                                         "option":{
 
@@ -264,6 +264,12 @@ define(
                                 documentItem.element.map = map;
                             },
 
+                            remove: function(){
+                                var map = documentItem.element.map || {};
+                                map[elementUID] = null;
+                                delete map[elementUID];
+                            },
+
                             option: function(name, value){
                                 
                                 var map = documentItem.element.map || {};
@@ -314,7 +320,7 @@ define(
                             // var documentItem = Project.current.getDocument(documentUID);
                             // var dom = documentItem.document.content;
                             // type = angular.element(dom).attr('type');
-                            type = 'document';
+                            type = ELEMENT.DOCUMENT;
                         }
 
                         // return { type: type, dom: dom };
@@ -774,14 +780,23 @@ define(
                         var newValue = documentUID;
                         if(oldValue == newValue) return;
 
+                        //---------------------
+                        // 이벤트 발송 : #Project.select-ELEMENT
+                        var propertyName = 'DOCUMENT';
+                        var eventName = '#' + this.eventPrefix + '.select-' + propertyName;
+                        out('# 이벤트 발생 (before) : ', eventName);
+                        var args = {newValue:newValue, name:propertyName, oldValue:oldValue};
+                        $rootScope.$broadcast(eventName, args); 
+
+                        //---------------------
                         // SET
                         Tool.current._setSelectDocument(documentUID);
 
-                        // 이벤트 발송
+                        //---------------------
+                        // 이벤트 발송 : #Project.selected-ELEMENT
                         var propertyName = 'DOCUMENT';
                         var eventName = '#' + this.eventPrefix + '.selected-' + propertyName;
                         out('# 이벤트 발생 : ', eventName);
-
                         var args = {newValue:newValue, name:propertyName, oldValue:oldValue};
                         $rootScope.$broadcast(eventName, args); 
 
@@ -880,22 +895,30 @@ define(
                         var option = param.option;
                         var css = param.css;
                         
-                        //---------------------
-                        // DOM 추가
-
+                        // DOM
                         // param으로 넘어온 값(open)을 document에 적용
                         var documentItem = this.getDocument(documentUID);
                         var content = documentItem.document.content;
                         var $content = angular.element(content);
 
-                        // 추가
+                        //---------------------
+                        // 이벤트 발송 : #Project.add-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.add-' + propertyName;
+                        out('# 이벤트 발생 (before) : ', eventName);
+                        var args = {data:documentItem, item:documentItem.document.content, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
+
+                        //---------------------
+                        // DOM 추가
+
                         var $comp = this.createElementContent(type, elementUID, option, css);
                         $content.append($comp);
 
-                        // 데이터 갱신
+                        // 데이터 갱신 (이미 dom 차원에서 갱신되어 있지만 그냥 명시적으로 기술함)
                         documentItem.document.content = $content[0];
 
-                        // type 추가
+                        // Map에 type 추가
                         this.elementAPI(documentUID, elementUID)._type(type);
 
                         // option 추가
@@ -904,13 +927,10 @@ define(
                         }
                         
                         //---------------------
-                        // 이벤트 발송
-
-                        // #Project.added-ELEMENT
+                        // 이벤트 발송 : #Project.added-ELEMENT
                         var propertyName = 'ELEMENT';
                         var eventName = '#' + this.eventPrefix + '.added-' + propertyName;
                         out('# 이벤트 발생 : ', eventName);
-
                         var args = {data:documentItem, item:documentItem.document.content, name:propertyName, param:param};
                         $rootScope.$broadcast(eventName, args); 
 
@@ -953,20 +973,34 @@ define(
                         var option = param.option;
                         var css = param.css;
 
-                        // 데이터 갱신
                         var documentItem = this.getDocument(documentUID);
-                        var element = this.getElement(documentUID, elementUID)
-                        angular.element(element).css(css);
+                        var dom = this.getElement(documentUID, elementUID);
 
                         //---------------------
-                        // 이벤트 발송
+                        // 이벤트 발송 : #Project.modifiy-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.modifiy-' + propertyName;
+                        out('# 이벤트 발생 (before) : ', eventName);
+                        var args = {data:documentItem, item:dom, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
 
-                        // #Project.added-ELEMENT
+                        //---------------------
+                        // 데이터 갱신 (css)
+                        
+                        angular.element(dom).css(css);
+
+                        // 데이터 갱신 (option)
+                        var api = Project.current.elementAPI (documentUID, elementUID);
+                        for(var prop in option){
+                            api.option(prop, option[prop]);
+                        }
+
+                        //---------------------
+                        // 이벤트 발송 : #Project.modified-ELEMENT
                         var propertyName = 'ELEMENT';
                         var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
                         out('# 이벤트 발생 : ', eventName);
-
-                        var args = {data:documentItem, item:element, name:propertyName, param:param};
+                        var args = {data:documentItem, item:dom, name:propertyName, param:param};
                         $rootScope.$broadcast(eventName, args); 
                     },
 
@@ -975,11 +1009,46 @@ define(
                     //-----------------------------------
 
                     // uid : element uid
-                    removeElement: function(uid){
+                    removeElement: function(param){
                         Tool.current.dataChanged = true;
 
-                        alert('TODO : removeElement 기능 구현 필요');
+                        out('TODO : removeElement 기능 구현 필요 : ', param);
+                        
+                        var documentUID = param.documentUID || Project.current.getSelectDocument();
+                        var elementUID = param.elementUID || Project.current.getSelectElement(documentUID);
 
+                        // DOM
+                        // param으로 넘어온 값(open)을 document에 적용
+                        var documentItem = this.getDocument(documentUID);
+                        var content = documentItem.document.content;
+                        var $content = angular.element(content);
+
+                        var dom = this.getElement(documentUID, elementUID);
+
+                        //---------------------
+                        // 이벤트 발송 : #Project.remove-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.remove-' + propertyName;
+                        out('# 이벤트 발생 (before) : ', eventName);
+                        var args = {data:documentItem, item:dom, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
+
+                        // 제거
+                        angular.element(dom).remove();
+
+                        // 데이터 갱신 (이미 dom 차원에서 갱신되어 있지만 그냥 명시적으로 기술함)
+                        documentItem.document.content = $content[0];
+
+                        // Map에서 제거
+                        this.elementAPI(documentUID, elementUID).remove();
+
+                        //---------------------
+                        // 이벤트 발송 : #Project.removed-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.removed-' + propertyName;
+                        out('# 이벤트 발생 : ', eventName);
+                        var args = {data:documentItem, item:dom, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
                     },
 
                     //-----------------------------------
@@ -1008,6 +1077,20 @@ define(
                         var newValue = elementUID;
                         if(!forced && oldValue == newValue) return;
 
+                        //---------------------
+                        // 이벤트 발송 : #Project.select-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.select-' + propertyName;
+                        out('# 이벤트 발생 (before) : ', eventName);
+                        var args = {
+                            name:propertyName, 
+                            newValue:newValue, 
+                            oldValue:oldValue,
+                            documentUID:documentUID
+                        };
+                        $rootScope.$broadcast(eventName, args); 
+
+                        //---------------------
                         // SET
                         // Document 선택 표시
                         // this.setSelectDocument(documentUID);
@@ -1016,13 +1099,11 @@ define(
                         var documentItem = this.getDocument(documentUID);
                         documentItem.element.selectUID = elementUID;
 
-                        // 데ㅔ이터 변경됨을 기록
+                        // 데이터 변경됨을 기록
                         Tool.current.dataChanged = true;
 
                         //---------------------
-                        // 이벤트 발송
-
-                        // #Project.selected-ELEMENT
+                        // 이벤트 발송 : #Project.selected-ELEMENT
                         var propertyName = 'ELEMENT';
                         var eventName = '#' + this.eventPrefix + '.selected-' + propertyName;
                         out('# 이벤트 발생 : ', eventName);
@@ -1030,8 +1111,7 @@ define(
                         var args = {
                             name:propertyName, 
                             newValue:newValue, 
-                            oldValue:oldValue, 
-                            // element: documentItem.document.content,
+                            oldValue:oldValue,
                             documentUID:documentUID
                         };
                         $rootScope.$broadcast(eventName, args); 

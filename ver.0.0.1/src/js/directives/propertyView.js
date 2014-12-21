@@ -19,7 +19,7 @@ define(
         application.directive( 'propertyView', _directive );
 
         // 선언
-        function _directive( Tool ) {
+        function _directive( Tool, ELEMENT, CommandService ) {
 
             //out( 'version' );
 
@@ -88,6 +88,12 @@ define(
                     $scope.updateContent(item.uid);
                 }
 
+                $scope.$on('#Project.removed-ELEMENT', function(e, data){
+                    // 해당 element가 선택상태이면 선택 해지
+                    var documentUID = Project.current.getSelectDocument();
+                    $scope.updateContent(documentUID);
+                });
+                
                 ////////////////////////////////////////////////////////////////////////////////
                 // Element
                 ////////////////////////////////////////////////////////////////////////////////
@@ -124,92 +130,15 @@ define(
                 // DOM 인터렉션
                 ////////////////////////////////////////////////////////////////////////////////
 
-                var _dom;
-                
-                // 속성창 내용을 갱신한다.
-                $scope.updateContent = function( documentUID, elementUID ){
-                    
-                    var type = Project.current.getType(documentUID, elementUID);
-                    if(type == 'document'){
-                        _getDocumentProperties(documentUID);
+                // var _dom;
+                var _documentUID;
+                var _elementUID;
 
-                    }else{
-                        _getElementProperties(documentUID, elementUID);
-
-                    }
-
-                    $scope.type = type;
-                    out('*********************************type : ', type);
-                }
-                
-                // $scope.$watch('type', function(newValue, oldValue) {
-                //     getBasicProperties(_dom);
-                // });
-
-                function _getDocumentProperties(documentUID){
-                    
-                    // var documentItem = Project.current.getDocument(documentUID);
-                    // _dom = documentItem.document.content;
-
-                    //------------------
-                    // Property
-                    //------------------
-
-                    var obj = {
-                        // left : U.toNumber( $dom.css('left') ),
-                        // top : U.toNumber( $dom.css('top') ),
-                        width : Project.paper.width,
-                        height : Project.paper.height
-                    }
-
-                    $scope.properties = obj;
-
-                    //------------------
-                    // Config Option
-                    //------------------
-
-                    $scope.display_snap_pixel = Tool.current.config_display('display_snap_pixel');
-                    $scope.display_grid = Tool.current.config_display('display_grid');
-                }
-
-                function _getElementProperties(documentUID, elementUID){
-
-                    var dom = Project.current.getElement(documentUID, elementUID);
-
-                    //------------------
-                    // Property
-                    //------------------
-
-                    var obj;
-                    var type;
-                    if(dom){
-                        var $dom = angular.element(dom);
-                        obj = {
-                            left : U.toNumber( $dom.css('left') ),
-                            top : U.toNumber( $dom.css('top') ),
-                            width : $dom.width(),
-                            height : $dom.height()
-                        }
-
-                    }else{
-                        obj = {
-                            left : 0,
-                            top : 0,
-                            width : 0,
-                            height : 0
-                        }
-
-                    }
-
-                    $scope.properties = obj;
-
-                    //------------------
-                    // Config Option
-                    //------------------
-
-                    var api = Project.current.elementAPI (documentUID, elementUID);
-                    $scope.display_size_toText = api.option('display_size_toText');
-                }
+                // updateContent 실행에 의해 css, option값이 바뀐 경우에는 modifyContent를 실행하지 않기위해 체크함
+                var _fromUpdate_css = false;
+                var _fromUpdate_option = false;
+                // modifyContent 실행에 의해 속성, 옵션값이 바뀐 경우에는 updateContent를 실행하지 않기위해 체크함
+                var _fromModify = false;
 
                 ////////////////////////////////////////
                 // Document 환경설정
@@ -218,25 +147,31 @@ define(
                 //-------------------
                 // snap 크기
                 //-------------------
-
-                $scope.$watch('display_snap_pixel',  function (newValue, oldValue){
-                    Tool.current.config_display('display_snap_pixel', newValue);
+                /*
+                $scope.$watch('option.display_snap_pixel',  function (newValue, oldValue){
+                    // Tool.current.config_display('display_snap_pixel', newValue);
+                    $scope.modifyContent( _documentUID, _elementUID );
                 });
+                */
 
                 $scope.$on('#Tool.changed-CONFIG.display.display_snap_pixel' , function(e, data){
-                    $scope.display_snap_pixel = data.newValue;
+                    // $scope.option.display_snap_pixel = data.newValue;
+                    $scope.updateContent( _documentUID, _elementUID );
                 });
 
                 //-------------------
                 // grid 보이기
                 //-------------------
-
-                $scope.$watch('display_grid',  function (newValue, oldValue){
-                    Tool.current.config_display('display_grid', newValue);
+                /*
+                $scope.$watch('option.display_grid',  function (newValue, oldValue){
+                    // Tool.current.config_display('display_grid', newValue);
+                    $scope.modifyContent( _documentUID, _elementUID );
                 });
+                */
 
                 $scope.$on('#Tool.changed-CONFIG.display.display_grid' , function(e, data){
-                    $scope.display_grid = data.newValue;
+                    // $scope.option.display_grid = data.newValue;
+                    $scope.updateContent( _documentUID, _elementUID );
                 });
 
                 ////////////////////////////////////////
@@ -246,18 +181,236 @@ define(
                 //-------------------
                 // 텍스트 크기 맞춤 옵션
                 //-------------------
-
-                $scope.$watch('display_size_toText',  function (newValue, oldValue){
+                /*
+                $scope.$watch('option.display_size_toText',  function (newValue, oldValue){
                     if(newValue === undefined) return;
 
                     // param 지정하지 않으면 현재 선택 상태의 element에 적용됨
-                    var api = Project.current.elementAPI();
-                    api.option('display_size_toText', newValue);
+                    // var api = Project.current.elementAPI();
+                    // api.option('display_size_toText', newValue);
+                    $scope.modifyContent( _documentUID, _elementUID );
                 });
+                */
 
                 $scope.$on('#Project.changed-element.option.display_size_toText' , function(e, data){
-                    $scope.display_size_toText = data.newValue;
+                    // $scope.option.display_size_toText = data.newValue;
+                    $scope.updateContent( _documentUID, _elementUID );
                 });
+
+                ////////////////////////////////////////
+                // DOM 업데이트
+                ////////////////////////////////////////
+                
+                // 속성창 내용을 갱신한다.
+                $scope.updateContent = function( documentUID, elementUID ){
+                    _documentUID = documentUID;
+                    _elementUID = elementUID;
+
+                    var type = Project.current.getType(documentUID, elementUID);
+                    $scope.type = type;
+
+                    // type 이 바뀌지 않은 상태에서도 속성값은 계속 수정되므로 
+                    // type watch에서 실행하지 않늗다.
+                    if(type == ELEMENT.DOCUMENT){
+                        $scope.uid = documentUID;
+                    }else{
+                        $scope.uid = elementUID;
+                    }
+
+                    if(!Project.current) return;
+
+                    _getCSS(type, documentUID, elementUID);
+                    _getOption(type, documentUID, elementUID);
+                }
+                
+                // $scope.$watch('type', function(newValue, oldValue) {
+                // });
+
+                //------------------
+                // Property
+                //------------------
+
+                function _getCSS(type, documentUID, elementUID){
+                    
+                    // var documentItem = Project.current.getDocument(documentUID);
+                    // _dom = documentItem.document.content;
+                    var css;
+                    if(type == ELEMENT.DOCUMENT){
+                        
+                        css = {
+                            // left : U.toNumber( $dom.css('left') ),
+                            // top : U.toNumber( $dom.css('top') ),
+                            width : Project.paper.width,
+                            height : Project.paper.height
+                        }
+
+                    }else{
+
+                        var dom = Project.current.getElement(documentUID, elementUID);
+                        var $dom = angular.element(dom);
+                        
+                        css = {
+                            left : U.toNumber( $dom.css('left') ) || 0,
+                            top : U.toNumber( $dom.css('top') ) || 0,
+                            width : $dom.width() || 0,
+                            height : $dom.height() || 0
+                        }
+
+                        var newCss;
+                        if(type == ELEMENT.TEXT)
+                        {
+                            //
+                        }
+                        else if(type == ELEMENT.IMAGE)
+                        {
+                            //
+                        }
+
+                        if(newCss) css = angular.extend(css, newCss);
+                    }
+
+                    // __onModifyElement에 의해 호출된 경우임
+                    var isEqual= angular.equals($scope.css, css);
+                    if(isEqual) return;
+
+                    // modifyContent 호출 무시
+                    _fromUpdate_css = true;
+
+                    // 값 설정
+                    $scope.css = css;
+                }
+
+                //------------------
+                // Config Option
+                //------------------
+
+                function _getOption(type, documentUID, elementUID){
+                    if(!Project.current) return;
+                    
+                    var option;
+                    if(type == ELEMENT.DOCUMENT){
+
+                        option = {
+                            display_snap_pixel: Tool.current.config_display('display_snap_pixel'),
+                            display_grid: Tool.current.config_display('display_grid')
+                        }
+
+                    }else{
+
+                        var api = Project.current.elementAPI (documentUID, elementUID);
+                        option = {}
+
+                        var newOption;
+                        if(type == ELEMENT.TEXT)
+                        {
+                             newOption = {
+                                display_size_toText: api.option('display_size_toText')
+                            };
+                        }
+                        else if(type == ELEMENT.IMAGE)
+                        {
+                            //
+                        }
+
+                        if(newOption) option = angular.extend(option, newOption);
+                    }
+
+                    // __onModifyElement에 의해 호출된 경우임
+                    var isEqual= angular.equals($scope.option, option);
+                    if(isEqual) return;
+
+                    // modifyContent 호출 무시
+                    _fromUpdate_option = true;
+
+                    // 값 설정
+                    $scope.option = option;
+                }
+
+                ////////////////////////////////////////
+                // Data 업데이트
+                ////////////////////////////////////////
+
+                // 속성 변경값 적용
+                $scope.$watch('css', function (newValue, oldValue){
+                    if(newValue === undefined) return;
+                    if(_fromUpdate_css){
+                        out('* 속성창 CSS 업데이트 완료 (_fromUpdate_css=false)');
+                        _fromUpdate_css = false;
+                        return;
+                    }
+
+                    $scope.modifyContent(_documentUID, _elementUID);
+                }, true);
+
+                // 옵션 변경값 적용
+                $scope.$watch('option', function (newValue, oldValue){
+                    if(newValue === undefined) return;
+                    if(_fromUpdate_option){
+                        out('* 속성창 Option 업데이트 완료 (_fromUpdate_option=false)');
+                        _fromUpdate_option = false;
+                        return;
+                    }
+                    
+                    $scope.modifyContent(_documentUID, _elementUID);
+                }, true);
+
+                //------------------
+                // 데이터 전송
+                //------------------
+                
+                // 속성창 내용을 데이터에 갱신한다.
+                $scope.modifyContent = function( documentUID, elementUID ){
+
+                    // _modifyCSS($scope.type, _documentUID, _elementUID);
+                    // _modifyOption($scope.type, _documentUID, _elementUID);
+                    
+                    if(!Project.current) return;
+
+                    var type = $scope.type;
+                    var command;
+                    var param;
+
+                    if(type == ELEMENT.DOCUMENT){
+                        
+                        // DOCUMENT  수정
+
+                        command = CommandService.MODIFY_DOCUMENT;
+                        param = {
+                            // 삽입될 문서
+                            documentUID : documentUID,
+                            elementUID: elementUID,
+
+                            // element 설정값
+                            option: $scope.option,
+                            css: $scope.css
+                        };
+
+                    }else{
+                        
+                        // ELEMENT 수정
+
+                        command = CommandService.MODIFY_ELEMENT;
+                        param = {
+                            // 삽입될 문서
+                            documentUID : documentUID,
+                            elementUID: elementUID,
+
+                            // element 설정값
+                            option: $scope.option,
+                            css: $scope.css
+                        };
+
+                    }
+
+                    // updateContent 호출 무시
+                    _fromModify = true;
+
+                    // Modify command 호출
+                    CommandService.exe(command, param, function(){
+                        out('* 속성창 변경값 데이터 저장 완료 (_fromModify=false)');
+                        _fromModify = false;
+                    });
+                }
 
                 ////////////////////////////////////////
                 // End Controller

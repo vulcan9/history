@@ -36,6 +36,20 @@
     word-wrap: break-word;
     vertical-align: top;
     */
+
+
+    /*Formal syntax: none | text | all | (element)*/
+    /*Chrome all / Safari all*/
+    -webkit-user-select: none;
+    /*Firefox all*/
+    -moz-user-select: none; 
+    /*IE 10+ */
+    -ms-user-select: none;
+    /*No support for these yet, use at own risk */
+    -o-user-select: none;
+    user-select: none;
+
+
 }
 html {
     width: 100%;

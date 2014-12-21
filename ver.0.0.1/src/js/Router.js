@@ -252,7 +252,8 @@ define( [], function() {
 						_PATH.DIRECTIVE + 'screen/content',
 						// _PATH.DIRECTIVE + 'screen/contentIframe',
 						_PATH.DIRECTIVE + 'screen/element',
-						_PATH.DIRECTIVE + 'screen/uiControl',
+						
+						_PATH.DIRECTIVE + 'ui/uiControl',
 
 		        				// FACTORY
 		        				_PATH.DATA + 'Data',

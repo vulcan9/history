@@ -58,12 +58,12 @@ define(
                 // DOCUMENT
                 ADD_DOCUMENT: 'addDocument',
                 REMOVE_DOCUMENT: 'removeDocument',
-                // MODIFY_DOCUMENT: 'modifyDocument',
+                MODIFY_DOCUMENT: 'modifyDocument',
                 SELECT_DOCUMENT: 'selectDocument',
 
                 // ELEMENT
                 ADD_ELEMENT: 'addElement',
-                // REMOVE_ELEMENT: 'removeElement',
+                REMOVE_ELEMENT: 'removeElement',
                 MODIFY_ELEMENT: 'modifyElement',
                 SELECT_ELEMENT: 'selectElement',
                 
@@ -85,11 +85,13 @@ define(
                     });
                 },
 
-                ////////////////////////////////////////////////////////////////////////////////
+                //******************************************************************************
+                //
                 //
                 // 메뉴 Command 실행
+                //
                 // 
-                ////////////////////////////////////////////////////////////////////////////////
+                //******************************************************************************
 
                 _execute: function() {
 
@@ -224,17 +226,21 @@ define(
                     command.execute.apply( command, [ param, callback ] );
                 },
 
-                ////////////////////////////////////////////////////////////////////////////////
+                //******************************************************************************
+                //
                 //
                 // Macro 구성 Command
+                //
                 // 
-                ////////////////////////////////////////////////////////////////////////////////
+                //******************************************************************************
 
                 // deferred.promise를 리턴한다.
                 //  then 결과값으로는 Command 배열이 리턴됨
 
                 ////////////////////////////////////////////////////////////////////////////////
+                //
                 // File 메뉴
+                //
                 ////////////////////////////////////////////////////////////////////////////////
 
                 command_close: function( param ) {
@@ -446,7 +452,9 @@ define(
                 },
 
                 ////////////////////////////////////////////////////////////////////////////////
+                //
                 // Edit 메뉴
+                //
                 ////////////////////////////////////////////////////////////////////////////////
 
                 command_undo: function( param ) {
@@ -690,6 +698,12 @@ define(
                     return deferred.promise;
                 },
 
+                /*
+                var param = {
+                    documentUID: Project.current.getSelectDocument(),
+                    elementUID: Project.current.getSelectElement()
+                };
+                */
                 command_removeElement: function( param ) {
 
                     if(Project.current == null) return;
@@ -703,11 +717,49 @@ define(
                     var macro = [];
                     var deferred = $q.defer();
 
-                    // 제거
-                    var command = new RemoveElementCommand();
-                    macro.push( {command:command, param:param} );
+                    // 선택 상태이면 선택 취소 과정 추가
+                    var elementUID = Project.current.getSelectElement();
+                    if(param.elementUID === elementUID){
 
-                    deferred.resolve( macro );
+                        var promise_select = sub_command_unselect();
+                        promise_select.then( function( macro_select ) {
+                            // macro 추가
+                            macro = macro.concat( macro_select );
+                            resove();
+
+                        }, function(result){
+                            deferred.reject(result);
+
+                        });
+
+                    }else{
+                        resove();
+                    }
+                    
+                    function sub_command_unselect(){
+                        var newMacro = [];
+                        var deferred = $q.defer();
+
+                        // Element 선택
+                        var param = {
+                            documentUID: Project.current.getSelectDocument(),
+                            elementUID: ''
+                        };
+                        var command = new SelectElementCommand();
+                        newMacro.push( {command:command, param:param} );
+
+                        deferred.resolve( newMacro );
+                        return deferred.promise;
+                    }
+
+                    // 취소인 경우 -> 실행 취소
+                    function resove() {
+                        // 제거
+                        var command = new RemoveElementCommand();
+                        macro.push( {command:command, param:param} );
+                        deferred.resolve( macro );
+                    }
+
                     return deferred.promise;
                 },
 
@@ -752,6 +804,18 @@ define(
                     var elementUID = Project.current.getSelectElement();
                     if(param.elementUID === elementUID) return null;
 
+                    //**********************************************************
+
+                    // 현재 편집 상태라면 선택해지는 시키지 않는다.
+                    // 편집 모드만 해지
+                    var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                    if(scope.editableUID && scope.editableUID == elementUID){
+                        scope.editableUID = '';
+                        return null;
+                    }
+
+                    //**********************************************************
+                    
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
@@ -765,49 +829,10 @@ define(
                 },
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 ////////////////////////////////////////////////////////////////////////////////
+                //
                 // View 메뉴
+                //
                 ////////////////////////////////////////////////////////////////////////////////
 
                 command_play: function( param ) {

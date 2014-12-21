@@ -26,6 +26,14 @@
     opacity: 0.5;
 }
 
+.error{
+    border: 1px solid #F00;
+    outline: #F00 solid 1px;
+}
+.error:focus{
+    box-shadow: 0 0px 20px rgba(255, 0, 0, 0.7);
+    -webkit-box-shadow: 0 0px 20px rgba(255, 0, 0, 0.7);
+}
 
 
 
@@ -278,7 +286,7 @@
     /*border: 1px solid rgba(0,0,0,0.15);*/
     /*border-radius: 4px;*/
     
-    box-shadow: 0 0px 10px rgba(0,0,0,.175);
+    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.175);
     /*-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);*/
 
     /*background: #333;*/
@@ -564,6 +572,15 @@
 // Element
 ------------------------------------*/
 
+/* document 요소 */
+.screen #contentContainer div[uid^="document-"],
+.screen #contentContainer div[uid^="document-"]:hover
+.screen #contentContainer div[uid^="document-"].selectedElement
+.screen #contentContainer div[uid^="document-"].selectedElement:hover {
+    outline: none;
+    position: relative;
+}
+
 /* element 요소 */
 .screen #contentContainer  div[uid^="element-"] {
     outline: rgba(0, 216, 255, 0.2) solid 1px;
@@ -572,24 +589,18 @@
 .screen #contentContainer div[uid^="element-"]:hover {
     outline: rgba(0, 216, 255, 0.1) solid 10px;
 }
+/*
 .screen #contentContainer div[uid^="element-"].selectedElement {
     outline: rgba(0, 216, 255, 0.2) solid 1px;
 }
-
 .screen #contentContainer div[uid^="element-"].selectedElement:hover {
     outline: rgba(255, 194, 0, 0.2) solid 1px;
 }
-.screen #contentContainer div[contenteditable=true].selectedElement {
-    outline: rgba(255, 194, 0, 0.2) solid 1px;
-}
-
-/* document 요소 */
-.screen #contentContainer div[uid^="document-"],
-.screen #contentContainer div[uid^="document-"]:hover
-.screen #contentContainer div[uid^="document-"].selectedElement
-.screen #contentContainer div[uid^="document-"].selectedElement:hover {
-    outline: none;
-    position: relative;
+*/
+.screen #contentContainer div[contenteditable=true],
+.screen #contentContainer div[contenteditable=true]:hover {
+    outline: rgba(255, 194, 0, 0.2) solid 10000px;
+    cursor: text;
 }
 
 
@@ -672,7 +683,7 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
 .screen .paper .modeHandle.edit:after{
     content: "\270f";
 }
-.screen .paper .modeHandle.play:after{
+.screen .paper .modeHandle.delete:after{
     content: "\e014";
 }
 

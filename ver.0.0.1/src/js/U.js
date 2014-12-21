@@ -199,8 +199,8 @@ define(
             // 디렉티브의 scope 설정이 false로 설정되었다면 아래와 같이 접근 가능하다.
             // 디렉티브의 scope 설정이 scope={} 로 설정된 경우에는 scop 하위에 새로운 child scpoe에서 찾아야 한다.
             ,getScope: function(selector, directiveName){
-                    // var $document = angular.element(document);
-                    // var treeContainer = $document.find('.treeContainer');
+                    var $document = angular.element(document);
+                    var treeContainer = $document.find(selector);
                     
                     var $element = angular.element(selector);
                     var $scope = treeContainer.scope(directiveName);

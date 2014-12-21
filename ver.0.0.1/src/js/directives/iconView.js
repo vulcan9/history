@@ -19,7 +19,7 @@ define(
         application.directive( 'iconView', _directive );
 
         // 선언
-        function _directive(CommandService, Tool) {
+        function _directive(CommandService, Tool, ELEMENT) {
 
             //out( 'version' );
 
@@ -169,10 +169,10 @@ define(
                     
                     /*
                     switch(type){
-                        case 'text':
+                        case ELEMENT.TEXT:
                         break;
 
-                        case 'image':
+                        case ELEMENT.IMAGE:
                         break;
                     }
                     */
@@ -180,7 +180,7 @@ define(
                     // 1. 현재 선택상태의 document를 찾는다.
 
 
-                    out('TODO : // 마우스 위치로 삽입 위치를 결정한다.');
+                    alert('TODO : // 마우스 위치로 삽입 위치를 결정한다.');
                     
                     var css = {
                         'left':155,

@@ -31,18 +31,27 @@
     <div ng-show="type=='document'">
         DOCUMENT PROPERTY
 
-        <div>width : <input type="text" name="width" value="{{properties.width}}" required ng-pattern="onlyNumbers"></div>
-        <div>height : <input type="text" name="height" value="{{properties.height}}" required ng-pattern="onlyNumbers"></div>
+        <form name="form_document">
 
-        <!-- 화면 표시 -->
-        <br><br>
-        <div>* 그리드 표시 : <input type="checkbox" ng-model="display_grid"></div>
-        <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="display_guide" ng-true-value="Y" ng-false-value="N"></div>
-        <div>[*] 룰러 표시 (준비중) : <input type="checkbox" ng-model="display_ruler" ng-true-value="Y" ng-false-value="N"></div>
-        
-        <br>
-        <br>* snap 크기 (display_snap_pixel > 0)
-        <br><div>snap 크기 : <input type="text" name="display_snap_pixel" ng-model="display_snap_pixel" required ng-pattern="onlyNumbers"></div>
+              <div>UID : {{uid}}</div>
+              <!-- <div>width : <input type="text" name="width" value="{{css.width}}" required ng-pattern="onlyNumbers"></div> -->
+              <div>width : <input type="number" name="width" ng-model="css.width" min="0" max="3000" required ng-readonly="true"
+                ng-class="{error: !form_document.width.$valid}"></div>
+              <div>height : <input type="number" name="height" ng-model="css.height" min="0" max="3000" required ng-readonly="true"
+                ng-class="{error: !form_document.height.$valid}"></div>
+
+              <!-- 화면 표시 -->
+              <br><br>
+              <div>* 그리드 표시 : <input type="checkbox" ng-model="option.display_grid"></div>
+              <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="option.display_guide" ng-true-value="Y" ng-false-value="N"></div>
+              <div>[*] 룰러 표시 (준비중) : <input type="checkbox" ng-model="option.display_ruler" ng-true-value="Y" ng-false-value="N"></div>
+              
+              <br>
+              <br>* snap 크기 (display_snap_pixel > 0)
+              <br><div>snap 크기 : <input type="number" name="display_snap_pixel" ng-model="option.display_snap_pixel" min="0" max="100" required
+                ng-class="{error: !form_document.display_snap_pixel.$valid}"></div>
+
+        </form>
 
     </div>
 
@@ -59,15 +68,84 @@
     <div ng-show="type == 'text'">
         ELEMENT ({{type}}) PROPERTY
 
-        <div>x : <input type="text" name="left" value="{{properties.left}}" required ng-pattern="onlyNumbers"></div>
-        <div>y : <input type="text" name="top" value="{{properties.top}}" required ng-pattern="onlyNumbers"></div>
-        <div>width : <input type="text" name="width" value="{{properties.width}}" required ng-pattern="onlyNumbers"></div>
-        <div>height : <input type="text" name="height" value="{{properties.height}}" required ng-pattern="onlyNumbers"></div>
-        
-        <!-- 화면 표시 -->
-        <br><br>
-        <br><div>* 텍스트 박스 크기에 맞춤 : <input type="checkbox" ng-model="display_size_toText"></div>
-        
+        <form name="form_text">
+
+              <div>UID : {{uid}}</div>
+              <div>x : <input type="number" name="left" ng-model="css.left" min="0" max="3000" required
+                ng-class="{error: !form_text.left.$valid}"></div>
+              <div>y : <input type="number" name="top" ng-model="css.top" min="0" max="3000" required
+                ng-class="{error: !form_text.top.$valid}"></div>
+              <div>width : <input type="number" name="width" ng-model="css.width" min="0" max="3000" required
+                ng-class="{error: !form_text.width.$valid}"></div>
+              <div>height : <input type="number" name="height" ng-model="css.height" min="0" max="3000" required
+                ng-class="{error: !form_text.height.$valid}"></div>
+              
+              <!-- 화면 표시 -->
+              <br><br>
+              <br><div>* 텍스트 박스 크기에 맞춤 : <input type="checkbox" ng-model="option.display_size_toText"></div>
+
+
+
+
+
+
+
+<pre>
+* 편집
+contenteditable="true|false"
+
+* 텍스트 옵션, 
+text-align : left|right|center|justify;
+text-decoration: none|underline|overline|line-through|initial|inherit;
+text-indent: px, pt, cm, em, %
+text-overflow: clip|ellipsis|string|initial|inherit; (width 지정되고 overflow: hidden;인 경우)
+text-shadow: h-shadow v-shadow blur color|none|initial|inherit;
+text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문자 변환)
+
+* 폰트 옵션
+font
+@font-face
+font-family
+font-size
+font-size-adjust
+font-stretch
+font-style
+font-variant
+font-weight
+
+* Paragraphs 옵션
+letter-spacing
+line-height
+list-style
+list-style-image
+list-style-position
+list-style-type
+
+* 여백 (layout)
+margin
+margin-bottom
+margin-left
+margin-right
+margin-top
+padding
+padding-bottom
+padding-left
+padding-right
+padding-top
+
+* 객체 align (IE11이상 지원)
+justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
+</pre>
+
+
+
+
+
+
+
+
+
+        </form>
 
     </div>
 

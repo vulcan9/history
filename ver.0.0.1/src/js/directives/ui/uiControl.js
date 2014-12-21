@@ -81,26 +81,18 @@ define(
                 // snap 크기
                 //-------------------
 
-                $scope.$watch('display_snap_pixel',  function (newValue, oldValue){
-                    Tool.current.config_display('display_snap_pixel', newValue);
-                });
-
                 $scope.$on('#Tool.changed-CONFIG.display.display_snap_pixel' , function(e, data){
                     $scope.display_snap_pixel = data.newValue;
                 });
 
-                //-------------------
-                // snap 크기
-                //-------------------
-
                 $scope.$watch('display_snap_pixel',  function (newValue, oldValue){
+                    
+                    // 바인딩 하지 않음
+                    // Tool.current.config_display('display_snap_pixel', newValue);
+
                     // snap 속성 업데이트
                     var sensitive = (newValue || newValue > 1) ? newValue : 1;
                     _snap.update('sensitive', sensitive);
-                });
-
-                $scope.$on('#Tool.changed-CONFIG.display.display_snap_pixel' , function(e, data){
-                    $scope.display_snap_pixel = data.newValue;
                 });
 
                 function _setElementOption(){
@@ -128,12 +120,17 @@ define(
                     $scope.resizable = newValue;
                     $scope.rotatable = newValue;
 
+                    $element.off('dblclick', angular.bind(this, onDoubleClick));
+
                     //**************************
                     
                     if(!newValue) return;
 
                     // 설정값 갱신
                     _setElementOption();
+
+                    // 편집 모드 더블클릭 허용
+                    $element.on('dblclick', angular.bind(this, onDoubleClick));
                 });
 
                 $scope.$watch('draggable',  function (newValue, oldValue){
@@ -147,18 +144,88 @@ define(
                 $scope.$watch('rotatable',  function (newValue, oldValue){
                     __updateRotatable(newValue);
                 });
-
-                ////////////////////////////////////////
-                // 선택 상태 표시 업데이트
-                ////////////////////////////////////////
                 
+                // 편집모드로 진행
+                function onDoubleClick(){
+                    // alert('onDoubleClick - 편집모드로 진행');
+                    var selectUID = Project.current.getSelectElement();
+                    if($scope.editableUID == selectUID) return;
+                    
+                    // 편집 모드
+                    $scope.$apply(function(){ 
+                        // var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                        $scope.editableUID = selectUID;
+                    });
+                }
+
+                ////////////////////////////////////////////////////////////////////////////////
+                // 선택 상태 표시 업데이트
+                ////////////////////////////////////////////////////////////////////////////////
+                
+                $scope.$on('#Project.select-DOCUMENT', function(e, data){
+
+                    // Document 선택이 바뀌기 전에 edit 모드 해지
+                    $scope.editableUID = '';
+                    // $scope.$apply();
+
+                    // BUG : editable 상태가 적용되지 않는 현상이 있어 직접 코드를 실행시켜준다.
+                    // $scope.$apply 등의 방법은 가끔 에러를 발생 시킨다.
+                    var elementUID = Project.current.getSelectElement();
+                    _checkEditable('', elementUID);
+                    
+                    // $scope.$evalAsync(function() {
+                    //     $scope.editableUID = '';
+                    // });
+
+                    // http://stackoverflow.com/questions/12729122/prevent-error-digest-already-in-progress-when-calling-scope-apply
+                    // if($scope.$$phase !== '$digest'){
+                    //     $scope.$digest()
+                    // }
+
+                });
+
                 // 선택 변경 작업 중에는 transition 없앰
                 var _notUseTransition = false;
 
+                $scope.$on('#Project.select-ELEMENT', function(e, data){
+                    // 편집 모드 해지
+                    $scope.editableUID = '';
+                });
                 $scope.$on('#Project.selected-ELEMENT', function(e, data){
+
+                    // selectInfo 변경에 의해 아래 watch 실행됨
                     _notUseTransition = true;
+
+                    // 설정값 갱신
+                    _setElementOption();
+                    
+                    //----------------------
+                    // 해당 DOM에 선택 표시
+                    //----------------------
+                    /*
+                    // addElement 후 바로 선택되는 경우 $element에 아직 렌더링 되지 않은 상황일 수 있다.
+                    var el_old = Project.current.getElement(data.documentUID, data.oldValue)
+                    angular.element(el_old).removeClass('selectedElement');
+
+                    var el_new = Project.current.getElement(data.documentUID, data.newValue)
+                    angular.element(el_new).addClass('selectedElement');
+                    */
+                });
+
+                $scope.$on('#Project.remove-ELEMENT', function(e, data){
+                    // 편집 모드 해지
+                    $scope.editableUID = '';
+                });
+                $scope.$on('#Project.removed-ELEMENT', function(e, data){
+                    // 해당 element가 선택상태이면 선택 해지
+                    __updateBoundary();
                 });
                 
+                $scope.$on('#Project.modified-ELEMENT', function(e, data){
+                    // 해당 element가 선택상태이면 선택 해지
+                    __updateBoundary();
+                });
+
                 $scope.$watch('selectInfo',  function (newValue, oldValue){
 
                     // snap 속성 업데이트
@@ -166,6 +233,7 @@ define(
                     _snap.update('scale', scale);
 
                     __updateBoundary();
+
                 }, true);
 
                 /*
@@ -657,12 +725,12 @@ define(
                         var $el = angular.element(el);
                         $el.css({
                             'width': 'initial',
-                            'word-wrap': 'inherit'
+                            'word-wrap': 'initial'
                         });
-                        var maxW = toInt ($el.width());
+                        var maxW = toInt ($el.width()+1);
                         var wordWrap;
                         if(maxW <= w){
-                            wordWrap = 'inherit';
+                            wordWrap = 'initial';
                             w = maxW;
                         }else{
                             wordWrap = 'break-word';
@@ -683,7 +751,7 @@ define(
                             'top': y,
                             'width': w,
                             'height': h,
-                            'word-wrap': 'inherit'
+                            'word-wrap': 'initial'
                         };
                     }
 
@@ -714,6 +782,151 @@ define(
                 }
 
                 ////////////////////////////////////////
+                // 편집
+                ////////////////////////////////////////
+
+                // 현재 Element가 편집 사태인지 여부
+                $scope.editableUID = '';
+
+                $scope.$watch('editableUID', function(newValue, oldValue){
+                        _checkEditable(newValue, oldValue);
+                });
+
+                function _checkEditable(newElementUID, oldElementUID){
+                    var documentUID = Project.current.getSelectDocument();
+
+                    if(oldElementUID){
+                        out('* 편집 해지 : ', oldElementUID);
+                        var dom = Project.current.getElement(documentUID, oldElementUID);
+                        var $dom = angular.element(dom);
+                        // $dom.css('z-index', 0);
+                        $dom.attr('contenteditable', false);
+
+                        $dom.css({
+                            /*Chrome all / Safari all*/
+                            '-webkit-user-select' :'none',
+                            /*Firefox all*/
+                            '-moz-user-select' :'none',
+                            /*IE 10+ */
+                            '-ms-user-select' :'none',
+                            /*No support for these yet, use at own risk */
+                            '-o-user-select' :'none',
+                            'user-select' :'none',
+
+                            'background-color' :'transparent'
+                        });
+
+
+
+
+
+
+                        out('\n\n\n*************************************Element 수정 내용 적용 : modify Command - mody 적용 시점 문제 있음\n\n\n');
+
+
+
+                    }
+
+                    if(newElementUID){
+                        out('* 편집 모드 : ', newElementUID);
+                        var dom = Project.current.getElement(documentUID, newElementUID);
+                        var $dom = angular.element(dom);
+                        // $dom.css('z-index', 2000);
+                        $dom.attr('contenteditable', true);
+
+                        $dom.css({
+                            /*Chrome all / Safari all*/
+                            '-webkit-user-select' :'initial',
+                            /*Firefox all*/
+                            '-moz-user-select' :'initial',
+                            /*IE 10+ */
+                            '-ms-user-select' :'initial',
+                            /*No support for these yet, use at own risk */
+                            '-o-user-select' :'initial',
+                            'user-select' :'initial',
+
+                            'background-color' : '#FFF'
+                        });
+
+                        $scope.$evalAsync(function(){
+                            angular.element(dom).focus();
+
+                            // 모두 선택 상태로
+                            selectAllContents(dom);
+                            // 선택 커서를 마지막 글자로 이동
+                            caretToSelectEnd();
+                        });
+                    }
+
+                    //--------------------------------------
+                    // 텍스트 선택 위치 지정
+                    //--------------------------------------
+
+                    // 모두 선택 상태로
+                    function selectAllContents (dom) {
+                        var elemToSelect = dom;
+                        if (window.getSelection) {
+                            // all browsers, except IE before version 9
+                            var selection = window.getSelection ();
+                            selection.selectAllChildren (elemToSelect);
+                        } else {
+                            // Internet Explorer before version 9
+                            var range = document.body.createTextRange ();
+                            range.moveToElementText (elemToSelect);
+                            range.select ();
+                        }
+                    }
+
+                    // 글자 마지막으로 캐럿 이동
+                    function caretToSelectEnd () {
+                        if (window.getSelection) {
+                            // all browsers, except IE before version 9
+                            var selection = window.getSelection ();
+                            selection.collapseToEnd ();
+                        }
+                        else {
+                            // Internet Explorer before version 9
+                            var textRange = document.selection.createRange ();
+                            textRange.collapse (false);
+                            textRange.select ();
+                        }
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                }
+
+                ////////////////////////////////////////
                 // End Controller
                 ////////////////////////////////////////
             }
@@ -724,11 +937,58 @@ define(
             //
             ////////////////////////////////////////////////////////////////////////////////
             
-            function Link ( $scope, $element, $attrs) {
+            function Link ( $scope, $element, $attrs, controller) {
 
                 // $timeout (function() {
                 //     $element.trigger('#view.layoutUpdate');
                 // }, 100);
+
+                //-----------------------
+                // 메뉴 클릭 이벤트 처리
+                //-----------------------
+
+                // 메뉴 항목을 클릭한 경우 호출되는 함수
+                $scope.callAPI = function(){
+                    
+                    var arg = U.toArray(arguments);
+                    var funcName = arg.shift();
+                    out(' * callAPI : ', funcName);
+
+                    if(funcName){
+                        eval(funcName).apply(null, arg);
+                    }
+
+                };
+
+                // element 삭제
+                function remove (){
+                    var documentUID = Project.current.getSelectDocument();
+                    var elementUID = Project.current.getSelectElement(documentUID);
+                    var param = {
+                        documentUID: documentUID,
+                        elementUID: elementUID
+                    }
+                    CommandService.exe(CommandService.REMOVE_ELEMENT, param);
+                }
+
+                //-----------------------
+                // 편집 모드
+                //-----------------------
+
+                // content.js, screenView.js 에서 선택 해지시 편집모드이면 
+                // 편집 모드만 해지되도록 코딩해 놓았음
+
+                function edit (){
+                    /*
+                    if($scope.editableUID){
+                        $scope.editableUID = '';
+                        return;
+                    }
+                    */
+
+                    var elementUID = Project.current.getSelectElement();
+                    $scope.editableUID = elementUID;
+                }
 
                 ////////////////////////////////////////
                 // End Link
@@ -742,7 +1002,6 @@ define(
         return _directive;
     }
 );
-
 
 
 

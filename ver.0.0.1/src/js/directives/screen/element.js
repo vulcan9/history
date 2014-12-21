@@ -45,20 +45,67 @@ define(
             
             function Controller( $scope, $element, $attrs) {
                 
+                // 제거
+                $scope.$on("$destroy", function () {
+
+                    // 마우스 이벤트 제거됨
+                    // $element.off('mousedown', angular.bind(this, onMousedown));
+                    $element.off('click', angular.bind(this, onClick));
+
+                    // 편집 모드 더블클릭 허용
+                    // $element.off('dblclick', angular.bind(this, onDoubleClick));
+                });
+
                 // element 클릭시 선택상태로 변경
-                $element.on('mousedown', angular.bind(this, onMousedown));
-                // $element.on('mousedown', onMousedown);
+                // $element.on('mousedown', angular.bind(this, onMousedown));
+                $element.on('click', angular.bind(this, onClick));
 
+                // 편집 모드 더블클릭 허용
+                // $element.on('dblclick', angular.bind(this, onDoubleClick));
+
+                /*
                 function onMousedown(e){
-                    
-                    // out('down : ', this);
-                    // out('down : ', arguments);
-                    // out('scope : ', $scope);
-
-                    var selectUID = $element.attr('uid');
-                    $scope.selectElement(selectUID);
-                    $scope.$apply();
+                    $scope.$apply(function(){
+                        var selectUID = $element.attr('uid');
+                        $scope.selectElement(selectUID);
+                    });
                 }
+                */
+                
+                function onClick(){
+                    var selectUID = $element.attr('uid');
+                    
+                    $scope.$apply(function(){
+                        $scope.selectElement(selectUID);
+                    });
+                    /*
+                    // 편집 모드
+                    $scope.$evalAsync(function(){
+                        var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                        if(scope.editableUID == selectUID) return;
+                        scope.editableUID = selectUID;
+                    });
+                    */
+                }
+
+                /*
+                // 편집모드로 진행
+                function onDoubleClick(){
+                    alert('onDoubleClick - 편집모드로 진행');
+                    var selectUID = $element.attr('uid');
+                    
+                    $scope.$apply(function(){
+                        $scope.selectElement(selectUID);
+                    });
+                    
+                    $scope.$evalAsync(function(){
+                        // 편집 모드
+                        var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                        if(scope.editableUID == selectUID) return;
+                        scope.editableUID = selectUID;
+                    });
+                }
+                */
 
                 //--------------
                 // End Controller
