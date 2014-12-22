@@ -81,15 +81,14 @@ define(
                 // snap 크기
                 //-------------------
 
-                $scope.$on('#Tool.changed-CONFIG.display.display_snap_pixel' , function(e, data){
-                    $scope.display_snap_pixel = data.newValue;
+                $scope.$on('#Tool.changed-CONFIG.display.snap_pixel' , function(e, data){
+                    $scope.snap_pixel = data.newValue;
                 });
 
-                $scope.$watch('display_snap_pixel',  function (newValue, oldValue){
+                $scope.$watch('snap_pixel',  function (newValue, oldValue){
                     
                     // 바인딩 하지 않음
-                    // Tool.current.config_display('display_snap_pixel', newValue);
-
+                    
                     // snap 속성 업데이트
                     var sensitive = (newValue || newValue > 1) ? newValue : 1;
                     _snap.update('sensitive', sensitive);
@@ -98,7 +97,7 @@ define(
                 function _setElementOption(){
                     
                     // Tool 지정값
-                    $scope.display_snap_pixel = Tool.current.config_display('display_snap_pixel');
+                    $scope.snap_pixel = Tool.current.config_display('snap_pixel');
 
                     // 개별 지정 옵션
                     var api = Project.current.elementAPI ();
@@ -153,7 +152,7 @@ define(
                     
                     // 편집 모드
                     $scope.$apply(function(){ 
-                        // var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                        // var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
                         $scope.editableUID = selectUID;
                     });
                 }

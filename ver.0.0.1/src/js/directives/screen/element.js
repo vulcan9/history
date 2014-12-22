@@ -81,7 +81,7 @@ define(
                     /*
                     // 편집 모드
                     $scope.$evalAsync(function(){
-                        var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                        var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
                         if(scope.editableUID == selectUID) return;
                         scope.editableUID = selectUID;
                     });
@@ -100,7 +100,7 @@ define(
                     
                     $scope.$evalAsync(function(){
                         // 편집 모드
-                        var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                        var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
                         if(scope.editableUID == selectUID) return;
                         scope.editableUID = selectUID;
                     });

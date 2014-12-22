@@ -57,10 +57,10 @@ define(
                 // grid 보이기
                 //-------------------
 
-                $scope.display_grid = Tool.current.config_display('display_grid');
+                $scope.show_grid = Tool.current.config_display('show_grid');
 
-                $scope.$on('#Tool.changed-CONFIG.display.display_grid' , function(e, data){
-                    $scope.display_grid = data.newValue;
+                $scope.$on('#Tool.changed-CONFIG.display.show_grid' , function(e, data){
+                    $scope.show_grid = data.newValue;
                 });
 
                 ////////////////////////////////////////
@@ -317,6 +317,50 @@ define(
                     $scope.updateSelectUI();
                 };
 
+                //-----------------------------------
+                // 커서 모양 세팅
+                //-----------------------------------
+                
+                $scope.setCursor = function(cursor){
+                    var $container = $element.find('#contentContainer');
+                    var oldCursor = $container.css('cursor');
+                    $container.css('cursor', cursor);
+
+                    return oldCursor;
+                }
+
+                //-----------------------------------
+                // 특정 마우스 이벤트 동작 등록하고 콜백 받기
+                //-----------------------------------
+                
+                /*
+                // 마우스 위치로 삽입 위치를 결정한다.
+                var scope = $getScope('#contentContainer', 'screenView');
+                scope.setMouseEvent ('click', function(e){
+                    add(e.offsetX, e.offsetY);
+                }, 'cell');
+                */
+
+                $scope.setMouseEvent = function(eventName, callback, cursor){
+                    var $container = $element.find('#contentContainer');
+                    $container.bind(eventName, handler);
+
+                    var oldCursor;
+                    if(cursor){
+                        oldCursor = $scope.setCursor(cursor);
+                    }
+
+                    function handler(e){
+                        $container.unbind('click', handler);
+
+                        if(oldCursor){
+                            $scope.setCursor(oldCursor);
+                        }
+
+                        if(callback) callback(e);
+                    }
+                }
+
                 ////////////////////////////////////////
                 // End Controller
                 ////////////////////////////////////////
@@ -450,13 +494,13 @@ define(
                 // layout 바뀔때 size 재조정
                 //-----------------------------------
 
-                // layout이 변경이 완료된 후 이벤트 받음
-                $document.on('#dock.layoutUpdating', __onLayoutUpdating);
-                
                 $scope.$on("$destroy", function() {
                     $document.off('#dock.layoutUpdating', __onLayoutUpdating);
                 });
 
+                // layout이 변경이 완료된 후 이벤트 받음
+                $document.on('#dock.layoutUpdating', __onLayoutUpdating);
+                
                 $scope.$evalAsync( function(){
                     $element.trigger('#view.layoutUpdate');
                 } );
@@ -544,7 +588,7 @@ define(
                     /*
                     // 현재 편집 상태라면 선택해지는 시키지 않는다.
                     // 편집 모드만 해지
-                    var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                    var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
                     if(scope.editableUID){
                         scope.editableUID = '';
                         return;

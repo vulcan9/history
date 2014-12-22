@@ -305,11 +305,11 @@ define(
 
                     // 객체 유형
                     getType : function(documentUID, elementUID){
-                        /*
+                        
                         if(!documentUID && !elementUID){
-                            throw '지정된 uid 값이 없어 type을 알아낼 수 없습니다. (Project)';
+                            // throw '지정된 uid 값이 없어 type을 알아낼 수 없습니다. (Project)';
+                            return null;
                         }
-                        */
 
                         var type;
                         if(elementUID){
@@ -547,15 +547,40 @@ define(
 
                     // uid : document uid
                     getDocument : function(documentUID){
-                        return this.__get('DOCUMENT', this.PROJECT.DOCUMENT, documentUID);
+                        // return this.__get('DOCUMENT', this.PROJECT.DOCUMENT, documentUID);
+                        if(documentUID === undefined){
+                            throw 'documentUID 값이 없습니다. (getDocument)';
+                        }
+
+                        var propertyName = 'DOCUMENT';
+                        var dataOwner = this.PROJECT.DOCUMENT;
+                        if(dataOwner === undefined){
+                            throw propertyName + '이 정의되지 않았습니다.';
+                        }
+
+                        if(dataOwner.items === undefined) return null;
+                        return dataOwner.items[documentUID];
                     },
-                    
+
                     // addDocumentList: function(param){}
 
                     //-----------------------------------
                     // add
                     //-----------------------------------
                     
+                    /*
+                    var param = {
+                        //document : null,
+                        // documentUID: uid가 지정되지 않았으면 자동 생성됨
+                        documentUID : documentUID || Project.current.createDocumentUID(),
+
+                        option: {
+                            position: position,
+                            // 현재 선택 상태의 document
+                            selectUID: selectUID || Project.current.getSelectDocument()
+                        }
+                    };
+                    */
                     addDocument: function(param){
                         Tool.current.dataChanged = true;
 
@@ -564,10 +589,34 @@ define(
 
                         // param으로 넘어온 값(open)을 document에 적용
                         var documentItem = this.updateDocumentVersion(documentUID, documentObj);
+                        var dataOwner = this.PROJECT.DOCUMENT;
+                        var propertyName = 'DOCUMENT';
+
+                        //---------------------
+                        // 이벤트 발송 : #Project.add-DOCUMENT
+                        var eventName = '#' + this.eventPrefix + '.add-' + propertyName;
+                        out('# 이벤트 발생 (before) : ', eventName);
+                        var args = {data:dataOwner, item:documentItem, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
+
+                        //---------------------
+                        // 데이터 갱신
+                        if(dataOwner === undefined) throw propertyName + '이 정의되지 않았습니다.';
+                        if(dataOwner.items === undefined){
+                            dataOwner.items = {};
+                        }
+                        dataOwner.items[documentUID] = documentItem;
+
+                        //---------------------
+                        // 이벤트 발송 : #Project.added-DOCUMENT
+                        var eventName = '#' + this.eventPrefix + '.added-' + propertyName;
+                        out('# 이벤트 발생 : ', eventName);
+                        var args = {data:dataOwner, item:documentItem, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
 
                         // document 추가
-                        this.add('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
-                        out('# 추가 된 Document : ', documentItem);
+                        // this.add('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
+                        // out('# 추가 된 Document : ', documentItem);
 
                         // 선택 표시
                         this.setSelectDocument(documentUID);
@@ -588,6 +637,97 @@ define(
                         return documentItem;
                     },
 
+                    //-----------------------------------
+                    // modify
+                    //-----------------------------------
+
+                    /*
+                    param = {
+                        // 삽입될 문서
+                        documentUID : documentUID,
+
+                        // element 설정값
+                        option: $scope.option,
+                        css: $scope.css
+                    };
+                    */
+                    
+                    // itemObject.uid 값이 있어야함
+                    modifyDocument: function(param){
+                        Tool.current.dataChanged = true;
+
+                        out('modify param : ', param);
+                        var documentUID = param.documentUID;
+                        var option = param.option;
+                        var css = param.css;
+
+                        if(documentUID === undefined) throw 'documentUID 값이 없습니다. (modify)';
+                        var documentItem = this.getDocument(documentUID);
+
+                        var propertyName = 'DOCUMENT';
+                        var dataOwner = this.PROJECT.DOCUMENT;
+                        if(dataOwner === undefined) throw propertyName + '이 정의되지 않았습니다.';
+                        if(dataOwner.items === undefined){
+                            dataOwner.items = {};
+                        }
+
+                        //---------------------
+                        // 이벤트 발송 : #Project.modify-DOCUMENT
+                        var eventName = '#' + this.eventPrefix + '.modify-' + propertyName;
+                        out('# 이벤트 발생 (before) : ', eventName);
+                        var args = {data:dataOwner, item:documentItem, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
+
+                        //---------------------
+                        // 데이터 갱신 (css)
+                        
+                        // (예외) 크기 지정하지 않는다.
+                        // 크기 지정시 바닥의 click 이벤트(element 선택 해지)를 가려버리게 된다.
+                        css.width = 'initial';
+                        css.height = 'initial';
+
+                        var dom = documentItem.document.content;
+                        angular.element(dom).css(css);
+
+                        //---------------------
+                        // 데이터 갱신 (option)
+                        // var api = Project.current.elementAPI (documentUID, elementUID);
+                        for(var prop in option){
+                            // api.option(prop, option[prop]);
+                            var categoryName = prop;
+                            var category = option[prop];
+
+                            var apiName = 'config_' + categoryName;
+                            var func = Tool.current[apiName];
+                            if(!func){
+                                throw '해당 메서드를 찾을 수 없습니다. : Tool.' + apiName;
+                            }
+
+                            out(' * option 업데이트 - ', prop, ' : ', option[prop]);
+
+                            // 해당 카테고리의 값을 업데이트한다.
+                            // 예) display 카테고리 :  Tool.current.config_display.config_display('snap_pixel', newValue);
+                            for(var name in category){
+                                var value = category[name];
+                                func.apply(Tool.current, [name, value]);
+                            }
+                        }
+
+                        //---------------------
+                        // Document Item 데이터 갱신
+                        // (명시적으로 코드에 적어두는 것임. 레퍼런스 참조이므로 데이터는 이미 업데이트됨)
+                        dataOwner.items[documentUID] = documentItem;
+
+                        //---------------------
+                        // 이벤트 발송 : #Project.modified-DOCUMENT
+                        var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
+                        out('# 이벤트 발생 : ', eventName);
+                        var args = {data:dataOwner, item:documentItem, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
+
+                        // this.modify('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
+                    },
+                    
                     //-----------------------------------
                     // remove
                     //-----------------------------------
@@ -720,13 +860,38 @@ define(
                             {
                                 var info = list[index];
                                 var item = info.items[info.index];
-                                var uid = item.uid;
+                                var documentUID = item.uid;
 
                                 // 이벤트 매개변수에 전달하기 위해 변수 생성함
                                 param.position = info;
 
-                                var documentItem = this.getDocument(uid);
-                                this.remove('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
+                                // var documentItem = this.getDocument(uid);
+                                // this.remove('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
+
+                                var documentItem = this.getDocument(documentUID);
+                                var dataOwner = this.PROJECT.DOCUMENT;
+                                var propertyName = 'DOCUMENT';
+
+                                //---------------------
+                                // 이벤트 발송 : #Project.remove-DOCUMENT
+                                var eventName = '#' + this.eventPrefix + '.remove-' + propertyName;
+                                out('# 이벤트 발생 (before) : ', eventName);
+                                var args = {data:dataOwner, item:documentItem, name:propertyName, param:param};
+                                $rootScope.$broadcast(eventName, args); 
+
+                                //---------------------
+                                // 데이터 갱신
+                                if(dataOwner === undefined) throw propertyName + '이 정의되지 않았습니다.';
+                                if(dataOwner.items === undefined) return;
+                                dataOwner.items[documentUID] = null;
+                                delete dataOwner.items[documentUID];
+
+                                //---------------------
+                                // 이벤트 발송 : #Project.removed-DOCUMENT
+                                var eventName = '#' + this.eventPrefix + '.removed-' + propertyName;
+                                out('# 이벤트 발생 : ', eventName);
+                                var args = {data:dataOwner, item:documentItem, name:propertyName, param:param};
+                                $rootScope.$broadcast(eventName, args); 
                             }
                         }
 
@@ -814,25 +979,6 @@ define(
                         //*******************************************************
                     },
 
-                    //-----------------------------------
-                    // modify
-                    //-----------------------------------
-                    
-                    // itemObject.uid 값이 있어야함
-                    modifyDocument: function(param){
-                        Tool.current.dataChanged = true;
-
-                        // tree에 수정
-                        //var treeItem = this.getDefinitionTree(uid);
-                        // this.modify('TREE', this.PROJECT.TREE, treeItem);
-
-                        out('modify param : ', param);
-                        alert('TODO : 기능 구현 필요');
-
-                        var documentItem = this.getDocument(uid);
-                        this.modify('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
-                    },
-                    
                     //////////////////////////////////////////////////////////////////////////
                     //
                     // Element
@@ -859,8 +1005,8 @@ define(
 
                     // uid : element uid
                     getElement : function(documentUID, elementUID){
-                        var item = this.__get('DOCUMENT', this.PROJECT.DOCUMENT, documentUID);
-                        var $dom = angular.element(item.document.content);
+                        var documentItem = this.getDocument(documentUID)
+                        var $dom = angular.element(documentItem.document.content);
                         var $element = $dom.find("[uid='" + elementUID + "']");
                         return $element[0];
                     },
@@ -1058,6 +1204,7 @@ define(
                     getSelectElement: function(documentUID){
                         documentUID = documentUID || this.getSelectDocument();
                         var documentItem = this.getDocument(documentUID);
+                        if(!documentItem) return null;
 
                         var elementUID = documentItem.element.selectUID;
                         return elementUID;

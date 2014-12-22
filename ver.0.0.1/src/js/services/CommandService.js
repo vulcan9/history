@@ -20,7 +20,7 @@ define(
 
         // 선언
         function _service(
-            $q, 
+            $q, $getScope,
             NewCommand, OpenCommand, SaveCommand, SaveAsCommand, CloseCommand, ExitCommand,
             AddDocumentCommand, RemoveDocumentCommand, ModifyDocumentCommand, SelectDocumentCommand,
             AddElementCommand, RemoveElementCommand, ModifyElementCommand, SelectElementCommand,
@@ -808,7 +808,7 @@ define(
 
                     // 현재 편집 상태라면 선택해지는 시키지 않는다.
                     // 편집 모드만 해지
-                    var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                    var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
                     if(scope.editableUID && scope.editableUID == elementUID){
                         scope.editableUID = '';
                         return null;

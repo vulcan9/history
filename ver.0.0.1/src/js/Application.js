@@ -44,10 +44,52 @@ define(
         // Element type 상수
         application.constant( 'ELEMENT', {
 
-                DOCUMENT: 'document',
-                TEXT: 'text'
+            DOCUMENT: 'document',
+            TEXT: 'text'
+            
+        });
+
+        /////////////////////////////////////
+        // Application 유틸
+        /////////////////////////////////////
+
+        /*
+        // IFrame에서 parent window의 scope 찾기
+        app.factory('$parentScope', function($window) {
+            return $window.parent.angular.element($window.frameElement).scope();
+        });
+        */
+
+        // 디렉티브의 scope 설정이 false로 설정되었다면 아래와 같이 접근 가능하다.
+        // 디렉티브의 scope 설정이 scope={} 로 설정된 경우에는 scop 하위에 새로운 child scpoe에서 찾아야 한다.
+        
+        // 예 : 
+        // var scope = U.getScope('.screenContainer', 'screenView');
+
+        application.service('$getScope', function($document) {
+
+            function getScope(selector, directiveName) {
+                var $document = angular.element(document);
+                var container = $document.find(selector);
                 
-            });
+                var $element = angular.element(selector);
+                var $scope = container.scope(directiveName);
+                return $scope;
+            }
+
+            return getScope;
+        });
+        
+        // 디렉티브에 정의된 controller 찾기
+        application.service('$getController', function() {
+            function getController(selector, directiveName){
+                var $element = angular.element(selector);
+                var controller = $element.controller(directiveName);
+                return controller;
+            }
+
+            return getController;
+        });
 
         /////////////////////////////////////
         // Application 모듈 설정

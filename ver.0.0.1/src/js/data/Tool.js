@@ -130,23 +130,6 @@ define(
                     }
                 },
 
-                ////////////////////////////////////////
-                // END
-                ////////////////////////////////////////
-
-                //---------------------
-                // Document 
-                //---------------------
-                
-                _getSelectDocument: function(){
-                    return this.tool('CURRENT').document.selectUID;
-                },
-
-                _setSelectDocument: function(uid){
-                    this.tool('CURRENT').document.selectUID = uid;
-                    this.dataChanged = true;
-                },
-
                 //---------------------
                 // Element 
                 //---------------------
@@ -189,9 +172,13 @@ define(
                             // display_size_toText: false,
 
                             // snap 크기 (pixel >= 1)
-                            display_snap_pixel: 10,
+                            snap_pixel: 10,
                             // grid 보이기
-                            display_grid: true
+                            show_grid: true,
+                            // guide 라인 보이기
+                            // show_guide: true,
+                            // ruler 보이기
+                            // show_ruler: true
                         }
                     });
 
@@ -199,16 +186,53 @@ define(
                     this.tool('CURRENT', {
                         document:{
                             // 현재 선택 문서 (uid)
-                            selectUID:null
+                            selectUID:null,
+
+                            /* 
+                            // 현재 사용안함
+                            // document 설정 정보를 가진 Map (documentUID:config option 설정 내용)
+                            "map": {
+                                // Tool에서 설정된 개별 document 설정들
+                                "key (documentUID)": {
+
+                                    "uid": documentUID,
+                                    
+                                    // element type
+                                    // "type": ELEMENT.DOCUMENT,
+                                    
+                                    "option":{
+                                        display : {
+                                            snap_pixel: 10,
+                                            show_grid: true
+                                        }
+                                    },
+
+                                }
+                            }
+                            */
                         }
                     });
-
+  
                 },
 
                 //---------------------
-                // Tool Config
+                // Tool CURRENT 값 수정
                 //---------------------
                 
+                _getSelectDocument: function(){
+                    return this.tool('CURRENT').document.selectUID;
+                },
+
+                _setSelectDocument: function(uid){
+                    this.tool('CURRENT').document.selectUID = uid;
+                    this.dataChanged = true;
+                },
+
+                //---------------------
+                // Tool CONFIG 값 수정
+                //---------------------
+                
+                // CONFIG - display category  수정
                 config_display: function(name, value){
                     if(value === undefined){
                         //GET
@@ -231,7 +255,9 @@ define(
                     $rootScope.$broadcast(eventName, args); 
                 }
 
+                ////////////////////////////////////////
                 // _factory end
+                ////////////////////////////////////////
             });
 
             return Tool;

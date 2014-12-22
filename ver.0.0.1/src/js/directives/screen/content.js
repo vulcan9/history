@@ -66,7 +66,7 @@ define(
                     /*
                     // 현재 편집 상태라면 선택해지는 시키지 않는다.
                     // 편집 모드만 해지
-                    var scope = U.getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                    var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
                     if(scope.editableUID){
                         scope.editableUID = '';
                         return;

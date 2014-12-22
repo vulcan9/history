@@ -43,9 +43,12 @@ define(
             
             var $document = angular.element(document);
             var body = $document.find("body");
+            
+            // 선택 방지는 user-select CSS로 교체함
             // body.on("focusin", function(e){e.preventDefault();return false;});
             // body.on("selectstart", function(e){e.preventDefault();return false;});
             // body.on("dragstart", function(e){e.preventDefault();return false;});
+
             body.on("contextmenu", function(e){
                 e.preventDefault();
                 alert('context menu!');

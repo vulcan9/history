@@ -19,7 +19,7 @@ define(
         application.directive( 'iconView', _directive );
 
         // 선언
-        function _directive(CommandService, Tool, ELEMENT) {
+        function _directive(CommandService, Tool, ELEMENT, $getScope) {
 
             //out( 'version' );
 
@@ -133,6 +133,16 @@ define(
                     CommandService.exe(CommandService.REDO, {});
                 }
 
+                function copy(){
+                    alert('// TODO : copy');
+                    // CommandService.exe(CommandService.UNDO, {});
+                }
+
+                function paste(){
+                    alert('// TODO : paste');
+                    // CommandService.exe(CommandService.REDO, {});
+                }
+
                 ////////////////////////////////////////
                 // Document
                 ////////////////////////////////////////
@@ -177,30 +187,33 @@ define(
                     }
                     */
 
-                    // 1. 현재 선택상태의 document를 찾는다.
+                    // 마우스 위치로 삽입 위치를 결정한다.
+                    var scope = $getScope('#contentContainer', 'screenView');
+                    scope.setMouseEvent ('click', function(e){
+                        add(e.offsetX, e.offsetY);
+                    }, 'cell');
 
+                    function add(x, y){
+                        var css = {
+                            'left':x,
+                            'top':y
+                        };
+                        var param = {
+                            
+                            // 삽입될 문서
+                            documentUID : documentUID || Project.current.getSelectDocument(),
+                            
+                            // uid가 지정되지 않았으면 command에서 자동 생성됨
+                            elementUID: elementUID || Project.current.createElementUID(),
+                            type: type,
 
-                    alert('TODO : // 마우스 위치로 삽입 위치를 결정한다.');
-                    
-                    var css = {
-                        'left':155,
-                        'top':115
-                    };
-                    var param = {
-                        
-                        // 삽입될 문서
-                        documentUID : documentUID || Project.current.getSelectDocument(),
-                        
-                        // uid가 지정되지 않았으면 command에서 자동 생성됨
-                        elementUID: elementUID || Project.current.createElementUID(),
-                        type: type,
+                            // element 설정값
+                            option: {},
+                            css: css
+                        };
 
-                        // element 설정값
-                        option: {},
-                        css: css
-                    };
-
-                    CommandService.exe(CommandService.ADD_ELEMENT, param);
+                        CommandService.exe(CommandService.ADD_ELEMENT, param);
+                    }
                 }
 
                 ////////////////////////////////////////

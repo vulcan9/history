@@ -10,6 +10,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////*/
 
+/*//////////////////////////////////////
+// 단위 유틸 클래스
+//////////////////////////////////////*/
+
 .transition{
     transition: all 0.2s ease;
 }
@@ -35,17 +39,40 @@
     -webkit-box-shadow: 0 0px 20px rgba(255, 0, 0, 0.7);
 }
 
+/*//////////////////////////////////////
+// Depth 관리
+//////////////////////////////////////*/
+
+/*
+[depth]
+z-index : 
+
+- 500 : .ui-selected
+- 600 : 필터링 검색, screen 메뉴 그룹
+
+- 999 : Tree 드래그할때 나타나는 임시 이미지
+- 1001 : progressContainer
+
+- 1040 : notice 배경
+- 1050 : notice 창
 
 
 
 
+(bootstrap)
+- 5~15 : .carousel
+- 1000 : .dropdown, .navbar-static-top
+- 1030 : .navbar-fixed-top, .navbar-fixed-bottom
+- 1040 : .modal-backdrop
+- 1050 : .modal
+- 1070 : .tooltip
+- 1060 : .popover
+*/
 
 
-
-
-
-
-
+/*//////////////////////////////////////
+// Application
+//////////////////////////////////////*/
 
 .applicationContainer{
     /*application 설정 완료 후 1로 변경되는 js 코드 있음*/
@@ -715,7 +742,7 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
 ------------------------------------*/
 
 .ui-selected{
-    z-index: 1001;
+    z-index: 500;
 }
 
 /*선택 상태 표시 (=.ui-draggable-handle)
@@ -757,7 +784,7 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
     padding:0px;
     
     border:1px dashed #E42806;
-    z-index: 1001 !important;
+    z-index: 501 !important;
     top:0px;
     left:0px;
     /*pointer-events:none;*/
@@ -770,7 +797,7 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
 .ui-resizable-handle {
     position: absolute; 
     font-size: 0px; 
-    z-index: 1001;
+    z-index: 501;
 }
 
 /*모서리(dot handle)*/
@@ -867,7 +894,7 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
 /*영역 표시 (크기 표시)*/
 .areaDisplay {
     background-color: rgba(0, 0, 0, 0.145098);
-    z-index: 1001;
+    z-index: 501;
     position: absolute;
 }
 
@@ -891,7 +918,7 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 1001;
+    z-index: 500;
 }
 .guide.vertical {
     border-left: 1px solid #FFDCD6;

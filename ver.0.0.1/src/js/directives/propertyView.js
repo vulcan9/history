@@ -19,7 +19,7 @@ define(
         application.directive( 'propertyView', _directive );
 
         // 선언
-        function _directive( Tool, ELEMENT, CommandService ) {
+        function _directive( Tool, ELEMENT, CommandService, $timeout ) {
 
             //out( 'version' );
 
@@ -84,7 +84,7 @@ define(
                 }
 
                 function __onModifyDocument(item, param){
-                    alert('// 현재 선택상태 element가 없으면 property 창을 업데이트 한다.');
+                    // 현재 선택상태 element가 없어도 property 창을 업데이트 한다.
                     $scope.updateContent(item.uid);
                 }
 
@@ -119,11 +119,10 @@ define(
                 function __onSelectElement(newValue, oldValue, documentUID){
                     out(' - oldValue (propertyView) : ', oldValue);
                     out(' - newValue (propertyView) : ', newValue);
-
-                    var elementUID = newValue;
-
+                    
                     // var item = Project.current.getElement(documentUID);
-                   $scope.updateContent(documentUID, elementUID);
+                    var elementUID = newValue;
+                    $scope.updateContent(documentUID, elementUID);
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////
@@ -148,14 +147,12 @@ define(
                 // snap 크기
                 //-------------------
                 /*
-                $scope.$watch('option.display_snap_pixel',  function (newValue, oldValue){
-                    // Tool.current.config_display('display_snap_pixel', newValue);
+                $scope.$watch('option.display.snap_pixel',  function (newValue, oldValue){
                     $scope.modifyContent( _documentUID, _elementUID );
                 });
                 */
 
-                $scope.$on('#Tool.changed-CONFIG.display.display_snap_pixel' , function(e, data){
-                    // $scope.option.display_snap_pixel = data.newValue;
+                $scope.$on('#Tool.changed-CONFIG.display.snap_pixel' , function(e, data){
                     $scope.updateContent( _documentUID, _elementUID );
                 });
 
@@ -163,14 +160,12 @@ define(
                 // grid 보이기
                 //-------------------
                 /*
-                $scope.$watch('option.display_grid',  function (newValue, oldValue){
-                    // Tool.current.config_display('display_grid', newValue);
+                $scope.$watch('option.display.show_grid',  function (newValue, oldValue){
                     $scope.modifyContent( _documentUID, _elementUID );
                 });
                 */
 
-                $scope.$on('#Tool.changed-CONFIG.display.display_grid' , function(e, data){
-                    // $scope.option.display_grid = data.newValue;
+                $scope.$on('#Tool.changed-CONFIG.display.show_grid' , function(e, data){
                     $scope.updateContent( _documentUID, _elementUID );
                 });
 
@@ -182,7 +177,7 @@ define(
                 // 텍스트 크기 맞춤 옵션
                 //-------------------
                 /*
-                $scope.$watch('option.display_size_toText',  function (newValue, oldValue){
+                $scope.$watch('option.display.display_size_toText',  function (newValue, oldValue){
                     if(newValue === undefined) return;
 
                     // param 지정하지 않으면 현재 선택 상태의 element에 적용됨
@@ -193,7 +188,6 @@ define(
                 */
 
                 $scope.$on('#Project.changed-element.option.display_size_toText' , function(e, data){
-                    // $scope.option.display_size_toText = data.newValue;
                     $scope.updateContent( _documentUID, _elementUID );
                 });
 
@@ -246,6 +240,12 @@ define(
 
                     }else{
 
+                        if(!documentUID && !elementUID){
+                            _fromUpdate_css = true;
+                            $scope.css = null;
+                            return;
+                        }
+
                         var dom = Project.current.getElement(documentUID, elementUID);
                         var $dom = angular.element(dom);
                         
@@ -289,13 +289,21 @@ define(
                     
                     var option;
                     if(type == ELEMENT.DOCUMENT){
-
+                        
                         option = {
-                            display_snap_pixel: Tool.current.config_display('display_snap_pixel'),
-                            display_grid: Tool.current.config_display('display_grid')
+                            display : {
+                                snap_pixel: Tool.current.config_display('snap_pixel'),
+                                show_grid: Tool.current.config_display('show_grid')
+                            }
                         }
 
                     }else{
+
+                        if(!documentUID && !elementUID){
+                            _fromUpdate_option = true;
+                            $scope.option = null;
+                            return;
+                        }
 
                         var api = Project.current.elementAPI (documentUID, elementUID);
                         option = {}
@@ -333,24 +341,14 @@ define(
                 // 속성 변경값 적용
                 $scope.$watch('css', function (newValue, oldValue){
                     if(newValue === undefined) return;
-                    if(_fromUpdate_css){
-                        out('* 속성창 CSS 업데이트 완료 (_fromUpdate_css=false)');
-                        _fromUpdate_css = false;
-                        return;
-                    }
-
+                    out('css');
                     $scope.modifyContent(_documentUID, _elementUID);
                 }, true);
 
                 // 옵션 변경값 적용
                 $scope.$watch('option', function (newValue, oldValue){
                     if(newValue === undefined) return;
-                    if(_fromUpdate_option){
-                        out('* 속성창 Option 업데이트 완료 (_fromUpdate_option=false)');
-                        _fromUpdate_option = false;
-                        return;
-                    }
-                    
+                    out('option');
                     $scope.modifyContent(_documentUID, _elementUID);
                 }, true);
 
@@ -358,13 +356,34 @@ define(
                 // 데이터 전송
                 //------------------
                 
+                var __delayTimeout;
+
                 // 속성창 내용을 데이터에 갱신한다.
                 $scope.modifyContent = function( documentUID, elementUID ){
 
-                    // _modifyCSS($scope.type, _documentUID, _elementUID);
-                    // _modifyOption($scope.type, _documentUID, _elementUID);
+                    // 연속으로 호출된 경우 업데이트를 무시하고 최종값을 한번에 적용시킨다.
+                    $timeout.cancel(__delayTimeout);
                     
+                    __delayTimeout = $timeout(function () {
+                        __delayTimeout = null;
+                        __modifyContent(documentUID, elementUID);
+                    }, 500);
+                    
+                    // (주의) delay 시간이 250 이하이면 delay 적용되지 않고 실행됨
+                    // 연속 클릭 속도 감안하여 500으로 설정해 놓음
+                    // $digest 호출 시간이 245정도이기 때문인듯함
+                }
+
+                function __modifyContent( documentUID, elementUID ){
                     if(!Project.current) return;
+
+                    if(_fromUpdate_css && _fromUpdate_option){
+                        out('* 속성창 CSS 업데이트 완료 (_fromUpdate_css=false)');
+                        out('* 속성창 Option 업데이트 완료 (_fromUpdate_option=false)');
+                        _fromUpdate_css = false;
+                        _fromUpdate_option = false;
+                        return;
+                    }
 
                     var type = $scope.type;
                     var command;
@@ -378,7 +397,6 @@ define(
                         param = {
                             // 삽입될 문서
                             documentUID : documentUID,
-                            elementUID: elementUID,
 
                             // element 설정값
                             option: $scope.option,

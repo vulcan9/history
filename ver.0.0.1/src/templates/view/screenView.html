@@ -20,7 +20,7 @@
     -->
 
 <!-- 메뉴 그룹 -->
-<div style="position: absolute; top: 0px; left: 0px; z-index: 2000;">
+<div style="position: absolute; top: 0px; left: 0px; z-index: 600;">
     <span class="label label-info" ng-click="callMethod('toggleScaleMode')">Toggle ScaleMode</span>
 
     <span class="label label-info" ng-click="callMethod('setScaleMode', 0.5)">Scale : 0.5</span>
@@ -65,7 +65,7 @@
 
             <!--// 페이지 배경 -->
             <!--배경 패턴-->
-            <background scale="{{size.scale}}" ng-show="display_grid" ng-hide="!display_grid"></background>
+            <background scale="{{size.scale}}" ng-show="show_grid" ng-hide="!show_grid"></background>
 
             <!--내용 컨테이너 : paper의 가로/세로 비율을 유지한 scale 변화 적용해야함-->
             <content class="transition" item="item" size="size" on-load-complete="onLoadComplete(success)"

@@ -15,14 +15,16 @@
     <!--실행/취소-->
     <span class="label label-default" ng-click="callAPI('undo')">undo</span>
     <span class="label label-default" ng-click="callAPI('redo')">redo</span>
-
-    |
-    <!--프레젠테이션 실행-->
-    <span class="label label-default" ng-click="callAPI('play')">play</span>
-
+    <!--copy/paste-->
+    <span class="label label-default" ng-click="callAPI('copy')">copy</span>
+    <span class="label label-default" ng-click="callAPI('paste')">paste</span>
     |
     <!--요소 삽입-->
     <span class="label label-success" ng-click="callAPI('addElement', 'text')">TEXT</span>
     <span class="label label-success" ng-click="callAPI('addElement', 'image')">IMAGE</span>
+
+    |
+    <!--프레젠테이션 실행-->
+    <span class="label label-default" ng-click="callAPI('play')">play</span>
 
 </div>

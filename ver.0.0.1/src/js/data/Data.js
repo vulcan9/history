@@ -171,6 +171,7 @@ define(
                 // dataObject을 가진 데이터에 값을 추가한다.
                 // propertyName : __createProxy로 생성된 property 이름
                 
+                /*
                 add: function(propertyName, dataOwner, itemObject, param){
 
                     // 이벤트 발송
@@ -185,7 +186,6 @@ define(
                     // 이벤트 발송
                     var eventName = '#' + this.eventPrefix + '.added-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
-
                     var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
                     $rootScope.$broadcast(eventName, args); 
                 },
@@ -204,7 +204,6 @@ define(
                     // 이벤트 발송
                     var eventName = '#' + this.eventPrefix + '.removed-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
-
                     var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
                     $rootScope.$broadcast(eventName, args); 
                 },
@@ -223,7 +222,6 @@ define(
                     // 이벤트 발송
                     var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
                     out('# 이벤트 발생 : ', eventName);
-
                     var args = {data:dataOwner, item:itemObject, name:propertyName, param:param};
                     $rootScope.$broadcast(eventName, args); 
                 },
@@ -287,6 +285,7 @@ define(
                     if(dataOwner.items === undefined) return null;
                     return dataOwner.items[uid];
                 }
+                */
 
                 // end
             };
