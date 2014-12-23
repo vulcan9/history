@@ -26,7 +26,7 @@ define(
             ////////////////////////////////////////
             
             /*
-            <script type="text/ng-template" id="confirm.html">
+            <script type="text/ng-template" id="notice.html">
                 
                 <div class="modal-header">
                     <h3 class="modal-title">{{title}}</h3>

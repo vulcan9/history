@@ -22,7 +22,10 @@ define(
         function _service(
             $q, $getScope,
             NewCommand, OpenCommand, SaveCommand, SaveAsCommand, CloseCommand, ExitCommand,
-            AddDocumentCommand, RemoveDocumentCommand, ModifyDocumentCommand, SelectDocumentCommand,
+            
+            AddDocumentCommand, RemoveDocumentCommand, SelectDocumentCommand, ModifyDocumentCommand, 
+            ConfigurationCommand,
+
             AddElementCommand, RemoveElementCommand, ModifyElementCommand, SelectElementCommand,
             Project, Tool, NoticeService, ProgressService
 
@@ -55,17 +58,20 @@ define(
                 UNDO: 'undo',
                 REDO: 'redo',
 
+                // Configuration Application
+                CONFIGURATION: 'configuration',
+
                 // DOCUMENT
                 ADD_DOCUMENT: 'addDocument',
                 REMOVE_DOCUMENT: 'removeDocument',
-                MODIFY_DOCUMENT: 'modifyDocument',
                 SELECT_DOCUMENT: 'selectDocument',
+                MODIFY_DOCUMENT: 'modifyDocument',
 
                 // ELEMENT
                 ADD_ELEMENT: 'addElement',
                 REMOVE_ELEMENT: 'removeElement',
-                MODIFY_ELEMENT: 'modifyElement',
                 SELECT_ELEMENT: 'selectElement',
+                MODIFY_ELEMENT: 'modifyElement',
                 
                 /*
                 CommandService._exe(CommandService.OPEN, param, function callback(isSuccess, result){
@@ -520,27 +526,6 @@ define(
                     return deferred.promise;
                 },
 
-                command_modifyDocument: function( param ) {
-
-                    if(Project.current == null) return;
-
-                    // 아이디 체크
-                    if(!param || param.documentUID === undefined){
-                        return null;
-                    }
-
-                    // var self = this;
-                    var macro = [];
-                    var deferred = $q.defer();
-
-                    // 수정
-                    var command = new ModifyDocumentCommand();
-                    macro.push( {command:command, param:param} );
-
-                    deferred.resolve( macro );
-                    return deferred.promise;
-                },
-
                 command_selectDocument: function( param ) {
                     
                     if(Project.current == null) return;
@@ -607,6 +592,53 @@ define(
                         deferred.resolve( macro );
                     }
 
+                    return deferred.promise;
+                },
+
+                command_modifyDocument: function( param ) {
+
+                    if(Project.current == null) return;
+
+                    // 아이디 체크
+                    if(!param || param.documentUID === undefined){
+                        return null;
+                    }
+
+                    // var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 수정
+                    var command = new ModifyDocumentCommand();
+                    macro.push( {command:command, param:param} );
+
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                },
+                /*
+                param = {
+                    // option 설정값
+                    option: Tool.current.CONFIG
+                };
+                */
+                command_configuration: function( param ) {
+
+                    if(Project.current == null) return;
+
+                    // 아이디 체크
+                    if(!param || param.option === undefined){
+                        return null;
+                    }
+
+                    // var self = this;
+                    var macro = [];
+                    var deferred = $q.defer();
+
+                    // 수정
+                    var command = new ConfigurationCommand();
+                    macro.push( {command:command, param:param} );
+
+                    deferred.resolve( macro );
                     return deferred.promise;
                 },
 

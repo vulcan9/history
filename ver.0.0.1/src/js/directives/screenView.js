@@ -322,7 +322,7 @@ define(
                 //-----------------------------------
                 
                 $scope.setCursor = function(cursor){
-                    var $container = $element.find('#contentContainer');
+                    var $container = $scope.getScreenEventTarget();
                     var oldCursor = $container.css('cursor');
                     $container.css('cursor', cursor);
 
@@ -333,16 +333,30 @@ define(
                 // 특정 마우스 이벤트 동작 등록하고 콜백 받기
                 //-----------------------------------
                 
+                // 마우스 이벤트를 감지할 수 있는 객체 반환
+                $scope.getScreenEventTarget = function (){
+                    var $container = $element.find('#contentContainer');
+                    return $container;
+                }
+
                 /*
                 // 마우스 위치로 삽입 위치를 결정한다.
                 var scope = $getScope('#contentContainer', 'screenView');
-                scope.setMouseEvent ('click', function(e){
+
+                // 버튼 클릭만 계속한 경우 이전 등록한 클릭 이벤트는 제거
+                scope.unbindScreenEvent ('click', __handlerID);
+
+                // 마우스 위치로 삽입 위치를 결정한다.
+                __handlerID = scope.bindScreenEvent ('click', function(e){
                     add(e.offsetX, e.offsetY);
                 }, 'cell');
                 */
 
-                $scope.setMouseEvent = function(eventName, callback, cursor){
-                    var $container = $element.find('#contentContainer');
+                /*
+                $scope.bindScreenEvent = function(eventName, callback, cursor){
+                    var $container = _getScreenEventTarget();
+
+                    // 새로 등록
                     $container.bind(eventName, handler);
 
                     var oldCursor;
@@ -359,7 +373,15 @@ define(
 
                         if(callback) callback(e);
                     }
+
+                    return handler;
                 }
+
+                $scope.unbindScreenEvent = function(eventName, handler){
+                    var $container = _getScreenEventTarget();
+                    $container.unbind(eventName, handler);
+                }
+                */
 
                 ////////////////////////////////////////
                 // End Controller

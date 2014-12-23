@@ -19,7 +19,7 @@ define(
         application.directive( 'iconView', _directive );
 
         // 선언
-        function _directive(CommandService, Tool, ELEMENT, $getScope) {
+        function _directive(CommandService, Tool, ELEMENT, $getScope, TalkService) {
 
             //out( 'version' );
 
@@ -147,6 +147,12 @@ define(
                 // Document
                 ////////////////////////////////////////
 
+                //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
+                $scope.$on('#Project.select-DOCUMENT', function(e, data){
+                    out('#Project.select-DOCUMENT (iconView)');
+                    _removeMousePointEvent();
+                });
+
                 // Document 추가 
                 // position : 'next', 'sub', 'prev'
                 function addDocument (position, documentUID, selectUID){
@@ -173,33 +179,50 @@ define(
                 // Element
                 ////////////////////////////////////////
                 
+                // 등록된 마우스 이벤트
+                var __lastHandler = null;
+                var __oldCursor;
+                var __messageObj;
+
                 function addElement (type, elementUID, documentUID){
 
                     if(Project.current == null) return;
+
+                    //------------------
+                    // 안내 문구 띄우기
+                    //------------------
                     
-                    /*
-                    switch(type){
-                        case ELEMENT.TEXT:
-                        break;
-
-                        case ELEMENT.IMAGE:
-                        break;
+                    var msgExist = TalkService.has(__messageObj);
+                    if(msgExist < 0){
+                        __messageObj = TalkService.open('문서에서 추가할 위치를 클릭하세요.', {
+                            delayTime : TalkService.LONGEST,
+                            closeCallback: function(){
+                                __messageObj = null;
+                            }
+                        });
+                    }else{
+                        __messageObj = TalkService.delay(__messageObj, TalkService.LONGEST);
                     }
-                    */
 
-                    // 마우스 위치로 삽입 위치를 결정한다.
-                    var scope = $getScope('#contentContainer', 'screenView');
-                    scope.setMouseEvent ('click', function(e){
-                        add(e.offsetX, e.offsetY);
-                    }, 'cell');
+                    //------------------
+                    // 핸들러 등록
+                    //------------------
 
-                    function add(x, y){
+                    _addMousePointEvent(add);
+
+                    //------------------
+                    // 마우스 위치 결정
+                    //------------------
+
+                    function add(e){
+                        
+                        _removeMousePointEvent();
+
                         var css = {
-                            'left':x,
-                            'top':y
+                            'left': e.target.offsetLeft + e.offsetX, //e.offsetX,
+                            'top': e.target.offsetTop + e.offsetY  //e.offsetY,
                         };
                         var param = {
-                            
                             // 삽입될 문서
                             documentUID : documentUID || Project.current.getSelectDocument(),
                             
@@ -211,9 +234,43 @@ define(
                             option: {},
                             css: css
                         };
-
                         CommandService.exe(CommandService.ADD_ELEMENT, param);
                     }
+
+                    // end
+                }
+
+                // Element를 추가할 위치 찾기
+                function _addMousePointEvent(listener){
+                    var scope = $getScope('#contentContainer', 'screenView');
+                    var $container = scope.getScreenEventTarget();
+                    var eventName = 'mousedown';
+
+                    // 이전 핸들러 해지
+                    if(__lastHandler){
+                        _removeMousePointEvent();
+                    }
+                    __lastHandler = angular.bind(this, listener);
+                    $container.one(eventName, __lastHandler);
+
+                    // 커서
+                    if(__oldCursor == null){
+                        __oldCursor = scope.setCursor('cell');
+                    }
+                }
+
+                function _removeMousePointEvent(){
+                    if(!__lastHandler) return;
+                    
+                    var scope = $getScope('#contentContainer', 'screenView');
+                    var $container = scope.getScreenEventTarget();
+                    var eventName = 'mousedown';
+
+                    scope.setCursor(__oldCursor);
+                    __oldCursor = null;
+
+                    $container.off(eventName, __lastHandler);
+                    __lastHandler = null;
                 }
 
                 ////////////////////////////////////////

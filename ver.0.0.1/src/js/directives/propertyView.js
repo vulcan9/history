@@ -50,11 +50,15 @@ define(
                 ////////////////////////////////////////////////////////////////////////////////
                 
                 //-------------------------------------
-                // Pattern
+                // Tool
                 //-------------------------------------
 
-                $scope.onlyNumbers = /^[0-9]+$/;
-
+                $scope.$on('#Tool.configed-TOOL.CONFIG', function(e, data){
+                    out('#Tool.configed-TOOL.CONFIG (propertyView) : ', data);
+                    var documentUID = Project.current.getSelectDocument();
+                    $scope.updateContent(documentUID);
+                });
+                
                 ////////////////////////////////////////////////////////////////////////////////
                 // Document
                 ////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +107,7 @@ define(
                     out('#Project.selected-ELEMENT (propertyView) : ', data);
                     __onSelectElement(data.newValue, data.oldValue, data.documentUID);
                 });
-                
+
                 $scope.$on('#Project.modified-ELEMENT', function(e, data){
                     out('#Project.modified-ELEMENT (propertyView) : ', data);
                     __onModifyElement(data.item, data.param);
@@ -349,11 +353,17 @@ define(
                 $scope.$watch('option', function (newValue, oldValue){
                     if(newValue === undefined) return;
                     out('option');
-                    $scope.modifyContent(_documentUID, _elementUID);
+
+                    if($scope.type == ELEMENT.DOCUMENT){
+                        $scope.configDocument();
+                    }else{
+                        $scope.modifyContent(_documentUID, _elementUID);
+                    }
+                    
                 }, true);
 
                 //------------------
-                // 데이터 전송
+                // 데이터 수정 - CSS
                 //------------------
                 
                 var __delayTimeout;
@@ -367,7 +377,7 @@ define(
                     __delayTimeout = $timeout(function () {
                         __delayTimeout = null;
                         __modifyContent(documentUID, elementUID);
-                    }, 500);
+                    }, 300);
                     
                     // (주의) delay 시간이 250 이하이면 delay 적용되지 않고 실행됨
                     // 연속 클릭 속도 감안하여 500으로 설정해 놓음
@@ -395,11 +405,16 @@ define(
 
                         command = CommandService.MODIFY_DOCUMENT;
                         param = {
-                            // 삽입될 문서
                             documentUID : documentUID,
 
-                            // element 설정값
-                            option: $scope.option,
+                            //*********************************
+                            
+                            // option은 configDocument에서 설정
+                            // option: $scope.option,
+
+                            //*********************************
+
+                            // element css 설정값
                             css: $scope.css
                         };
 
@@ -428,6 +443,32 @@ define(
                         out('* 속성창 변경값 데이터 저장 완료 (_fromModify=false)');
                         _fromModify = false;
                     });
+                }
+
+                //------------------
+                // 데이터 수정 - Configuration Option
+                //------------------
+                
+                // Deley Time 없이 업데이트 (History에 기록하지 않으므로)
+                $scope.configDocument = function(){
+                    if(!Project.current) return;
+
+                    var type = $scope.type;
+                    var command;
+                    var param;
+
+                    if(type != ELEMENT.DOCUMENT){
+                        throw '이 옵션 설정은 Document type일때만 가능합니다.';
+                    }
+                        
+                    // CONFIGURATION  설정값 수정
+                    param = {
+                        // option 설정값
+                        option: $scope.option
+                    };
+
+                    // command 호출
+                    CommandService.exe(CommandService.CONFIGURATION, param);
                 }
 
                 ////////////////////////////////////////

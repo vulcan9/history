@@ -53,8 +53,9 @@ z-index :
 - 999 : Tree 드래그할때 나타나는 임시 이미지
 - 1001 : progressContainer
 
-- 1040 : notice 배경
+- 1040 : notice 배경(modal)
 - 1050 : notice 창
+- 1060 : talk 메세지 표시
 
 
 
@@ -100,6 +101,81 @@ z-index :
     position: relative;
     /*border: 1px solid #FF0000;*/
     height: 100%;
+}
+
+/*------------------------------------
+// Talk
+------------------------------------*/
+
+.talkContainer{
+    position: fixed;
+    /*border: 1px solid #FF0000;*/
+    width: 100%;
+    /*height: 100%;*/
+    bottom: 90px;
+    /*right: 0px;*/
+    z-index: 1060;
+    pointer-events: none;
+}
+
+.talkContainer .alert {
+    padding: 15px;
+    padding-right: 35px;
+    margin: 20px;
+
+    color: #4b4d4c;
+    background-color: rgba(255, 255, 255, 1); 
+    border-color: rgba(0, 0, 0, 0.15);
+
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+    max-width: 500px;
+    text-align: center;
+    margin: 10px auto;
+
+    pointer-events: none;
+}
+.talkContainer .alert-,
+.talkContainer .alert-normal {
+    color: #4b4d4c;
+    background-color: rgba(255, 255, 255, 1); 
+    border-color: rgba(0, 0, 0, 0.15);
+}
+.talkContainer .alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+.talkContainer .alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+.talkContainer .alert-warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+.talkContainer .alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+/* animation */
+.talk.ng-enter,
+.talk.ng-leave {
+    transition:0.2s linear all;
+}
+.talk.ng-enter,
+.talk.ng-leave.ng-leave-active {
+  opacity:0;
+}
+.talk.ng-leave,
+.talk.ng-enter.ng-enter-active {
+  opacity:1;
 }
 
 /*//////////////////////////////////////
@@ -584,6 +660,7 @@ z-index :
     padding: 0px !important;
     width:100%;
     height:100%;
+
     cursor: crosshair;
 }
 

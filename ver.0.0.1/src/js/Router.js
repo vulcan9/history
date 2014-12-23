@@ -174,9 +174,12 @@ define( [], function() {
 				// SERVICE
 				_PATH.SERVICE + 'VersionService',
 				_PATH.SERVICE + 'ProgressService',
+				
 				// _PATH.SERVICE + 'DataService',
 				_PATH.SERVICE + 'HttpService',
-				_PATH.SERVICE + 'NoticeService'
+
+				_PATH.SERVICE + 'NoticeService',
+				_PATH.SERVICE + 'TalkService'
 			];
 
 			return dependencies;
@@ -270,6 +273,8 @@ define( [], function() {
 						
 						// COMMAND
 						_PATH.COMMAND + 'Command',
+						_PATH.COMMAND + 'ConfigurationCommand',
+						
 						_PATH.COMMAND + 'NewCommand',
 						_PATH.COMMAND + 'OpenCommand',
 						_PATH.COMMAND + 'SaveCommand',
@@ -279,8 +284,8 @@ define( [], function() {
 
 						_PATH.COMMAND + 'document/AddDocumentCommand',
 						_PATH.COMMAND + 'document/RemoveDocumentCommand',
-						_PATH.COMMAND + 'document/ModifyDocumentCommand',
 						_PATH.COMMAND + 'document/SelectDocumentCommand',
+						_PATH.COMMAND + 'document/ModifyDocumentCommand',
 
 						_PATH.COMMAND + 'element/AddElementCommand',
 						_PATH.COMMAND + 'element/RemoveElementCommand',

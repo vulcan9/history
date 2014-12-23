@@ -215,6 +215,55 @@ define(
   
                 },
 
+                // Command에서 Option값 수정
+                configuration: function(param){
+                    this.dataChanged = true;
+
+                    out('config param : ', param);
+                    var option = param.option;
+
+                    var propertyName = 'TOOL.CONFIG';
+                    var dataOwner = this.TOOL.CONFIG;
+                    if(dataOwner === undefined) throw propertyName + '이 정의되지 않았습니다.';
+
+                    //---------------------
+                    // 이벤트 발송 : #Tool.config-TOOL.CONFIG
+                    var eventName = '#' + this.eventPrefix + '.config-' + propertyName;
+                    out('# 이벤트 발생 (before) : ', eventName);
+                    var args = {data:dataOwner, param:param};
+                    $rootScope.$broadcast(eventName, args); 
+
+                    //---------------------
+                    // 데이터 갱신 (option)
+                    for(var prop in option){
+                        // api.option(prop, option[prop]);
+                        var categoryName = prop;
+                        var category = option[prop];
+
+                        var apiName = 'config_' + categoryName;
+                        var func = this[apiName];
+                        if(!func){
+                            throw '해당 메서드를 찾을 수 없습니다. : Tool.' + apiName;
+                        }
+
+                        out(' * option 업데이트 - ', prop, ' : ', option[prop]);
+
+                        // 해당 카테고리의 값을 업데이트한다.
+                        // 예) display 카테고리 :  Tool.current.config_display.config_display('snap_pixel', newValue);
+                        for(var name in category){
+                            var value = category[name];
+                            func.apply(this, [name, value]);
+                        }
+                    }
+
+                    //---------------------
+                    // 이벤트 발송 : #Tool.configed-TOOL.CONFIG
+                    var eventName = '#' + this.eventPrefix + '.configed-' + propertyName;
+                    out('# 이벤트 발생 : ', eventName);
+                    var args = {data:dataOwner, param:param};
+                    $rootScope.$broadcast(eventName, args); 
+                },
+
                 //---------------------
                 // Tool CURRENT 값 수정
                 //---------------------

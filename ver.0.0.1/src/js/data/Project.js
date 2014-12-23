@@ -652,13 +652,14 @@ define(
                     };
                     */
                     
-                    // itemObject.uid 값이 있어야함
+                    // Document 내용 수정
+                    // Document Option값 수정은 configDocument 에서
                     modifyDocument: function(param){
                         Tool.current.dataChanged = true;
 
                         out('modify param : ', param);
                         var documentUID = param.documentUID;
-                        var option = param.option;
+                        // var option = param.option;
                         var css = param.css;
 
                         if(documentUID === undefined) throw 'documentUID 값이 없습니다. (modify)';
@@ -689,6 +690,7 @@ define(
                         var dom = documentItem.document.content;
                         angular.element(dom).css(css);
 
+                        /*
                         //---------------------
                         // 데이터 갱신 (option)
                         // var api = Project.current.elementAPI (documentUID, elementUID);
@@ -712,6 +714,7 @@ define(
                                 func.apply(Tool.current, [name, value]);
                             }
                         }
+                        */
 
                         //---------------------
                         // Document Item 데이터 갱신
@@ -727,7 +730,7 @@ define(
 
                         // this.modify('DOCUMENT', this.PROJECT.DOCUMENT, documentItem, param);
                     },
-                    
+
                     //-----------------------------------
                     // remove
                     //-----------------------------------
@@ -994,6 +997,7 @@ define(
                     // type : html(문서), tag(태그묶음), text(글상자)...
                     createElementContent: function(type, elementUID, option, css){
                         var comp = '<div uid="' + elementUID + '">TEXT</div>';
+                        // var comp = '<textarea uid="' + elementUID + '">TEXT</textarea>';
                         var $comp = angular.element(comp);
                         if(css) $comp.css(css);
 

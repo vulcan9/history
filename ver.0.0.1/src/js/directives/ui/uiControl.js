@@ -86,9 +86,6 @@ define(
                 });
 
                 $scope.$watch('snap_pixel',  function (newValue, oldValue){
-                    
-                    // 바인딩 하지 않음
-                    
                     // snap 속성 업데이트
                     var sensitive = (newValue || newValue > 1) ? newValue : 1;
                     _snap.update('sensitive', sensitive);

@@ -29,7 +29,7 @@ define(
         var application = angular.module(
 
             // '모듈 Name', ['Require 모듈']
-            'Application', [ 'ngRoute', 'dockModule', 'alignModule', 'ui.bootstrap', 'ui.tree' ],
+            'Application', [ 'ngRoute', 'ngAnimate', 'dockModule', 'alignModule', 'ui.bootstrap', 'ui.tree' ],
 
             // Configuration Function
             function( $provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider ) {
@@ -49,6 +49,12 @@ define(
             
         });
 
+        //-------------------------------------
+        // Pattern
+        //-------------------------------------
+
+        // $scope.onlyNumbers = /^[0-9]+$/;
+
         /////////////////////////////////////
         // Application 유틸
         /////////////////////////////////////
@@ -64,16 +70,19 @@ define(
         // 디렉티브의 scope 설정이 scope={} 로 설정된 경우에는 scop 하위에 새로운 child scpoe에서 찾아야 한다.
         
         // 예 : 
-        // var scope = U.getScope('.screenContainer', 'screenView');
+        // var scope = $getScope('.screenContainer', 'screenView');
 
         application.service('$getScope', function($document) {
 
             function getScope(selector, directiveName) {
                 var $document = angular.element(document);
-                var container = $document.find(selector);
-                
+                var $container = $document.find(selector);
+                if($container.length < 1){
+                    throw 'selector에 대한 scope을 찾을  수 없습니다. (' + selector + ')';
+                }
+
                 var $element = angular.element(selector);
-                var $scope = container.scope(directiveName);
+                var $scope = $container.scope(directiveName);
                 return $scope;
             }
 

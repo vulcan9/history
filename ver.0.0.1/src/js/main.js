@@ -147,9 +147,10 @@ require.config( {
 
         // 'angular':                '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular',
         // 'angular-route':       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular-route',
-        
+
         'angular':                _PATH.LIB + 'angular/angular.1.2.23',
         'angular-route':       _PATH.LIB + 'angular/angular-route.1.2.24',
+        'angular-animate':       'http://code.angularjs.org/1.2.23/angular-animate',
         'angular-collection':       _PATH.LIB + 'angular/angular-collection',
 
         // http://angular-ui.github.io/bootstrap/
@@ -187,6 +188,10 @@ require.config( {
             deps: [ 'angular' ],
             exports: 'angular-route'
         },
+        'angular-animate': {
+            deps: [ 'angular' ],
+            exports: 'angular-animate'
+        },
         'angular-collection': {
             deps: [ 'angular' ]
         },
@@ -212,7 +217,7 @@ require.config( {
         },
         */
         'Application': {
-            deps: [ 'angular', 'angular-route', 'dockModule', 'alignModule', 'ui-bootstrap', 'ui.tree']
+            deps: [ 'angular', 'angular-route', 'angular-animate', 'dockModule', 'alignModule', 'ui-bootstrap', 'ui.tree']
         },
 
         'Space':{
