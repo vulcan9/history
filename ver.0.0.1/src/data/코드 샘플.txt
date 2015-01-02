@@ -45,7 +45,7 @@ $scope.$on('#ApplicationController.resize', function .....)
 //----------------------------
 
 var $document = angular.element(document);
-var treeContainer = $document.find('.treeContainer');
+var treeContainer = $document.find('.hi-treeContainer');
 
 // tree 디렉티브
 var treeController = treeContainer.controller('tree');

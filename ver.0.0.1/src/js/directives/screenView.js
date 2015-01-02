@@ -11,15 +11,15 @@
 
 define(
     [
-        'Application', 'U'
+        'Application', 'U', 'html2canvas'
     ],
-    function( application, U ) {
+    function( application, U, html2canvas ) {
 
         // 등록
         application.directive( 'screenView', _directive );
 
         // 선언
-        function _directive($document, ScaleMode, Project , CommandService, Tool) {
+        function _directive($document, ScaleMode, Project , CommandService, Tool, $timeout) {
 
             //out( 'version' );
 
@@ -52,6 +52,9 @@ define(
                 ////////////////////////////////////////
                 // 환경설정
                 ////////////////////////////////////////
+
+                // Transition 효과 사용 여부 설정
+                $scope.useTransition = true;
 
                 //-------------------
                 // grid 보이기
@@ -162,7 +165,7 @@ define(
                     // IFrame 랜더링 타임을 기다렸다가 DOM 적용함 (IFrame 파일로드)
                     // _onLoadComplete 이벤트 발생함
                     $timeout(function(){
-                        $element.find('#contentContainer').html(dom);
+                        $element.find('#hi-contentContainer').html(dom);
                     });
                     */
                 }
@@ -268,8 +271,9 @@ define(
                     if(Project.current == null) return;
                     
                     var documentUID = Project.current.getSelectDocument();
-                    var selectUID = Project.current.getSelectElement();
+                    if(!documentUID)return;
 
+                    var selectUID = Project.current.getSelectElement();
                     out('updateSelectUI : ', selectUID, '/', documentUID);
                     // $scope.documentUID = documentUID;
 
@@ -335,13 +339,13 @@ define(
                 
                 // 마우스 이벤트를 감지할 수 있는 객체 반환
                 $scope.getScreenEventTarget = function (){
-                    var $container = $element.find('#contentContainer');
+                    var $container = $element.find('#hi-contentContainer');
                     return $container;
                 }
 
                 /*
                 // 마우스 위치로 삽입 위치를 결정한다.
-                var scope = $getScope('#contentContainer', 'screenView');
+                var scope = $getScope('#hi-contentContainer', 'screenView');
 
                 // 버튼 클릭만 계속한 경우 이전 등록한 클릭 이벤트는 제거
                 scope.unbindScreenEvent ('click', __handlerID);
@@ -383,6 +387,182 @@ define(
                 }
                 */
 
+                ////////////////////////////////////////////////////////////////////////////////
+                // Thumbnail 이미지 캡쳐
+                ////////////////////////////////////////////////////////////////////////////////
+
+                //-----------------------
+                // 캡쳐
+                //-----------------------
+                
+                $scope.updateThumbnail = function (documentUID){
+                    // documentUID = documentUID || Project.current.getSelectDocument();
+                    
+                    var size = Tool.current.config_thumbnail ('size');
+                    var sourceWidth = Project.paper.width;
+                    var sourceHeight = Project.paper.height;
+                    var ratioW = size / sourceWidth;
+                    var ratioH = size / sourceHeight;
+                    var ratio = Math.min(ratioW, ratioH);
+
+                    var $captureLayer = $element.find('#hi-captureLayer');
+                    // var $content = $captureLayer.find('#hi-contentContainer_capture');
+                    // if($content.length > 0){
+                    //     // 캡쳐중
+                    //     return;
+                    // }
+                    $captureLayer.empty();
+
+                    var option ={
+                        // width : $scope.size.sourceWidth,
+                        // height : $scope.size.sourceHeight,
+                        ratio : ratio,
+                        captureLayer : $captureLayer,
+                        callback : callback
+                    }
+                    
+                    var $source = $element.find('#hi-contentContainer');
+                    _capture($source, option);
+
+                    function callback(canvas)
+                    {
+                        var tw = canvas.width;
+                        var th = canvas.height;
+
+                        // 데이터 저장 - 이벤트 발생 : #Project.changed-thumbnail.src
+                        var api = Project.current.documentAPI(documentUID);
+                        var data = canvas.toDataURL("image/png");
+                        // api.thumbnail('src', data);
+                        api.thumbnail({
+                            'src' : data,
+                            'width' : tw,
+                            'height' : th
+                        });
+
+                        // out('Thumbnail src : ', data);
+
+                        // DOM에 결과물 Display
+                        /*
+                        var $output = $element.find('#output');
+                        // Canvas로 바로  삽입하는 경우
+                        var context = canvas.getContext("2d");
+                        context.strokeStyle = '#080';
+                        context.rect(0, 0, tw, th);
+                        context.stroke();
+
+                        $output.html(canvas);
+                        //*/
+                        /*
+                        var $output = $element.find('#output');
+                        // 이미지 태그로 삽입하는 경우
+                        var data = canvas.toDataURL("image/png");
+                        var $image = angular.element('<img src="'+data+'"/>');
+                        $image.css({
+                            outline: '1px solid #080', 
+                            width: tw, 
+                            height: th
+                        });
+                        $output.html($image);
+                        //*/
+                    }
+                }
+
+                function _capture($source, option){
+                    if(!$source || $source.length < 1) return;
+                    
+                    var callback = option.callback;
+                    var ratio = option.ratio || 1;
+                    var $captureLayer = $source;
+
+                    // 컨텐츠 DOM Clone (scale=1, no transition)
+                    if(option.captureLayer && option.captureLayer.length > 0){
+                        $captureLayer = option.captureLayer;
+
+                        var cloneSource = $source.clone();
+                        
+                        // id 변경
+                        cloneSource.attr('id', 'hi-contentContainer_capture');
+
+                        // 영향을 줄만한 attribute 제거
+                        cloneSource.removeAttr('ng-init');
+                        // cloneSource.find("[uid]").removeAttr('uid');
+                        cloneSource.find('[uid^=document-]').attr('uid', 'document-capture');
+                        cloneSource.find('[uid^=element-]').attr('uid', 'element-capture');
+
+                        $captureLayer.html(cloneSource);
+                        $captureLayer.css('display', 'inline-block');
+                    }
+
+                    // var W = option.width || $captureLayer.width();
+                    // var H = option.height || $captureLayer.height();
+                    
+                    // 캡쳐 작업 호출
+                    // html2canvas 캡쳐
+                    // http://html2canvas.hertzen.com/
+                    // http://day0429.tistory.com/153
+                    // http://micropilot.tistory.com/2516
+                    // transtorm 적용된 DOM에 대해서는 정상 적용되지 않는다.
+                    // 캡쳐 순간  scale=1로 한 후 다시 원래 scale로 되돌리는 방법은 화면 깜빢임 현상 때문에 사용하지 않는다.
+                    // application 레이어 아래에 임시 capture Layer를 생성하여 복사한 DOM을 놓고 (scale=1) 이것을 캡쳐하여 사용한다.
+                    // (역시 깜빡이는 현상이 있으나 레이어 아래 감춰진 상태이므로 사용에 무리는 없어보임)
+                    html2canvas($captureLayer, {
+                        onrendered: onrendered
+                    });
+
+                    // 캡쳐 후 콜백
+                    function onrendered(oCanvas){
+
+                        // Clone 객체 제거
+                        if($captureLayer){
+                            $captureLayer.css('display', 'none');
+                            $captureLayer.empty();
+                        }
+
+                        // Scale 적용 작업
+                        var tw = Math.round(oCanvas.width * ratio);
+                        var th = Math.round(oCanvas.height * ratio);
+                        
+                        var canvas;
+                        if(ratio == 1){
+                            canvas = oCanvas;
+                        }else{
+                            canvas = _scaleCanvas(oCanvas, tw, th);
+                            oCanvas = null;
+                        }
+
+                        if(callback){
+                            callback(canvas);
+                        }
+                    }
+                }
+
+                // canvas 객체 하나만 생성해서 사용함
+                var __cacheCanvas;
+                function _scaleCanvas(canvas, tw, th) {
+                    if (tw && th)
+                    {
+                        var nCanvas;
+                        if(!__cacheCanvas){
+                            nCanvas = document.createElement("canvas");
+                        }else{
+                            nCanvas = __cacheCanvas;
+                        }
+                        
+                        nCanvas.width = tw;
+                        nCanvas.height = th;
+                        nCanvas.style.width = tw+"px";
+                        nCanvas.style.height = th+"px";
+
+                        var context = nCanvas.getContext("2d");
+                        // context.ImageSmoothingEnabled = false;
+                        // context.webkitImageSmoothingEnabled = false;
+                        // context.mozImageSmoothingEnabled = false;
+                        context.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, tw, th);
+                        return nCanvas;
+                    }
+                    return canvas;
+                }
+
                 ////////////////////////////////////////
                 // End Controller
                 ////////////////////////////////////////
@@ -412,7 +592,7 @@ define(
 
                 // A4 : 595x842, ppt : 1193x671
 
-                // margin은 (.paper) class 설정치를 참고할것
+                // margin은 (.hi-paper) class 설정치를 참고할것
                 var marginW = 20;
                 var marginH = 20;
                 var sourceWidth = Project.paper.width;
@@ -606,17 +786,6 @@ define(
 
                 // bg를 클릭한 경우 선택상태의 Element 선택 해지
                 function onClick_bg(){
-                    
-                    /*
-                    // 현재 편집 상태라면 선택해지는 시키지 않는다.
-                    // 편집 모드만 해지
-                    var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
-                    if(scope.editableUID){
-                        scope.editableUID = '';
-                        return;
-                    }
-                    */
-
                     // 선택 해지
                     $scope.selectElement('');
                 }

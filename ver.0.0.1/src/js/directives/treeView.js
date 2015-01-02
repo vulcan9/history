@@ -88,7 +88,7 @@ define(
                 var self = this;
                 $scope.$on('#Project.changed-TREE', function(e, data){
                     if(data.name == 'TREE'){
-                        out('#Project.changed-TREE (tree) : ', arguments);
+                        out('#Project.changed-TREE (treeView) : ', arguments);
 
                         // 2. 변경 내용을 scope에 적용한다.
                         var tree = Project.current.project('TREE');
@@ -99,10 +99,17 @@ define(
                 // 3. scope이 변경되었음을 감지한다.
                 $scope.$watch('tree', function(newValue, oldValue) {
                     if (newValue === oldValue) { return; }
-                    out('# $scope.tree changed (tree) : ', $scope.tree);
+                    out('# $scope.tree changed (treeView) : ', $scope.tree);
                     $element.trigger('#view.layoutUpdate');
                 }, true);
                 //*/
+
+                $scope.$on('#Project.changed-DOCUMENT', function(e, data){
+                    out('#Project.changed-DOCUMENT (treeView) : ', data.newValue);
+
+                    // Thumbnail 설정
+                    initThumbnail();
+                });
 
                 ////////////////////////////////////////
                 // DOCUMENT 데이터 이벤트
@@ -119,31 +126,61 @@ define(
                 $scope.$on('#Project.initialized', function(e, data){
                     // $scope.tree = Project.current.project('TREE');
                     // $scope.document = Project.current.project('DOCUMENT');
+                    __onInitializeDocument();
                 });
 
                 //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
                 $scope.$on('#Project.selected-DOCUMENT', function(e, data){
-                    out('#Project.selected-DOCUMENT (tree) : ', data);
+                    out('#Project.selected-DOCUMENT (treeView) : ', data);
                     __onSelectDocument(data.newValue, data.oldValue);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.added-DOCUMENT', function(e, data){
-                    out('#Project.added-DOCUMENT (tree) : ', data);
+                    out('#Project.added-DOCUMENT (treeView) : ', data);
                     __onAddDocument(data.item, data.param);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.removed-DOCUMENT', function(e, data){
-                    out('#Project.removed-DOCUMENT (tree) : ', data);
+                    out('#Project.removed-DOCUMENT (treeView) : ', data);
                     __onRemoveDocument(data.item, data.param);
                 });
 
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.modified-DOCUMENT', function(e, data){
-                    out('#Project.modified-DOCUMENT (tree) : ', data);
+                    out('#Project.modified-DOCUMENT (treeView) : ', data);
                     __onModifyDocument(data.item, data.param);
                 });
+
+                //-------------------------------------
+                // 용지 사이즈 세팅
+                //-------------------------------------
+                
+                var __maxWidth = 100;
+                var __maxHeight = 70;
+                // 용지 원본에 대한 미리보기 scale
+                var __scale = 1;
+                // 용지 가로,세로 비율
+                // var __ratio = 1;
+
+                function __onInitializeDocument(item, param){
+                    var sourceWidth = Project.paper.width;
+                    var sourceHeight = Project.paper.height;
+
+                    // var scaleW = __maxWidth / sourceWidth;
+                    // var scaleH = __maxHeight / sourceHeight;
+                    // __scale = Math.min(scaleW, scaleH);
+                    __scale = __maxHeight / sourceHeight;
+
+                    var w = sourceWidth * __scale;
+                    var h = sourceHeight * __scale;
+
+                    $scope.paper = {
+                        width: w,
+                        height: h
+                    };
+                }
 
                 //-------------------------------------
                 // DOM 업데이트
@@ -157,7 +194,7 @@ define(
                 }
 
                 /*
-                <div class="paper" ng-repeat="item in tree.items" ng-click="selectDocument(item, $index)">
+                <div class="hi-paper" ng-repeat="item in tree.items" ng-click="selectDocument(item, $index)">
                     {{$index}}
                 </div>
                 
@@ -214,37 +251,70 @@ define(
                     
                 }
 
+                //-------------------------------------
+                // Thumbnail 업데이트
+                //-------------------------------------
 
+                // thumbnial 초기 세팅
+                $scope.thumbnail = {};
 
+                /*
+                $scope.initThumbnail = function(documentUID){
+                    var api = Project.current.documentAPI(documentUID);
+                    var src = api.thumbnail('src');
 
+                    var thumbnail = api.thumbnail();
+                    // $scope.thumbnail[documentUID] = thumbnail;
+                }
+                */
 
+                function initThumbnail(){
+                    var documents = Project.current.project('DOCUMENT');
+                    for(var documentUID in documents.items)
+                    {
+                        // var api = Project.current.documentAPI(documentUID);
+                        // var thumbnail = api.thumbnail();
 
+                        var item = documents.items[documentUID];
+                        var thumbnail = item.document.thumbnail;
+                        updateThumbnail(documentUID, thumbnail);
 
+                        // out('* 썸네일 데이터 : ', documentUID, thumbnail);
+                    }
+                }
 
+                // var data = {data:dataOwner, item:itemObject, name:propertyName};
+                $scope.$on('#Project.changed-thumbnail', function(e, data){
+                    out('#Project.changed-thumbnail (treeView) : ', data.newValue);
+                    
+                    // UID로 개별 업데이트 해야함
+                    var documentUID = data.documentUID;
+                    var thumbnail = data.newValue;
+                    updateThumbnail(documentUID, thumbnail);
+                });
 
+                function updateThumbnail(documentUID, thumbnail){
+                    if(!thumbnail) return;
+                    /*
+                    var sourceWidth = thumbnail.width;
+                    var sourceHeight = thumbnail.height;
 
+                    var maxW = $scope.paper.width;
+                    var maxH = $scope.paper.height;
+                    var scaleW = maxW / sourceWidth;
+                    var scaleH = maxH / sourceHeight;
+                    var scale = Math.min(scaleW, scaleH);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    var w = sourceWidth * scale;
+                    var h = sourceHeight * scale;
+                    $scope.thumbnail[documentUID] = {
+                        width : w,
+                        height : h,
+                        src : thumbnail ? thumbnail.src : ''
+                    };
+                    */
+                    $scope.thumbnail[documentUID] = thumbnail;
+                }
 
                 ////////////////////////////////////////////////////////////////////////////////
                 // DOM 인터렉션

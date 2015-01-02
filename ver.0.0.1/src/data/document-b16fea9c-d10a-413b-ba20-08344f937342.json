@@ -9,8 +9,12 @@
         "uid": "document-b16fea9c-d10a-413b-ba20-08344f937342",
 
         "id": "bored-2",
-        "content": "<div id='bored-2' data-scale='1' data-x='-1500' data-y='200' style='border: 20px solid rgb(255, 111, 0);'><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>"
-
+        "content": "<div id='bored-2' data-scale='1' data-x='-1500' data-y='200' style='border: 20px solid rgb(255, 111, 0);'><q>Would you like to <strong>impress your audience</strong> with <strong>stunning visualization</strong> of your talk?</q></div>",
+        "thumbnail": {
+            "width": "200",
+            "height":"112",
+            "src": "data:image/png;base64,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"
+        }
     },
 
     "configuration": {

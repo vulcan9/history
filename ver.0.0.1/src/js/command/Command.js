@@ -53,7 +53,7 @@ define(
                     this._param = param;
                     this._callback = callback;
 
-                    out( '# Command Execute : ', this );
+                    // out( '# Command Execute : ', this );
 
                     try {
 
@@ -66,7 +66,7 @@ define(
 
                 // Override 하여 사용할것
                 _run: function( param ) {
-                    out( 'command run : ', param );
+                    // out( 'command run : ', param );
 
                     /*
                     // 속성 사용
@@ -87,7 +87,7 @@ define(
 
                 _success: function( data ) {
 
-                    out( 'command success : ', data||'(ok)' );
+                    // out( 'command success : ', data||'(ok)' );
 
                     var isPrevented = false;
                     if ( this._callback ) {

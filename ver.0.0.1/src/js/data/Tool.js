@@ -179,6 +179,13 @@ define(
                             // show_guide: true,
                             // ruler 보이기
                             // show_ruler: true
+                        },
+
+                        thumbnail : {
+                            // 가로 너비, 세로 너비(px)는 Paper의 가로/세로 비율에 맞추어 size를 넘지 않는 범위에서 자동 설정됨
+                            // 이 값은 thumbnail을 캡쳐할때 생성되는 이미지의 크기 계산에 사용됨
+                            // 캡쳐된 thumbnail 이미지 정보는 Project.current.getDocument(documentUID).thumbnail.data 로 접근
+                            size: 200
                         }
                     });
 
@@ -282,6 +289,7 @@ define(
                 //---------------------
                 
                 // CONFIG - display category  수정
+                // Tool.current.config_display (name);
                 config_display: function(name, value){
                     if(value === undefined){
                         //GET
@@ -298,6 +306,30 @@ define(
 
                     // EVENT
                     var eventName = '#Tool.changed-CONFIG.display.' + name;
+                    out('# 이벤트 발생 : ', eventName);
+
+                    var args = {newValue:value, oldValue:oldValue};
+                    $rootScope.$broadcast(eventName, args); 
+                },
+
+                // CONFIG - thumbnail category  수정
+                // Tool.current.config_thumbnail ('width');
+                config_thumbnail: function(name, value){
+                    if(value === undefined){
+                        //GET
+                        return this.tool('CONFIG').thumbnail[name];
+                    }
+
+                    // this.dataChanged = true;
+
+                    // SET
+                    var oldValue = this.tool('CONFIG').thumbnail[name];
+                    this.tool('CONFIG').thumbnail[name] = value;
+
+                    if(oldValue == value) return;
+
+                    // EVENT
+                    var eventName = '#Tool.changed-CONFIG.thumbnail.' + name;
                     out('# 이벤트 발생 : ', eventName);
 
                     var args = {newValue:value, oldValue:oldValue};

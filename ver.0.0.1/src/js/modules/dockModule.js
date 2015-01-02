@@ -120,7 +120,7 @@ define(
                         _dock_layout($scope);
                     };
 
-                    $element.addClass('dockOwner');
+                    $element.addClass('hi-dockOwner');
                     this.addDockFrame('owner', $element);
                     
                     /*
@@ -168,7 +168,7 @@ define(
 
                 link: function( scope, element, attrs, ownerController) {
                     // console.log('top : ', scope.dock.owner);
-                    element.addClass('dock');
+                    element.addClass('hi-dock');
                     element.addClass('top');
                     ownerController.addDockFrame('top', element);
 
@@ -190,7 +190,7 @@ define(
 
                 link: function( scope, element, attrs, ownerController) {
                     // console.log('left : ', scope.dock.owner);
-                    element.addClass('dock');
+                    element.addClass('hi-dock');
                     element.addClass('left');
                     ownerController.addDockFrame('left', element);
 
@@ -212,7 +212,7 @@ define(
 
                 link: function( scope, element, attrs, ownerController) {
                     // console.log('center : ', scope.dock.owner);
-                    element.addClass('dock');
+                    element.addClass('hi-dock');
                     element.addClass('center');
                     ownerController.addDockFrame('center', element);
 
@@ -234,7 +234,7 @@ define(
 
                 link: function( scope, element, attrs, ownerController) {
                     // console.log('right : ', scope.dock.owner);
-                    element.addClass('dock');
+                    element.addClass('hi-dock');
                     element.addClass('right');
                     ownerController.addDockFrame('right', element);
 
@@ -256,7 +256,7 @@ define(
 
                 link: function( scope, element, attrs, ownerController) {
                     // console.log('bottom : ', scope.dock.owner);
-                    element.addClass('dock');
+                    element.addClass('hi-dock');
                     element.addClass('bottom');
                     ownerController.addDockFrame('bottom', element);
 
@@ -298,7 +298,7 @@ define(
             // 종료 시점에 transition 기능 적용
             __delayExecute (100, function(){
                 var transitionTime = Tool.current.tool('CONFIG').transition.TICK;
-                angular.element(window.document).find('.dock').css({
+                angular.element(window.document).find('.hi-dock').css({
                     'transition': 'all ' + transitionTime + 's ease 0s'
                 });
             }, null);

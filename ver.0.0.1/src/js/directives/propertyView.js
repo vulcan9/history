@@ -138,8 +138,7 @@ define(
                 var _elementUID;
 
                 // updateContent 실행에 의해 css, option값이 바뀐 경우에는 modifyContent를 실행하지 않기위해 체크함
-                var _fromUpdate_css = false;
-                var _fromUpdate_option = false;
+                var _fromUpdate = false;
                 // modifyContent 실행에 의해 속성, 옵션값이 바뀐 경우에는 updateContent를 실행하지 않기위해 체크함
                 var _fromModify = false;
 
@@ -245,7 +244,7 @@ define(
                     }else{
 
                         if(!documentUID && !elementUID){
-                            _fromUpdate_css = true;
+                            _fromUpdate = true;
                             $scope.css = null;
                             return;
                         }
@@ -261,6 +260,7 @@ define(
                         }
 
                         var newCss;
+                        /*
                         if(type == ELEMENT.TEXT)
                         {
                             //
@@ -269,6 +269,8 @@ define(
                         {
                             //
                         }
+                        */
+                        // scope.getModifyElementParameter(documentUID, elementUID);
 
                         if(newCss) css = angular.extend(css, newCss);
                     }
@@ -278,7 +280,7 @@ define(
                     if(isEqual) return;
 
                     // modifyContent 호출 무시
-                    _fromUpdate_css = true;
+                    _fromUpdate = true;
 
                     // 값 설정
                     $scope.css = css;
@@ -304,7 +306,7 @@ define(
                     }else{
 
                         if(!documentUID && !elementUID){
-                            _fromUpdate_option = true;
+                            _fromUpdate = true;
                             $scope.option = null;
                             return;
                         }
@@ -332,7 +334,7 @@ define(
                     if(isEqual) return;
 
                     // modifyContent 호출 무시
-                    _fromUpdate_option = true;
+                    _fromUpdate = true;
 
                     // 값 설정
                     $scope.option = option;
@@ -342,18 +344,23 @@ define(
                 // Data 업데이트
                 ////////////////////////////////////////
 
+                // 서버 저장값 변경된 경우
+                // select가 변경되어 값이 변한 경우
+                // type이 변경된 경우
+                
                 // 속성 변경값 적용
                 $scope.$watch('css', function (newValue, oldValue){
                     if(newValue === undefined) return;
-                    out('css');
+                    // out('css : ', newValue, oldValue);
+                    
                     $scope.modifyContent(_documentUID, _elementUID);
                 }, true);
 
                 // 옵션 변경값 적용
                 $scope.$watch('option', function (newValue, oldValue){
                     if(newValue === undefined) return;
-                    out('option');
-
+                    // out('option');
+                    
                     if($scope.type == ELEMENT.DOCUMENT){
                         $scope.configDocument();
                     }else{
@@ -373,7 +380,7 @@ define(
 
                     // 연속으로 호출된 경우 업데이트를 무시하고 최종값을 한번에 적용시킨다.
                     $timeout.cancel(__delayTimeout);
-                    
+
                     __delayTimeout = $timeout(function () {
                         __delayTimeout = null;
                         __modifyContent(documentUID, elementUID);
@@ -387,11 +394,9 @@ define(
                 function __modifyContent( documentUID, elementUID ){
                     if(!Project.current) return;
 
-                    if(_fromUpdate_css && _fromUpdate_option){
-                        out('* 속성창 CSS 업데이트 완료 (_fromUpdate_css=false)');
-                        out('* 속성창 Option 업데이트 완료 (_fromUpdate_option=false)');
-                        _fromUpdate_css = false;
-                        _fromUpdate_option = false;
+                    if(_fromUpdate){
+                        out('* 속성창 CSS, Option 업데이트 완료 (_fromUpdate=false)');
+                        _fromUpdate = false;
                         return;
                     }
 
@@ -497,7 +502,7 @@ define(
                 };
 
                 function __pannelToggle(w){
-                    var $dock = $element.parent('.dock');
+                    var $dock = $element.parent('.hi-dock');
                     if(w === undefined){
                         w = $dock.outerWidth();
                         w = (w>300) ? 250:400;

@@ -35,7 +35,7 @@ define(
             _superClass.apply(this, arguments);
         }
 
-        function _factory( Data, VersionService, $rootScope, $sce, ELEMENT ){
+        function _factory( Data, VersionService, $rootScope, $sce, $getScope, ELEMENT ){
 
             /////////////////////////////////////
             // Prototype 상속
@@ -99,7 +99,7 @@ define(
                         // 이벤트 발송
                         var eventName = '#' + this.eventPrefix + '.initialized';
                         out('# 이벤트 발생 : ', eventName);
-                        var args = {data:this.project};
+                        var args = {data:this};
                         $rootScope.$broadcast(eventName, args); 
 
                         // Root Element (Overview)
@@ -132,8 +132,18 @@ define(
                                 "uid": documentUID,
 
                                 "id": "",
-                                "content": dom
+                                "content": dom,
 
+                                /* 
+                                // 생성된 thumbnail 데이터 저장
+                                // var documentItem = this.getDocument(documentUID);
+                                // documentItem.thumbnail.data
+                                "thumbnail": {
+                                    width : 0,
+                                    height: 0,
+                                    src : 'base64 데이터'
+                                }
+                                */
                             },
 
                             // Document 운영 정보
@@ -217,6 +227,73 @@ define(
                     },
 
                     //---------------------
+                    // document 옵션 설정
+                    //---------------------
+                    
+                    // var api = Project.current.documentAPI(documentUID);
+                    // var src = api.thumbnail('src');
+
+                    documentAPI: function(documentUID){
+                        documentUID = documentUID || this.getSelectDocument();
+                        var documentItem = this.getDocument(documentUID);
+
+                        var self = this;
+                        return {
+                            /*
+                            "thumbnail": {
+                                width : 0,
+                                height: 0,
+                                src : 'base64 데이터'
+                            }
+                            */
+                            thumbnail: function(name, value){
+                                var prop = documentItem.document['thumbnail'] || {};
+
+                                //GET
+                                var oldValue;
+                                if(name === undefined && value === undefined){
+                                    oldValue = prop;
+                                    return oldValue;
+                                }else{
+                                    if(name != null && typeof name === 'object'){
+                                        // SET
+                                        oldValue = angular.copy(prop);
+                                    }else{
+                                        // GET
+                                        oldValue = prop[name];
+                                        if(value === undefined){
+                                            return oldValue;
+                                        }
+                                    }
+                                }
+
+                                // SET
+                                var newValue;
+                                if(name != null && typeof name === 'object'){
+                                    prop = name;
+                                    newValue = prop;
+                                }else{
+                                    // SET
+                                    prop[name] = value;
+                                    newValue = value;
+                                }
+
+                                // 적용 확인
+                                documentItem.document['thumbnail'] = prop;
+                                if(angular.equals(oldValue, newValue)) return;
+
+                                // EVENT
+                                var eventName = '#Project.changed-thumbnail';
+                                out('# 이벤트 발생 : ', eventName);
+
+                                var args = {newValue:newValue, oldValue:oldValue, documentUID: documentUID};
+                                $rootScope.$broadcast(eventName, args); 
+                            }
+
+                        };
+                    },
+
+                    //---------------------
                     // Element 옵션 설정
                     //---------------------
                     
@@ -249,7 +326,7 @@ define(
                                 var key = map[elementUID] || {"uid": elementUID};
                                 var typeValue = key['type'];
 
-                                var oldValue = (typeValue === undefined) ? '' : typeValue;
+                                var oldValue = (typeValue === undefined) ? 'unknown' : typeValue;
 
                                 //GET
                                 if(value === undefined){
@@ -1099,62 +1176,6 @@ define(
                     },
 
                     //-----------------------------------
-                    // modify Element
-                    //-----------------------------------
-                    /*
-                    var param = {
-                        // 삽입될 문서
-                        documentUID : Project.current.getSelectDocument(),
-                        elementUID: elementUID,
-                        // element 설정값
-                        option: {},
-                        css: {
-                            'width': e.width * (1/scale),
-                            'height': e.height * (1/scale)
-                        }
-                    };
-                    */
-                    modifyElement: function(param){
-                        Tool.current.dataChanged = true;
-
-                        out('modify param : ', param);
-                        var elementUID = param.elementUID;
-                        var documentUID = param.documentUID;
-                        var option = param.option;
-                        var css = param.css;
-
-                        var documentItem = this.getDocument(documentUID);
-                        var dom = this.getElement(documentUID, elementUID);
-
-                        //---------------------
-                        // 이벤트 발송 : #Project.modifiy-ELEMENT
-                        var propertyName = 'ELEMENT';
-                        var eventName = '#' + this.eventPrefix + '.modifiy-' + propertyName;
-                        out('# 이벤트 발생 (before) : ', eventName);
-                        var args = {data:documentItem, item:dom, name:propertyName, param:param};
-                        $rootScope.$broadcast(eventName, args); 
-
-                        //---------------------
-                        // 데이터 갱신 (css)
-                        
-                        angular.element(dom).css(css);
-
-                        // 데이터 갱신 (option)
-                        var api = Project.current.elementAPI (documentUID, elementUID);
-                        for(var prop in option){
-                            api.option(prop, option[prop]);
-                        }
-
-                        //---------------------
-                        // 이벤트 발송 : #Project.modified-ELEMENT
-                        var propertyName = 'ELEMENT';
-                        var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
-                        out('# 이벤트 발생 : ', eventName);
-                        var args = {data:documentItem, item:dom, name:propertyName, param:param};
-                        $rootScope.$broadcast(eventName, args); 
-                    },
-
-                    //-----------------------------------
                     // remove Element
                     //-----------------------------------
 
@@ -1266,6 +1287,77 @@ define(
                             documentUID:documentUID
                         };
                         $rootScope.$broadcast(eventName, args); 
+                    },
+
+                    //-----------------------------------
+                    // modify Element
+                    //-----------------------------------
+                    /*
+                    var param = {
+                        // 삽입될 문서
+                        documentUID : Project.current.getSelectDocument(),
+                        elementUID: elementUID,
+                        // element 설정값
+                        option: {},
+                        css: {
+                            'width': e.width * (1/scale),
+                            'height': e.height * (1/scale)
+                        }
+                    };
+                    */
+                    modifyElement: function(param){
+                        Tool.current.dataChanged = true;
+
+                        out('modify param : ', param);
+                        var elementUID = param.elementUID;
+                        var documentUID = param.documentUID;
+                        var option = param.option;
+                        var css = param.css;
+
+                        var documentItem = this.getDocument(documentUID);
+                        var dom = this.getElement(documentUID, elementUID);
+
+                        //---------------------
+                        // 이벤트 발송 : #Project.modifiy-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.modifiy-' + propertyName;
+                        out('# 이벤트 발생 (before) : ', eventName);
+                        var args = {data:documentItem, item:dom, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
+
+                        //---------------------
+                        // 데이터 갱신 (Element Type에 따른 개별 설정)
+                        this.setModifyElementParameter(documentUID, elementUID, param);
+
+                        //---------------------
+                        // 데이터 갱신 (css)                        
+                        if(css) angular.element(dom).css(css);
+
+                        // 데이터 갱신 (option)
+                        var api = Project.current.elementAPI (documentUID, elementUID);
+                        for(var prop in option){
+                            api.option(prop, option[prop]);
+                        }
+
+                        //---------------------
+                        // 이벤트 발송 : #Project.modified-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
+                        out('# 이벤트 발생 : ', eventName);
+                        var args = {data:documentItem, item:dom, name:propertyName, param:param};
+                        $rootScope.$broadcast(eventName, args); 
+                    },
+
+                    getModifyElementParameter: function(documentUID, elementUID){
+                        var selector = '#hi-contentContainer [uid=' + elementUID + ']';
+                        var scope = $getScope(selector, 'element');
+                        return scope.getModifyElementParameter(documentUID, elementUID);
+                    },
+
+                    setModifyElementParameter: function(documentUID, elementUID, param){
+                        var selector = '#hi-contentContainer [uid=' + elementUID + ']';
+                        var scope = $getScope(selector, 'element');
+                        return scope.setModifyElementParameter(documentUID, elementUID, param);
                     }
 
                     // end prototype

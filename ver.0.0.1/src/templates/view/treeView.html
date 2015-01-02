@@ -1,4 +1,4 @@
-<div class="treeContainer">
+<div class="hi-treeContainer">
     <!--//
     <ul>
         <li ng-repeat="item in tree.items" ng-model="counter">{{$index + 1}} : {{item.uid}}</li>
@@ -14,12 +14,12 @@
         
 
 
-    <div class="tree" style="height:calc(100% - 40px);">
+    <div class="hi-tree" style="height:calc(100% - 40px);">
 
 
         
         <!--//
-        <div class="paper" ng-repeat="item in tree.items[0]" ng-click="selectDocument(item, $index)">
+        <div class="hi-paper" ng-repeat="item in tree.items[0]" ng-click="selectDocument(item, $index)">
             {{$index}} : {{item.depth}} - {{item.index}}
         </div>
         {{tree.items}}
@@ -74,18 +74,35 @@
          -->
 
 
+        <!--// ROOT -->
+        <div ui-tree ng-show="(tree && tree.length>0)"
+            drag-delay="10" drag-distance="10" drag-enabled="true">
+            <ol ui-tree-nodes ng-model="tree">
+                <li ng-repeat="item in tree" ui-tree-node ng-include="'tree_renderer.html'"></li>
+            </ol>
+        </div>
+       
         <!-- Nested node template  -->
         <script type="text/ng-template" id="tree_renderer.html">
             
 
-            <div class="paper"
+            <div class="hi-paper"
                 ui-tree-handle uid="{{item.uid}}" 
+                ng-attr-style="width:{{paper.width}}px; height:{{paper.height}}px;"
+
                 ng-class="{selected: item.uid==selectUID, remove:(item.uid==removeUID)&&(removeOption=='only'), removeAll:(item.uid==removeUID)&&(removeOption=='all')}" 
                 ng-mouseover="hover=true" ng-mouseleave="hover=false" ng-model="hover" ng-init="hover=false">
 
                 <div class="tree-node-content" ng-click="selectDocument(item)"></div>
                 <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">
-                    {{this.depth()}} : {{$index}} : {{item.uid.substring(item.uid.lastIndexOf('-')+1)}}
+
+                    <!--썸네일-->
+                    <img class="hi-thumbnail" ng-show="thumbnail[item.uid].src"
+                        ng-src="{{thumbnail[item.uid].src}}"
+                        style="width:100%; height:100%;
+                        position: absolute; border: none; top:0px; left:0px;margin: 0; padding: 0;
+                        pointer-events: none;"/>
+{{this.depth()}} : {{$index}} : {{item.uid.substring(item.uid.lastIndexOf('-')+1)}}
                 </div>
                 
                 <!--// 확장 버튼-->
@@ -118,14 +135,6 @@
 
 
 
-        <!--// ROOT -->
-        <div ui-tree ng-show="(tree && tree.length>0)"
-            drag-delay="10" drag-distance="10" drag-enabled="true">
-            <ol ui-tree-nodes ng-model="tree">
-                <li ng-repeat="item in tree" ui-tree-node ng-include="'tree_renderer.html'"></li>
-            </ol>
-        </div>
-       
         <!--// Nested node template 
         <script type="text/ng-template" id="tree_renderer.html">
           <div ui-tree-handle class="tree-node tree-node-content">

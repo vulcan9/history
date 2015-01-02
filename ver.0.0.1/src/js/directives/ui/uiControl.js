@@ -32,7 +32,7 @@ define(
         // _module.directive( 'uiRotatable', uiResizable );
 
         // 선언
-        function _directive(Drager, Resizer, Snap, CommandService, Project, Tool, $timeout) {
+        function _directive(Drager, Resizer, Snap, CommandService, Project, Tool, $timeout, ELEMENT, $getScope) {
 
             //out( 'version' );
 
@@ -63,7 +63,7 @@ define(
             //
             ////////////////////////////////////////////////////////////////////////////////
             
-            function Controller( $scope, $element, $attrs, VersionService) {
+            function Controller( $scope, $element, $attrs) {
                 
                 ////////////////////////////////////////
                 // 환경 설정값
@@ -161,23 +161,24 @@ define(
                 $scope.$on('#Project.select-DOCUMENT', function(e, data){
 
                     // Document 선택이 바뀌기 전에 edit 모드 해지
-                    $scope.editableUID = '';
-                    // $scope.$apply();
+                    if($scope.editableUID){
+                        // BUG : editable 상태가 적용되지 않는 현상이 있어 직접 코드를 실행시켜준다.
+                        // $scope.$apply 등의 방법은 가끔 에러를 발생 시킨다.
+                        // var elementUID = Project.current.getSelectElement();
+        // var elementUID = $scope.editableUID;
+        // $scope.editableUID = '';
+        // $scope._checkEditable('', elementUID);
+                        // $scope.$apply();
+                        
+                        // $scope.$evalAsync(function() {
+                        //     $scope.editableUID = '';
+                        // });
 
-                    // BUG : editable 상태가 적용되지 않는 현상이 있어 직접 코드를 실행시켜준다.
-                    // $scope.$apply 등의 방법은 가끔 에러를 발생 시킨다.
-                    var elementUID = Project.current.getSelectElement();
-                    _checkEditable('', elementUID);
-                    
-                    // $scope.$evalAsync(function() {
-                    //     $scope.editableUID = '';
-                    // });
-
-                    // http://stackoverflow.com/questions/12729122/prevent-error-digest-already-in-progress-when-calling-scope-apply
-                    // if($scope.$$phase !== '$digest'){
-                    //     $scope.$digest()
-                    // }
-
+                        // http://stackoverflow.com/questions/12729122/prevent-error-digest-already-in-progress-when-calling-scope-apply
+                        // if($scope.$$phase !== '$digest'){
+                        //     $scope.$digest()
+                        // }
+                    }
                 });
 
                 // 선택 변경 작업 중에는 transition 없앰
@@ -261,7 +262,7 @@ define(
                     var $select = (selectUID) ? $content.find('[uid=' + selectUID + ']') : null;
 
                     // var $parent = $element.parent();
-                    // var $contentContainer = $parent.find('#contentContainer');
+                    // var $contentContainer = $parent.find('#hi-contentContainer');
                     // var $select = (selectUID) ? $contentContainer.find('[uid=' + selectUID + ']') : null;
                     // out('$contentContainer : ', $contentContainer);
 
@@ -777,149 +778,44 @@ define(
                     out("_onClickResize : ", e);
                 }
 
-                ////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////
+                //
                 // 편집
-                ////////////////////////////////////////
+                //
+                ////////////////////////////////////////////////////////////////////////////////
 
                 // 현재 Element가 편집 사태인지 여부
                 $scope.editableUID = '';
 
                 $scope.$watch('editableUID', function(newValue, oldValue){
-                        _checkEditable(newValue, oldValue);
+                    if(newValue == oldValue) return;
+                    $scope._checkEditable(newValue, oldValue);
                 });
 
-                function _checkEditable(newElementUID, oldElementUID){
+                $scope._checkEditable = function (newElementUID, oldElementUID, callCommand){
                     var documentUID = Project.current.getSelectDocument();
+                    var directiveName = 'element';
 
                     if(oldElementUID){
                         out('* 편집 해지 : ', oldElementUID);
-                        var dom = Project.current.getElement(documentUID, oldElementUID);
-                        var $dom = angular.element(dom);
-                        // $dom.css('z-index', 0);
-                        $dom.attr('contenteditable', false);
+                        var selector = '#hi-contentContainer [uid=' + oldElementUID + ']';
+                        var scope = $getScope(selector, directiveName);
+                        scope.deactivateEdit(documentUID, oldElementUID);
 
-                        $dom.css({
-                            /*Chrome all / Safari all*/
-                            '-webkit-user-select' :'none',
-                            /*Firefox all*/
-                            '-moz-user-select' :'none',
-                            /*IE 10+ */
-                            '-ms-user-select' :'none',
-                            /*No support for these yet, use at own risk */
-                            '-o-user-select' :'none',
-                            'user-select' :'none',
-
-                            'background-color' :'transparent'
-                        });
-
-
-
-
-
-
-                        out('\n\n\n*************************************Element 수정 내용 적용 : modify Command - mody 적용 시점 문제 있음\n\n\n');
-
-
-
+                        // 수정 Command 호출
+                        if(callCommand === undefined || callCommand){
+                            out('* Element 수정 내용 적용 : modify Command 호출');
+                            var param = Project.current.getModifyElementParameter (documentUID, oldElementUID);
+                            CommandService.exe(CommandService.MODIFY_ELEMENT, param);
+                        }
                     }
 
                     if(newElementUID){
                         out('* 편집 모드 : ', newElementUID);
-                        var dom = Project.current.getElement(documentUID, newElementUID);
-                        var $dom = angular.element(dom);
-                        // $dom.css('z-index', 2000);
-                        $dom.attr('contenteditable', true);
-
-                        $dom.css({
-                            /*Chrome all / Safari all*/
-                            '-webkit-user-select' :'initial',
-                            /*Firefox all*/
-                            '-moz-user-select' :'initial',
-                            /*IE 10+ */
-                            '-ms-user-select' :'initial',
-                            /*No support for these yet, use at own risk */
-                            '-o-user-select' :'initial',
-                            'user-select' :'initial',
-
-                            'background-color' : '#FFF'
-                        });
-
-                        $scope.$evalAsync(function(){
-                            angular.element(dom).focus();
-
-                            // 모두 선택 상태로
-                            selectAllContents(dom);
-                            // 선택 커서를 마지막 글자로 이동
-                            caretToSelectEnd();
-                        });
+                        var selector = '#hi-contentContainer [uid=' + newElementUID + ']';
+                        var scope = $getScope(selector, directiveName);
+                        scope.activateEdit(documentUID, newElementUID);
                     }
-
-                    //--------------------------------------
-                    // 텍스트 선택 위치 지정
-                    //--------------------------------------
-
-                    // 모두 선택 상태로
-                    function selectAllContents (dom) {
-                        var elemToSelect = dom;
-                        if (window.getSelection) {
-                            // all browsers, except IE before version 9
-                            var selection = window.getSelection ();
-                            selection.selectAllChildren (elemToSelect);
-                        } else {
-                            // Internet Explorer before version 9
-                            var range = document.body.createTextRange ();
-                            range.moveToElementText (elemToSelect);
-                            range.select ();
-                        }
-                    }
-
-                    // 글자 마지막으로 캐럿 이동
-                    function caretToSelectEnd () {
-                        if (window.getSelection) {
-                            // all browsers, except IE before version 9
-                            var selection = window.getSelection ();
-                            selection.collapseToEnd ();
-                        }
-                        else {
-                            // Internet Explorer before version 9
-                            var textRange = document.selection.createRange ();
-                            textRange.collapse (false);
-                            textRange.select ();
-                        }
-                    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 }
 
                 ////////////////////////////////////////
@@ -970,9 +866,6 @@ define(
                 //-----------------------
                 // 편집 모드
                 //-----------------------
-
-                // content.js, screenView.js 에서 선택 해지시 편집모드이면 
-                // 편집 모드만 해지되도록 코딩해 놓았음
 
                 function edit (){
                     /*

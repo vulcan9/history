@@ -30,7 +30,7 @@ define(
                 restrict: 'EA',
 
                 // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
-                // template: '<div id="contentContainer" class="content" ng-init="loadContent()"></div>',
+                // template: '<div id="hi-contentContainer" class="content" ng-init="loadContent()"></div>',
                 templateUrl: _PATH.TEMPLATE + 'screen/content.html',
                 
                 replace: false,
@@ -116,7 +116,7 @@ define(
                     //-------------------------
                     // 이미 제작되어 있는 컨텐츠에 대해 directive를 생성
                     var elementUID = param.elementUID;
-                    // var $screenContainer = $element.find('.screenContainer');
+                    // var $screenContainer = $element.find('.hi-screenContainer');
                     var $screenContainer = angular.element(item);
                     var $elements = $screenContainer.find("[uid='" + elementUID + "']");
                     
@@ -128,10 +128,12 @@ define(
                         $scope.$apply();
                     }
                     */
+                    $scope.updateThumbnail();
                 }
 
                 function __onRemoveElement(item, param){
                     //
+                    $scope.updateThumbnail();
                 }
 
                 function __onModifyElement(item, param){
@@ -139,6 +141,8 @@ define(
 
                     // UI 크기 업데이트 (selectInfo 값이 변경됨)
                    // $scope.updateSelectUI();
+
+                   $scope.updateThumbnail();
                 }
 
                 function __onSelectElement(newValue, oldValue, documentUID){
@@ -191,7 +195,7 @@ define(
                 //-----------------------
 
                 function _getContentContainer(documentUID){
-                    var $contentContainer = $element.find('#contentContainer');
+                    var $contentContainer = $element.find('#hi-contentContainer');
                     return $contentContainer;
                     // return $element;
                 }

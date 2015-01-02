@@ -9,8 +9,12 @@
         "uid": "document-b16fea9c-d10a-413b-ba20-08344f937343",
 
         "id": "bored1",
-        "content": "<div id='bored1' data-scale='2' data-x='1000' data-y='0' data-rotate='-45'><h1>#디자인 어디까지 해봤니~</h1><br><a href='#bored1-1'>컨셉 디자인 진행1</a><br><a href='#bored1-2'>컨셉 디자인 진행2</a></div>"
-
+        "content": "<div id='bored1' data-scale='2' data-x='1000' data-y='0' data-rotate='-45'><h1>#디자인 어디까지 해봤니~</h1><br><a href='#bored1-1'>컨셉 디자인 진행1</a><br><a href='#bored1-2'>컨셉 디자인 진행2</a></div>",
+        "thumbnail": {
+            "width": "200",
+            "height":"112",
+            "src": "data:image/png;base64,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"
+        }
     },
 
     "configuration": {

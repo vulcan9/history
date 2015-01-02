@@ -388,7 +388,7 @@ define(
 
                 /*
                 // width를 미리 알아내는 방법
-                var $temp = angular.element('body').find('.screenContainer #temp');
+                var $temp = angular.element('body').find('.hi-screenContainer #temp');
                 $temp.css('visibility', 'hidden');
 
                 var $document = angular.element('<div>').attr('uid', 'document-temp');

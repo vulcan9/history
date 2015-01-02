@@ -9,8 +9,12 @@
         "uid": "document-b16fea9c-d10a-413b-ba20-08344f937337",
 
         "id": "overview",
-        "content": "<div id='overview' data-scale='10' data-x='0' data-y='0'>aaa</div>"
-
+        "content": "<div id='overview' data-scale='10' data-x='0' data-y='0'>aaa</div>",
+        "thumbnail": {
+            "width": "200",
+            "height":"112",
+            "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABwCAYAAABbwT+GAAADGUlEQVR4Xu3VsW0CURBFUSMnbmdFKa6DStyJi0GiIbAoAAcv5J7NJ5gz/2pPHz4CBF4KnNgQIPBaQCBeB4F/BATieRAQiDdAYBPwB9ncTEUEBBI5tDU3AYFsbqYiAgKJHNqam4BANjdTEQGBRA5tzU1AIJubqYiAQCKHtuYmIJDNzVREQCCRQ1tzExDI5mYqIiCQyKGtuQkIZHMzFREQSOTQ1twEBLK5mYoICCRyaGtuAgLZ3ExFBAQSObQ1NwGBbG6mIgICiRzampuAQDY3UxEBgUQObc1NQCCbm6mIgEAih7bmJpAP5Hw+X550j8fj63q9/myMpt5VIB/IcRzfz+Pe7/fP2+32+66HttcmkA9kYzNVERBI5dL2nAQEMrEZqggIpHJpe04CApnYDFUEBFK5tD0nAYFMbIYqAgKpXNqek4BAJjZDFQGBVC5tz0lAIBOboYqAQCqXtuckIJCJzVBFQCCVS9tzEhDIxGaoIiCQyqXtOQkIZGIzVBEQSOXS9pwEBDKxGaoICKRyaXtOAgKZ2AxVBARSubQ9JwGBTGyGKgICqVzanpOAQCY2QxUBgVQubc9JQCATm6GKgEAql7bnJCCQic1QRUAglUvbcxIQyMRmqCIgkMql7TkJCGRiM1QREEjl0vacBAQysRmqCAikcml7TgICmdgMVQQEUrm0PScBgUxshioCAqlc2p6TgEAmNkMVAYFULm3PSUAgE5uhioBAKpe25yQgkInNUEVAIJVL23MSEMjEZqgiIJDKpe05CQhkYjNUERBI5dL2nAQEMrEZqggIpHJpe04CApnYDFUEBFK5tD0nAYFMbIYqAgKpXNqek4BAJjZDFQGBVC5tz0lAIBOboYqAQCqXtuckIJCJzVBFQCCVS9tzEhDIxGaoIiCQyqXtOQkIZGIzVBEQSOXS9pwEBDKxGaoICKRyaXtOAgKZ2AxVBARSubQ9JwGBTGyGKgICqVzanpOAQCY2QxUBgVQubc9JQCATm6GKgEAql7bnJCCQic1QRUAglUvbcxIQyMRmqCIgkMql7TkJCGRiM1QR+APXwg5xd01YQwAAAABJRU5ErkJggg=="
+        }
     },
 
     "configuration": {

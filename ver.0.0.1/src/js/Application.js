@@ -70,7 +70,7 @@ define(
         // 디렉티브의 scope 설정이 scope={} 로 설정된 경우에는 scop 하위에 새로운 child scpoe에서 찾아야 한다.
         
         // 예 : 
-        // var scope = $getScope('.screenContainer', 'screenView');
+        // var scope = $getScope('.hi-screenContainer', 'screenView');
 
         application.service('$getScope', function($document) {
 
@@ -168,7 +168,7 @@ define(
         //-----------------------------------
 
         function showApplication() {
-            angular.element( '.applicationContainer' ).css( {
+            angular.element( '.hi-applicationContainer' ).css( {
                 // opacity: 1
                 visibility: 'visible'
             } );

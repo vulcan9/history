@@ -43,7 +43,7 @@ define(
             
 
             var progress = {
-                isPercentage : true,
+                isPercentage : false,
                 value : 0,
                 init : function(isEventMode){
 
@@ -82,13 +82,11 @@ define(
                 progress.value = value;
                 progress.isPercentage = isPercentage;
 
-                /*
                 // 이벤트 발송
                 //var scope = angular.element( document ).scope();
                 var scope = $document.scope();
                 scope.$emit('#progressService.progressChange', progress);
                 scope.$broadcast('#progressService.progressChange', progress); 
-                */
             };
 
 

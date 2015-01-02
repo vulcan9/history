@@ -1,11 +1,18 @@
-<div class="screenContainer">
+<div class="hi-screenContainer">
+
+<!-- paper 캡쳐 레이어 -->
+    <div id="hi-captureLayer" 
+        ng-attr-style="width:{{size.sourceWidth}}px; height:{{size.sourceHeight}}px; 
+        margin: 0px !important; position: fixed; top: 10px; left: 10px;
+        pointer-events: none; z-index: -100; display: none"></div>
+
 
     <!--// overflow_style : 스크롤 생성 여부 결정-->
-    <div class="screen" ng-style="overflow_style" ng-repeat="item in documents">
+    <div class="hi-screen" ng-style="overflow_style" ng-repeat="item in documents">
 
 
     <!-- 배경 : 마우스 이벤트를 얻기위해 설치함 (예:선택해지 동작) -->
-        <div class="transition" 
+        <div ng-class="{transition:useTransition}"
             ng-attr-style="min-width:{{bg.minWidth}}px; min-height:{{bg.minHeight}}px; width: {{bg.width}}px; height: {{bg.height}}px;
             position: absolute; top: 0px; left: 0px;" 
             ng-click="callMethod('onClick_bg')"></div>
@@ -23,11 +30,14 @@
 <div style="position: absolute; top: 0px; left: 0px; z-index: 600;">
     <span class="label label-info" ng-click="callMethod('toggleScaleMode')">Toggle ScaleMode</span>
 
+    <span class="label label-info" ng-click="callMethod('setScaleMode', 0.3)">Scale : 0.3</span>
     <span class="label label-info" ng-click="callMethod('setScaleMode', 0.5)">Scale : 0.5</span>
     <span class="label label-info" ng-click="callMethod('setScaleMode', 0.75)">Scale : 0.75</span>
     <span class="label label-info" ng-click="callMethod('setScaleMode', 1.5)">Scale : 1.5</span>
     <span class="label label-info" ng-click="callMethod('setScaleMode', 2)">Scale : 2</span>
     <span class="label label-info" ng-click="callMethod('setScaleMode', 3)">Scale : 3</span>
+
+    <!-- <span class="label label-success" ng-click="updateThumbnail()">updateThumbnail</span> -->
 
     <div>Document : {{item.uid}}</div>
     <div>
@@ -53,7 +63,7 @@
         ng-style="{     width: (size.width+'px'), height: (size.height+'px'), left: (paper_horizontalPosition+'px'), top: (paper_verticalPosition + 'px' )     }"
         ng-attr-style="width:{{size.width}}px; height:{{size.height}}px; left: {{paper_horizontalPosition}}px; top: {{paper_verticalPosition}}px;"
      -->
-    <div class="transition"
+    <div ng-class="{transition:useTransition}"
         align-center="{{alignInfo_paper}}" align-result="alignPaper" ng-model="alignPaper"
         
         ng-attr-style="width:{{alignInfo_paper.width}}px; height:{{alignInfo_paper.height}}px; 
@@ -61,24 +71,25 @@
             position: absolute; margin: {{size.marginW/2}}px {{size.marginH/2}}px;">
 
         
-        <div class="paper">
+        <div class="hi-paper">
 
             <!--// 페이지 배경 -->
             <!--배경 패턴-->
             <background scale="{{size.scale}}" ng-show="show_grid" ng-hide="!show_grid"></background>
 
             <!--내용 컨테이너 : paper의 가로/세로 비율을 유지한 scale 변화 적용해야함-->
-            <content class="transition" item="item" size="size" on-load-complete="onLoadComplete(success)"
+            <content ng-class="{transition:useTransition}"
+                item="item" size="size" on-load-complete="onLoadComplete(success)"
                 ng-attr-style="width:{{size.sourceWidth}}px; height:{{size.sourceHeight}}px; 
                 transform: scale({{size.scale}}); transform-origin: 0 0;
                 margin: 0px !important; position: absolute;">
 
                 <!--컨텐츠 그룹
-                <content-iframe id="contentContainer" on-load-complete="onLoadComplete(success)" item="item" size="size"
+                <content-iframe id="hi-contentContainer" on-load-complete="onLoadComplete(success)" item="item" size="size"
                     style="position: absolute; width: 100%; height: 100%;"></content-iframe>
                 -->
-                <!-- <div id="contentContainer" class="content" ng-init="loadContent()"></div> -->
-                <!--<div id="contentContainer" class="content" style="width:100%;height:100%;" ng-init="callMethod('getHTMLContent', item)"></div>-->
+                <!-- <div id="hi-contentContainer" class="hi-content" ng-init="loadContent()"></div> -->
+                <!--<div id="hi-contentContainer" class="hi-content" style="width:100%;height:100%;" ng-init="callMethod('getHTMLContent', item)"></div>-->
 
             </content>
 
@@ -95,24 +106,24 @@
 
 
             <!-- 영역표시(투명표시)
-            <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>
+            <div class="hi-areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>
              -->
 
             <!-- 마우스 선택영역 표시
-            <div class="areaDisplay selector" style="left: 500px;top: 100px;width: 100px;height: 100px;"></div>
+            <div class="hi-areaDisplay selector" style="left: 500px;top: 100px;width: 100px;height: 100px;"></div>
              -->
 
             <!--snap 선
-            <div id="guide-h" class="guide horizontal" style="top: 200px; display: block;"></div>
-            <div id="guide-v" class="guide vertical" style="left: 500px; display: block;"></div>
+            <div id="guide-h" class="hi-guide horizontal" style="top: 200px; display: block;"></div>
+            <div id="guide-v" class="hi-guide vertical" style="left: 500px; display: block;"></div>
              -->
 
             <!-- 편집모드로 전환 버튼
-            <div class="modeHandle edit"></div>
-            <div class="modeHandle play" style="top:0"></div>
+            <div class="hi-modeHandle edit"></div>
+            <div class="hi-modeHandle play" style="top:0"></div>
             -->
 
-        <!--paper end-->
+        <!--hi-paper end-->
         </div>
 
     </div>
@@ -123,5 +134,22 @@
 
 
     </div>
-    <!-- <div id="temp"></div> -->
+
+
+
+
+
+
+
+
+
+    <!-- <div id="temp"></div>
+    <div style="position:absolute; top:50px; left:10px; ">
+        <div id="output" style="border: solid 0px red; min-width:20px;"></div>
+    </div>
+     -->
+
+
+
+
 </div>

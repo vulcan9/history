@@ -9,8 +9,12 @@
         "uid": "document-b16fea9c-d10a-413b-ba20-08344f937344",
 
         "id": "bored1-1",
-        "content": "<div id='bored1-1' data-scale='1' data-x='1500' data-y='500' data-rotate='-45'>어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href='#bored'>기획 보기</a></div>"
-
+        "content": "<div id='bored1-1' data-scale='1' data-x='1500' data-y='500' data-rotate='-45'>어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href='#bored'>기획 보기</a></div>",
+        "thumbnail": {
+            "width": "200",
+            "height":"112",
+            "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABwCAYAAABbwT+GAAAFjUlEQVR4Xu2azWtcdRSGe5uPTmsGKamI4CLYaAIJCfmgIX5hFm6KUF34D6gIomARaqALrZtCu1B0YaGou250IwouVdRSFfJhSCCBLGYhFBWRoJYJ+Zi+t9SNmHHmcKDhnGc2NzNzf2f6Pu99uPfOtDjAAwIQ2JNAARsIQGBvAgjC0QGBJgQQhMMDAgjCMQABGwHOIDZurEpCAEGSFE1MGwEEsXFjVRICCJKkaGLaCCCIjRurkhBAkCRFE9NGAEFs3FiVhACCJCmamDYCCGLjxqokBBAkSdHEtBFAEBs3ViUhgCBJiiamjQCC2LixKgkBBElSNDFtBBDExo1VSQggSJKiiWkjgCA2bqxKQgBBkhRNTBsBBLFxY1USAgiSpGhi2gggiI0bq5IQQJAkRRPTRgBBbNxYlYQAgiQpmpg2Aghi48aqJAQQJEnRxLQRQBAbN1YlIYAgSYompo0Agti4sSoJAQRJUjQxbQQQxMaNVUkIIEiSoolpI4AgNm6sSkIAQZIUTUwbAQSxcWNVEgIIkqRoYtoIIIiNG6uSEECQJEUT00YAQWzcWJWEAIIkKZqYNgIIYuPGqiQEECRJ0cS0EUCQJtzGx8cvzs/Pvz4xMXHf3Nzc9YGBgera2tqf5ZLJycmTOzs7UwsLC2/p6e7o6OhMo9H4saur68T29vZWZ2fncb1/o6Oj47he/0L7nNas52w1sepOEUCQJuQlxt0SY+OfXfr6+iq1Wq1ePi/fkwBHFxcXa+XzkZGRu5aWlv4uXy+K4oGtra1ftX1YghzR259ubGzU19fXN+9U0XyujQCC2LixKgkBBGmhaJ0VPtCZ5AVta9r2afuatm//e+ng4GDv6urq7+Xrw8PD93Z3d5/c3Nz8ZGVl5S+dYe7XGebnFj6OXfYRAQRpfol1RCLcuH1JNaXt97p06ikvpcrXxsbG3tU9yKv/NaIUZHl5+ZehoaGeUpB91Dn/lDYIIEgbsNg1HwEEad55ocupw9rlY51Jnipv0qvV6oP6huqgHg/pbHJNf1d0M36lXq+fqlQq1/WN1fv6turlfIdSzMQI8j+9Tk9PH9Z9xDuSYEqSjOleYlj3Fqd2d3d/0te5i7cFmdWYS5LjM+33ufZ7Kebhki8VguTrnMRtEECQFmDpMqtLl1PdOlu8ocunWT1/WsvmdRZ5UjfpH5aXXr29vYfK30z03jG9d15nk2e1fUX7X9EPji+WH6O/L7fwceyyjwggSBtl6ED/Qwf50XJJf3//ob1++CsF0j3KnAR6RtK8p2+7npdIH2lZo42PY9d9QABBWijhiXNfVb4+N3PrF3QeuQggSLO+G43iQFE0Hjv/zT3fnn38t5kLP5wpDhZvfnnmRM8jF76rXp199Nb/y+IRlwCCxO2WZA4EEMQBIiPiEkCQuN2SzIEAgjhAZERcAggSt1uSORBAEAeIjIhLAEHidksyBwII4gCREXEJIEjcbknmQABBHCAyIi4BBInbLckcCCCIA0RGxCWAIHG7JZkDAQRxgMiIuAQQJG63JHMggCAOEBkRlwCCxO2WZA4EEMQBIiPiEkCQuN2SzIEAgjhAZERcAggSt1uSORBAEAeIjIhLAEHidksyBwII4gCREXEJIEjcbknmQABBHCAyIi4BBInbLckcCCCIA0RGxCWAIHG7JZkDAQRxgMiIuAQQJG63JHMggCAOEBkRlwCCxO2WZA4EEMQBIiPiEkCQuN2SzIEAgjhAZERcAggSt1uSORBAEAeIjIhLAEHidksyBwII4gCREXEJIEjcbknmQABBHCAyIi4BBInbLckcCCCIA0RGxCWAIHG7JZkDAQRxgMiIuAQQJG63JHMggCAOEBkRlwCCxO2WZA4EEMQBIiPiEkCQuN2SzIEAgjhAZERcAjcBo1jvcWBXb8gAAAAASUVORK5CYII="
+        }
     },
 
     "configuration": {

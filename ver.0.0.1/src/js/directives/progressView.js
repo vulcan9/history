@@ -19,7 +19,7 @@ define(
         application.directive( 'progressView', _directive );
 
         // 선언
-        function _directive() {
+        function _directive(ProgressService) {
 
             //out( 'version' );
 
@@ -33,29 +33,42 @@ define(
                 transclude: true,
                 scope: {},
 
-                controller : function( $scope, ProgressService) {
-                    
-                    $scope.progress = ProgressService;
+                controller : Controller,
+                link: Link
+
+            };
+            function Controller( $scope, $element, $attrs) {
 
                     //*
-                    
+
                     // watch를 이용한 업데이트 방법
                     $scope.$watch('progress', function(newValue, oldValue) {
                         // if (newValue === oldValue) { return; }
                     }, true);
                     
+                    $scope.progress = ProgressService;
+
                     /*/
                     
                     // 이벤트를 이용한 업데이트 방법 - 이벤트 등록전에는 업데이트 못함
                     $scope.$on('#progressService.progressChange', function(event, progress){
                         out('progress - ', progress);
                         onUpdate();
-                    }); 
+                    });
+
+                    function onUpdate(){
+                        // $scope.$evalAsync(function(){
+                            $scope.progress = ProgressService;
+                        // });
+                    }
 
                     //*/
-                }
-            };
+            }
+            function Link ( $scope, $element, $attrs) {
 
+                //--------------
+                // End Link
+            }
         }
 
         // 리턴

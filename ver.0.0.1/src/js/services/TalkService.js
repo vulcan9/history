@@ -25,7 +25,7 @@ define(
         
         /*
         // DOM에 태그를 추가한 후
-        <talk class="talkContainer"></talk>
+        <talk class="hi-talkContainer"></talk>
         
         // Script : 안내 문구 띄우기
         TalkService.open('문서에서 추가할 위치를 클릭하세요.', TalkService.SHORTEST);
@@ -84,16 +84,16 @@ define(
                     return item;
                 };
 
-                $scope.close = function(index) {
+                $scope.closeItem = function(index) {
                     $scope.items.splice(index, 1);
                 };
 
-                $scope.closeItem = function(item){
-                    var messageID = item.uid;
+                $scope.close = function(messageID){
+                    // var messageID = item.uid;
                     var idx = $scope.has(messageID);
 
                     if(idx > -1){
-                        $scope.close(idx);
+                        $scope.closeItem(idx);
                     }
                 };
 
@@ -118,7 +118,7 @@ define(
 
         function _service($timeout, $getScope) {
 
-            var Talk = {
+            var TalkService = {
                 
                 // 시간 상수(milisecond)
                 TICK : 200,
@@ -126,7 +126,7 @@ define(
                 SHORT : 1000,
                 LONG : 2000,
                 LONGEST : 3000,
-                // NONE: 0, // 닫지 않음
+                NONE: -1, // 닫지 않음
 
                 // 메서드
                 open : open,
@@ -138,8 +138,9 @@ define(
             /*
             config = {
                 container : Message를 표시할 부모 DOM Selector,
-                delayTime : Message 유지 시간,
-                type :  message type,
+                delayTime : Message 유지 시간 (default : TalkService.LONG),
+                type :  message type (normal | success | info | warning | danger),
+                // closeButton : true | false ( 닫기버튼 표시 default : false)
                 
                 openCallback : open시 콜백 함수,
                 closeCallback : close시 콜백 함수,
@@ -147,7 +148,7 @@ define(
             */
 
             var directiveName = 'talk';
-            var selector = '.talkContainer';
+            var selector = '.hi-talkContainer';
 
             function open(message, config){
                 if(!message) return;
@@ -158,7 +159,7 @@ define(
                 var closeCallback = config.closeCallback;
 
                 var container = config.parent || selector;
-                var delayTime = config.delayTime || Talk.LONG;
+                var delayTime = (!isNaN(config.delayTime)) ? config.delayTime : TalkService.LONG;
                 // var templateUrl = config.templateUrl || _PATH.TEMPLATE + 'popup/talk.html';
 
                 // DOM에 Template 객체 삽입
@@ -185,18 +186,17 @@ define(
                     openCallback.apply(null, messageObj);
                 }
 
-                messageObj.promise = $timeout(function(){
-                    close(messageObj);
-                }, delayTime);
-
+                delay(messageObj, delayTime);
                 return messageObj;
             }
 
             function close(messageObj){
+                if(!messageObj) return;
+                
                 var container = messageObj.container;
                 var scope = $getScope(container, directiveName);
 
-                scope.closeItem(messageObj.item);
+                scope.close(messageObj.item.uid);
 
                 // 콜백
                 if(messageObj.closeCallback){
@@ -206,22 +206,30 @@ define(
             }
 
             function delay(messageObj, delayTime){
-                out('messageObj : ', messageObj);
+                if(!messageObj) return null;
+
+                // out('messageObj : ', messageObj);
                 var promise = messageObj.promise;
-                $timeout.cancel(promise);
+                if(promise) $timeout.cancel(promise);
 
                 var container = messageObj.container;
                 var scope = $getScope(container, directiveName);
                 
-                messageObj.promise = $timeout(function(){
-                    scope.closeItem(messageObj.item);
-                }, delayTime);
-
+                if(delayTime === TalkService.NONE){
+                    // 닫지 않음
+                    messageObj.promise = null;
+                }else{
+                    messageObj.promise = $timeout(function(){
+                        scope.close(messageObj.item.uid);
+                    }, delayTime);
+                }
+                
                 return messageObj;
             }
 
             function has(messageObj){
                 if(!messageObj) return -1;
+
                 var container = messageObj.container;
                 var scope = $getScope(container, directiveName);
 
@@ -246,7 +254,7 @@ define(
 
 
             // 서비스 객체 리턴
-            return Talk;
+            return TalkService;
         }
 
         // 리턴

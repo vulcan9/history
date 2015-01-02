@@ -9,8 +9,12 @@
         "uid": "document-b16fea9c-d10a-413b-ba20-08344f937341",
 
         "id": "bored-1-1",
-        "content": "<div id='bored-1-1' data-scale='0.5' data-x='-2500' data-y='200'>ㅎㅎㅎ어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href='#bored'>모두 보기</a></div>"
-
+        "content": "<div id='bored-1-1' data-scale='0.5' data-x='-2500' data-y='200'>ㅎㅎㅎ어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href='#bored'>모두 보기</a></div>",
+        "thumbnail": {
+            "width": "200",
+            "height":"112",
+            "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABwCAYAAABbwT+GAAAFe0lEQVR4Xu2ZS2hcdRyFO0lIBumYkiC4EAyYRUIeQzKpoiIlFF342EkRpSCi6MK6EUFcaFeCio+NCx9rFXGloqBoCG6kOgkTjY0bGWq6CYYQaH2EPDxXzEYmgTkLy/R8A8P03vzPJL/v/L/cO2npCA8IQOBAAiXYQAACBxNAEHYHBA4hgCBsDwggCHsAAh4BriAeN1IhBBAkpGjG9AggiMeNVAgBBAkpmjE9AgjicSMVQgBBQopmTI8AgnjcSIUQQJCQohnTI4AgHjdSIQQQJKRoxvQIIIjHjVQIAQQJKZoxPQII4nEjFUIAQUKKZkyPAIJ43EiFEECQkKIZ0yOAIB43UiEEECSkaMb0CCCIx41UCAEECSmaMT0CCOJxIxVCAEFCimZMjwCCeNxIhRBAkJCiGdMjgCAeN1IhBBAkpGjG9AggiMeNVAgBBAkpmjE9AgjicSMVQgBBQopmTI8AgnjcSIUQQJCQohnTI4AgHjdSIQQQJKRoxvQIIIjHjVQIAQQJKZoxPQII4nEjFUIAQUKKZkyPAIJ43EiFEECQkKIZ0yOAIB43UiEEECSkaMb0CCCIx41UCAEECSmaMT0CCOJxIxVCAEFCimZMjwCCeNxIhRBAkJCiGdMjgCAeN1IhBBAkpGjG9AggiMeNVAgBBAkpmjE9AgjicSMVQgBBQopmTI8AgnjcSIUQQJCQohnTI4AgHjdSIQQQJKRoxvQIIIjHjVQIAQQJKZoxPQII4nEjFUIAQUKKZkyPAIK0wW18fHy0t7f3yNbW1iW9Di0sLHxTq9Uerdfr7+6/jY6f1vGrw8PD11YqlXt0vtHT03Nse3u7qX9fp+yvfX19t5VKpTGte6mNb8/SK0AAQVpA1yb/VJv33unp6Y8kwf06fk/HD+r4By0/tbOzU+7u7j5aCPLfuNac0vkPx8bGBiRRZXFx8WK1Wp3o6uq6Rc/39T6bMzMzd+o9LuprP12BzvmWbRBAkDZgsTSPAIK06Fy//Y8uLy9fKr6kq8cTevlMv/kvDA0NlQcGBs7s7e19oSvAztLS0o//rrlJ56o6taEry7Zun87rlmqi0WjMKT+hbHHl4dGBBBCk9S3WO9rUj01NTVV1W3SrljxeLNvd3X1Ym/+uQhDdHjX2o1p3o87XJMjPWn99f3///MbGxh2FIIVUzWbzzw7cG/zIIoAgbAMIHEIAQVrA0Qft13R6VFeFpl4vrK+vvz44OPi9rhzrxXJ9CD+hW6c3dLynw8t6ntTaeV11nmW3XV0EEKT1Ldbz2vu3F5t/bW3todXV1T8kTV23WCd1C/WlBDmu448lxZNa95bWndHzBZ0/fXVtD6ZBEPYABLjFan8P6AoxqtTbelZ0pTiuK8WkrhB1nX9Ory/uv+Pk5OQN+mvWqv5v4xGtOa3nmtZ/p9dNPX/Rh/mvtba4FePRgQS4ghxQWiGIRDivP/n2lsvlr3R79aY2+weHday/Zj2gr/+u56bWzuu1e2Rk5NjKyso/n114dB4BBOm8zviJ/0cCCNIC9uwr5+bmnrl5dvblcyfK5d++/fypu//aP1c7+8k19bP3FVcJHgEEECSgZEb0CSCIz45kAAEECSiZEX0CCOKzIxlAAEECSmZEnwCC+OxIBhBAkICSGdEngCA+O5IBBBAkoGRG9AkgiM+OZAABBAkomRF9AgjisyMZQABBAkpmRJ8AgvjsSAYQQJCAkhnRJ4AgPjuSAQQQJKBkRvQJIIjPjmQAAQQJKJkRfQII4rMjGUAAQQJKZkSfAIL47EgGEECQgJIZ0SeAID47kgEEECSgZEb0CSCIz45kAAEECSiZEX0CCOKzIxlAAEECSmZEnwCC+OxIBhBAkICSGdEngCA+O5IBBP4GLJARgNUVzmgAAAAASUVORK5CYII="
+        }
     },
 
     "configuration": {

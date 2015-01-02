@@ -9,8 +9,12 @@
         "uid": "document-b16fea9c-d10a-413b-ba20-08344f937340",
 
         "id": "bored-1",
-        "content": "<div id='bored-1' data-scale='1' data-x='-2500' data-y='200'>어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href='#bored'>모두 보기</a></div>"
-
+        "content": "<div id='bored-1' data-scale='1' data-x='-2500' data-y='200'>어떤 컨셉이 좋을까요? <br><strong>유머스러운~</strong> 아니지~! <br><strong>copy the limits</strong> <br>디자인 어디서 배웠어? <br><a href='#bored'>모두 보기</a></div>",
+        "thumbnail": {
+            "width": "200",
+            "height":"112",
+            "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABwCAYAAABbwT+GAAAFjUlEQVR4Xu2ZT2gUdxiGnTQlW9d0c5MeqvHQgyYkJpsUtBcTPCgKIsWjF3vpwfbiHzyVnoqkvbR4LqK0hxYPnryIgmht85fEBGylNIGKbYXEhKwkJNn0G+pWL4p5w+ruvo8QdjPON/N7n3ceZjabbOAfBCDwXAIJbCAAgecTQBCuDgi8gACCcHlAAEG4BiCgEeAOonFjyoQAgpgUTUyNAIJo3JgyIYAgJkUTUyOAIBo3pkwIIIhJ0cTUCCCIxo0pEwIIYlI0MTUCCKJxY8qEAIKYFE1MjQCCaNyYMiGAICZFE1MjgCAaN6ZMCCCISdHE1AggiMaNKRMCCGJSNDE1AgiicWPKhACCmBRNTI0AgmjcmDIhgCAmRRNTI4AgGjemTAggiEnRxNQIIIjGjSkTAghiUjQxNQIIonFjyoQAgpgUTUyNAIJo3JgyIYAgJkUTUyOAIBo3pkwIIEjtFf1GS0vLWw0NDa3Ly8t/jo2N3c/n84eGhoYux/ZsGjeTyXwcv3/V0dHR/mz8hYWFR9lsdnOxWNwZ28eGh4d/rj08a0uEIGvjVRV7hwib6uvrt87Ozv4+OTm5ECJsHRkZmSq9lkJ0dnbmkyQ5urq6OhA/N9N90m0hxlC6T7w/He/7qiJ0mRaJIGUCy2FrgwCC1EaP/6eIx6lr8fjUG69b4lHpvbiTJIuLi7fjUasQ247EneKjuCvsa2try6bbntwpJuNOsiveH46Zxni/GPv9EK89se93NYZoTXEQZE24Kn/neIw6Go9KF9OVdnd37x4YGPiptOoQ5EBc+Oemp6e3p49epe1dXV0fDg4OXirNxuuxOMa3lZ+2/CtEkPIzrrgzhCjvxF3mQcUtrAIXhCAVWMo6l5S0t7d/MDo6ejM+ZF+JR6T9zc3NmaampnzcPR7G9t9CkLshyI54XYlzfR8/f8XvJ9Z53pocR5CarPW/UCHAp3Hhf1PDEcseDUHKjvjVniDuGjPx4XpH3C3uxd1jU0gytbS0tCc+kP/R2tq6eXx8/GG6LcR595nPJj3xnUmhrq6ucWZm5lYul2srFAqj8V3KmxMTE/OvNkFlnQ1BKquPda8mLv5cHGRjSPJ2fPD+NT1g/MVq28rKyv244A+HND/GPo3z8/PF+FLwi/j9k5DqYPz/P/H41R/v/46R83Nzc5+FKOkXil+ve1FVfAAEqeLyWHr5CSBI+Rm/9jPsPTuYu3qma7anr//c9dPvH3/tC6qiBSBIFZX1Mkvt/fKX3mLhcX8x07Dtxpndd/Z8fj2TZLOnkqT+wrWTnVMvcwz2eUoAQbgaIPACAgjC5QEBBOEagIBGgDuIxo0pEwIIYlI0MTUCCKJxY8qEAIKYFE1MjQCCaNyYMiGAICZFE1MjgCAaN6ZMCCCISdHE1AggiMaNKRMCCGJSNDE1AgiicWPKhACCmBRNTI0AgmjcmDIhgCAmRRNTI4AgGjemTAggiEnRxNQIIIjGjSkTAghiUjQxNQIIonFjyoQAgpgUTUyNAIJo3JgyIYAgJkUTUyOAIBo3pkwIIIhJ0cTUCCCIxo0pEwIIYlI0MTUCCKJxY8qEAIKYFE1MjQCCaNyYMiGAICZFE1MjgCAaN6ZMCCCISdHE1AggiMaNKRMCCGJSNDE1AgiicWPKhACCmBRNTI0AgmjcmDIhgCAmRRNTI4AgGjemTAggiEnRxNQIIIjGjSkTAghiUjQxNQIIonFjyoQAgpgUTUyNAIJo3JgyIYAgJkUTUyOAIBo3pkwIIIhJ0cTUCCCIxo0pEwIIYlI0MTUCCKJxY8qEAIKYFE1MjQCCaNyYMiGAICZFE1MjgCAaN6ZMCCCISdHE1AggiMaNKRMCCGJSNDE1AgiicWPKhACCmBRNTI0AgmjcmDIhgCAmRRNTI/Av7RELgBtyKPEAAAAASUVORK5CYII="
+        }
     },
 
     "configuration": {

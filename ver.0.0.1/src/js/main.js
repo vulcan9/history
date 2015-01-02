@@ -171,7 +171,10 @@ require.config( {
         
         'Space':                 _PATH.LIB + 'space/Space',
         'ScaleMode':                 _PATH.LIB + 'space/ScaleMode',
-        'ExtendSpace':                 _PATH.LIB + 'space/ExtendSpace'
+        'ExtendSpace':                 _PATH.LIB + 'space/ExtendSpace',
+
+        'html2canvas':                 _PATH.LIB + 'dom2image/html2canvas'
+        // 'Canvas2Image':                 _PATH.LIB + 'dom2image/canvas2image'
     },
 
     /*
@@ -231,7 +234,16 @@ require.config( {
             // deps: [ 'jquery', 'Space', 'ScaleMode'],
             deps: [ 'Space', 'ScaleMode'],
             exports: 'ExtendSpace'
+        },
+
+        'html2canvas':{
+            exports: 'html2canvas'
         }
+        /*
+        'Canvas2Image':{
+            exports: 'Canvas2Image'
+        }
+        */
     }
 
     // config End

@@ -9,8 +9,12 @@
         "uid": "document-b16fea9c-d10a-413b-ba20-08344f937338",
 
         "id": "center1",
-        "content": "<div id='center1' data-scale='0.5' data-x='0' data-y='0' style='background:red;'></div>"
-
+        "content": "<div id='center1' data-scale='0.5' data-x='0' data-y='0' style='background:red;'></div>",
+        "thumbnail": {
+            "width": "200",
+            "height":"112",
+            "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABwCAYAAABbwT+GAAADQUlEQVR4Xu3VsW2VURCEUSw5oQp6cBU0SAdUQ4JcCbETPxICCEwwk80eZw7uSnv2//SePvkjQOBDgSc2BAh8LCAQXweB/wgIxOdBQCC+AQKZgF+QzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQzM2rIwICOXJoa2YCAsncvDoiIJAjh7ZmJiCQv9xeXl5+/fn3++Px+Pz+/v7t9fX1Z0br1YKAQP4N5Ovb29uP5+fnL8JY+Lz7HQTSG5owLCCQ4eNarRcQSG9owrCAQIaPa7VeQCC9oQnDAgIZPq7VegGB9IYmDAsIZPi4VusFBNIbmjAsIJDh41qtFxBIb2jCsIBAho9rtV5AIL2hCcMCAhk+rtV6AYH0hiYMCwhk+LhW6wUE0huaMCwgkOHjWq0XEEhvaMKwgECGj2u1XkAgvaEJwwICGT6u1XoBgfSGJgwLCGT4uFbrBQTSG5owLCCQ4eNarRcQSG9owrCAQIaPa7VeQCC9oQnDAgIZPq7VegGB9IYmDAsIZPi4VusFBNIbmjAsIJDh41qtFxBIb2jCsIBAho9rtV5AIL2hCcMCAhk+rtV6AYH0hiYMCwhk+LhW6wUE0huaMCwgkOHjWq0XEEhvaMKwgECGj2u1XkAgvaEJwwICGT6u1XoBgfSGJgwLCGT4uFbrBQTSG5owLCCQ4eNarRcQSG9owrCAQIaPa7VeQCC9oQnDAr8BSPIUcWMyIZ8AAAAASUVORK5CYII="
+        }
     },
 
     "configuration": {

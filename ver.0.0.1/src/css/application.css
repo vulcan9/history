@@ -75,7 +75,7 @@ z-index :
 // Application
 //////////////////////////////////////*/
 
-.applicationContainer{
+.hi-applicationContainer{
     /*application 설정 완료 후 1로 변경되는 js 코드 있음*/
     /*opacity: 0;
     transition: opacity 1s;*/
@@ -97,7 +97,7 @@ z-index :
     min-height: 800px;
 }
 
-.toolContainer{
+.hi-toolContainer{
     position: relative;
     /*border: 1px solid #FF0000;*/
     height: 100%;
@@ -107,7 +107,7 @@ z-index :
 // Talk
 ------------------------------------*/
 
-.talkContainer{
+.hi-talkContainer{
     position: fixed;
     /*border: 1px solid #FF0000;*/
     width: 100%;
@@ -118,7 +118,7 @@ z-index :
     pointer-events: none;
 }
 
-.talkContainer .alert {
+.hi-talkContainer .alert {
     padding: 15px;
     padding-right: 35px;
     margin: 20px;
@@ -137,28 +137,28 @@ z-index :
 
     pointer-events: none;
 }
-.talkContainer .alert-,
-.talkContainer .alert-normal {
+.hi-talkContainer .alert-,
+.hi-talkContainer .alert-normal {
     color: #4b4d4c;
     background-color: rgba(255, 255, 255, 1); 
     border-color: rgba(0, 0, 0, 0.15);
 }
-.talkContainer .alert-success {
+.hi-talkContainer .alert-success {
     color: #3c763d;
     background-color: #dff0d8;
     border-color: #d6e9c6;
 }
-.talkContainer .alert-info {
+.hi-talkContainer .alert-info {
     color: #31708f;
     background-color: #d9edf7;
     border-color: #bce8f1;
 }
-.talkContainer .alert-warning {
+.hi-talkContainer .alert-warning {
     color: #8a6d3b;
     background-color: #fcf8e3;
     border-color: #faebcc;
 }
-.talkContainer .alert-danger {
+.hi-talkContainer .alert-danger {
     color: #a94442;
     background-color: #f2dede;
     border-color: #ebccd1;
@@ -182,14 +182,14 @@ z-index :
 // Split Layout
 //////////////////////////////////////*/
 
-.dockOwner{
+.hi-dockOwner{
     position: relative;
 
     min-width: 20px;
     min-height: 20px;
 }
 
-.dock{
+.hi-dock{
     /*position: relative;*/
     display: inline-block;
     /*
@@ -203,28 +203,29 @@ z-index :
     /*margin-left: -1px;*/
 
     /*transition: all 0.5s ease;*/
+    background: #FFF;
 }
 
-.dock.top{
+.hi-dock.top{
     /*background-color: rgba(255,0,0,1);*/
     width: 100%;
 }
 
-.dock.left{
+.hi-dock.left{
     /*background-color: rgba(255,255,0,0.8);*/
     /*float: left;*/
     min-width: 200px;
     box-sizing: content-box;
 }
 
-.dock.center{
+.hi-dock.center{
     /*background-color: rgba(150,150,255,0.6);*/
     /*float: left;*/
     box-sizing: content-box;
     margin-left: 1px;
 }
 
-.dock.right{
+.hi-dock.right{
     /*background-color: rgba(255,0,255,0.4);*/
     /*float: right;*/
     min-width: 200px;
@@ -232,7 +233,7 @@ z-index :
     margin-left: -2px;
 }
 
-.dock.bottom{
+.hi-dock.bottom{
     /*clear: both;*/
     background-color: rgba(0,255,255,0.2);
     width: 100%;
@@ -242,11 +243,13 @@ z-index :
 // Nav Bar (메뉴바 부분)
 //////////////////////////////////////*/
 
-.menuContainer{
+.hi-menuContainer{
     position: relative;
     width: 100%;
     height: 100%;
 }
+
+/* navbar : bootstrap */
 
 /* 높이 조절
 .navbar{
@@ -273,10 +276,13 @@ z-index :
 // 프로그래스바 (% 표시)
 //////////////////////////////////////*/
 
-.progressContainer{
+.hi-progressContainer{
     position: relative;
     z-index: 1001;
 }
+
+/*  progress : bootstrap */
+
 /* 로딩바 */
 .progress{
     height: 5px;
@@ -290,6 +296,11 @@ z-index :
     -moz-box-shadow: 0 1px 2px rgba(0,0,0,0);
 }
 .progress-bar{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    /*transition: none;*/
+    transition: width .2s ease;/*default : 0.6s*/
 }
 .progress-text{
     float: right;;
@@ -297,11 +308,19 @@ z-index :
     margin-top: 3px;
 }
 
+.progress.active .progress-bar,
+.progress-bar.active{
+    /*default: 1s*/
+    animation: progress-bar-stripes 1s linear infinite;
+    -webkit-animation: progress-bar-stripes 1s linear infinite;
+    -o-animation: progress-bar-stripes 1s linear infinite;
+}
+
 /*//////////////////////////////////////
 //  Property
 //////////////////////////////////////*/
 
-.propertyContainer{
+.hi-propertyContainer{
     position: relative;
     /*overflow: scroll;*/
     /*display: inline-block;*/
@@ -309,7 +328,7 @@ z-index :
     width: 100%;
     height: 100%;
 }
-.property{
+.hi-property{
     overflow-x: auto;
     overflow-y: scroll;
     position: absolute;
@@ -325,14 +344,14 @@ z-index :
 // 상태 표시줄
 //////////////////////////////////////*/
 
-.statusContainer{
+.hi-statusContainer{
     position: relative;
     /*border: 1px solid #FF0000;*/
     width: 100%;
     height: 100%;
     bottom: 0px;
 }
-.status{
+.hi-status{
     background: #e7e7e7;
     bottom: 0px;
     width: 100%;
@@ -344,14 +363,14 @@ z-index :
 // Tree
 //////////////////////////////////////*/
 
-.treeContainer{
+.hi-treeContainer{
     position: relative;
     /*overflow: auto;*/
     width: 100%;
     height: 100%;
 }
 
-.tree{
+.hi-tree{
     overflow-x: auto;
     overflow-y: scroll;
     position: absolute;
@@ -368,7 +387,7 @@ z-index :
 // Paper
 ------------------------------------*/
 
-.tree .paper {
+.hi-tree .hi-paper {
     /*position: absolute;*/
     /*display: inline-block;*/
     width: 100px;
@@ -394,16 +413,27 @@ z-index :
 
     /*background: #333;*/
 }
-.tree .paper:hover {
+.hi-tree .hi-paper:hover {
     border: 1px solid #5cb85c;
 }
 
 /*
-.tree .paper .content{
+.hi-tree .hi-paper .content{
     position: absolute;
     padding: 10px 10px;
 }
 */
+ .hi-tree .hi-paper .hi-thumbnail {
+    width:100%; 
+    height:100%;
+    position: absolute; 
+    top:0px; 
+    left:0px;
+    /*border: none; 
+    margin: 0; 
+    padding: 0;*/
+    pointer-events: none;
+}
 
 /*----------------
 // Tree
@@ -438,18 +468,18 @@ z-index :
 }
 
 /*선택 표시*/
-.tree .paper.selected,
-.tree .paper.selected:hover {
+.hi-tree .hi-paper.selected,
+.hi-tree .hi-paper.selected:hover {
     border: 2px solid #5cb85c;
     /*font-weight:bold;*/
 }
 
 /*삭제 대상 표시*/
-.tree .paper.remove,
-.tree .paper.remove:hover,
+.hi-tree .hi-paper.remove,
+.hi-tree .hi-paper.remove:hover,
 /*삭제 대상 표시(하위노드까지)*/
-.tree .paper.removeAll,
-.tree .paper.removeAll + ol .paper {
+.hi-tree .hi-paper.removeAll,
+.hi-tree .hi-paper.removeAll + ol .hi-paper {
     border-color: #FF0000;
 }
 
@@ -585,7 +615,7 @@ z-index :
 // screen
 //////////////////////////////////////*/
 
-.screenContainer{
+.hi-screenContainer{
     position: relative;
     overflow: auto;
     display: inline-block;
@@ -593,7 +623,7 @@ z-index :
     width: 100%;
     height: 100%;
 }
-.screen{
+.hi-screen{
     overflow: hidden;
     position: absolute;
     /*border: 1px solid #FF0000;*/
@@ -608,7 +638,7 @@ z-index :
 // Paper
 ------------------------------------*/
 
-.screen .paper {
+.hi-screen .hi-paper {
     position: absolute;
     display: inline-block;
     padding: 0px 0px !important;;
@@ -644,7 +674,7 @@ z-index :
     /*background: #333;*/
 }
 
-.screen .paper .background{
+.hi-screen .hi-paper .hi-background{
     position: absolute;
     overflow:hidden;
     width:100%;
@@ -654,17 +684,7 @@ z-index :
     padding: 0px !important;
 }
 
-.screen .paper .content{
-    position: absolute;
-    /*border: 1px solid #FF0000;*/
-    padding: 0px !important;
-    width:100%;
-    height:100%;
-
-    cursor: crosshair;
-}
-
-.screen .paper .loading{
+.hi-screen .hi-paper .hi-loading{
     position: absolute;
     border: 1px solid #FF0000;
     padding: 10px 10px;
@@ -675,38 +695,48 @@ z-index :
 /*------------------------------------
 // Element
 ------------------------------------*/
+.hi-screenContainer .hi-content{
+    position: absolute;
+    /*border: 1px solid #FF0000;*/
+    padding: 0px !important;
+    width:100%;
+    height:100%;
+}
 
 /* document 요소 */
-.screen #contentContainer div[uid^="document-"],
-.screen #contentContainer div[uid^="document-"]:hover
-.screen #contentContainer div[uid^="document-"].selectedElement
-.screen #contentContainer div[uid^="document-"].selectedElement:hover {
+.hi-screenContainer .hi-content div[uid^="document-"],
+.hi-screenContainer .hi-content div[uid^="document-"]:hover
+.hi-screenContainer .hi-content div[uid^="document-"].selectedElement
+.hi-screenContainer .hi-content div[uid^="document-"].selectedElement:hover {
     outline: none;
     position: relative;
 }
 
 /* element 요소 */
-.screen #contentContainer  div[uid^="element-"] {
+.hi-screenContainer .hi-content  div[uid^="element-"] {
     outline: rgba(0, 216, 255, 0.2) solid 1px;
     position: absolute;
 }
-.screen #contentContainer div[uid^="element-"]:hover {
+.hi-screenContainer .hi-content div[uid^="element-"]:hover {
     outline: rgba(0, 216, 255, 0.1) solid 10px;
 }
 /*
-.screen #contentContainer div[uid^="element-"].selectedElement {
+.hi-screenContainer .hi-content div[uid^="element-"].selectedElement {
     outline: rgba(0, 216, 255, 0.2) solid 1px;
 }
-.screen #contentContainer div[uid^="element-"].selectedElement:hover {
+.hi-screenContainer .hi-content div[uid^="element-"].selectedElement:hover {
     outline: rgba(255, 194, 0, 0.2) solid 1px;
 }
 */
-.screen #contentContainer div[contenteditable=true],
-.screen #contentContainer div[contenteditable=true]:hover {
+.hi-screenContainer .hi-content div[contenteditable=true],
+.hi-screenContainer .hi-content div[contenteditable=true]:hover {
     outline: rgba(255, 194, 0, 0.2) solid 10000px;
     cursor: text;
 }
 
+/*------------------------------------
+// Capture Clone 레이어
+------------------------------------*/
 
 /*텍스트 옵션, 
 <element contenteditable="true|false">
@@ -757,7 +787,7 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
 // 편집모드 전환 버튼
 ------------------------------------*/
 
-.screen .paper .modeHandle{
+.hi-screen .hi-paper .hi-modeHandle{
     position: absolute;
     width: 20px;
     height: 20px;
@@ -779,15 +809,15 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
     font-size: 14px;
     line-height: 16px;
 }
-.screen .paper .modeHandle:hover{
+.hi-screen .hi-paper .hi-modeHandle:hover{
     color: #666;
     border: 2px solid #666;
 }
 
-.screen .paper .modeHandle.edit:after{
+.hi-screen .hi-paper .hi-modeHandle.edit:after{
     content: "\270f";
 }
-.screen .paper .modeHandle.delete:after{
+.hi-screen .hi-paper .hi-modeHandle.delete:after{
     content: "\e014";
 }
 
@@ -969,19 +999,19 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
 //////////////////////////////////////*/
 
 /*영역 표시 (크기 표시)*/
-.areaDisplay {
+.hi-areaDisplay {
     background-color: rgba(0, 0, 0, 0.145098);
     z-index: 501;
     position: absolute;
 }
 
 /*투명 표시*/
-.areaDisplay.transparent {
+.hi-areaDisplay.transparent {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIUlEQVQYV2NkYGCQBGJ08BxdgHGIKMTiF0wPgjwz2BUCADTeBYguWvyCAAAAAElFTkSuQmCC);
 }
 
 /*마우스 드래그 선택영역 표시*/
-.areaDisplay.selector {
+.hi-areaDisplay.selector {
     border: 1px dashed #444;
     background: transparent !important;
 }
@@ -990,19 +1020,19 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
 //  Snap 라인 표시
 //////////////////////////////////////*/
 
-.guide {
+.hi-guide {
     display: none;
     position: absolute;
     left: 0;
     top: 0;
     z-index: 500;
 }
-.guide.vertical {
+.hi-guide.vertical {
     border-left: 1px solid #FFDCD6;
     border-left: 1px solid rgba(255, 99, 71, 0.5);
     height: 100%;
 }
-.guide.horizontal {
+.hi-guide.horizontal {
     border-top: 1px solid #FFDCD6;
     border-top: 1px solid rgba(255, 99, 71, 0.5);
     width: 100%;

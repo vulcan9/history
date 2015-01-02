@@ -194,14 +194,15 @@ define(
                     
                     var msgExist = TalkService.has(__messageObj);
                     if(msgExist < 0){
-                        __messageObj = TalkService.open('문서에서 추가할 위치를 클릭하세요.', {
-                            delayTime : TalkService.LONGEST,
+                        __messageObj = TalkService.open('문서에서 추가할 ' + type + '의 위치를 클릭하세요.', {
+                            delayTime : TalkService.NONE,
+                            type : 'info', //normal | success | info | warning | danger
                             closeCallback: function(){
                                 __messageObj = null;
                             }
                         });
                     }else{
-                        __messageObj = TalkService.delay(__messageObj, TalkService.LONGEST);
+                        __messageObj = TalkService.delay(__messageObj, TalkService.NONE);
                     }
 
                     //------------------
@@ -215,7 +216,7 @@ define(
                     //------------------
 
                     function add(e){
-                        
+
                         _removeMousePointEvent();
 
                         var css = {
@@ -242,35 +243,43 @@ define(
 
                 // Element를 추가할 위치 찾기
                 function _addMousePointEvent(listener){
-                    var scope = $getScope('#contentContainer', 'screenView');
+                    var scope = $getScope('#hi-contentContainer', 'screenView');
                     var $container = scope.getScreenEventTarget();
                     var eventName = 'mousedown';
 
                     // 이전 핸들러 해지
                     if(__lastHandler){
-                        _removeMousePointEvent();
+                        _removeMousePointEvent(true);
                     }
+                    // 이벤트 새로 등록
                     __lastHandler = angular.bind(this, listener);
                     $container.one(eventName, __lastHandler);
 
-                    // 커서
+                    // 커서 설정(최초 한번만)
                     if(__oldCursor == null){
                         __oldCursor = scope.setCursor('cell');
                     }
                 }
 
-                function _removeMousePointEvent(){
+                function _removeMousePointEvent(keepMessage){
                     if(!__lastHandler) return;
                     
-                    var scope = $getScope('#contentContainer', 'screenView');
+                    var scope = $getScope('#hi-contentContainer', 'screenView');
                     var $container = scope.getScreenEventTarget();
                     var eventName = 'mousedown';
 
+                    // 커서 되돌림
                     scope.setCursor(__oldCursor);
                     __oldCursor = null;
 
+                    // 이벤트 제거
                     $container.off(eventName, __lastHandler);
                     __lastHandler = null;
+
+                    // 메세지 제거
+                    if(__messageObj && !keepMessage){
+                        TalkService.close(__messageObj);
+                    }
                 }
 
                 ////////////////////////////////////////

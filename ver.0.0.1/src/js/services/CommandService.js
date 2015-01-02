@@ -544,16 +544,54 @@ define(
                     var macro = [];
                     var deferred = $q.defer();
 
-                    /*
-                    // 추가
-                    var command = new SelectDocumentCommand();
-                    macro.push( command );
+                    //**********************************************************
 
-                    deferred.resolve( macro );
-                    return deferred.promise;
-                    */
+                    // 현재 편집 상태라면 먼저 편집 모드 해지하여 ModifyElementCommand를 실행시킨다.
+                    var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                    if(scope.editableUID){
+                        // scope.editableUID = '';
+                        // 여기에서 scope.editableUID 값 변경에 대한 watch코드는 발생하지 않으므로 직접 코드를 호출한다.
+                        // digest loop 시간지연때문에 watch코드 실행전 DOM이 제거되기 때문인것 같다.
+                        // Document 선택이 변할때 Controller가 초기 실행되면서 editableUID값도 초기화 되지만 oldValue값이 존재하지 않으므로
+                        // DOM 상태는 편집모드에서 해지되지 않은 상태로 나타나는 문제가 발생하므로 여기에서 강제로 실행해 준다.
 
-                    function sub_command(){
+                        // modify command는 여기에서 호출하지 않고 promise로따로 실행 시킨다.
+                        var elementUID = scope.editableUID;
+                        scope._checkEditable('', elementUID, false);
+
+                        var param_modify = Project.current.getModifyElementParameter (documentUID, elementUID);
+                        // var promise_modify = sub_selectCommand();
+                        var promise_modify = this.command_modifyElement(param_modify);
+                        promise_modify.then( function( macro_modify ) {
+                            // macro 추가
+                            macro = macro.concat( macro_modify );
+                            resove_modify();
+
+                        }, function(result){
+                            deferred.reject(result);
+
+                        } );
+
+                    }else{
+                        resove_modify();
+                    }
+
+                    //**********************************************************
+                    
+                    function resove_modify(){
+                        var promise = sub_selectCommand();
+                        promise.then( function( macro_sub ) {
+                            // macro 추가
+                            macro = macro.concat( macro_sub );
+                            resove_select();
+
+                        }, function(result){
+                            deferred.reject(result);
+
+                        } );
+                    }
+
+                    function sub_selectCommand(){
                         var macro = [];
                         var deferred = $q.defer();
                         
@@ -564,23 +602,16 @@ define(
                         return deferred.promise;
                     }
 
-                    var promise = sub_command();
+                    /*
+                    // 추가
+                    var command = new SelectDocumentCommand();
+                    macro.push( command );
 
-                    //---------------------
-                    // 현재 선택 상태의 문서이면 Element 선택 표시
-                    //---------------------
-                    
-                    promise.then( function( macro_sub ) {
-                        // macro 추가
-                        macro = macro.concat( macro_sub );
-                        resove();
+                    deferred.resolve( macro );
+                    return deferred.promise;
+                    */
 
-                    }, function(result){
-                        deferred.reject(result);
-
-                    } );
-
-                    function resove() {
+                    function resove_select() {
                         // Element 선택 macro 추가
                         var newParam = {
                             documentUID: param.documentUID,
@@ -839,7 +870,7 @@ define(
                     //**********************************************************
 
                     // 현재 편집 상태라면 선택해지는 시키지 않는다.
-                    // 편집 모드만 해지
+                    out('// 편집 모드만 해지 - 선택해지는 실행하지 않음');
                     var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
                     if(scope.editableUID && scope.editableUID == elementUID){
                         scope.editableUID = '';

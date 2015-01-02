@@ -190,7 +190,7 @@ define(
             // 디렉티브에 정의된 controller 찾기
             ,getController: function(selector, directiveName){
                     // var $document = angular.element(document);
-                    // var treeContainer = $document.find('.treeContainer');
+                    // var treeContainer = $document.find('.hi-treeContainer');
                     
                     var $element = angular.element(selector);
                     var controller = $element.controller(directiveName);
