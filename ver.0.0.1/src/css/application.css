@@ -392,8 +392,8 @@ z-index :
     /*display: inline-block;*/
     width: 100px;
     
-    min-width: 100px;
-    min-height: 70px;
+    min-width: 50px;
+    min-height: 50px;
     padding: 0px 0px;
     margin: 0px 0px;
     
@@ -680,7 +680,7 @@ z-index :
     width:100%;
     height:100%;
     
-    margin: 0px !important;
+    margin: 1px !important;
     padding: 0px !important;
 }
 
@@ -715,9 +715,11 @@ z-index :
 /* element 요소 */
 .hi-screenContainer .hi-content  div[uid^="element-"] {
     outline: rgba(0, 216, 255, 0.2) solid 1px;
+    /*border: rgba(0, 216, 255, 0.2) solid 1px;*/
     position: absolute;
 }
 .hi-screenContainer .hi-content div[uid^="element-"]:hover {
+    /*border: none;*/
     outline: rgba(0, 216, 255, 0.1) solid 10px;
 }
 /*
@@ -730,6 +732,7 @@ z-index :
 */
 .hi-screenContainer .hi-content div[contenteditable=true],
 .hi-screenContainer .hi-content div[contenteditable=true]:hover {
+    /*border: none;*/
     outline: rgba(255, 194, 0, 0.2) solid 10000px;
     cursor: text;
 }

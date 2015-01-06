@@ -53,22 +53,35 @@ define(
                     // 결과 리턴
                     // _super._run.apply(this, arguments);
 
+                    /*
                     var self = this;
                     $timeout( function() {
-
                         self._success.apply(self, [param]);
                         // self._error.apply(self, [param]);
                         // self._error();
-
-
-
-// ===============================================================================================
-
-
-
-
-
                     }, 2000 );
+                    */
+
+                    //**********************************************
+                    
+                    // 로컬 저장 또는 서버 전송 구현
+                    if(window._SAVE_LOCAL){
+                        this.saveLocal();
+                    }else{
+                        this.saveServer();
+                    }
+                    
+
+
+
+
+
+
+
+
+
+                    
+                    //**********************************************
                 },
 
                 _success: function( data ) {

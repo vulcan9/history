@@ -157,7 +157,7 @@ define(
                 // 용지 사이즈 세팅
                 //-------------------------------------
                 
-                var __maxWidth = 100;
+                var __maxWidth = 70;
                 var __maxHeight = 70;
                 // 용지 원본에 대한 미리보기 scale
                 var __scale = 1;

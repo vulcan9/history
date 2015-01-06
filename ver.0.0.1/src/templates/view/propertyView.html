@@ -41,9 +41,10 @@
         <br><br>
         CONFIGURATION
               <!-- 화면 표시 -->
-              <div>그리드 표시 : <input type="checkbox" ng-model="option.display.show_grid"></div>
+              <div><input type="checkbox" ng-model="option.display.show_grid"> 그리드 표시</div>
               <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="option.display.show_guide" ng-true-value="Y" ng-false-value="N"></div>
               <div>[*] 눈금자 표시 (준비중) : <input type="checkbox" ng-model="option.display.show_ruler" ng-true-value="Y" ng-false-value="N"></div>
+              <div>[*] 도형 윤곽선 표시 (준비중) : <input type="checkbox" ng-model="option.display.show_outline" ng-true-value="Y" ng-false-value="N"></div>
               
               <br>
               <br><div>snap 크기 : <input type="number" name="snap_pixel" ng-model="option.display.snap_pixel" min="0" max="100" required
@@ -51,7 +52,7 @@
                 <br> snap 적용 : (그리드, 객체, 가이드라인)
 
                 <br><br>
-                도형 윤곽선
+                
 
         </form>
 

@@ -91,7 +91,8 @@ var requestAnimationFrame = window.requestAnimationFrame || (function () {
 // Global 속성
 ////////////////////////////////////////
 
-var _PATH_ROOT = '/history/ver.0.0.1/src/';
+// var _PATH_ROOT = '/history/ver.0.0.1/src/';
+var _PATH_ROOT = '/';
 var _PATH_ROOT_FOLDER = '';
 
 var _PATH = {
