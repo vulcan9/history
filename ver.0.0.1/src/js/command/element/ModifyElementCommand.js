@@ -9,14 +9,10 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
 
-        // 등록
-        application.service( 'ModifyElementCommand', _service );
+define( [], function() {
+
+
 
         // 선언
         function _service(Command, Project) {
@@ -66,6 +62,10 @@ define(
         }
 
         // 리턴
+        _service._regist = function(application){
+            // 등록
+            application.service( 'ModifyElementCommand', _service );
+        }
         return _service;
 
         ////////////////////////////////////////

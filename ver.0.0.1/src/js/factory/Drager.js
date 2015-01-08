@@ -15,15 +15,8 @@
 
 "use strict";
 
-define(
-    [
-        'Application', 'U'
-    ],
-    function( application, U ) {
+define( ['U'], function( U ) {
 
-        // 등록
-        application.factory( 'Drager', _factory );
-	
         // 선언
         function _factory() {
         	
@@ -389,7 +382,12 @@ define(
 		return Drager;
         }
 
+
         // 리턴
+        _factory._regist = function(application){
+            // 등록
+            application.factory( 'Drager', _factory );
+        };
         return _factory;
     }
 );

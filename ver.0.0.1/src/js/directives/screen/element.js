@@ -9,14 +9,8 @@
 
 'use strict';
 
-define(
-    [
-        'Application', 'U'
-    ],
-    function( application, U ) {
+define( [ 'U' ], function( U ) {
 
-        // 등록
-        application.directive( 'element', _directive );
 
         function _directive (Project, ELEMENT) {
 
@@ -341,6 +335,10 @@ define(
         }
 
         // 리턴
+        _directive._regist = function(application){
+            // 등록
+            application.directive( 'element', _directive );
+        };
         return _directive;
     }
 );

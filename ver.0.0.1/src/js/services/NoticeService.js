@@ -9,17 +9,10 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
-
-        // 등록
-        application.service( 'NoticeService', _service );
+define([], function( ) {
 
         // 선언
-        function _service( $modal ) {
+        function _service( $modal, $modalStack ) {
 
             ////////////////////////////////////////
             // 스킨 샘플
@@ -55,6 +48,7 @@ define(
 
             // size : 'lg', 'sm', or undefined
             // backdrop : true, false, static
+            // keyboard : true, false (esc 키 동작)
             
             // var modalInstance = Notice.open( config, callback );
             // Notice.close( modalInstance );
@@ -68,6 +62,7 @@ define(
                 buttons: ['예', '아니오', '취소']
                 isHTML: false // content가 HTML 이면 true
                 hideCloseButton: false // x버튼 감출려면 tree
+                keyboard : true (esc 키 동작)
             };
             var callback = {
                 
@@ -207,11 +202,14 @@ define(
                     // close 버튼 표시
                     //-----------------
                     
+                    var $close = $header.find( '.close' );
                     if(config.hideCloseButton){
-                        var $close = $header.find( '.close' );
-                        $close.remove();
+                        // $close.remove();
+                        $close.css('display', 'none');
+                    }else{
+                        $close.css('display', 'inline-block');
                     }
-
+                    
                     //-----------------
                     // 버튼 label, 개수 재조정
                     //-----------------
@@ -294,6 +292,10 @@ define(
         }
 
         // 리턴
+        _service._regist = function(application){
+            // 등록
+            application.service( 'NoticeService', _service );
+        };
         return _service;
 
         ////////////////////////////////////////

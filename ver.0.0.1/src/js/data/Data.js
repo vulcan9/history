@@ -9,14 +9,9 @@
 
 'use strict';
 
-define(
-    [
-        'Application', 'U'
-    ],
-    function(application, U) {
+define( ['U'], function( U ) {
 
-        // 등록
-        application.factory( 'Data', _factory );
+
 
         /////////////////////////////////////
         // 생성자
@@ -294,7 +289,11 @@ define(
         }
 
         // 리턴
-        return Data;
+        _factory._regist = function(application){
+            // 등록
+            application.factory( 'Data', _factory );
+        };
+        return _factory;
 
         ////////////////////////////////////////
         // END

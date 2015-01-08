@@ -9,14 +9,8 @@
 
 'use strict';
 
-define(
-    [
-        'U', 'Application'
-    ],
-    function( U, application ) {
+define( [ 'U' ], function( U ) {
 
-        // 등록
-        application.directive( 'contentIframe', _directive );
 
         // 선언
         function _directive( $templateCache, $sce ) {
@@ -413,6 +407,10 @@ define(
         }
 
         // 리턴
+        _directive._regist = function(application){
+            // 등록
+            application.directive( 'contentIframe', _directive );
+        };
         return _directive;
 
         ////////////////////////////////////////

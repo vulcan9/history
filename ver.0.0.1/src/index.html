@@ -58,14 +58,13 @@
         <link ng-repeat="stylesheet in stylesheets" ng-href="{{stylesheet}}" type="text/css" rel="stylesheet" >
 
 
-        <script data-main="js/main" src="./libs/require/require.js"></script>        
+        <script data-main="js/main" src="./libs/require/require.js"></script>
 
 
     </head>
 
 
     <body>
-
 
         <div ng-view class="hi-applicationContainer"></div>
 
@@ -96,6 +95,9 @@
 
 
 
+
+<!-- 메세지 표시 -->
+<talk class="hi-talkContainer"></talk>
 
 
         <!--[if lt IE 7]>

@@ -22,7 +22,7 @@ define( [], function() {
 
 	Router.prototype = {
 
-		config: function() {
+		config: function(callback) {
 
 			//var self = this;
 			var application = this.application;
@@ -48,14 +48,40 @@ define( [], function() {
 			var routes = this._getRoutes();
 			var $routeProvider = application.$routeProvider;
 
-			this._when( routes, $routeProvider );
+			this._when( routes, $routeProvider, callback );
 		},
 
+		////////////////////////////////////////
+		// Route 체크 (로그인 세션) - SessionService로 옮김
+		////////////////////////////////////////
+		
 		run: function() {
 
 			// change the path
 			//this.application.$location.path('/login');
-			
+
+			/*
+			var self = this;
+			this.application.$rootScope.$on('$routeChangeStart', function(event, currRoute, prevRoute){
+				out('# routeChangeStart : ', self.application.$location.path());
+			});
+
+			this.application.$rootScope.$on("$routeChangeSuccess", function (event, currRoute, prevRoute) {
+				out('# routeChangeSuccess : ', self.application.$location.path(), currRoute);
+
+				// redirect된 상황인지를 필터링
+				// var path = self.application.$location.path();
+				if(currRoute.$$route)
+				{
+					var path = currRoute.$$route.originalPath;
+					if(path === '/tool' || path === '/admin')
+					{
+						// 세션 체크(로그인 페이지로 이동)
+						// self.application.$location.path('/signup');
+					}
+				}
+			});
+			*/
 		},
 
 		/////////////////////////////////////
@@ -67,7 +93,7 @@ define( [], function() {
 		// params : $route.current
 		// otherwise(params);
 
-		_when: function( routes, $routeProvider ) {
+		_when: function( routes, $routeProvider, callback ) {
 
 			var self = this;
 			var application = this.application;
@@ -77,7 +103,7 @@ define( [], function() {
 				angular.forEach( routes.paths, function( route, path ) {
 
 					var templateUrl = route.templateUrl;
-					var definition = self._getRouteDefinition( templateUrl, route.dependencies );
+					var definition = self._getRouteDefinition( templateUrl, route.dependencies, callback );
 					//out( 'templateUrl : ', templateUrl );
 
 					$routeProvider.when( path, definition );
@@ -92,7 +118,7 @@ define( [], function() {
 			}
 		},
 
-		_getRouteDefinition: function( templateUrl, dependencies ) {
+		_getRouteDefinition: function( templateUrl, dependencies, callback ) {
 
 			/*
 			var definition = {
@@ -144,8 +170,15 @@ define( [], function() {
 						require( dependencies, function() {
 							out( '* DEPENDANCY LOAD : ', dependencies );
 
+							// application에 등록
+							var len = arguments.length;
+							for(var i=0; i<len; ++i ){
+								regist (arguments[i], dependencies[i]);
+							}
+
 							$rootScope.$apply( function() {
 								deferred.resolve();
+								callback();
 							} );
 
 							loaded = true;
@@ -158,6 +191,15 @@ define( [], function() {
 
 			}
 
+			function regist (dependency, path){
+				if(dependency._regist === undefined){
+					throw '[Application 등록 에러] _regist 메서드를 정의하여 등록하세요. : ' + path;
+				}
+				// out('regist - ', self.application, dependency);
+
+				dependency._regist (self.application);
+			}
+
 			return definition;
 		},
 
@@ -165,21 +207,23 @@ define( [], function() {
 		//  공통 dependancy 정의
 		/////////////////////////////////////
 		
+		// ApplicationController 이전에 정의되어야하는 서비스는 PreInitialize에서 로드됨
+
 		_getCommonDependancies: function( ) {
 			var dependencies = [
 
 				// DIRECTIVE
-				_PATH.DIRECTIVE + 'version',
+				// _PATH.DIRECTIVE + 'version',
 
-				// SERVICE
-				_PATH.SERVICE + 'VersionService',
-				_PATH.SERVICE + 'ProgressService',
+				// // SERVICE
+				// _PATH.SERVICE + 'VersionService',
+				// _PATH.SERVICE + 'ProgressService',
+				// // _PATH.SERVICE + 'SessionService',
 				
-				// _PATH.SERVICE + 'DataService',
-				_PATH.SERVICE + 'HttpService',
+				// _PATH.SERVICE + 'HttpService',
 
-				_PATH.SERVICE + 'NoticeService',
-				_PATH.SERVICE + 'TalkService'
+				// _PATH.SERVICE + 'NoticeService',
+				// _PATH.SERVICE + 'TalkService'
 			];
 
 			return dependencies;
@@ -210,7 +254,7 @@ define( [], function() {
 				// ADMIN
 				//-----------------------------------
 
-				,'/admin/': {
+				,'/admin': {
 					templateUrl: _PATH.TEMPLATE + 'admin.html',
 					dependencies: [
 						_PATH.CONTROLLER + 'AdminController'
@@ -221,19 +265,38 @@ define( [], function() {
 				// LOGIN 경로 설정
 				//-----------------------------------
 				
-				,'/login/': {
+				// 한 화면에서 팝업으로 처리한다.
+				
+				,'/signup': {
+					templateUrl: _PATH.TEMPLATE + 'session/signup.html',
+					dependencies: [
+						_PATH.CONTROLLER + 'SignupController'
+					]
+				}
+
+				,'/profile': {
+					templateUrl: _PATH.TEMPLATE + 'session/profile.html',
+					dependencies: [
+						_PATH.CONTROLLER + 'ProfileController'
+					]
+				}
+
+				/*
+				// 로그인 상태에 따라 적절한 login 화면을 보여준다. 
+				,'/login/:state': {
 					templateUrl: _PATH.TEMPLATE + 'login.html',
 					dependencies: [
 						_PATH.CONTROLLER + 'LoginController'
 					]
 				}
+				*/
 
 				//-----------------------------------
 				// Application
 				//-----------------------------------
 
 
-				,'/tool/': {
+				,'/tool': {
 					templateUrl: _PATH.TEMPLATE + 'tool.html',
 					dependencies: [
 
@@ -310,7 +373,7 @@ define( [], function() {
 			};
 
 			var route = {
-				defaultPath: '/',
+				defaultPath: '/404_NOT_FOUND',
 				paths: paths
 			};
 			return route;

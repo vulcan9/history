@@ -13,10 +13,10 @@
 define(
     [
         'angular',
-        'Router',
-        _PATH.CONTROLLER + 'ApplicationController'
+        'PreInitialize',
+        'Router'
     ],
-    function( angular, Router, ApplicationController ) {
+    function( angular, PreInitialize, Router ) {
 
         // 라우터 정의 객체
         var _router;
@@ -28,9 +28,15 @@ define(
         //위의 디펜던시를 가져와서 콜백을 수행하게 되는데 여기서는 App이라는 앵귤러 모듈을 리턴한다.
         var application = angular.module(
 
-            // '모듈 Name', ['Require 모듈']
-            'Application', [ 'ngRoute', 'ngAnimate', 'dockModule', 'alignModule', 'ui.bootstrap', 'ui.tree' ],
-
+            // '모듈 Name'
+            'Application', 
+            // ['Require 모듈']
+            [ 
+                'ngRoute', 'ngAnimate', 'ngMessages', 
+                'dockModule', 'alignModule', 
+                'ui.bootstrap', 'ui.tree', 
+                'satellizer' 
+            ],
             // Configuration Function
             function( $provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider ) {
                 //
@@ -107,6 +113,8 @@ define(
         application.config (
             function( $provide, $compileProvider, $controllerProvider, $filterProvider, $animateProvider, $routeProvider, $locationProvider ) {
 
+                out( '# Application CONFIG.' );
+
                 //-----------------------------------
                 // 자주쓰는 등록 메서드
                 //-----------------------------------
@@ -139,9 +147,9 @@ define(
                 //-----------------------------------
                 
                 _router = new Router( application );
-                _router.config();
-
-                out( '# Application 설정 종료' );
+                _router.config(function(){
+                    out( '# Application 초기화 종료' );
+                });
             }
         );
 
@@ -156,11 +164,11 @@ define(
 
             // Route 실행
             _router.run();
-
+            
             // 보이기
             showApplication();
 
-            out( '# Application 초기화 종료' );
+            out( '# Application RUN.' );
         } );
 
         //-----------------------------------
@@ -189,11 +197,8 @@ define(
 
         //$compileProvider.directive.apply(null, directive);
 
-        //-----------------------------------
-        //  Controller
-        //-----------------------------------
-
-        application.controller( 'ApplicationController', ApplicationController );
+        // Provider 등록
+        PreInitialize(application);
 
         ////////////////////////////////////////
         // END

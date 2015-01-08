@@ -9,14 +9,7 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
-
-        // 등록
-        application.controller( 'AdminController', _controller );
+define( [], function() {
 
         // 선언
         function _controller( $scope ) {
@@ -34,6 +27,10 @@ define(
         }
 
         // 리턴
+        _controller._regist = function(application){
+            // 등록
+            application.controller( 'AdminController', _controller );
+        };
         return _controller;
 
         ////////////////////////////////////////

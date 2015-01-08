@@ -9,16 +9,12 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
+define( [], function( ) {
 
         console.log( "# Version.", _service().version() );
 
         // 등록
-        application.service( 'VersionService', _service );
+        // application.service( 'VersionService', _service );
 
         // 선언
         function _service( ) {
@@ -56,6 +52,10 @@ define(
         }
 
         // 리턴
+        _service._regist = function(application){
+            // 등록
+            application.service( 'VersionService', _service );
+        };
         return _service;
 
         ////////////////////////////////////////

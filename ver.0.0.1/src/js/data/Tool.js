@@ -9,11 +9,7 @@
 
 'use strict';
 
-define(
-    [
-        'Application', 'U'
-    ],
-    function(application, U) {
+define( ['U'], function( U ) {
 
         // 디버깅용으로 속성 노출
         if(window.debug) window.Tool = Tool;
@@ -24,8 +20,6 @@ define(
         var _superClass;
         var _super;
 
-        // 등록
-        application.factory( 'Tool', _factory );
 
         /////////////////////////////////////
         // 생성자
@@ -344,8 +338,13 @@ define(
             return Tool;
         }
 
+
         // 리턴
-        return Tool;
+        _factory._regist = function(application){
+            // 등록
+            application.factory( 'Tool', _factory );
+        };
+        return _factory;
 
         ////////////////////////////////////////
         // END

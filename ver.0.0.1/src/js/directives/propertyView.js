@@ -9,14 +9,7 @@
 
 'use strict';
 
-define(
-    [
-        'U', 'Application'
-    ],
-    function( U, application ) {
-
-        // 등록
-        application.directive( 'propertyView', _directive );
+define( [ 'U' ], function( U ) {
 
         // 선언
         function _directive( Tool, ELEMENT, CommandService, $timeout ) {
@@ -531,6 +524,10 @@ define(
 
 
         // 리턴
+        _directive._regist = function(application){
+            // 등록
+            application.directive( 'propertyView', _directive );
+        };
         return _directive;
 
         ////////////////////////////////////////

@@ -9,14 +9,7 @@
 
 'use strict';
 
-define(
-    [
-        'Application', 'U'
-    ],
-    function( application, U ) {
-
-        // 등록
-        application.directive( 'iconView', _directive );
+define( [ 'U' ], function( U ) {
 
         // 선언
         function _directive(CommandService, Tool, ELEMENT, $getScope, TalkService) {
@@ -298,7 +291,12 @@ define(
             // end _directive
         }
 
+
         // 리턴
+        _directive._regist = function(application){
+            // 등록
+            application.directive( 'iconView', _directive );
+        };
         return _directive;
 
         ////////////////////////////////////////

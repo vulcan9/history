@@ -1,0 +1,82 @@
+﻿
+
+* Node, npm 확인
+// npm install mongoose
+// var mime = require("mongoose");
+
+////////////////////////////////////////////////////////
+// 
+////////////////////////////////////////////////////////
+
+mongodb.bat
+
+//------------------------------------------------
+// mongodb
+//------------------------------------------------
+
+http://www.mongodb.org
+http://www.mongodb.org/downloads
+http://docs.mongodb.org/manual/tutorial/install-mongodb-on-windows/
+
+1. 설치
+    * mongoDB 설치 파일 다운로드 (Production Release (2.6.6))
+
+2. 시스템 환경 변수에 bin 폴더 등록
+
+3. 데이터 저장소 폴더 생성
+    * 저장소 : C:\mongodb\data\db 
+    * 로그파일 위치 : C:\mongodb\log
+    *  CMD 설정 (관리자 권한으로 설정) - 쓰기권한 설정 확인할것
+
+4. 기타 변경
+    * 포트 변경 (default : 27017)
+    > mongod --port 8000
+
+    * Admin Page 주소세팅
+    - default : port + 1000으로 세팅하면 웹페이지가 보여진다.
+    - http://localhost:28017/
+    > mongod --bind_ip 127.0.0.1
+
+5. 실행 (관리자 권한) : mongodb 인스턴스 활성화
+    > mongod --logpath "C:\mongodb\log\log.txt"
+    > mongod --dbpath "C:\mongodb\data\db"
+    (기본 port 27017로 설정되어 있음)
+
+예)
+mongod --logpath "C:\mongodb\log\log.txt" --bind_ip 127.0.0.1 --logappend --directoryperdb --install
+mongod --dbpath "C:\mongodb\data\db"
+mongod --install --serviceName Mongodb --serviceDisplayName Mongodb
+
+6. 확인
+    * bin/mongo.exe 실행 (클라이언트 prompt에서 다음 입력)
+    
+    * 데이터 저장 (생성)
+    >db.test.save({a:1})
+
+    * 데이터 읽기
+    >show dbs
+    >db.test.find()
+    >db.stats()
+    
+    * collection 삭제
+    >show collections
+    >db.test.drop()
+
+    * db 삭제
+    >show dbs
+    >use test
+    >db.test.dropDatabase()
+
+7. 인스턴스 종료 (shutdown할때는 반드시 Admin 데이터베이스로 이동 후 명령어 실행)
+    >use admin
+    >db.shutdownServer()
+
+
+
+
+
+
+
+
+
+

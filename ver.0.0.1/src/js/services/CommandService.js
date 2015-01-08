@@ -9,14 +9,7 @@
 
 'use strict';
 
-define(
-    [
-        'Application', 'U'
-    ],
-    function( application, U ) {
-
-        // 등록
-        application.service( 'CommandService', _service );
+define( [ 'U' ], function( U ) {
 
         // 선언
         function _service(
@@ -926,6 +919,10 @@ define(
         }
 
         // 리턴
+        _service._regist = function(application){
+            // 등록
+            application.service( 'CommandService', _service );
+        };
         return _service;
 
         ////////////////////////////////////////

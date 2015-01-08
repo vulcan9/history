@@ -9,14 +9,9 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
+define( [], function() {
 
-        // 등록
-        application.controller( 'NameController', _controller );
+        
 
         // 선언
         function _controller( $scope, $route, $routeParams, $location, $rootScope ) {
@@ -53,7 +48,12 @@ define(
         }
         
         // 리턴
+        _controller._regist = function(application){
+            // 등록
+            application.controller( 'NameController', _controller );
+        };
         return _controller;
+
 
         ////////////////////////////////////////
         // END

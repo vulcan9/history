@@ -9,14 +9,8 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
 
-        // 등록
-        application.directive( 'background', _directive );
+define( [], function() {
 
         // 선언
         function _directive() {
@@ -113,6 +107,10 @@ define(
         }
 
         // 리턴
+        _directive._regist = function(application){
+            // 등록
+            application.directive( 'background', _directive );
+        };
         return _directive;
 
         ////////////////////////////////////////

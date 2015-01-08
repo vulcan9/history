@@ -9,14 +9,8 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
+define([], function( ) {
 
-        // 등록
-        application.factory( 'Snap', _factory );
 
         // 선언
         function _factory( ) {
@@ -92,6 +86,10 @@ define(
         }
 
         // 리턴
+        _factory._regist = function(application){
+            // 등록
+            application.factory( 'Snap', _factory );
+        };
         return _factory;
     }
 );

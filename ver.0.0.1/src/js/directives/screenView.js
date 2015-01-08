@@ -11,12 +11,10 @@
 
 define(
     [
-        'Application', 'U', 'html2canvas'
+        'U', 'html2canvas'
     ],
-    function( application, U, html2canvas ) {
+    function( U, html2canvas ) {
 
-        // 등록
-        application.directive( 'screenView', _directive );
 
         // 선언
         function _directive($document, ScaleMode, Project , CommandService, Tool, $timeout) {
@@ -798,7 +796,12 @@ define(
             // end _directive
         }
 
+
         // 리턴
+        _directive._regist = function(application){
+            // 등록
+            application.directive( 'screenView', _directive );
+        };
         return _directive;
 
         ////////////////////////////////////////

@@ -9,14 +9,7 @@
 
 'use strict';
 
-define(
-    [
-        'Application', 'U'
-    ],
-    function( application, U ) {
-
-        // 등록
-        application.directive( 'treeView', _directive );
+define( [ 'U' ], function( U ) {
 
         /*
         application.filter('orderBy', _filter);
@@ -503,7 +496,7 @@ define(
                 };
 
                 function __pannelToggle(w){
-                    var $dock = $element.parent('.dock');
+                    var $dock = $element.parent('.hi-dock');
                     if(w === undefined){
                         w = $dock.outerWidth();
                         w = (w>300) ? 250:400;
@@ -577,6 +570,10 @@ define(
         }
 
         // 리턴
+        _directive._regist = function(application){
+            // 등록
+            application.directive( 'treeView', _directive );
+        };
         return _directive;
 
         ////////////////////////////////////////

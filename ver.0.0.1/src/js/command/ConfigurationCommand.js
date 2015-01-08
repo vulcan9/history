@@ -9,11 +9,9 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
+
+define( [], function() {
+
 
         //*********************************************************
         //
@@ -25,8 +23,6 @@ define(
         //
         //*********************************************************
 
-        // 등록
-        application.service( 'ConfigurationCommand', _service );
 
         // 선언
         function _service(Command, VersionService, Project) {
@@ -76,6 +72,10 @@ define(
         }
 
         // 리턴
+        _service._regist = function(application){
+            // 등록
+            application.service( 'ConfigurationCommand', _service );
+        }
         return _service;
 
         ////////////////////////////////////////

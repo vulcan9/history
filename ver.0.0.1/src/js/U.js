@@ -9,9 +9,7 @@
 
 'use strict';
 
-define(
-    [],
-    function( ) {
+define( [], function( ) {
 
         return {
 

@@ -9,15 +9,11 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
+define( [], function( ) {
 
         // 등록
-        application.directive( 'talk', _directive );
-        application.service( 'TalkService', _service );
+        // application.directive( 'talk', _directive );
+        // application.service( 'TalkService', _service );
 
         ////////////////////////////////////////
         // 사용 샘플
@@ -258,6 +254,11 @@ define(
         }
 
         // 리턴
+        _service._regist = function(application){
+            // 등록
+            application.directive( 'talk', _directive );
+            application.service( 'TalkService', _service );
+        };
         return _service;
 
         ////////////////////////////////////////

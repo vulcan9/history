@@ -9,14 +9,10 @@
 
 'use strict';
 
-define(
-    [
-        'Application', 'U'
-    ],
-    function( application, U ) {
 
-        // 등록
-        application.service( 'OpenCommand', _service );
+define( [], function() {
+
+
 
         // 선언
         function _service( Command, HttpService, $q, Tool, Project, $timeout ) {
@@ -478,6 +474,10 @@ define(
         }
 
         // 리턴
+        _service._regist = function(application){
+            // 등록
+            application.service( 'OpenCommand', _service );
+        }
         return _service;
 
         ////////////////////////////////////////

@@ -111,7 +111,9 @@ var _PATH = {
     SERVICE:           _PATH_ROOT_FOLDER + 'js/services/',
     FACTORY:           _PATH_ROOT_FOLDER + 'js/factory/',
     FILTER:               _PATH_ROOT_FOLDER + 'js/filters/',
-    COMMAND:         _PATH_ROOT_FOLDER + 'js/command/'
+    COMMAND:         _PATH_ROOT_FOLDER + 'js/command/',
+
+    ANGULAR:          _PATH_ROOT_FOLDER + 'libs/angular.1.3.8/'
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -142,31 +144,53 @@ require.config( {
     //뒤에 js 확장자는 생략한다.
     paths: {
         // text : HTML 데이터를 가져올때 text! 프리픽스를 붙여준다.
-        // 'text':                     _PATH.LIB + 'require/text',
+        'text':                     _PATH.LIB + 'require/text',
         // 'jquery':                 _PATH.LIB + 'jquery/jquery',
         // 'jquery-ui':             _PATH.LIB + 'jquery/jquery-ui-1.10.2.min',
 
-        // 'angular':                '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular',
-        // 'angular-route':       '//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular-route',
+        //-----------------
+        // Angular
+        //-----------------
+        'angular':                _PATH.ANGULAR + 'angular',
+        'angular-animate':    _PATH.ANGULAR + 'angular-animate',
+        // 'angular-aria':    _PATH.ANGULAR + 'angular-aria',
+        // 'angular-cookies':    _PATH.ANGULAR + 'angular-cookies',
+        // 'angular-loader':    _PATH.ANGULAR + 'angular-loader',
+        'angular-messages':       _PATH.ANGULAR + 'angular-messages',
+        // 'angular-mocks':    _PATH.ANGULAR + 'angular-mocks',
+        // 'angular-resource':    _PATH.ANGULAR + 'angular-resource',
+        'angular-route':       _PATH.ANGULAR + 'angular-route',
+        // 'angular-sanitize':    _PATH.ANGULAR + 'angular-sanitize',
+        // 'angular-scenario':    _PATH.ANGULAR + 'angular-scenario',
+        //' angular-touch':    _PATH.ANGULAR + 'angular-touch',
 
-        'angular':                _PATH.LIB + 'angular/angular.1.2.23',
-        'angular-route':       _PATH.LIB + 'angular/angular-route.1.2.24',
-        'angular-animate':       'http://code.angularjs.org/1.2.23/angular-animate',
-        'angular-collection':       _PATH.LIB + 'angular/angular-collection',
+        //-----------------
+        // Angular Module
+        //-----------------
+        // 'angular-collection':       _PATH.LIB + 'angular/angular-collection',
 
+        //-----------------
         // http://angular-ui.github.io/bootstrap/
+        //-----------------
         'bootstrap':                _PATH.LIB + 'bootstrap-3.2.0/js/bootstrap',
         'ui-bootstrap':                _PATH.LIB + 'ui-bootstrap-tpls-0.11.2',
 
+        //-----------------
+        // 모듈
+        //-----------------
         'ui.tree':                _PATH.LIB + 'tree/angular-ui-tree',
+        'satellizer':              _PATH.LIB + 'auth/satellizer',
 
         // 모듈
         'dockModule':         _PATH.MODULE + 'dockModule',
         'alignModule':         _PATH.MODULE + 'alignModule',
-        // 'uiModule':             _PATH.MODULE + 'uiModule',
 
-        'Application':          _PATH.JS + 'Application',
+        //-----------------
+        // Framework
+        //-----------------
+        'PreInitialize':          _PATH.JS + 'PreInitialize',
         'Router':                 _PATH.JS + 'Router',
+        'Application':          _PATH.JS + 'Application',
 
         'U':                 _PATH.JS + 'U',
         
@@ -185,43 +209,36 @@ require.config( {
     shim: {
         // 'jquery':{exports: 'jquery'},
         //'jquery-ui': {deps: ['jquery'] },
-        'angular': {
-            exports: 'angular'
-        },
-        'angular-route': {
-            deps: [ 'angular' ],
-            exports: 'angular-route'
-        },
-        'angular-animate': {
-            deps: [ 'angular' ],
-            exports: 'angular-animate'
-        },
-        'angular-collection': {
-            deps: [ 'angular' ]
-        },
+        'angular': { exports: 'angular' },
+        'angular-animate': { deps: [ 'angular' ], exports: 'angular-animate' },
+        // 'angular-aria': { deps: [ 'angular' ], exports: 'angular-aria' },
+        // 'angular-cookies': { deps: [ 'angular' ], exports: 'angular-cookies' },
+        // 'angular-loader': { deps: [ 'angular' ], exports: 'angular-loader' },
+        'angular-messages': { deps: [ 'angular' ], exports: 'angular-messages' },
+        // 'angular-mocks': { deps: [ 'angular' ], exports: 'angular-mocks' },
+        // 'angular-resource': { deps: [ 'angular' ], exports: 'angular-resource' },
+        'angular-route': { deps: [ 'angular' ], exports: 'angular-route' },
+        // 'angular-sanitize': { deps: [ 'angular' ], exports: 'angular-sanitize' },
+        // 'angular-scenario': { deps: [ 'angular' ], exports: 'angular-scenario' },
+        //' angular-touch': { deps: [ 'angular' ], exports: 'angular-touch' },
+
+        // 'angular-collection': { deps: [ 'angular' ]},
+
         'bootstrap': {
             // deps: [ 'jquery' ]
         },
-        'ui-bootstrap': {
-            deps: [ 'angular' ]
-        },
-        'ui.tree': {
-            deps: [ 'angular' ]
-        },
+        'ui-bootstrap': { deps: [ 'angular' ]},
+        'ui.tree': { deps: [ 'angular' ]},
+        'dockModule': { deps: [ 'angular' ]},
+        'alignModule': { deps: [ 'angular' ]},
 
-        'dockModule': {
-            deps: [ 'angular']
+        'satellizer': {
+            deps: [ 'angular'],
+            exports: 'satellizer'
         },
-        'alignModule': {
-            deps: [ 'angular']
-        },
-        /*
-        'uiModule': {
-            deps: [ 'angular', 'angular-collection']
-        },
-        */
+        
         'Application': {
-            deps: [ 'angular', 'angular-route', 'angular-animate', 'dockModule', 'alignModule', 'ui-bootstrap', 'ui.tree']
+            deps: [ 'angular', 'angular-route', 'angular-animate', 'angular-messages', 'dockModule', 'alignModule', 'ui-bootstrap', 'ui.tree', 'satellizer']
         },
 
         'Space':{

@@ -9,14 +9,10 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
+define( [], function( ) {
 
         // 등록
-        application.service( 'ProgressService', _service );
+        // application.service( 'ProgressService', _service );
 
         // 선언
         function _service($document) {
@@ -95,6 +91,10 @@ define(
         }
 
         // 리턴
+        _service._regist = function(application){
+            // 등록
+            application.service( 'ProgressService', _service );
+        };
         return _service;
 
         ////////////////////////////////////////

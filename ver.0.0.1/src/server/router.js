@@ -92,7 +92,7 @@ function checkFileSystem(req, res, pathname){
     // var tmp  = pathname.lastIndexOf(".");
     // var extension  = pathname.substring((tmp + 1));
     console.log("Anonymous Request : " + filePath);
-    console.log("( ", pathname, " )");
+    console.log("pathname : ( ", pathname, " )");
 
     var mimeType = mime.lookup(pathname);
     fs.readFile(filePath, function(error, contents){

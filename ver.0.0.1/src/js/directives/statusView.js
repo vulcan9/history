@@ -9,14 +9,7 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
-
-        // 등록
-        application.directive( 'statusView', _directive );
+define( [], function() {
 
         // 선언
         function _directive( $timeout ) {
@@ -93,6 +86,10 @@ define(
         }
 
         // 리턴
+        _directive._regist = function(application){
+            // 등록
+            application.directive( 'statusView', _directive );
+        };
         return _directive;
 
         ////////////////////////////////////////

@@ -9,28 +9,11 @@
 
 'use strict';
 
-define(
-    [
-        'Application', 'U'
-    ],
-    function( application, U ) {
+define( [ 'U' ], function( U ) {
 
-        // 모듈에 정의
-        // var _module = angular.module('uiModule', ['ngCollection']);
 
-        // _module.service('UIService', _service);
 
-        // 등록
-        // _module.directive( 'uid', uid );
-        // _module.directive( 'uiCanvas', uiCanvas );
-        // _module.directive( 'uiControl', uiControl );
-        application.directive( 'uiControl', _directive );
-
-        // _module.directive( 'uiSelected', uiSelected );
-        // _module.directive( 'uiDraggable', uiDraggable );
-        // _module.directive( 'uiResizable', uiResizable );
-        // _module.directive( 'uiRotatable', uiResizable );
-
+        
         // 선언
         function _directive(Drager, Resizer, Snap, CommandService, Project, Tool, $timeout, ELEMENT, $getScope) {
 
@@ -888,6 +871,23 @@ define(
         }
 
         // 리턴
+        _directive._regist = function(application){
+            // 모듈에 정의
+            // var _module = angular.module('uiModule', ['ngCollection']);
+
+            // _module.service('UIService', _service);
+
+            // 등록
+            // _module.directive( 'uid', uid );
+            // _module.directive( 'uiCanvas', uiCanvas );
+            // _module.directive( 'uiControl', uiControl );
+            application.directive( 'uiControl', _directive );
+
+            // _module.directive( 'uiSelected', uiSelected );
+            // _module.directive( 'uiDraggable', uiDraggable );
+            // _module.directive( 'uiResizable', uiResizable );
+            // _module.directive( 'uiRotatable', uiResizable );
+        };
         return _directive;
     }
 );

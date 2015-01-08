@@ -9,14 +9,8 @@
 
 'use strict';
 
-define(
-    [
-        'U', 'Application'
-    ],
-    function( U, application ) {
+define( [ 'U' ], function( U ) {
 
-        // 등록
-        application.directive( 'content', _directive );
 
         // 선언
         function _directive( $compile, CommandService, Project ) {
@@ -273,6 +267,10 @@ define(
         }
 
         // 리턴
+        _directive._regist = function(application){
+            // 등록
+            application.directive( 'content', _directive );
+        };
         return _directive;
 
         ////////////////////////////////////////

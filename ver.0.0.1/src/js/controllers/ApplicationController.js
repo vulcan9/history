@@ -15,11 +15,10 @@ define(
     ],
     function() {
 
-        // 여기서 등록 안됨 (application config 전임)
-        //application.controller( 'ApplicationController', _controller );
-
         // 선언
-        function _controller( $scope, $element, $attrs, $transclude, $log, $route, $location, $routeParams, $rootScope, $window ) {
+        function _controller( $scope, $element, $attrs, $transclude, $log, $route, $location, $routeParams, $rootScope, $window, SessionService ) {
+
+            out( '# ApplicationController 로드됨' );
 
             //-----------------------
             //스타일시트 업데이트
@@ -35,8 +34,14 @@ define(
 
             $scope.$emit( 'updateCSS', [ 
                 _PATH.CSS + 'basic.css',
-                _PATH.CSS + 'application.css'
+                _PATH.CSS + 'application.css',
+                
+                '//cdnjs.cloudflare.com/ajax/libs/ionicons/1.5.2/css/ionicons.min.css',
+                _PATH.CSS + 'login.css'
             ] );
+
+            //$scope.$emit('updateCSS', [_PATH.CSS + 'login.css']);
+            // <link href="//cdnjs.cloudflare.com/ajax/libs/ionicons/1.5.2/css/ionicons.min.css" rel="stylesheet">
 
             //-----------------------
             // log 함수 수정
@@ -46,15 +51,24 @@ define(
                 window.out.$log = $log;
             }
 
-            //-----------------------
-            // scope 데이터 설정
-            //-----------------------
+            ////////////////////////////////////////
+            // Session
+            ////////////////////////////////////////
 
-            out( '# ApplicationController 로드됨' );
+            $scope.login = function(enableCancel){
+                SessionService.login(enableCancel);
+            };
 
+            $scope.signup = function(){
+                SessionService.signup();
+            };
         }
 
-        // 컨트롤러 리턴
+        // 리턴
+        _controller._regist = function(application){
+            // 등록
+            application.controller('ApplicationController', _controller);
+        };
         return _controller;
 
         ////////////////////////////////////////

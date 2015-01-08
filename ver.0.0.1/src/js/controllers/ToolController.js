@@ -9,15 +9,8 @@
 
 'use strict';
 
-define(
-    [
-        'Application'
-    ],
-    function( application ) {
-
-        // 등록
-        application.controller( 'ToolController', _controller );
-
+define( [], function() {
+    
         // controller간 통신 방법
         // http://programmingsummaries.tistory.com/124
         
@@ -30,11 +23,13 @@ define(
 
             //$scope.$emit('updateCSS', [_PATH.CSS + 'application.css']);
             
+            /*
             $scope.$emit( 'updateCSS', [ 
                 _PATH.CSS + 'basic.css' ,
                 _PATH.CSS + 'application.css',
                 _PATH.CSS + 'space.css' 
             ] );
+            */
 
             //-----------------------
             // Tool 데이터 세팅
@@ -204,6 +199,10 @@ define(
         }
 
         // 리턴
+        _controller._regist = function(application){
+            // 등록
+            application.controller('ToolController', _controller);
+        };
         return _controller;
 
         ////////////////////////////////////////
