@@ -75,7 +75,7 @@ http://ramonvictor.github.io/protractor/slides/#/
 
 
 
-
+// Sign Out (가입 탈퇴) 기능
 
 
 
