@@ -154,9 +154,9 @@ function set (router){
 
 
 
-lynndylanhurley/ng-token-auth 으로 다시 시도할것
-https://github.com/lynndylanhurley/ng-token-auth
-http://ng-token-auth-demo.herokuapp.com/#/
+// lynndylanhurley/ng-token-auth 으로 다시 시도할것
+// https://github.com/lynndylanhurley/ng-token-auth
+// http://ng-token-auth-demo.herokuapp.com/#/
 
 
 
