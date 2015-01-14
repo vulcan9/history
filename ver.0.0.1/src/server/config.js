@@ -33,6 +33,7 @@ var config = {
 
 // https://www.npmjs.com/package/satellizer
 var auth = {
+	
 	TOKEN_SECRET: process.env.TOKEN_SECRET || 'A hard to guess string',
 
 	// Google Client Secret
@@ -45,7 +46,7 @@ var auth = {
 	// Twitter Consumer Secret
 	TWITTER_SECRET: process.env.TWITTER_SECRET || 'sCWkFzzVEOPPWuTGBPfkVQRWw8vFx1DKBxyaage9oBlvzwkob3',
 	// Twitter Callback Url
-	// http://127.0.0.1:3000/publish/templates/auth/twitter_callback.html
+	// http://127.0.0.1:3000/client/templates/auth/twitter_callback.html
 	// http://127.0.0.1:3000/history - http://bit.ly/1ybndS8
 	TWITTER_CALLBACK: process.env.TWITTER_CALLBACK || 'http://bit.ly/1ybndS8',
 

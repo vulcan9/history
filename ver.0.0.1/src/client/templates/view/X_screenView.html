@@ -1,0 +1,134 @@
+<div class="hi-screenContainer">
+    <div class="screen">
+        
+
+
+
+
+
+
+
+        <!-- <div ui-canvas class="paper"></div> -->
+        <div ui-canvas class="paper"></div>
+
+
+
+
+
+
+
+
+        <div ui-canvas class="paper" horizontal-center="0" vertical-center="0">
+            
+            <!--배경 패턴-->
+            <div class="background">
+
+                <svg zoomAndPan="disable" currentscale="1" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                    <pattern id="grid-pattern" patternUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+                        <g id="sharp" transform="translate(-0.5,-0.5)">
+                            <line class="lineH" x1="0" x2="100" y1="20" y2="20" stroke="#888" stroke-width="1"></line>
+                            <line class="lineH" x1="0" x2="100" y1="40" y2="40" stroke="#888" stroke-width="1"></line>
+                            <line class="lineH" x1="0" x2="100" y1="60" y2="60" stroke="#888" stroke-width="1"></line>
+                            <line class="lineH" x1="0" x2="100" y1="80" y2="80" stroke="#888" stroke-width="1"></line>
+                            <line class="lineV" x1="20" x2="20" y1="0" y2="100" stroke="#888" stroke-width="1"></line>
+                            <line class="lineV" x1="40" x2="40" y1="0" y2="100" stroke="#888" stroke-width="1"></line>
+                            <line class="lineV" x1="60" x2="60" y1="0" y2="100" stroke="#888" stroke-width="1"></line>
+                            <line class="lineV" x1="80" x2="80" y1="0" y2="100" stroke="#888" stroke-width="1"></line>
+                            <line class="lineV" x1="100" x2="100" y1="0" y2="100" stroke="#222" stroke-width="1"></line>
+                            <line class="lineH" x1="0" x2="100" y1="100" y2="100" stroke="#222" stroke-width="1"></line>
+                        </g>
+                    </pattern>
+                    
+                    <rect id="grid" fill="url(#grid-pattern)" width="100%" height="100%" opacity="0.1"></rect>
+                </svg>
+
+            </div>
+
+            <!--컨텐츠 그룹-->
+            <div class="content" style="width:100%;height:100%;">
+
+
+
+                TODO :
+                <ol>
+                    <li>window resize는 (#ApplicationController.resize) 이벤트 사용</li>
+                    <li><s>Directive 생성 : horizontalCenter, verticalCenter</s></li>
+                </ol>
+
+                <ol start="10">
+                    <li>데이터 로드 (DataService) 를 먼저 구현한 후</li>
+                    <li>Tree 뷰를 만들어 전체 데이터 구조를 만든다.</li>
+                </ol>
+
+                <ol start="20">
+                    <li>Impress 화면 적용</li>
+                    <li>편집모드 전환</li>
+                </ol>
+
+                <ol start="30">
+                    <li>Directive 생성 : select</li>
+                    <li>Directive 생성 : drag</li>
+                    <li>Directive 생성 : resize</li>
+                </ol>
+
+
+
+
+
+                <!-- 선택 객체 샘플 -->
+                <div style="position: absolute;
+                top: 140px; left: 40px; width: 240px; height: 160px;
+                border: 1px solid rgb(68, 68, 68);
+                background-color: rgba(150, 250, 0, 0.2);
+                transform:rotateX(0deg) rotateY(0deg) rotateZ(-45deg)"
+                uid='uid001'></div>
+
+
+
+
+
+
+<input type="button" style="position:absolute;width: 100px;height:30px;left:400px;top:200px;" value="button"/>
+<input type="text" style="position:absolute;width: 100px;height:30px;left:400px;top:230px;"/>
+
+
+
+
+
+
+
+
+
+            </div>
+
+            <!-- 영역표시(투명표시) -->
+            <div class="areaDisplay transparent" style="left: 780px;top: 100px;width: 100px;height: 100px;"></div>
+
+            <!-- 마우스 선택영역 표시 -->
+            <div class="areaDisplay selector" style="left: 500px;top: 100px;width: 100px;height: 100px;"></div>
+
+            <!--snap 선-->
+            <div id="guide-h" class="guide horizontal" style="top: 200px; display: block;"></div>
+            <div id="guide-v" class="guide vertical" style="left: 500px; display: block;"></div>
+
+            <!-- 편집모드로 전환 버튼-->
+            <div class="modeHandle edit"></div>
+            <div class="modeHandle play" style="top:0"></div>
+
+            <!--선택 표시 핸들러 컨테이너-->
+            <div ui-controller class="hi-content"></div>
+            
+        </div>
+
+
+
+
+
+
+
+
+
+
+        
+    </div>
+</div>

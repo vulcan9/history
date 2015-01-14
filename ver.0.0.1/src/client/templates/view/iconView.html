@@ -1,0 +1,30 @@
+﻿<div class="hi-menuContainer" style="padding:10px;border-bottom: 1px solid #DDD;">
+
+    <!--파일 명령-->
+    <span class="label label-success" ng-click="callAPI('newProject')">NEW</span>
+    <span class="label label-success" ng-click="callAPI('openProject')">OPEN</span>
+    <span class="label label-success" ng-click="callAPI('saveProject')">SAVE</span>
+
+    |
+    <!--페이지 삽입-->
+    <span class="label label-success" ng-click="callAPI('addDocument', 'prev')">add Prev</span>
+    <span class="label label-success" ng-click="callAPI('addDocument', 'next')">add Next</span>
+    <span class="label label-success" ng-click="callAPI('addDocument', 'sub')">add Sub</span>
+
+    |
+    <!--실행/취소-->
+    <span class="label label-default" ng-click="callAPI('undo')">undo</span>
+    <span class="label label-default" ng-click="callAPI('redo')">redo</span>
+    <!--copy/paste-->
+    <span class="label label-default" ng-click="callAPI('copy')">copy</span>
+    <span class="label label-default" ng-click="callAPI('paste')">paste</span>
+    |
+    <!--요소 삽입-->
+    <span class="label label-success" ng-click="callAPI('addElement', 'text')">TEXT</span>
+    <span class="label label-success" ng-click="callAPI('addElement', 'image')">IMAGE</span>
+
+    |
+    <!--프레젠테이션 실행-->
+    <span class="label label-default" ng-click="callAPI('play')">play</span>
+
+</div>

@@ -184,16 +184,16 @@ app.use(serve);
 app.use(serveStatic(PATH_ROOT + '/'));
 app.use(serveStatic(PATH_ROOT + '/data'));
 app.use(serveStatic(PATH_ROOT + '/server'));
-app.use(serveStatic(PATH_ROOT + '/publish', {
+app.use(serveStatic(PATH_ROOT + '/client', {
     // dotfiles: 'deny',
     // extensions : ['js']
 }));
 
-// app.use(serveStatic(PATH_ROOT + '/publish/css'));
-// app.use(serveStatic(PATH_ROOT + '/publish/data'));
-// app.use(serveStatic(PATH_ROOT + '/publish/js'));
-// app.use(serveStatic(PATH_ROOT + '/publish/libs'));
-// app.use(serveStatic(PATH_ROOT + '/publish/templates'));
+// app.use(serveStatic(PATH_ROOT + '/client/css'));
+// app.use(serveStatic(PATH_ROOT + '/client/data'));
+// app.use(serveStatic(PATH_ROOT + '/client/js'));
+// app.use(serveStatic(PATH_ROOT + '/client/libs'));
+// app.use(serveStatic(PATH_ROOT + '/client/templates'));
 
 //-----------------------------------
 //라우터 설정 : http://expressjs.com/4x/api.html#router

@@ -1,0 +1,87 @@
+﻿<div class="hi-menuContainer">
+    <div class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0px;">
+        <div class="container">
+
+
+            <!--접힌 버튼-->
+            <div class="navbar-header">
+
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <!--Toggle navigation-->
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+
+                <a class="navbar-brand" href="#">Application</a>
+            </div>
+
+            <!--접힌 버튼 일때 확장되는 내용-->
+            <div class="navbar-collapse collapse">
+
+                <!--
+                <ul class="nav navbar-nav">
+                    <li ng-repeat="item in menu.items" ng-click="onClick(item)"><a>{{item.label}}</a></li>
+                    <li ng-repeat="item in menu.items">
+                        <link href="{item}">{{item.label}} (todo:Link Directive)</link>
+                    </li>
+                    <li class="active"><a href="./">Static top</a></li>
+                </ul>
+                -->
+
+                <!--/////////////////////////////////////////////-->
+                <!-- 메뉴 링크-->
+                <!--/////////////////////////////////////////////-->
+
+                <ul class="nav navbar-nav">
+                    <li class="dropdown" ng-repeat="item in menu.items">
+
+                        <!--하위 메뉴가 없는 경우-->
+                        <a  ng-show="item.menus === undefined" ng-click="onClick(item)"
+                        class="dropdown-toggle" data-toggle="dropdown">{{item.label}}</a>
+
+                        <!--하위 메뉴가 있는 경우-->
+                        <a  ng-show="item.menus" class="dropdown-toggle" data-toggle="dropdown">
+                            {{item.label}} <span class="caret"></span>
+                        </a>
+
+                        <ul ng-show="item.menus" class="dropdown-menu" role="menu">
+
+                            <!--하위 메뉴링크-->
+                            <li  ng-repeat="menu in item.menus" ng-class="menu.class">
+                                
+                                <!-- header -->
+                                <span ng-show="(menu.class === 'dropdown-header')">{{ menu.label }}</span>
+                                <!-- 링크 -->
+                                <a  ng-show="(menu.class !== 'divider' && menu.class !== 'dropdown-header')" ng-click="onClick(menu)">
+                                   {{menu.label}}
+                                </a>
+                                <!-- devider : 내용없음 -->
+
+                            </li>
+                        </ul>
+
+                    </li>
+                </ul>
+
+                <!--/////////////////////////////////////////////-->
+                <!-- 기타 링크-->
+                <!--/////////////////////////////////////////////-->
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Nav. <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#admin">admin</a></li>
+                            <li><a href="#login">login</a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header">Application</li>
+                            <li><a href="#tool">tool</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<section ng-controller='HomeController'>
+    <h3>Home</h3>
+    
+    <!-- 로그인이 필요한 페이지에 삽입한다. -->
+    <div style="position: fixed; right: 0px; top: 0px;">
+
+        <ul class="nav navbar-nav">
+            <!-- <li><a ng-click="home()">Home</a></li> -->
+            <li><a ng-click="back()">Back</a></li>
+        </ul>
+
+        <ul class="nav navbar-nav">
+            <li ng-if="auth_isAuthenticated()"><a ng-click="auth_profile()">Profile</a></li>
+        </ul>
+
+        <ul ng-if="!auth_isAuthenticated()" class="nav navbar-nav pull-right">
+            <li><a ng-click="auth_login()">Login</a></li>
+            <li><a ng-click="auth_signup()">Sign up</a></li>
+        </ul>
+        
+        <ul ng-if="auth_isAuthenticated()" class="nav navbar-nav pull-right">
+            <li><a ng-click="auth_logout()">Logout</a></li>
+        </ul>
+
+    </div>
+    <version></version>
+</section>

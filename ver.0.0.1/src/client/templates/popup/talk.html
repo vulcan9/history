@@ -1,0 +1,18 @@
+    
+<div>
+  <!--
+  <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="close($index)">{{alert.msg}}</alert>
+  <div ng-repeat="alert in alerts" class="alert alert-info" role="alert">{{alert.msg}}</div>
+  -->
+
+  <!--
+  <div ng-repeat="item in items" class="transition talk alert alert-info">{{item}}<span class="delete" ng-click="close($index)">delete</span></div>
+  <button class='btn btn-default' ng-click="open($index)">Add Alert</button>
+  -->
+
+  <div ng-repeat="item in items" class="talk alert alert-{{item.type}}">
+    {{item.msg}}
+    <div class="glyphicon closeButton" ng-click="close(item.uid)" ng-if="item.autoClose==false"></div>
+  </div>
+  <!-- <button class='btn btn-default' ng-click="open($index)">Add Alert</button> -->
+</div>
