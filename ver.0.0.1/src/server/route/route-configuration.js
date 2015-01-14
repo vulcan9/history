@@ -4,6 +4,8 @@ var url = require('url');
 var mime = require('mime');
 // var fs = require('fs');
 
+var authRoute = require('./route-auth');
+
 
 /*
                                        url.parse(string).query
@@ -217,8 +219,28 @@ function set (router, app){
     // Auth Request Routing 정의
     ////////////////////////////////////////////////////////////////////////////
 
-    var authRoute = require('./auth');
+
+
+
+
+
+
+
+
+
+
+
     authRoute.set (router);
+
+
+
+
+
+
+
+
+
+
 
     ////////////////////////////////////////////////////////////////////////////
     // 마지막으로 파일시스템을 조사한다. (이미지, css등의 요청)

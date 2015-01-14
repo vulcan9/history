@@ -4,7 +4,7 @@
 var config = {
 	local: {
 		mode: 'local',
-		port: 8000,
+		port: 3000,
 		database: {
 			type: "mongodb",
 			host: '127.0.0.1',
@@ -31,19 +31,32 @@ var config = {
 	}
 };
 
+// https://www.npmjs.com/package/satellizer
 var auth = {
 	TOKEN_SECRET: process.env.TOKEN_SECRET || 'A hard to guess string',
 
-	FACEBOOK_SECRET: process.env.FACEBOOK_SECRET || 'Facebook App Secret',
+	// Google Client Secret
+	GOOGLE_SECRET: process.env.GOOGLE_SECRET || 'ZlCsE7fazbW_WdevCP9yp2AP',
+	// Facebook App Secret
+	FACEBOOK_SECRET: process.env.FACEBOOK_SECRET || 'f968cea09f67d43f0dac0d4df3d3ec89',
+
+	// Twitter Consumer Key
+	TWITTER_KEY: process.env.TWITTER_KEY || '2t65a5w1OTvKUyEsOtsROMu4b',
+	// Twitter Consumer Secret
+	TWITTER_SECRET: process.env.TWITTER_SECRET || 'sCWkFzzVEOPPWuTGBPfkVQRWw8vFx1DKBxyaage9oBlvzwkob3',
+	// Twitter Callback Url
+	// http://127.0.0.1:3000/publish/templates/auth/twitter_callback.html
+	// http://127.0.0.1:3000/history - http://bit.ly/1ybndS8
+	TWITTER_CALLBACK: process.env.TWITTER_CALLBACK || 'http://bit.ly/1ybndS8',
+
+	/*
+	// Windows Live Secret
+	WINDOWS_LIVE_SECRET: process.env.WINDOWS_LIVE_SECRET || 'Windows Live Secret',
 	FOURSQUARE_SECRET: process.env.FOURSQUARE_SECRET || 'Foursquare Client Secret',
-	GOOGLE_SECRET: process.env.GOOGLE_SECRET || 'Google Client Secret',
 	GITHUB_SECRET: process.env.GITHUB_SECRET || 'GitHub Client Secret',
 	LINKEDIN_SECRET: process.env.LINKEDIN_SECRET || 'LinkedIn Client Secret',
-	WINDOWS_LIVE_SECRET: process.env.WINDOWS_LIVE_SECRET || 'Windows Live Secret',
-	TWITTER_KEY: process.env.TWITTER_KEY || 'Twitter Consumer Key',
-	TWITTER_SECRET: process.env.TWITTER_SECRET || 'Twitter Consumer Secret',
-	TWITTER_CALLBACK: process.env.TWITTER_CALLBACK || 'Twitter Callback Url',
 	YAHOO_SECRET: process.env.YAHOO_SECRET || 'Yahoo Client Secret'
+	*/
 };
 
 module.exports = {

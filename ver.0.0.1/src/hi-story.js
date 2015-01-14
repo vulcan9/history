@@ -76,6 +76,26 @@ var favicon = require('serve-favicon');
 app.use(favicon(PATH_ROOT + '/favicon.ico'));
 
 //-----------------------------------
+// cors : https://www.npmjs.com/package/cors
+//-----------------------------------
+
+/*
+var cors = require('cors');
+// app.use(cors());
+
+// Middleware CORS (Allow Origins)
+var whitelist = ['http://localhost:3000' ];
+app.use(cors({
+    origin: function(origin, callback) {
+        var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+        callback(null, originIsWhitelisted);
+    },
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin' ]
+}));
+*/
+
+//-----------------------------------
 // morgan : https://www.npmjs.com/package/morgan
 //-----------------------------------
 // app.use(express.logger('dev'));
@@ -161,8 +181,9 @@ app.use(serve);
 */
 // app.use(express.static(path.join(PATH_SERVER, 'public')));
 
-
-// app.use(serveStatic(PATH_ROOT + '/data'));
+app.use(serveStatic(PATH_ROOT + '/'));
+app.use(serveStatic(PATH_ROOT + '/data'));
+app.use(serveStatic(PATH_ROOT + '/server'));
 app.use(serveStatic(PATH_ROOT + '/publish', {
     // dotfiles: 'deny',
     // extensions : ['js']
@@ -211,6 +232,13 @@ if (ENV_MODE === 'development') {
 
 }
 
+/*
+// HTTPS 프로토콜 사용
+app.use(function(req, res, next) {
+    var protocol = req.get('x-forwarded-proto');
+    protocol == 'https' ? next() : res.redirect('https://' + req.hostname + req.url);
+});
+*/
 
 //-----------------------------------
 // // Force HTTPS on Heroku
