@@ -2199,6 +2199,13 @@ angular.module( 'ui.bootstrap.modal', [ 'ui.bootstrap.transition' ] )
             openedWindows.top().value.modalDomEl = modalDomEl;
             body.append( modalDomEl );
             body.addClass( OPENED_MODAL_CLASS );
+
+            //***********************************
+            // bootstrap 소스 수정해서 window element값을 얻을 수 있도록 했음
+
+            modalInstance.element = modalDomEl;
+
+            //***********************************
         };
 
         $modalStack.close = function( modalInstance, result ) {

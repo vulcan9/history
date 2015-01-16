@@ -96,9 +96,16 @@
                 <div class="tree-node-content" ng-click="selectDocument(item)"></div>
                 <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">
 
-                    <!--썸네일-->
+                    <!--썸네일
                     <img class="hi-thumbnail" ng-show="thumbnail[item.uid].src"
                         ng-src="{{thumbnail[item.uid].src}}"
+                        style="width:100%; height:100%;
+                        position: absolute; border: none; top:0px; left:0px;margin: 0; padding: 0;
+                        pointer-events: none;"/>
+                    -->
+
+                    <img class="hi-thumbnail" ng-show="item.thumbnail"
+                        ng-src="{{item.thumbnail.src}}"
                         style="width:100%; height:100%;
                         position: absolute; border: none; top:0px; left:0px;margin: 0; padding: 0;
                         pointer-events: none;"/>

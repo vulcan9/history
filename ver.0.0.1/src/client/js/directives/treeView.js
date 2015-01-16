@@ -101,7 +101,7 @@ define( [ 'U' ], function( U ) {
                     out('#Project.changed-DOCUMENT (treeView) : ', data.newValue);
 
                     // Thumbnail 설정
-                    initThumbnail();
+                    // initThumbnail();
                 });
 
                 ////////////////////////////////////////
@@ -199,6 +199,8 @@ define( [ 'U' ], function( U ) {
 
                 // Tree에 해당 위치에 데이터 추가
                 function __onAddDocument (item, param){
+                    /*
+                    Project로 코드 이동됨
                     var option = param.option || {};
                     var posOption = option.position;
                     var selectUID = option.selectUID;
@@ -207,12 +209,15 @@ define( [ 'U' ], function( U ) {
                     var uid = item.uid;
                     var treeItem = Project.current.getDefinitionTree(uid);
                     info.items.splice(info.index, 0, treeItem);
+                    */
                 }
 
                 function __onRemoveDocument(item, param){
                     // out('tree remove : ', param.position);
                     // var info = Project.current.getTreePosition(uid);
                     
+                    /*
+                    Project로 코드 이동됨
                     var option = param.option;
                     var info = param.position;
                     var item = info.items[info.index];
@@ -238,6 +243,7 @@ define( [ 'U' ], function( U ) {
                         // option == 'all' : 하위 노드 모두 제거
                         info.items.splice(info.index, 1);
                     }
+                    */
                 }
 
                 function __onModifyDocument(item, param){
@@ -249,7 +255,7 @@ define( [ 'U' ], function( U ) {
                 //-------------------------------------
 
                 // thumbnial 초기 세팅
-                $scope.thumbnail = {};
+                // $scope.thumbnail = {};
 
                 /*
                 $scope.initThumbnail = function(documentUID){
@@ -261,6 +267,7 @@ define( [ 'U' ], function( U ) {
                 }
                 */
 
+                /*
                 function initThumbnail(){
                     var documents = Project.current.project('DOCUMENT');
                     for(var documentUID in documents.items)
@@ -275,7 +282,7 @@ define( [ 'U' ], function( U ) {
                         // out('* 썸네일 데이터 : ', documentUID, thumbnail);
                     }
                 }
-
+                
                 // var data = {data:dataOwner, item:itemObject, name:propertyName};
                 $scope.$on('#Project.changed-thumbnail', function(e, data){
                     out('#Project.changed-thumbnail (treeView) : ', data.newValue);
@@ -288,26 +295,9 @@ define( [ 'U' ], function( U ) {
 
                 function updateThumbnail(documentUID, thumbnail){
                     if(!thumbnail) return;
-                    /*
-                    var sourceWidth = thumbnail.width;
-                    var sourceHeight = thumbnail.height;
-
-                    var maxW = $scope.paper.width;
-                    var maxH = $scope.paper.height;
-                    var scaleW = maxW / sourceWidth;
-                    var scaleH = maxH / sourceHeight;
-                    var scale = Math.min(scaleW, scaleH);
-
-                    var w = sourceWidth * scale;
-                    var h = sourceHeight * scale;
-                    $scope.thumbnail[documentUID] = {
-                        width : w,
-                        height : h,
-                        src : thumbnail ? thumbnail.src : ''
-                    };
-                    */
                     $scope.thumbnail[documentUID] = thumbnail;
                 }
+                */
 
                 ////////////////////////////////////////////////////////////////////////////////
                 // DOM 인터렉션

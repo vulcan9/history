@@ -77,6 +77,13 @@ define( [], function() {
 							self.application.$location.path('/login');
 						}
 					}
+					else
+					{
+						if(currRoute.redirectTo){
+							out('# routeChangeStart redirectTo : ', currRoute.redirectTo);
+							self.application.$location.path(currRoute.redirectTo);
+						}
+					}
 				}
 			});
 
@@ -209,22 +216,25 @@ define( [], function() {
 		/////////////////////////////////////
 		
 		// ApplicationController 이전에 정의되어야하는 서비스는 PreInitialize에서 로드됨
+		// NodeJS에서 실행할때 '.js' 확장자를 붙이지 않으면 파일 못찾음 (require만 사용할때는 확장자 생략 가능)
 
 		_getCommonDependancies: function( ) {
 			var dependencies = [
 
 				// DIRECTIVE
-				// _PATH.DIRECTIVE + 'version',
+				// _PATH.DIRECTIVE + 'version.js',
 
 				// // SERVICE
-				// _PATH.SERVICE + 'VersionService',
-				// _PATH.SERVICE + 'ProgressService',
-				// // _PATH.SERVICE + 'AuthService',
+				// _PATH.SERVICE + 'VersionService.js',
+				// _PATH.SERVICE + 'ProgressService.js',
+				// // _PATH.SERVICE + 'AuthService.js',
 				
-				// _PATH.SERVICE + 'HttpService',
+				// _PATH.SERVICE + 'HttpService.js',
 
-				// _PATH.SERVICE + 'NoticeService',
-				// _PATH.SERVICE + 'TalkService'
+				// _PATH.SERVICE + 'NoticeService.js',
+				// _PATH.SERVICE + 'TalkService.js',
+
+				_PATH.SERVICE + 'ProcessService.js'
 			];
 
 			return dependencies;

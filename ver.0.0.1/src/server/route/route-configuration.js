@@ -5,6 +5,7 @@ var mime = require('mime');
 // var fs = require('fs');
 
 var authRoute = require('./route-auth');
+var dbRoute = require('./route-db');
 
 
 /*
@@ -189,7 +190,7 @@ function set (router, app){
     
     function getPatternString (word){
         // var patternString = '\/' + word + '(\W|$)(\/|\#)*(\/)*';
-        var patternString = '\\' + word + '(\\W|$)(\\/|\\#)*(\\/)*($|\\s)';
+        var patternString = '' + word + '(\\W|$)(\\/|\\#)*(\\/)*($|\\s)';
         return patternString;
     }
     function getPatternExpression (word){
@@ -229,7 +230,8 @@ function set (router, app){
 
 
 
-
+    dbRoute.set (router);
+    
     authRoute.set (router);
 
 

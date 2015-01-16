@@ -58,6 +58,84 @@ define( ['U'], function( U ) {
 
                     eventPrefix : 'Project',
 
+                    //////////////////////////////////////////////////////////////////////////
+                    //
+                    // Command 관련 API
+                    // 
+                    //////////////////////////////////////////////////////////////////////////
+                    
+                    // uid : element uid
+                    newProject: function(){
+                        Tool.current.initialize();
+                        this.initialize();
+                        //this.project( 'TREE', null );
+
+                        // Root Element (Overview)
+                        this.__checkRootDocument();
+
+                        // Tool.current.dataChanged = false;
+                        // this.dataChanged = false;
+                    },
+
+                    // data : tree-uid.json 파일 내용
+                    openProject: function(treeData, dataMap, presentationData){
+                        Tool.current.initialize();
+                        this.initialize();
+
+                        this.project( 'TREE', treeData );
+                        this.project( 'DOCUMENT', {
+                            items: dataMap
+                        } );
+                        this.project( 'PRESENTATION', presentationData );
+
+                        // 선택 상태 표시 (Root  Document를 초기 선택 상태로 표시)
+                        out('TODO : 저장된 마지막 선택 문서를 선택상태로 표시하기');
+
+                        //var uid = this.project( 'TREE').items[0].uid;
+                        var documentUID = treeData.items[0].uid;
+                        this.setSelectDocument(documentUID);
+
+                        // OpenComman에서 처리
+                        // Tool.current.dataChanged = false;
+                        this.dataChanged = false;
+                    },
+                    closeProject: function(){
+                        this.setSelectDocument(null);
+
+                        this.project( 'TREE', null );
+                        this.project( 'PRESENTATION', null );
+                        this.project( 'DOCUMENT', null );
+
+                        Tool.current.dataChanged = false;
+                        this.dataChanged = false;
+                    },
+
+                    // 최초 첫 문서 한개를 임의로 세팅
+                    __checkRootDocument: function(){
+                        // if(this.PROJECT.DOCUMENT.items['overview'] !== undefined) return;
+                        var treeData = this.project('TREE');
+                        if(treeData.items && treeData.items.length > 0) return;
+
+                        var documentUID = this.createDocumentUID();
+                        var param = {
+                            documentUID: documentUID,
+                            /* add option
+                            option: {
+                                position: null,
+                                selectUID: null
+                            },
+                            */
+                            document:{
+                                // Document 구성 정보
+                                "document": {
+                                    // "id": "undefined"
+                                }
+                            }
+                        }
+
+                        this.addDocument(param);
+                    },
+
                     initialize: function(){
                         
                         _super.initialize.apply(this, arguments);
@@ -84,12 +162,30 @@ define( ['U'], function( U ) {
 
                             }
                         );
+                        
+                        var version = VersionService.version();
+                        var projectUID = this.createProjectUID();
 
                         this.project('DOCUMENT', {items:{}});
-                        this.project('TREE', {items:[]});
-                        this.project('PRESENTATION', {items:{}});
+
+                        this.project('TREE', {
+                            "version": version,
+                            "description": "문서간 Tree 구조(depth)를 정의, 문서 uid와 1:1 매칭 (key-value)",
+                            "uid": projectUID,
+                            items:[]
+                        });
+
+                        // 아직 구체적으로 구현되지 않음
+                        this.project('PRESENTATION', {
+                            "version": version,
+                            // "uid": presentationUID,
+                            items:{}
+                        });
 
                         //this.project('SELECT_DOCUMENT', {items:{}});
+
+                        // 저장된 이후로 Projet (TREE) 데이터가 변경되었는지를 체크
+                        this.dataChanged = false;
 
                         // 이벤트 발송
                         var eventName = '#' + this.eventPrefix + '.initialized';
@@ -101,6 +197,82 @@ define( ['U'], function( U ) {
                         // this.__checkRootDocument();
 
                         // end initialize
+                    },
+
+                    createProjectUID: function(){
+                        var projectUID = 'project-' + U.createUID();
+                        return projectUID;
+                    },
+
+                    // Project.current.projectAPI().add(documentUID);
+                    projectAPI: function(){
+
+                        var self = this;
+                        return {
+                            /*
+                            "thumbnail": {
+                                width : 0,
+                                height: 0,
+                                src : 'base64 데이터'
+                            }
+                            */
+                            _add: function(documentUID, param){
+                                var option = param.option || {};
+                                var posOption = option.position;
+                                var selectUID = option.selectUID;
+                                var info = self.getTreePosition(selectUID, posOption);
+                                
+                                var treeItem = self.getDefinitionTree(documentUID);
+                                info.items.splice(info.index, 0, treeItem);
+
+                                self.dataChanged = true;
+                                Tool.current.dataChanged = true;
+                            },
+                            _remove: function(documentUID, param){
+                                var option = param.option;
+                                var info = param.position;
+                                var item = info.items[info.index];
+
+                                if(option == 'only'){
+                                    // 하위 노드들이 있는지 검색 후 있으면 리스트의 depth를 한단계씩 올림
+
+                                    // subItem을 이동시킬 index
+                                    var holder = info.index;
+                                    var len = item.items.length;
+
+                                    for(var i=len-1; i>=0; --i){
+                                        var subItem = item.items[i];
+                                        // out('subItem : ', subItem);
+                                        info.items.splice(holder, 0, subItem);
+                                    }
+
+                                    // index가 변경됨
+                                    var changedIndex = holder + len;
+                                    info.items.splice(changedIndex, 1);
+
+                                }else{
+                                    // option == 'all' : 하위 노드 모두 제거
+                                    info.items.splice(info.index, 1);
+                                }
+
+                                self.dataChanged = true;
+                                Tool.current.dataChanged = true;
+                            },
+                            _thumbnail: function(documentUID, thumbnail){
+
+                                var treeItem = self.getTreePosition(documentUID);
+                                var item = treeItem.items[treeItem.index];
+
+                                var oldValue = item.thumbnail;
+                                var newValue = thumbnail;
+                                if(angular.equals(oldValue, newValue)) return;
+                                
+                                item.thumbnail = newValue;
+                                self.dataChanged = true;
+                                Tool.current.dataChanged = true;
+                            }
+
+                        };
                     },
 
                     //////////////////////////////////////////////////////////////////////////
@@ -181,6 +353,8 @@ define( ['U'], function( U ) {
                                 "selectUID": "",
 
                                 // element 설정 정보를 가진 Map (elementUID:config option 설정 내용)
+                                // 모든 element가 기록된 것이 아니라 수정된 사항만 있는 element만 기록 된다.
+                                
                                 "map": {
                                     /*
                                     // Tool에서 설정된 개별 element 설정들
@@ -273,8 +447,16 @@ define( ['U'], function( U ) {
                                     newValue = value;
                                 }
 
+                                //******************************************
+
                                 // 적용 확인
                                 documentItem.document['thumbnail'] = prop;
+
+                                // project 내용에도 업데이트
+                                self.projectAPI()._thumbnail(documentUID, prop);
+
+                                //******************************************
+
                                 if(angular.equals(oldValue, newValue)) return;
 
                                 // EVENT
@@ -315,6 +497,7 @@ define( ['U'], function( U ) {
 
                         var self = this;
                         return {
+                            // map에 추가
                             _type: function(value){
 
                                 var map = documentItem.element.map || {};
@@ -336,12 +519,14 @@ define( ['U'], function( U ) {
                                 documentItem.element.map = map;
                             },
 
+                            // map에서 제거
                             remove: function(){
                                 var map = documentItem.element.map || {};
                                 map[elementUID] = null;
                                 delete map[elementUID];
                             },
 
+                            // 데이터 수정
                             option: function(name, value){
                                 
                                 var map = documentItem.element.map || {};
@@ -397,79 +582,6 @@ define( ['U'], function( U ) {
 
                         // return { type: type, dom: dom };
                         return type;
-                    },
-
-                    //////////////////////////////////////////////////////////////////////////
-                    //
-                    // Command 관련 API
-                    // 
-                    //////////////////////////////////////////////////////////////////////////
-                    
-                    // uid : element uid
-                    newProject: function(){
-                        this.initialize();
-                        //this.project( 'TREE', null );
-
-                        // Root Element (Overview)
-                        this.__checkRootDocument();
-
-                        Tool.current.dataChanged = false;
-                    },
-
-                    // data : tree-uid.json 파일 내용
-                    openProject: function(treeData, dataMap, presentationData){
-                        this.initialize();
-
-                        this.project( 'TREE', treeData );
-                        this.project( 'DOCUMENT', {
-                            items: dataMap
-                        } );
-                        this.project( 'PRESENTATION', presentationData );
-
-                        // 선택 상태 표시 (Root  Document를 초기 선택 상태로 표시)
-                        out('TODO : 저장된 마지막 선택 문서를 선택상태로 표시하기');
-
-                        //var uid = this.project( 'TREE').items[0].uid;
-                        var documentUID = treeData.items[0].uid;
-                        this.setSelectDocument(documentUID);
-
-                        // OpenComman에서 처리
-                        // Tool.current.dataChanged = false;
-                    },
-                    closeProject: function(){
-                        this.setSelectDocument(null);
-
-                        this.project( 'TREE', null );
-                        this.project( 'PRESENTATION', null );
-                        this.project( 'DOCUMENT', null );
-
-                        Tool.current.dataChanged = false;
-                    },
-
-                    // 최초 첫 문서 한개를 임의로 세팅
-                    __checkRootDocument: function(){
-                        // if(this.PROJECT.DOCUMENT.items['overview'] !== undefined) return;
-                        var treeData = this.project('TREE');
-                        if(treeData.items && treeData.items.length > 0) return;
-
-                        var documentUID = this.createDocumentUID();
-                        var param = {
-                            documentUID: documentUID,
-                            /* add option
-                            option: {
-                                position: null,
-                                selectUID: null
-                            },
-                            */
-                            document:{
-                                // Document 구성 정보
-                                "document": {
-                                    // "id": "undefined"
-                                }
-                            }
-                        }
-
-                        this.addDocument(param);
                     },
 
                     //////////////////////////////////////////////////////////////////////////
@@ -583,13 +695,15 @@ define( ['U'], function( U ) {
 
                     getDefinitionTree : function (uid){
                         var definition = {
-                            // "parentUID": "",
-                            // "parentName": "",
-                            
-                            // "depth": "0",
-                            // "index": "0",
-
                             "uid" : uid,
+                            /*
+                            // 업데이트되면서 생성됨
+                            "thumbnail": {
+                                "width": "200",
+                                "height":"112",
+                                "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABwCAYAAABbwT+GAAAFe0lEQVR4Xu2ZS2hcdRyFO0lIBumYkiC4EAyYRUIeQzKpoiIlFF342EkRpSCi6MK6EUFcaFeCio+NCx9rFXGloqBoCG6kOgkTjY0bGWq6CYYQaH2EPDxXzEYmgTkLy/R8A8P03vzPJL/v/L/cO2npCA8IQOBAAiXYQAACBxNAEHYHBA4hgCBsDwggCHsAAh4BriAeN1IhBBAkpGjG9AggiMeNVAgBBAkpmjE9AgjicSMVQgBBQopmTI8AgnjcSIUQQJCQohnTI4AgHjdSIQQQJKRoxvQIIIjHjVQIAQQJKZoxPQII4nEjFUIAQUKKZkyPAIJ43EiFEECQkKIZ0yOAIB43UiEEECSkaMb0CCCIx41UCAEECSmaMT0CCOJxIxVCAEFCimZMjwCCeNxIhRBAkJCiGdMjgCAeN1IhBBAkpGjG9AggiMeNVAgBBAkpmjE9AgjicSMVQgBBQopmTI8AgnjcSIUQQJCQohnTI4AgHjdSIQQQJKRoxvQIIIjHjVQIAQQJKZoxPQII4nEjFUIAQUKKZkyPAIJ43EiFEECQkKIZ0yOAIB43UiEEECSkaMb0CCCIx41UCAEECSmaMT0CCOJxIxVCAEFCimZMjwCCeNxIhRBAkJCiGdMjgCAeN1IhBBAkpGjG9AggiMeNVAgBBAkpmjE9AgjicSMVQgBBQopmTI8AgnjcSIUQQJCQohnTI4AgHjdSIQQQJKRoxvQIIIjHjVQIAQQJKZoxPQII4nEjFUIAQUKKZkyPAIK0wW18fHy0t7f3yNbW1iW9Di0sLHxTq9Uerdfr7+6/jY6f1vGrw8PD11YqlXt0vtHT03Nse3u7qX9fp+yvfX19t5VKpTGte6mNb8/SK0AAQVpA1yb/VJv33unp6Y8kwf06fk/HD+r4By0/tbOzU+7u7j5aCPLfuNac0vkPx8bGBiRRZXFx8WK1Wp3o6uq6Rc/39T6bMzMzd+o9LuprP12BzvmWbRBAkDZgsTSPAIK06Fy//Y8uLy9fKr6kq8cTevlMv/kvDA0NlQcGBs7s7e19oSvAztLS0o//rrlJ56o6taEry7Zun87rlmqi0WjMKT+hbHHl4dGBBBCk9S3WO9rUj01NTVV1W3SrljxeLNvd3X1Ym/+uQhDdHjX2o1p3o87XJMjPWn99f3///MbGxh2FIIVUzWbzzw7cG/zIIoAgbAMIHEIAQVrA0Qft13R6VFeFpl4vrK+vvz44OPi9rhzrxXJ9CD+hW6c3dLynw8t6ntTaeV11nmW3XV0EEKT1Ldbz2vu3F5t/bW3todXV1T8kTV23WCd1C/WlBDmu448lxZNa95bWndHzBZ0/fXVtD6ZBEPYABLjFan8P6AoxqtTbelZ0pTiuK8WkrhB1nX9Ory/uv+Pk5OQN+mvWqv5v4xGtOa3nmtZ/p9dNPX/Rh/mvtba4FePRgQS4ghxQWiGIRDivP/n2lsvlr3R79aY2+weHday/Zj2gr/+u56bWzuu1e2Rk5NjKyso/n114dB4BBOm8zviJ/0cCCNIC9uwr5+bmnrl5dvblcyfK5d++/fypu//aP1c7+8k19bP3FVcJHgEEECSgZEb0CSCIz45kAAEECSiZEX0CCOKzIxlAAEECSmZEnwCC+OxIBhBAkICSGdEngCA+O5IBBBAkoGRG9AkgiM+OZAABBAkomRF9AgjisyMZQABBAkpmRJ8AgvjsSAYQQJCAkhnRJ4AgPjuSAQQQJKBkRvQJIIjPjmQAAQQJKJkRfQII4rMjGUAAQQJKZkSfAIL47EgGEECQgJIZ0SeAID47kgEEECSgZEb0CSCIz45kAAEECSiZEX0CCOKzIxlAAEECSmZEnwCC+OxIBhBAkICSGdEngCA+O5IBBP4GLJARgNUVzmgAAAAASUVORK5CYII="
+                            },
+                            */
                             "items": []
                         };
 
@@ -654,8 +768,6 @@ define( ['U'], function( U ) {
                     };
                     */
                     addDocument: function(param){
-                        Tool.current.dataChanged = true;
-
                         var documentUID = param.documentUID;
                         var documentObj = param.document || {};
 
@@ -678,6 +790,11 @@ define( ['U'], function( U ) {
                             dataOwner.items = {};
                         }
                         dataOwner.items[documentUID] = documentItem;
+
+                        // Projet
+                        this.projectAPI()._add(documentUID, param);
+
+                        Tool.current.document(documentUID).add();
 
                         //---------------------
                         // 이벤트 발송 : #Project.added-DOCUMENT
@@ -727,7 +844,6 @@ define( ['U'], function( U ) {
                     // Document 내용 수정
                     // Document Option값 수정은 configDocument 에서
                     modifyDocument: function(param){
-                        Tool.current.dataChanged = true;
 
                         out('modify param : ', param);
                         var documentUID = param.documentUID;
@@ -793,6 +909,8 @@ define( ['U'], function( U ) {
                         // (명시적으로 코드에 적어두는 것임. 레퍼런스 참조이므로 데이터는 이미 업데이트됨)
                         dataOwner.items[documentUID] = documentItem;
 
+                        Tool.current.document(documentUID).dataChanged(true);
+
                         //---------------------
                         // 이벤트 발송 : #Project.modified-DOCUMENT
                         var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
@@ -816,7 +934,6 @@ define( ['U'], function( U ) {
                     };
                     */
                     removeDocument: function(param){
-                        Tool.current.dataChanged = true;
 
                         // 삭제 대상이 되는 document UID
                         var uid = param.documentUID;
@@ -960,6 +1077,11 @@ define( ['U'], function( U ) {
                                 if(dataOwner.items === undefined) return;
                                 dataOwner.items[documentUID] = null;
                                 delete dataOwner.items[documentUID];
+
+                                // Projet
+                                this.projectAPI()._remove(documentUID, param);
+
+                                Tool.current.document(documentUID).remove();
 
                                 //---------------------
                                 // 이벤트 발송 : #Project.removed-DOCUMENT
@@ -1106,7 +1228,6 @@ define( ['U'], function( U ) {
                     */
 
                     addElement: function(param){
-                        Tool.current.dataChanged = true;
 
                         // document에 데이터를 추가한다.
                         // out('param : ', param);
@@ -1148,6 +1269,8 @@ define( ['U'], function( U ) {
                             this.elementAPI(documentUID, elementUID).option(name, option[name]);
                         }
                         
+                        Tool.current.document(documentUID).dataChanged(true);
+
                         //---------------------
                         // 이벤트 발송 : #Project.added-ELEMENT
                         var propertyName = 'ELEMENT';
@@ -1176,10 +1299,7 @@ define( ['U'], function( U ) {
 
                     // uid : element uid
                     removeElement: function(param){
-                        Tool.current.dataChanged = true;
 
-                        out('TODO : removeElement 기능 구현 필요 : ', param);
-                        
                         var documentUID = param.documentUID || Project.current.getSelectDocument();
                         var elementUID = param.elementUID || Project.current.getSelectElement(documentUID);
 
@@ -1207,6 +1327,8 @@ define( ['U'], function( U ) {
 
                         // Map에서 제거
                         this.elementAPI(documentUID, elementUID).remove();
+
+                        Tool.current.document(documentUID).dataChanged(true);
 
                         //---------------------
                         // 이벤트 발송 : #Project.removed-ELEMENT
@@ -1267,7 +1389,7 @@ define( ['U'], function( U ) {
                         documentItem.element.selectUID = elementUID;
 
                         // 데이터 변경됨을 기록
-                        Tool.current.dataChanged = true;
+                        Tool.current.document(documentUID).dataChanged(true);
 
                         //---------------------
                         // 이벤트 발송 : #Project.selected-ELEMENT
@@ -1301,7 +1423,6 @@ define( ['U'], function( U ) {
                     };
                     */
                     modifyElement: function(param){
-                        Tool.current.dataChanged = true;
 
                         out('modify param : ', param);
                         var elementUID = param.elementUID;
@@ -1333,6 +1454,8 @@ define( ['U'], function( U ) {
                         for(var prop in option){
                             api.option(prop, option[prop]);
                         }
+
+                        Tool.current.document(documentUID).dataChanged(true);
 
                         //---------------------
                         // 이벤트 발송 : #Project.modified-ELEMENT

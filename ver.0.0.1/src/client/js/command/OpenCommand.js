@@ -328,19 +328,19 @@ define( [], function() {
                     
                     // 데이터 저장
                     Project.current.openProject(treeData, documentMap, presentationData);
-
-                    // 저장 체크 변경
-                    Tool.current.dataChanged = false;
-
                     // out( 'documentMap : ', documentMap );
 
-                    //*****************************************
-                    
                     // 결과 리턴
                     var self = this;
                     $timeout(function(){
                         self._success( documentMap );
+
+                        // 저장 체크 변경
+                        Tool.current.dataChanged = false;
                     });
+                    
+                    //*****************************************
+                    
                 }
 
             } );

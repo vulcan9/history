@@ -180,7 +180,13 @@ define([], function( ) {
 
                     // UI Bootstrap
                     // http://angular-ui.github.io/bootstrap/
-                    windowElement = angular.element( 'div[modal-window]' );
+                    // windowElement = angular.element( 'div[modal-window]' );
+
+                    // 하나 이상의 창이 띄워지는 경우 아래 selector에 의한 중복 선택으로
+                    // 옵션이 모든 창에 적용되어버리는 버그때문에
+                    // bootstrap 소스 수정해서 element값을 얻을 수 있도록 했음
+                    windowElement = $modalInstance.element;
+
                     var $header = windowElement.find( '.modal-header' );
                     var $body = windowElement.find( '.modal-body' );
                     var $footer = windowElement.find( '.modal-footer' );

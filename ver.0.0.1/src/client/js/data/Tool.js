@@ -51,18 +51,8 @@ define( ['U'], function( U ) {
 
                     _super.initialize.apply(this, arguments);
 
-                    //---------------------
-                    // 속성
-                    //---------------------
-                    
                     // 초기화가 완료된 상태인지 체크
                     this.initialized = false;
-
-                    // 저장 성공 여부 기록
-                    // this._saveSuccessed = undefined;
-                    
-                    // 저장된 이후로 데이터가 변경되었는지를 체크
-                    this.dataChanged = false;
 
                     //---------------------
                     // TOOL 속성 : tool 동작에 필요한 데이터 기록 (자동 생성)
@@ -76,7 +66,7 @@ define( ['U'], function( U ) {
                             // version : VersionService,
 
                             // 문서별 undo/redo 데이터
-                            // history: {},
+                            // __HISTORY: {},
                             
                             // 현재 Tool 실행시 중요한 state값 저장
                             __CURRENT: null,
@@ -89,10 +79,26 @@ define( ['U'], function( U ) {
                     );
 
                     // Tool 설정치
-                    this._config_default();
+                    this._config_default_CONFIG();
+                    this._config_default_CURRENT();
 
+                    //---------------------
                     // 데이터 로드 상태 확인
+                    //---------------------
+
                     this._setMenu(callback);
+
+                    out('TODO : Tool 설정값을 저장한 후 로드하여 적용하는 과정이 필요하다.');
+
+                    //---------------------
+                    // 속성
+                    //---------------------
+                    
+                    // 저장 성공 여부 기록
+                    // this._saveSuccessed = undefined;
+                    
+                    // 저장된 이후로 데이터가 변경되었는지를 체크
+                    this.dataChanged = false;
 
                     // end initialize
                 },
@@ -103,9 +109,13 @@ define( ['U'], function( U ) {
                 
                 // 데이터 로드 상태 확인
                 _setMenu: function(callback){
+                    if(this.TOOL.MENU){
+                        onDataChanged();
+                        return;
+                    }
 
+                    //  menuView에서 로드됨
                     var removeHandler = $rootScope.$on('#Tool.changed-MENU', angular.bind(this, onDataChanged)); 
-                    
                     function onDataChanged(e, data){
                         
                         out('# 필요한 모든 데이터 로드가 완료 되었는지 확인');
@@ -123,6 +133,28 @@ define( ['U'], function( U ) {
                         }
                     }
                 },
+                
+                /*
+                // defer를 이용한 병렬 실행 처리 예시
+                function changeColorAsync(color) {
+                    var d = $.Deferred();
+                    setTimeout(function () {
+                        $('body').css('background', color);
+                        d.resolve();
+                    }, 4000);
+                    return d;
+                }
+                $(function () {
+                    $('#color-form').on('submit', function (e) {
+                        var d;
+                        var color = ['red', 'green', 'blue'];
+                         for(var prop in color){
+                             d = d? d.then(changeColorAsync.bind(this, color[prop])) : changeColorAsync(color[prop]);
+                         }
+                        return false;
+                    });
+                });
+                */
 
                 //---------------------
                 // Element 
@@ -140,13 +172,17 @@ define( ['U'], function( U ) {
                 
                 //////////////////////////////////////////////////////////////////////////
                 //
-                // 옵션 설정
+                // 옵션 초기값 설정
                 // 
                 //////////////////////////////////////////////////////////////////////////
 
-                _config_default: function(){
+                _config_default_CONFIG: function(){
                     
                     this.tool('CONFIG', {
+                        
+                        // 실행시 임시로 저장되는 데이터임 (저장여부를 판단하기 위해)
+                        //  저장되면 이 변수는 다시 삭제됨
+                        // dataChanged : false,
 
                         transition : {
                             // second
@@ -182,43 +218,22 @@ define( ['U'], function( U ) {
                             size: 200
                         }
                     });
-
-                    // 현재 실행 state를 기록한다.
-                    this.tool('CURRENT', {
-                        document:{
-                            // 현재 선택 문서 (uid)
-                            selectUID:null,
-
-                            /* 
-                            // 현재 사용안함
-                            // document 설정 정보를 가진 Map (documentUID:config option 설정 내용)
-                            "map": {
-                                // Tool에서 설정된 개별 document 설정들
-                                "key (documentUID)": {
-
-                                    "uid": documentUID,
-                                    
-                                    // element type
-                                    // "type": ELEMENT.DOCUMENT,
-                                    
-                                    "option":{
-                                        display : {
-                                            snap_pixel: 10,
-                                            show_grid: true
-                                        }
-                                    },
-
-                                }
-                            }
-                            */
-                        }
-                    });
-  
                 },
 
+                //////////////////////////////////////////////////////////////////////////
+                //
+                // CONFIG 옵션 설정
+                // 
+                //////////////////////////////////////////////////////////////////////////
+
+                /*
+                예) option 설정
+                configuration({
+                    "option": $scope.option
+                });
+                */
                 // Command에서 Option값 수정
                 configuration: function(param){
-                    this.dataChanged = true;
 
                     out('config param : ', param);
                     var option = param.option;
@@ -250,12 +265,15 @@ define( ['U'], function( U ) {
                         out(' * option 업데이트 - ', prop, ' : ', option[prop]);
 
                         // 해당 카테고리의 값을 업데이트한다.
-                        // 예) display 카테고리 :  Tool.current.config_display.config_display('snap_pixel', newValue);
+                        // 예) display 카테고리 :  Tool.current.config_display('snap_pixel', newValue);
                         for(var name in category){
                             var value = category[name];
                             func.apply(this, [name, value]);
                         }
                     }
+
+                    this.dataChanged = true;
+                    dataOwner.dataChanged = true;
 
                     //---------------------
                     // 이벤트 발송 : #Tool.configed-TOOL.CONFIG
@@ -263,6 +281,98 @@ define( ['U'], function( U ) {
                     out('# 이벤트 발생 : ', eventName);
                     var args = {data:dataOwner, param:param};
                     $rootScope.$broadcast(eventName, args); 
+                },
+
+                //---------------------
+                // Tool CONFIG 값 수정
+                //---------------------
+                
+                // CONFIG - display category  수정
+                // Tool.current.config_display (name);
+                config_display: function(name, value){
+                    if(value === undefined){
+                        //GET
+                        return this.tool('CONFIG').display[name];
+                    }
+
+                    // SET
+                    var oldValue = this.tool('CONFIG').display[name];
+                    this.tool('CONFIG').display[name] = value;
+
+                    this.dataChanged = true;
+                    this.tool('CONFIG').dataChanged = true;
+
+                    if(oldValue == value) return;
+
+                    // EVENT
+                    var eventName = '#Tool.changed-CONFIG.display.' + name;
+                    out('# 이벤트 발생 : ', eventName);
+
+                    var args = {newValue:value, oldValue:oldValue};
+                    $rootScope.$broadcast(eventName, args); 
+                },
+
+                // CONFIG - thumbnail category  수정
+                // var size = Tool.current.config_thumbnail ('size');
+                config_thumbnail: function(name, value){
+                    if(value === undefined){
+                        //GET
+                        return this.tool('CONFIG').thumbnail[name];
+                    }
+
+                    // SET
+                    var oldValue = this.tool('CONFIG').thumbnail[name];
+                    this.tool('CONFIG').thumbnail[name] = value;
+
+                    this.dataChanged = true;
+                    this.tool('CONFIG').dataChanged = true;
+
+                    if(oldValue == value) return;
+
+                    // EVENT
+                    var eventName = '#Tool.changed-CONFIG.thumbnail.' + name;
+                    out('# 이벤트 발생 : ', eventName);
+
+                    var args = {newValue:value, oldValue:oldValue};
+                    $rootScope.$broadcast(eventName, args); 
+                },
+
+                //////////////////////////////////////////////////////////////////////////
+                //
+                // CURRENT 옵션 설정
+                // 
+                //////////////////////////////////////////////////////////////////////////
+
+                _config_default_CURRENT: function(){
+                    
+                    // 현재 실행 state를 기록한다.
+                    this.tool('CURRENT', {
+                        document:{
+                            // 현재 선택 문서 (uid)
+                            "selectUID": "",
+
+                            // document 개별 설정 정보
+                            // document 설정 정보를 가진 Map (documentUID:config option 설정 내용)
+                            // 모든 document가 기록된 것이 아니라 수정된 사항만 있는 document만 기록 된다.
+
+                            "map": {
+                                /*
+                                // Tool에서 설정된 개별 document 설정들
+                                "key (documentUID)": {
+
+                                    "uid": documentUID,
+
+                                    // 데이터가 수정되어 저장 대상인지 여부를 기록
+                                    "dataChanged": false, 
+                                    
+                                    // element type 사용 안함
+                                    // "type": ELEMENT.DOCUMENT,
+                                    // "option":{아직 사용 안함},
+                                */
+                            }
+                        }
+                    });
+  
                 },
 
                 //---------------------
@@ -278,57 +388,67 @@ define( ['U'], function( U ) {
                     this.dataChanged = true;
                 },
 
-                //---------------------
-                // Tool CONFIG 값 수정
-                //---------------------
-                
-                // CONFIG - display category  수정
-                // Tool.current.config_display (name);
-                config_display: function(name, value){
-                    if(value === undefined){
-                        //GET
-                        return this.tool('CONFIG').display[name];
-                    }
+                // documentUID 지정하지 않으면 현재 선택 상태의 document에 적용됨
+                // Tool.current.document(documentUID).value('dataChanged', true);
+                // Tool.current.document().value('dataChanged', true);
+                // Tool.current.document(documentUID).dataChanged(true);
+                document: function(documentUID){
+                    documentUID = documentUID || this._getSelectDocument();
+                    var map = this.tool('CURRENT').document.map || {};
+                    var self = this;
+                    return {
+                        add: function(){
 
-                    // this.dataChanged = true;
+                            var key = map[documentUID] || {"uid": documentUID};
+                            // 적용 확인
+                            map[documentUID] = key;
+                            self.tool('CURRENT').document.map = map;
 
-                    // SET
-                    var oldValue = this.tool('CONFIG').display[name];
-                    this.tool('CONFIG').display[name] = value;
+                            // self.dataChanged = true;
+                            self.document(documentUID).dataChanged(true);
+                        },
 
-                    if(oldValue == value) return;
+                        remove: function(){
+                            map[documentUID] = null;
+                            delete map[documentUID];
 
-                    // EVENT
-                    var eventName = '#Tool.changed-CONFIG.display.' + name;
-                    out('# 이벤트 발생 : ', eventName);
+                            self.dataChanged = true;
+                        },
 
-                    var args = {newValue:value, oldValue:oldValue};
-                    $rootScope.$broadcast(eventName, args); 
+                        dataChanged: function(value){
+                            if(value){
+                                self.dataChanged = true;
+                            }
+                            self.document(documentUID).value('dataChanged', value);
+                        },
+
+                        // GET/SET
+                        value: function(name, value){
+                            var key = map[documentUID] || {"uid": documentUID};
+                            var oldValue = key[name];
+
+                            //GET
+                            if(value === undefined){
+                                return oldValue;
+                            }
+
+                            // SET
+                            key[name] = value;
+                           // 적용 확인
+                            map[documentUID] = key;
+                            self.tool('CURRENT').document.map = map;
+
+                            if(oldValue == value) return;
+
+                            // EVENT
+                            var eventName = '#Tool.changed-document.' + name;
+                            out('# 이벤트 발생 : ', eventName);
+
+                            var args = {newValue:value, oldValue:oldValue};
+                            $rootScope.$broadcast(eventName, args); 
+                        }
+                    };
                 },
-
-                // CONFIG - thumbnail category  수정
-                // Tool.current.config_thumbnail ('width');
-                config_thumbnail: function(name, value){
-                    if(value === undefined){
-                        //GET
-                        return this.tool('CONFIG').thumbnail[name];
-                    }
-
-                    // this.dataChanged = true;
-
-                    // SET
-                    var oldValue = this.tool('CONFIG').thumbnail[name];
-                    this.tool('CONFIG').thumbnail[name] = value;
-
-                    if(oldValue == value) return;
-
-                    // EVENT
-                    var eventName = '#Tool.changed-CONFIG.thumbnail.' + name;
-                    out('# 이벤트 발생 : ', eventName);
-
-                    var args = {newValue:value, oldValue:oldValue};
-                    $rootScope.$broadcast(eventName, args); 
-                }
 
                 ////////////////////////////////////////
                 // _factory end

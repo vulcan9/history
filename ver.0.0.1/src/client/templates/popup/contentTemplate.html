@@ -1,0 +1,17 @@
+<div alt="간단한 Template은 여기에 정의해 놓는다.">
+
+<script type="text/ng-template" id="save_error_popup">
+    <div>{{message}}</div>
+    <ul style="list-style-type: disc; margin: 30px;">
+        <li ng-repeat="item in errorList" style="list-style: initial; padding: 5px; margin-left: 20px;">
+        <div>{{item.uid}}</div>
+        <div>[ {{item.error}} Error ] : {{item.message}}</div>
+        </li>
+    </ul>
+</script>
+
+</div>
+
+
+
+
