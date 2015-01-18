@@ -498,7 +498,7 @@ define( [ 'U' ], function( U ) {
                     var $dock = $element.parent('.hi-dock');
                     if(w === undefined){
                         w = $dock.outerWidth();
-                        w = (w>300) ? 250:400;
+                        w = (w>300) ? 10:400;
                     }
                     
                     $dock.css({
