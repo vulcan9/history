@@ -73,8 +73,9 @@ define( ['U'], function( U ) {
                         // Root Element (Overview)
                         this.__checkRootDocument();
 
-                        // Tool.current.dataChanged = false;
                         // this.dataChanged = false;
+                        // Tool.current.dataChanged = false;
+                        // Tool.current.tool('CONFIG').dataChanged = false;
                     },
 
                     // data : tree-uid.json 파일 내용
@@ -95,9 +96,10 @@ define( ['U'], function( U ) {
                         var documentUID = treeData.items[0].uid;
                         this.setSelectDocument(documentUID);
 
+                        this.dataChanged = false;
                         // OpenComman에서 처리
                         // Tool.current.dataChanged = false;
-                        this.dataChanged = false;
+                        Tool.current.tool('CONFIG').dataChanged = false;
                     },
                     closeProject: function(){
                         this.setSelectDocument(null);
@@ -106,8 +108,9 @@ define( ['U'], function( U ) {
                         this.project( 'PRESENTATION', null );
                         this.project( 'DOCUMENT', null );
 
-                        Tool.current.dataChanged = false;
                         this.dataChanged = false;
+                        Tool.current.dataChanged = false;
+                        Tool.current.tool('CONFIG').dataChanged = false;
                     },
 
                     // 최초 첫 문서 한개를 임의로 세팅

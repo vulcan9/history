@@ -55,7 +55,7 @@ define( [], function() {
 		// Route 체크 (로그인 세션) - AuthService로 옮김
 		////////////////////////////////////////
 		
-		run: function() {
+		run: function(AuthService) {
 
 			// change the path
 			//this.application.$location.path('/login');
@@ -71,10 +71,16 @@ define( [], function() {
 					var path = currRoute.$$route.originalPath;
 					if(path === '/tool' || path === '/admin' || path === '/profile')
 					{
-						if(self.application.$rootScope.auth_isAuthenticated() == false){
+						if(AuthService.isAuthenticated() == false){
 							// 세션 체크(로그인 페이지로 이동
 							event.preventDefault();
 							self.application.$location.path('/login');
+						}else{
+							if(!AuthService.session){
+								AuthService.getProfile();
+								// event.preventDefault();
+								// self.application.$location.path('/login');
+							}
 						}
 					}
 					else

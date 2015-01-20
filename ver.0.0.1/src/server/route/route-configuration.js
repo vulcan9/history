@@ -230,10 +230,11 @@ function set (router, app){
 
 
 
-    dbRoute.set (router);
+    
     
     authRoute.set (router);
 
+    dbRoute.set (router);
 
 
 

@@ -195,13 +195,13 @@ define(
         // Application 모듈 초기화
         /////////////////////////////////////
 
-        application.run( function( $rootScope, $location, $rootElement ) {
+        application.run( function( $rootScope, $location, $rootElement, AuthService ) {
 
             application.$rootScope = $rootScope;
             application.$location = $location;
 
             // Route 실행
-            _router.run();
+            _router.run(AuthService);
             
             // 보이기
             showApplication();

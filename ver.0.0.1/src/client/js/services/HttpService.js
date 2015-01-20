@@ -41,7 +41,7 @@ define( [], function( ) {
                 statuscode: {
                     100 : 'Continue',
                     101 : 'Switching protocols',
-                    200 : 'OK, 에러없이 전송 성공',
+                    200 : 'OK, 전송 성공',
                     201 : 'Created, POST 명령 실행 및 성공',
                     202 : 'Accepted, 서버가 클라이언트 명령을 받음',
                     203 : 'Non-authoritative information, 서버가 클라이언트 요구 중 일부만 전송',

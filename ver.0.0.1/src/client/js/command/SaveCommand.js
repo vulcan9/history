@@ -18,7 +18,7 @@ define( [
 
 
         // 선언
-        function _service( Command, Tool, NoticeService, $timeout, HttpService, $q, $http, ProcessService, Project ) {
+        function _service( Command, Tool, NoticeService, HttpService, $q, $http, ProcessService, Project, AuthService ) {
 
             out( 'Command 등록 : SaveCommand' );
 
@@ -34,14 +34,6 @@ define( [
                 _superClass.apply( this, arguments );
                 out( '# SaveCommand : ', this );
 
-            }
-
-            var SAVE_URL = {
-                // MENU : '/data/save:menu',
-                // PRESENTATION : '/data/save:presentation',
-                // TOOL : '/data/save:document',
-                DOCUMENT : '/data/save/document',
-                PROJECT : '/data/save/project'
             }
 
             /////////////////////////////////////
@@ -83,6 +75,11 @@ define( [
                     // Tool.current.TOOL.CONFIG
                     // Tool.current.document().value('dataChanged') == true 인 경우 저장한 후
                     // Tool.current.document().value('dataChanged', false);로 값 변경
+
+                    if(!AuthService.session || !AuthService.session.id){
+                        throw new Error('로그인 session 정보가 없습니다.');
+                        return;
+                    }
 
                     if(Tool.current.dataChanged == false){
                         out('* 데이터 변경 검사 : 저장할 데이터 없음');
@@ -150,8 +147,10 @@ define( [
                     }
 
                     function callServer(defer, config, callSuccess, callError){
-                        var uid = config.uid;
+                        out('\n\n--------------------------------');
                         out('* 서버 요청 : ', config.request);
+
+                        var uid = config.uid;
 
                         var promise = $http( config.request )
                             .success( success )
@@ -162,7 +161,7 @@ define( [
                             out( '* success : [', status, '] ', result );
                             out ('# 저장 완료 : ', uid);
 
-                            if(callSuccess) callSuccess();
+                            if(callSuccess) callSuccess(result);
 
                             defer.resolve({
                                 success: status,
@@ -177,12 +176,12 @@ define( [
                             out( '* error : [', status, '] ', result );
                             out ('# 저장 실패 : ', uid);
                             
-                            if(callError) callError();
+                            if(callError) callError(result);
 
                             // defer.reject( data );
                             defer.resolve({
                                 error: status,
-                                message: HttpService.statuscode[status],
+                                message: result.message || HttpService.statuscode[status],
                                 result: result,
                                 uid: uid
                             });
@@ -198,56 +197,68 @@ define( [
                     
                     function save_tool(){
                         
-
                         // Tool.current.TOOL.CONFIG
                         var config = Tool.current.TOOL.CONFIG;
-
-                        alert('save_tool');
                         if(!config.dataChanged){
                             // 저장 안함
                             return;
                         }
+                        // 저장 후 실패시 config.dataChanged=true로 다시 설정됨
+                        delete config.dataChanged;
 
-                        // 저장 후 config.dataChanged 삭제
-
-
-
-
-
-
-
+                        // 요청
+                        var defer = $q.defer();
+                        process.add(defer, callServer_tool)
+                        .then(function(response){
+                            if ( response.error ) {
+                                // 저장 실패한 경우
+                                errorList.push(response);
+                            } else {
+                                // 저장 성공
+                            }
+                            out('* process added : ', response);
+                            out('* --------------------------------서버 요청 끝\n\n');
+                        });
                     }
 
+                    function callServer_tool(defer){
+                        var tool = Tool.current.TOOL.CONFIG;
 
+                        var uid = 'Tool Configuration Data';
+                        var json = angular.toJson(tool);
+                        var userID = AuthService.session.id;
 
+                        var config = {
+                            uid : uid,
+                            request: {
+                                method: 'POST',
+                                url: '/user'+ '/' + userID + '/tool',
+                                data: {
+                                    // user: userID,
+                                    // uid: tool.uid,
+                                    tool: json
+                                }
+                            }
+                        }
 
+                        callServer(defer, config, success, error);
 
+                        out('- TOOL user : ', userID);
+                        // out('- JSON : ', json);
+                        
+                        function success() {
+                            // var config = Tool.current.TOOL.CONFIG;
+                            // delete config.dataChanged;
+                            out('# Tool 저장 성공 : ', uid);
+                        }
+                        function error() {
+                            var config = Tool.current.TOOL.CONFIG;
+                            config.dataChanged = true;
+                            out('# Tool 저장 실패 : ', uid);
+                        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                        return defer;
+                    }
 
                     //------------------------------------------------------------
                     // Project Data 저장
@@ -258,49 +269,54 @@ define( [
                             // 저장 안함
                             return;
                         }
-                        var project = Project.current.PROJECT.TREE;
-                        var uid = project.uid;
-                        var json = angular.toJson(project);
-                        out('- PROJECT : ', uid);
-                        // out('- JSON : ', json);
-                                                        // 요청
+                        
+                        // 요청
                         var defer = $q.defer();
-                        var data = {
-                            uid : uid,
-                            json: json
-                        }
-                        process.add(defer, callServer_project, data)
+                        process.add(defer, callServer_project)
                         .then(function(response){
-                            out('* process added : ', response);
                             if ( response.error ) {
                                 // 저장 실패한 경우
                                 errorList.push(response);
                             } else {
                                 // 저장 성공
                             }
+                            out('* process added : ', response);
+                            out('* --------------------------------서버 요청 끝\n\n');
                         });
                     }
 
-                    function callServer_project(defer, data){
-                        var uid = data.uid;
-                        var json = data.json;
-                        
+                    function callServer_project(defer){
+                        var project = Project.current.PROJECT.TREE;
+                        var uid = project.uid;
+                        var json = angular.toJson(project);
+                        var userID = AuthService.session.id;
+
                         var config = {
                             uid : uid,
                             request: {
                                 method: 'POST',
-                                url: SAVE_URL.PROJECT,
-                                data: json
+                                url: '/user'+ '/' + userID + '/project',
+                                data: {
+                                    user: userID,
+                                    // uid: 'project-13f36f49-55b6-4fb7-92ec-2ed573ac94f5',//uid,
+                                    uid: uid,
+                                    project: json
+                                }
                             }
                         }
 
                         callServer(defer, config, success, error);
 
-                        function success() {
+                        out('- PROJECT : ', uid);
+                        // out('- JSON : ', json);
+                        
+                        function success(result) {
                             Project.current.dataChanged = false;
+                            out('# Project 저장 성공 : ', result);
                         }
-                        function error() {
+                        function error(result) {
                             Project.current.dataChanged = true;
+                            out('# Project 저장 실패 : ', result);
                         }
 
                         return defer;
@@ -318,58 +334,61 @@ define( [
                             // out(' - ', uid, ' : ', item.dataChanged);
 
                             if(item.dataChanged){
-                                var documentItem = Project.current.getDocument(uid);
-
-                                // documentItem.document.content 를 DOM 구조에서 String로 변환시킨다.
-                                var content = documentItem.document.content;
-                                var htmlString = content.outerHTML;
-
-                                documentItem.document.content = htmlString;
-                                var json = angular.toJson(documentItem);
-                                documentItem.document.content = content;
-                                out('- DOCUMENT : ', uid);
-                                // out('- JSON : ', json);
-
                                 // 요청
                                 var defer = $q.defer();
-                                var data = {
-                                    uid : uid,
-                                    json: json
-                                }
-                                process.add(defer, callServer_document, data)
+                                process.add(defer, callServer_document, uid)
                                 .then(function(response){
-                                    out('* process added : ', response);
                                     if ( response.error ) {
                                         // 저장 실패한 경우
                                         errorList.push(response);
                                     } else {
                                         // 저장 성공
                                     }
+                                    out('* process added : ', response);
+                                    out('* --------------------------------서버 요청 끝\n\n');
                                 });
                             }
                         }
                     }
 
-                    function callServer_document(defer, data){
-                        var uid = data.uid;
-                        var json = data.json;
+                    function callServer_document(defer, uid){
 
+                        var documentItem = Project.current.getDocument(uid);
+
+                        // documentItem.document.content 를 DOM 구조에서 String로 변환시킨다.
+                        var content = documentItem.document.content;
+                        var htmlString = content.outerHTML;
+
+                        documentItem.document.content = htmlString;
+                        var json = angular.toJson(documentItem);
+                        documentItem.document.content = content;
+                        
+                        var userID = AuthService.session.id;
                         var config = {
                             uid : uid,
                             request: {
                                 method: 'POST',
-                                url: SAVE_URL.DOCUMENT,
-                                data: json
+                                url: '/user'+ '/' + userID + '/document',
+                                data: {
+                                    // user: userID,
+                                    uid: uid,
+                                    document: json
+                                }
                             }
                         }
 
                         callServer(defer, config, success, error);
 
-                        function success() {
+                        out('- DOCUMENT : ', uid);
+                        // out('- JSON : ', json);
+
+                        function success(result) {
                             Tool.current.document(uid).dataChanged(false);
+                            out('# Document 저장 성공 : ', result);
                         }
-                        function error() {
+                        function error(result) {
                             Tool.current.document(uid).dataChanged(true);
+                            out('# Document 저장 실패 : ', result);
                         }
 
                         return defer;

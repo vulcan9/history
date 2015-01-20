@@ -33,7 +33,7 @@ define( [
             /////////////////////////////////////
             // 서비스 객체 싱클톤
             /////////////////////////////////////
-
+            
             var AuthService = {
                 
                 isAuthenticated: isAuthenticated,
@@ -46,13 +46,28 @@ define( [
                 signout: signout,
 
                 authenticate: authenticate,
-                link: link,
-                unlink: unlink
+                // link: link,
+                // unlink: unlink,
+                session: null
             };
+            
+            if(isAuthenticated()){
+                // AuthService.session 업데이트 
+                // (url을 통해 바로 접근하는 경우 아직 AuthService.session값은 채워져 있지 않음)
+                getProfile();
+            }
 
             ////////////////////////////////////////
             // 등록, 로그인
             ////////////////////////////////////////
+
+            function getUserSession(user){
+                return {
+                    id: user._id,
+                    email: user.email,
+                    displayName: user.displayName
+                };
+            }
 
             function isAuthenticated(){
                 return $auth.isAuthenticated();
@@ -65,11 +80,25 @@ define( [
             };
             */
             function login(user){
-                console.log('user : ', user);
+                console.log('* login user : ', user);
+                console.log('* login user : 비밀번호 노출됨');
                 
                 $auth.login(user)
-                .then(function() {
+                .then(function(result) {
+                    /*
+                    result = { 
+                        user: {
+                            _id: "54bb28bb0ce410d828b20e76"
+                            displayName: "e"
+                            email: "pdi1066@naver.com"
+                            password: "$2a$10$kEU2kPhSvx3/MZ6rkfD4h.93iWSee.ynDja5CujalbwT6rLo/g8Wm"
+                        }, 
+                        token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NGJiMjhiYjBjZTQxMGQ4MjhiMjBlNzYiLCJpYXQiOjE0MjE1NTI2NDcsImV4cCI6MTQyMjc2MjI0N30.-dultr389OE4jLYdqxeDOKQNEp0HLWiKgc5F16XFkQ0"
+                    }
+                    */
                     talk('You have successfully logged in');
+                    out('* login result : ', result);
+                    AuthService.session = getUserSession(result.data.user);
                 })
                 .catch(function(response) {
                     notice(response.data.message);
@@ -84,6 +113,8 @@ define( [
                 $auth.logout()
                 .then(function() {
                     talk('You have been logged out');
+                    out('* logout result : --');
+                    AuthService.session = null;
                 });
             }
             /*
@@ -94,9 +125,14 @@ define( [
             }
             */
             function signup(user){
-                console.log('user : ', user);
+                console.log('* signup user : ', user);
+                console.log('* signup user : 비밀번호 노출됨');
 
                 $auth.signup(user)
+                .then(function(result) {
+                    out('* signup result : ', result);
+                    AuthService.session = getUserSession(result.data.user);
+                })
                 .catch (function(response) {
                     notice(response.data.message);
                 });
@@ -105,8 +141,10 @@ define( [
             function signout(){
                 
                 $auth.signout()
-                .then(function() {
+                .then(function(result) {
                     talk('You have been signed out');
+                    out('* signout result : ', result);
+                    AuthService.session = null;
                 });
             }
 
@@ -118,14 +156,19 @@ define( [
             function authenticate(provider, userData){
 
                 $auth.authenticate(provider)
-                .then(function() {
+                .then(function(result) {
                     talk('You have successfully logged in');
+                    out('* authenticate result : ', result);
+                    console.log('* authenticate result config에 비밀번호 노출됨');
+
+                    AuthService.session = getUserSession(result.data.user);
                 })
                 .catch(function(response) {
                     notice(response.data.message);
                 });
             }
 
+            /*
             // $auth.link(provider, [userData]);
             function link(provider, userData, callback){
 
@@ -157,6 +200,7 @@ define( [
                 });
 
             }
+            */
 
             ////////////////////////////////////////
             // Profile
@@ -164,8 +208,10 @@ define( [
 
             function getProfile(callback) {
                 $http.get('/api/me')
-                .success(function(data) {
-                    callback(data);
+                .success(function(user) {
+                    AuthService.session = getUserSession(user);
+                    if(callback) callback(user);
+                    out('* getProfile result : ', user);
                 })
                 .error(function(error) {
                     notice(response.data.message);
@@ -180,9 +226,11 @@ define( [
             */
             function updateProfile(profileData) {
                 $http.put('/api/me', profileData)
-                .then(function() {
+                .then(function(user) {
+                    AuthService.session = getUserSession(user);
                     // talk('Profile has been updated');
                     notice('Profile has been updated');
+                    out('* updateProfile result : ', user);
                 });
             };
 

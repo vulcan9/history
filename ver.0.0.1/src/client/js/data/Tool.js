@@ -180,6 +180,9 @@ define( ['U'], function( U ) {
                     
                     this.tool('CONFIG', {
                         
+                        // Tool UID
+                        // uid: 'tool-' + U.createUID(),
+
                         // 실행시 임시로 저장되는 데이터임 (저장여부를 판단하기 위해)
                         //  저장되면 이 변수는 다시 삭제됨
                         // dataChanged : false,
@@ -218,6 +221,7 @@ define( ['U'], function( U ) {
                             size: 200
                         }
                     });
+                    
                 },
 
                 //////////////////////////////////////////////////////////////////////////
@@ -272,8 +276,8 @@ define( ['U'], function( U ) {
                         }
                     }
 
-                    this.dataChanged = true;
-                    dataOwner.dataChanged = true;
+                    // this.dataChanged = true;
+                    // this.tool('CONFIG').dataChanged = true;
 
                     //---------------------
                     // 이벤트 발송 : #Tool.configed-TOOL.CONFIG
@@ -299,10 +303,10 @@ define( ['U'], function( U ) {
                     var oldValue = this.tool('CONFIG').display[name];
                     this.tool('CONFIG').display[name] = value;
 
+                    if(oldValue == value) return;
+
                     this.dataChanged = true;
                     this.tool('CONFIG').dataChanged = true;
-
-                    if(oldValue == value) return;
 
                     // EVENT
                     var eventName = '#Tool.changed-CONFIG.display.' + name;
@@ -324,10 +328,10 @@ define( ['U'], function( U ) {
                     var oldValue = this.tool('CONFIG').thumbnail[name];
                     this.tool('CONFIG').thumbnail[name] = value;
 
+                    if(oldValue == value) return;
+
                     this.dataChanged = true;
                     this.tool('CONFIG').dataChanged = true;
-
-                    if(oldValue == value) return;
 
                     // EVENT
                     var eventName = '#Tool.changed-CONFIG.thumbnail.' + name;

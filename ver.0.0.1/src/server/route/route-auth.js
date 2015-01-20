@@ -6,12 +6,12 @@ http://ngmodules.org/modules/satellizer
 https://www.npmjs.com/package/satellizer
 */
 
-var mongoose = require('mongoose');
+// var mongoose = require('mongoose');
 var qs = require('querystring');
 
 // bcryptjs : Optimized bcrypt in plain JavaScript
 // https://www.npmjs.com/package/bcryptjs
-var bcrypt = require('bcryptjs');
+// var bcrypt = require('bcryptjs');
 
 // jwt-simple : JWT(JSON Web Token) encode and decode module
 // https://www.npmjs.com/package/jwt-simple
@@ -26,57 +26,17 @@ var moment = require('moment');
 var request = require('request');
 
 // async : Higher-order functions and common patterns for asynchronous code
-var async = require('async');
+// var async = require('async');
 
 var config = require('../config').auth;
 
 function set (router){
-    /*
-    router.use (function(req, res, next) {
-        console.log('auth route : ---------------->');
-        next();
-    });
-    */
 
     //-----------------------------------
     // DB Schema
     //-----------------------------------
 
-    var userSchema = new mongoose.Schema({
-        email: { type: String, unique: true, lowercase: true },
-        password: { type: String, select: false },
-        displayName: String,
-        facebook: String,
-        foursquare: String,
-        google: String,
-        github: String,
-        linkedin: String,
-        live: String,
-        yahoo: String,
-        twitter: String
-    });
-
-    // hook middleware 정의
-    userSchema.pre('save', function(next) {
-        var user = this;
-        if (!user.isModified('password')) {
-            return next();
-        }
-        bcrypt.genSalt(10, function(err, salt) {
-            bcrypt.hash(user.password, salt, function(err, hash) {
-                user.password = hash;
-                next();
-            });
-        });
-    });
-
-    userSchema.methods.comparePassword = function(password, done) {
-        bcrypt.compare(password, this.password, function(err, isMatch) {
-            done(err, isMatch);
-        });
-    };
-
-    var User = mongoose.model('User', userSchema);
+    var User = require('../db/model').User;
 
     //////////////////////////////////////
     // Util
@@ -123,7 +83,7 @@ function set (router){
     }
 
     function send(response, code, message){
-        return response.status(401).send({
+        return response.status(code).send({
             message: message
         });
     }
@@ -142,7 +102,6 @@ function set (router){
 
         User.findOne({ email: req.body.email }, function(err, user) {
 
-            console.log('user : ', user);
             errorHandler(err);
 
             if (user) {
@@ -150,13 +109,18 @@ function set (router){
             }
 
             var user = new User({
-                displayName: req.body.displayName,
                 email: req.body.email,
-                password: req.body.password
+                password: req.body.password,
+                displayName: req.body.displayName
             });
 
+            console.log('* signup user : ', user);
+
             user.save(function() {
-                res.send({ token: createToken(user) });
+                res.send({ 
+                    user: user, 
+                    token: createToken(user) 
+                });
             });
         });
 
@@ -166,7 +130,8 @@ function set (router){
 
         User.findById(req.user, function(err, user) {
 
-            // console.log('user : ', user);
+            console.log('* signout user : ', user);
+
             errorHandler(err);
 
             if (user == null) {
@@ -190,14 +155,21 @@ function set (router){
         User.findOne({ email: req.body.email }, '+password', function(err, user) {
             
             if (!user) {
+                console.log('사용자 데이터 없음');
                 return send(res, 401, 'Wrong email and/or password');
             }
             
+            console.log('* login user : ', user);
+
             user.comparePassword(req.body.password, function(err, isMatch) {
                 if (!isMatch) {
+                    console.log('비밀번호 일치하지 않음 : ', req.body.password);
                     return send(res, 401, 'Wrong email and/or password');
                 }
-                res.send({ token: createToken(user) });
+                res.send({ 
+                    user: user, 
+                    token: createToken(user) 
+                });
             });
         });
 
@@ -212,9 +184,11 @@ function set (router){
     //--------------------------------------------------------------------------
     // GET /api/me
     //--------------------------------------------------------------------------
-     
+    
+    // get Profile
     router.get('/api/me', ensureAuthenticated, function(req, res) {
         User.findById(req.user, function(err, user) {
+            console.log('* get Profile user : ', user);
             res.send(user);
         });
     });
@@ -224,6 +198,7 @@ function set (router){
     // PUT /api/me
     //--------------------------------------------------------------------------
      
+     // update Profile
     router.put('/api/me', ensureAuthenticated, function(req, res) {
         User.findById(req.user, function(err, user) {
             if (!user) {
@@ -233,7 +208,8 @@ function set (router){
             user.displayName = req.body.displayName || user.displayName;
             user.email = req.body.email || user.email;
             user.save(function(err) {
-                res.status(200).end();
+                console.log('* update Profile user : ', user);
+                res.status(200).end(user);
             });
         });
     });
@@ -252,7 +228,7 @@ function set (router){
         var accessTokenUrl = 'https://accounts.google.com/o/oauth2/token';
         var peopleApiUrl = 'https://www.googleapis.com/plus/v1/people/me/openIdConnect';
 
-        console.log('req.body : ', req.body);
+        console.log('* google req.body : ', req.body);
 
         var params = {
             code: req.body.code,
@@ -287,8 +263,11 @@ function set (router){
                             user.google = profile.sub;
                             user.displayName = user.displayName || profile.name;
                             user.save(function() {
-                                var token = createToken(user);
-                                res.send({ token: token });
+                                console.log('* google save user : ', user);
+                                res.send({
+                                    user: user, 
+                                    token: createToken(user) 
+                                });
                             });
                         });
                     });
@@ -298,14 +277,21 @@ function set (router){
                     // Step 3b. Create a new user account or return an existing one.
                     User.findOne({ google: profile.sub }, function(err, existingUser) {
                         if (existingUser) {
-                            return res.send({ token: createToken(existingUser) });
+                            console.log('* google existingUser : ', existingUser);
+                            return res.send({
+                                user: existingUser, 
+                                token: createToken(existingUser) 
+                            });
                         }
                         var user = new User();
                         user.google = profile.sub;
                         user.displayName = profile.name;
                         user.save(function(err) {
-                            var token = createToken(user);
-                            res.send({ token: token });
+                            console.log('* google save user : ', user);
+                            res.send({
+                                user: user, 
+                                token: createToken(user) 
+                            });
                         });
                     });
 
@@ -359,8 +345,11 @@ function set (router){
                             user.facebook = profile.id;
                             user.displayName = user.displayName || profile.name;
                             user.save(function() {
-                                var token = createToken(user);
-                                res.send({ token: token });
+                                console.log('* facebook save user : ', user);
+                                res.send({
+                                    user: user, 
+                                    token: createToken(user) 
+                                });
                             });
                         });
                     });
@@ -370,15 +359,21 @@ function set (router){
                     // Step 3b. Create a new user account or return an existing one.
                     User.findOne({ facebook: profile.id }, function(err, existingUser) {
                         if (existingUser) {
-                            var token = createToken(existingUser);
-                            return res.send({ token: token });
+                            console.log('* facebook existingUser : ', existingUser);
+                            return res.send({
+                                user: existingUser, 
+                                token: createToken(existingUser) 
+                            });
                         }
                         var user = new User();
                         user.facebook = profile.id;
                         user.displayName = profile.name;
                         user.save(function() {
-                            var token = createToken(user);
-                            res.send({ token: token });
+                            console.log('* facebook save user : ', user);
+                            res.send({
+                                user: user, 
+                                token: createToken(user) 
+                            });
                         });
                     });
 
@@ -446,7 +441,11 @@ function set (router){
                             user.twitter = profile.user_id;
                             user.displayName = user.displayName || profile.screen_name;
                             user.save(function(err) {
-                                res.send({ token: createToken(user) });
+                                console.log('* twitter save user : ', user);
+                                res.send({
+                                    user: user, 
+                                    token: createToken(user) 
+                                });
                             });
                         });
                     });
@@ -456,14 +455,22 @@ function set (router){
                     // Step 4b. Create a new user account or return an existing one.
                     User.findOne({ twitter: profile.user_id }, function(err, existingUser) {
                         if (existingUser) {
-                            return res.send({ token: createToken(existingUser) });
+                            console.log('* twitter existingUser : ', existingUser);
+                            return res.send({
+                                user: existingUser, 
+                                token: createToken(existingUser) 
+                            });
                         }
 
                         var user = new User();
                         user.twitter = profile.user_id;
                         user.displayName = profile.screen_name;
                         user.save(function() {
-                            res.send({ token: createToken(user) });
+                            console.log('* twitter save user : ', user);
+                            res.send({
+                                user: user, 
+                                token: createToken(user) 
+                            });
                         });
                     });
 
@@ -508,14 +515,19 @@ function set (router){
 
                     User.findOne({ live: profile.id }, function(err, user) {
                         if (user) {
-                            return res.send({ token: createToken(user) });
+                            return res.send({
+                                user: user, 
+                                token: createToken(user) 
+                            });
                         }
                         var newUser = new User();
                         newUser.live = profile.id;
                         newUser.displayName = profile.name;
                         newUser.save(function() {
-                            var token = createToken(newUser);
-                            res.send({ token: token });
+                            res.send({
+                                user: newUser, 
+                                token: createToken(newUser) 
+                            });
                         });
                     });
 
