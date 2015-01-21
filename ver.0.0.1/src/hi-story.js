@@ -34,11 +34,11 @@ var app = express();
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'jade');
 
-var SERVER = 'local';
-console.log(' * SERVER URL : ', SERVER);
-
 var ENV_MODE = app.get('env');
 console.log(' * ENV_MODE : ', ENV_MODE);
+
+var SERVER = ENV_MODE || 'development';
+console.log(' * SERVER URL : ', SERVER);
 
 // URL Root 설정 (Home url에 쓰이는 가상 경로)
 var URL_HOME_PREFIX = '/history';
@@ -196,7 +196,7 @@ app.use(serveStatic(PATH_ROOT + '/client', {
 // app.use(serveStatic(PATH_ROOT + '/client/templates'));
 
 //-----------------------------------
-//라우터 설정 : http://expressjs.com/4x/api.html#router
+// 라우터 설정 : http://expressjs.com/4x/api.html#router
 //-----------------------------------
 
 var router = express.Router({
@@ -208,14 +208,21 @@ var routeConfig = require('./server/route/route-configuration');
 routeConfig.set(router, app);
 
 //-----------------------------------
+// 서버 응답 시간 표시 (헤더) : https://www.npmjs.com/package/response-time
+//-----------------------------------
+
+var responseTime = require('response-time');
+app.use(responseTime());
+
+//-----------------------------------
 // errorHandler : https://www.npmjs.com/package/errorhandler
 //-----------------------------------
 
+// 라우터 설정 후 설정할 것
 // error handling middleware should be loaded after the loading the routes
 // development only
 
 if (ENV_MODE === 'development') {
-
     var errorhandler = require('errorhandler');
     // app.use(errorHandler());
 
@@ -229,7 +236,6 @@ if (ENV_MODE === 'development') {
             message: str
         });
     }
-
 }
 
 /*

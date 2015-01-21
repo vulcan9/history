@@ -93,6 +93,7 @@ define( [], function( ) {
         // 리턴
         _service._regist = function(application){
             // 등록
+            out('ProgressService 등록');
             application.service( 'ProgressService', _service );
         };
         return _service;

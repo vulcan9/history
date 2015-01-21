@@ -15,7 +15,7 @@ define( [], function() {
         // http://programmingsummaries.tistory.com/124
         
         // 선언
-        function _controller( $scope, $element, $attrs, ProgressService, CommandService ) {
+        function _controller( $scope, $element, $attrs, ProgressService, CommandService, $route, $routeParams, $location ) {
 
             //-----------------------
             // CSS 설정
@@ -36,7 +36,7 @@ define( [], function() {
             //-----------------------
 
             // tool 동작에 필요한 데이터 기록
-            var callback = angular.bind(this, initComplate);
+            var callback = angular.bind(this, initComplate, $route, $routeParams);
             if (Tool.current == null) {
                 Tool.current = new Tool(callback);
 
@@ -45,6 +45,16 @@ define( [], function() {
             }else{
                 Tool.current.initialize(callback);
             }
+            
+            $scope.$on('$destroy', function(event){
+                /*
+                var message = _checkExit();
+                if(message){
+                    // 닫기
+                }
+                */
+                _checkExit();
+            });
 
             //-----------------------
             // 윈도우 종료 이벤트
@@ -101,16 +111,34 @@ define( [], function() {
             // 닫기 상태로 초기화 완료
             ////////////////////////////////////////
             
-            function initComplate(){
+            function initComplate(route, routeParams){
                 
-                var param = {
-                    // scope : $scope, 
-                    // element : $element, 
-                    // attrs : $attrs
+                var projectUID = routeParams['projectUID'];
+
+                // 유효한 UID인 경우 통과
+                var available = true;
+
+                // DB 조회하여 해당 uid의 Project가 있는지 검사
+
+                if(projectUID.indexOf('project-') == 0){
+                    // 문서 열기
+                    var param = {
+                        uid: projectUID
+                    }
+                    CommandService.exe(CommandService.OPEN, param, function callback(isSuccess, result) {
+                        out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
+                        ProgressService.complete();
+                    });
+                    return;
+                }
+
+                if(projectUID.indexOf('newproject:project-') != 0){
+                    throw new Error('잘못된 접근입니다.');
+                    return;
                 }
 
                 /*
-                
+                var param = {};
                 CommandService.exe ( CommandService.CLOSE, param, function callback(isSuccess, result) {
                     out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
                     ProgressService.complete();
@@ -119,12 +147,16 @@ define( [], function() {
                 /*/
 
                 // 새문서 열기
+                var param = {};
                 CommandService.exe(CommandService.NEW, param, function callback(isSuccess, result) {
                     out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
                     ProgressService.complete();
 
-                    //var $document = angular.element(document);
-                    //$document.trigger('#tool.complete'); 
+                    alert('NEW PROJECT : ' + Project.current.PROJECT.TREE.uid);
+==========================================================================================
+                    // Project 설정창 띄우기
+
+                    // Project 설정창 닫을때 서버 저장
                 });
                 
                 //*/

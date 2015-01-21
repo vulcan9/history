@@ -18,6 +18,8 @@ define( [], function( ) {
 
         // 선언
         function _service( ) {
+            
+            out( 'Service 등록 : VersionService' );
 
             // 버전 기록
             var Version = {
@@ -54,6 +56,7 @@ define( [], function( ) {
         // 리턴
         _service._regist = function(application){
             // 등록
+            out('VersionService 등록');
             application.service( 'VersionService', _service );
         };
         return _service;

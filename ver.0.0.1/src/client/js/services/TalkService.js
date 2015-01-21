@@ -114,6 +114,8 @@ define( [], function( ) {
 
         function _service($timeout, $getScope) {
 
+            out( 'Service 등록 : TalkService' );
+            
             var TalkService = {
                 
                 // 시간 상수(milisecond)
@@ -257,6 +259,7 @@ define( [], function( ) {
         // 리턴
         _service._regist = function(application){
             // 등록
+            out('TalkService 등록');
             application.directive( 'talk', _directive );
             application.service( 'TalkService', _service );
         };

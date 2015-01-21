@@ -51,12 +51,6 @@ define( [
                 session: null
             };
             
-            if(isAuthenticated()){
-                // AuthService.session 업데이트 
-                // (url을 통해 바로 접근하는 경우 아직 AuthService.session값은 채워져 있지 않음)
-                getProfile();
-            }
-
             ////////////////////////////////////////
             // 등록, 로그인
             ////////////////////////////////////////
@@ -381,6 +375,7 @@ define( [
         // 리턴
         _service._regist = function(application){
             // 등록
+            out('AuthService 등록');
             application.service( 'AuthService', _service );
         };
         return _service;

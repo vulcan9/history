@@ -1,5 +1,5 @@
 
-<div ng-controller='DashboardController'>
+<div ng-controller='DashboardController as ctrl'>
     <h3>Project</h3>
     
     <!-- 로그인이 필요한 페이지에 삽입한다. -->
@@ -25,6 +25,50 @@
         </ul>
 
     </div>
+
+    <style>
+        .hi-project{}
+        .hi-project li{
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: inline-block;
+            position: relative;
+            padding: 10px;
+            margin: 10px;
+            width: 250px;
+        }
+        .hi-project li .hi-thumbnail{
+            background-color: #eee;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            height: 150px;
+        }
+    </style>
+
+
+    <button class="btn btn-block btn-facebook" ng-click="ctrl.newProject()">
+        새로운 프로젝트 만들기
+    </button>
+
+    <ul class="hi-project">
+        <li ng-repeat="item in (ctrl.projects | orderBy : '_create' : false)">
+            <div>{{item._id}}</div>
+            <div>{{item.uid}}</div>
+            <!--썸네일-->
+            <div class="hi-thumbnail" ng-click="ctrl.openProject(item)">
+                <img ng-show="item.thumbnail"
+                    ng-src="{{item.thumbnail.src}}"
+                    style="width:100%; height:100%; 
+                    background-color: #FFF; 
+                    border-radius: 4px;"/>
+            </div>
+            <div>Create : {{item._create | date:"MM/dd/yyyy 'at' h:mma"}}</div>
+            <div>Update : {{item._update | date:"MM/dd/yyyy 'at' h:mma"}}</div>
+            <div>delete</div>
+        </li>
+    </ul>
+
     <version></version>
 </div>
 

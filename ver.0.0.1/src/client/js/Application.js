@@ -13,13 +13,9 @@
 define(
     [
         'angular',
-        'PreInitialize',
-        'Router'
+        'PreInitialize'
     ],
-    function( angular, PreInitialize, Router ) {
-
-        // 라우터 정의 객체
-        var _router;
+    function( angular, PreInitialize ) {
 
         /////////////////////////////////////
         // Application 모듈 선언 : angular.module(name, [requires], [configFn]);
@@ -181,13 +177,10 @@ define(
                 application.$locationProvider = $locationProvider;
                 
                 //-----------------------------------
-                // Route 설정
+                // 공통 기능 먼저 로드 후 등록
                 //-----------------------------------
-                
-                _router = new Router( application );
-                _router.config(function(){
-                    out( '# Application 초기화 종료' );
-                });
+
+                PreInitialize(application);
             }
         );
 
@@ -195,13 +188,21 @@ define(
         // Application 모듈 초기화
         /////////////////////////////////////
 
-        application.run( function( $rootScope, $location, $rootElement, AuthService ) {
+        application.run( function( $rootScope, $location, $rootElement, RouterService ) {
 
             application.$rootScope = $rootScope;
             application.$location = $location;
 
+            //-----------------------------------
+            // Route 설정
+            //-----------------------------------
+
+            RouterService.config(application, function(){
+                out( '# Application 초기화 종료' );
+            });
+
             // Route 실행
-            _router.run(AuthService);
+            RouterService.run();
             
             // 보이기
             showApplication();
@@ -234,9 +235,6 @@ define(
         //-----------------------------------
 
         //$compileProvider.directive.apply(null, directive);
-
-        // Provider 등록
-        PreInitialize(application);
 
         ////////////////////////////////////////
         // END

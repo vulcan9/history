@@ -20,6 +20,7 @@ define([
     _PATH.SERVICE + 'ProgressService.js',
     _PATH.SERVICE + 'AuthService.js',
     _PATH.SERVICE + 'HttpService.js',
+    _PATH.SERVICE + 'RouterService.js',
     
     // auth
     _PATH.DIRECTIVE + 'auth/passwordStrength.js',
@@ -30,7 +31,9 @@ define([
 
 ], function(
     version, 
-    NoticeService, TalkService, VersionService, ProgressService, AuthService, HttpService, 
+    NoticeService, TalkService, VersionService, ProgressService, 
+    AuthService, HttpService, 
+    RouterService, 
     passwordStrength, passwordMatch,
     ApplicationController
     ) {
@@ -46,6 +49,7 @@ define([
         regist(application, ProgressService);
         regist(application, AuthService);
         regist(application, HttpService);
+        regist(application, RouterService);
         
         // auth
         regist(application, passwordStrength);
@@ -60,6 +64,7 @@ define([
     }
     
     return PreInitialize;
+    
     ////////////////////////////////////////
     // END
     ////////////////////////////////////////

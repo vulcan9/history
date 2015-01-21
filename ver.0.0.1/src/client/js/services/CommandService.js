@@ -13,7 +13,7 @@ define( [ 'U' ], function( U ) {
 
         // 선언
         function _service(
-            $q, $getScope,
+            $q, $getScope, $rootScope,
             NewCommand, OpenCommand, SaveCommand, SaveAsCommand, CloseCommand, ExitCommand,
             
             AddDocumentCommand, RemoveDocumentCommand, SelectDocumentCommand, ModifyDocumentCommand, 
@@ -24,7 +24,7 @@ define( [ 'U' ], function( U ) {
 
         ) {
 
-            out( 'CommandService 등록 : ' );
+            out( 'Service 등록 : CommandService' );
 
             function CommandService() {
 
@@ -338,9 +338,11 @@ define( [ 'U' ], function( U ) {
                     var deferred = $q.defer();
 
                     if(!param || !param.uid){
-                        var uid = 'b16fea9c-d10a-413b-ba20-08344f937336';
-                        param.uid = uid;
-                        alert( 'TODO : [command_open] project 데이터 로드 경로(아이디) 다이얼로그 팝업창 띄우기 : ' + uid );
+                        // var uid = 'b16fea9c-d10a-413b-ba20-08344f937336';
+                        // param.uid = uid;
+                        $rootScope.go_dashboard();
+                        throw new Error('열고자 하는 Project가 지정되지 않았습니다.');
+                        return;
                     }
 
                     // 닫기 과정 추가

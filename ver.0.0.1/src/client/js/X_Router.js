@@ -57,6 +57,7 @@ define( [], function() {
 		
 		run: function(AuthService) {
 
+			//*
 			// change the path
 			//this.application.$location.path('/login');
 
@@ -64,27 +65,37 @@ define( [], function() {
 			this.application.$rootScope.$on('$routeChangeStart', function(event, currRoute, prevRoute){
 				out('# routeChangeStart : ', self.application.$location.path());
 
+				if(prevRoute && prevRoute.$$route){
+					var path = prevRoute.$$route.originalPath;
+					if(path === '/tool/:projectUID'){
+						alert('저장 상태 확인');
+						// CommandService.exe(CommandService.EXIT);
+						// event.preventDefault();
+						return;
+					}
+				}
+
 				// redirect된 상황인지를 필터링
 				// var path = self.application.$location.path();
 				if(currRoute.$$route)
 				{
 					var path = currRoute.$$route.originalPath;
-					if(path === '/tool' || path === '/admin' || path === '/profile' || path === '/dashboard')
-					{
-						if(AuthService.isAuthenticated() == false){
-							// 세션 체크(로그인 페이지로 이동
-							event.preventDefault();
-							self.application.$location.path('/login');
-						}else{
-							if(!AuthService.session){
-								AuthService.getProfile();
-								// event.preventDefault();
-								// self.application.$location.path('/login');
-							}
-						}
-					}
-					else
-					{
+					if(path === '/admin' || path === '/profile' || path === '/dashboard'){
+						checkAuth(event);
+
+					}else if(path === '/tool'){
+						// projectUID가 없으면 허용하지 않음
+						// var projectUID = Project.current.createProjectUID();
+
+						checkAuth(event);
+						event.preventDefault();
+						self.application.$location.path('/dashboard');
+
+					}else if(path === '/tool/:projectUID'){
+						checkAuth(event);
+						var projectUID = currRoute.params['projectUID'];
+						checkUID(projectUID, event);
+					}else{
 						if(currRoute.redirectTo){
 							out('# routeChangeStart redirectTo : ', currRoute.redirectTo);
 							self.application.$location.path(currRoute.redirectTo);
@@ -95,7 +106,32 @@ define( [], function() {
 
 			this.application.$rootScope.$on("$routeChangeSuccess", function (event, currRoute, prevRoute) {
 				out('# routeChangeSuccess : ', self.application.$location.path(), currRoute);
+				// #/tool/currRoute.projectUID
 			});
+
+			function checkAuth(event){
+				if(AuthService.isAuthenticated() == false){
+					// 세션 체크(로그인 페이지로 이동
+					if(event) event.preventDefault();
+					self.application.$location.path('/login');
+				}else{
+					if(!AuthService.session){
+						AuthService.getProfile();
+						// event.preventDefault();
+						// self.application.$location.path('/login');
+					}
+				}
+			}
+
+			function checkUID(uid, event){
+				// uid 유효성 검사
+				var available = uid && (uid.indexOf('project-') == 0 || uid.indexOf('newproject:project-') == 0);
+				if(!available){
+					if(event) event.preventDefault();
+					self.application.$location.path('/dashboard');
+				}
+			}
+			//*/
 		},
 
 		/////////////////////////////////////
@@ -117,7 +153,7 @@ define( [], function() {
 				angular.forEach( routes.paths, function( route, path ) {
 
 					var templateUrl = route.templateUrl;
-					var definition = self._getRouteDefinition( templateUrl, route.dependencies, callback );
+					var definition = self._getRouteDefinition( templateUrl, path, route.dependencies, callback );
 					//out( 'templateUrl : ', templateUrl );
 
 					$routeProvider.when( path, definition );
@@ -132,7 +168,7 @@ define( [], function() {
 			}
 		},
 
-		_getRouteDefinition: function( templateUrl, dependencies, callback ) {
+		_getRouteDefinition: function( templateUrl, path, dependencies, callback ) {
 
 			/*
 			var definition = {
@@ -162,7 +198,7 @@ define( [], function() {
 						var deferred = $q.defer();
 
 						if ( loaded || !dependencies || dependencies.length < 1 ) {
-							deferred.resolve();
+							checkSession(deferred, callback);
 							return deferred.promise;
 						}
 
@@ -191,8 +227,7 @@ define( [], function() {
 							}
 
 							$rootScope.$apply( function() {
-								deferred.resolve();
-								callback();
+								checkSession(deferred, callback);
 							} );
 
 							loaded = true;
@@ -203,6 +238,22 @@ define( [], function() {
 					}
 				] // end resolve
 
+			}
+
+			function checkSession(defer, callback){
+				// if(AuthService.isAuthenticated() == false){
+				// 	// 세션 체크(로그인 페이지로 이동
+				// 	if(event) event.preventDefault();
+				// 	self.application.$location.path('/login');
+				// }else{
+				// 	if(!AuthService.session){
+				// 		AuthService.getProfile();
+				// 		// event.preventDefault();
+				// 		// self.application.$location.path('/login');
+				// 	}
+				// }
+				defer.resolve();
+				callback();
 			}
 
 			function regist (dependency, path){
@@ -311,6 +362,13 @@ define( [], function() {
 				//-----------------------------------
 
 				,'/tool': {
+					templateUrl: _PATH.TEMPLATE + 'tool.html',
+					dependencies: [
+						_PATH.CONTROLLER + 'ToolController.js'
+					]
+				}
+
+				,'/tool/:projectUID': {
 					templateUrl: _PATH.TEMPLATE + 'tool.html',
 					dependencies: [
 

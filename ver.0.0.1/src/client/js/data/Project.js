@@ -77,7 +77,8 @@ define( ['U'], function( U ) {
 
                     // data : tree-uid.json 파일 내용
                     openProject: function(treeData, dataMap, presentationData){
-                        this.initialize();
+                        var projectUID = treeData.uid;
+                        this.initialize(projectUID);
 
                         this.project( 'TREE', treeData );
                         this.project( 'DOCUMENT', {
@@ -130,7 +131,7 @@ define( ['U'], function( U ) {
                         this.addDocument(param);
                     },
 
-                    initialize: function(){
+                    initialize: function(projectUID){
                         
                         _super.initialize.apply(this, arguments);
 
@@ -158,7 +159,7 @@ define( ['U'], function( U ) {
                         );
                         
                         var version = VersionService.version();
-                        var projectUID = this.createProjectUID();
+                        projectUID = projectUID || this.createProjectUID();
 
                         this.project('DOCUMENT', {items:{}});
 

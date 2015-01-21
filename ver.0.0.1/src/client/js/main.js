@@ -208,7 +208,8 @@ require.config( {
         // Framework
         //-----------------
         'PreInitialize':          _PATH.JS + 'PreInitialize',
-        'Router':                 _PATH.JS + 'Router',
+        // 'Router':                 _PATH.JS + 'Router',
+        // 'RouterService':      _PATH.SERVICE + 'RouterService',
         'Application':          _PATH.JS + 'Application',
 
         'U':                 _PATH.JS + 'U',

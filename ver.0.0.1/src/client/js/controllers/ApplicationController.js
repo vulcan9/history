@@ -16,7 +16,7 @@ define(
     function() {
 
         // 선언
-        function _controller( $scope, $element, $attrs, $transclude, $log, $route, $location, $routeParams, $rootScope, $window, AuthService ) {
+        function _controller( $scope, $element, $attrs, $log, $location, $rootScope, $window, AuthService ) {
 
             out( '# ApplicationController 로드됨' );
 
@@ -79,6 +79,11 @@ define(
                 $location.path('/profile');
             };
 
+            $rootScope.go_tool = function(uid) {
+                uid = uid || 'newproject:project-';
+                $location.path('/tool/' + uid);
+            };
+
             $rootScope.auth_isAuthenticated = function() {
                 return AuthService.isAuthenticated();
             };
@@ -95,6 +100,7 @@ define(
                 AuthService.authenticate(provider);
             };
 
+            // END Controller
         }
 
         // 리턴

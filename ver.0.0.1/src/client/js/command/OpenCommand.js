@@ -56,9 +56,15 @@ define( [], function() {
                     }
                     
                     // var self = this;
-                    var projectData, documentMap, presentationData
+                    var projectData;
+                    var documentMap;
+                    var presentationData;
+
                     var process = ProcessService.process();
-                    process.start();
+                    process.start().then(function(){
+                        // 데이터 초기화
+                        Project.current = new Project();
+                    });
                     
                     //---------------------
                     // 데이터 로드 상태 확인
@@ -70,64 +76,47 @@ define( [], function() {
                         });
                     }));
 
+                    // 1. 데이터 로드 : project 데이터
                     process.add($q.defer(), angular.bind(this, function(defer){
-                        // 1. 데이터 로드 : project 데이터
                         this._loadProject(defer, uid);
                         // defer.resolve();
                     })).then(function(data){
                         projectData = data;
+                        if(data == null){
+                            // 결과 리턴
+                            self._error();
+                        }
                     });
 
+                    // 2. 데이터 로드 : document 리스트 로드
                     process.add($q.defer(), angular.bind(this, function(defer){
-                        // 2. 데이터 로드 : document 리스트 로드
-                        this._loadDocument(defer, uid);
+                        this._loadDocument(defer, projectData);
                         // defer.resolve();
                     })).then(function(data){
                         documentMap = data;
                     });
 
+                    /*
+                    // 3. 데이터 로드 : presentation 리스트 로드
                     process.add($q.defer(), angular.bind(this, function(defer){
-                        // 3. 데이터 로드 : presentation 리스트 로드
                         this._loadPresentation(defer, uid);
                         // defer.resolve();
                     })).then(function(data){
                         presentationData = data;
                     });
+                    */
 
                     //---------------------
                     // 데이터 세팅 완료
                     //---------------------
 
+                    // 4. 데이터 적용
                     process.end().then(
                         angular.bind(this, function(){
-                            // 4. 데이터 적용
-                            // Project.current.openProject(projectData, documentMap, presentationData);
-                            Tool.current.openProject();
+                            // 로드 종료
+                            this._loadComplete( projectData, documentMap, presentationData );
                         })
                     );
-
-
-                    /*
-                    // 데이터 로드 : project 데이터
-                    self.treeLoad( uid, function( treeData ) {
-
-                        // 데이터 로드 : document 리스트 로드
-                        self.documentLoad( treeData, function( dataMap ) {
-
-                            self.presentationLoad( uid, function(presentationData) {
-
-                                // 로드 종료
-                                self._loadComplete( treeData, dataMap, presentationData );
-
-                                // end presentation load
-                            } );
-
-                            // end document load
-                        } );
-
-                        // end project load
-                    } );
-                    */
 
                     // END Execute
                 },
@@ -165,206 +154,67 @@ define( [], function() {
                 // Project  데이터 (Tree)
                 ////////////////////////////////////////
 
-                /*
+                //-----------------------------------
+                // Project 데이터 로드
+                //-----------------------------------
+
                 _loadProject: function (defer, uid){
 
+                    var self = this;
+                    var projectUID = uid;
+                    // var projectURL = _PATH.ROOT + 'data/' + projectUID + '.json';
                     var userID = AuthService.session.id;
 
                     var promise = HttpService.load( {
                             method: 'GET',
-                            url: '/user'+ '/' + userID + '/tool',
+                            url: '/user'+ '/' + userID + '/project',
                             params: {
-                                // user: userID
+                                uid: projectUID
                             }
                         } )
                         .then( 
                             angular.bind(this, success), 
                             angular.bind(this, error)
                         );
-
-                    
+                    /*
                     result = {
                         message: 'success',
-                        data: (doc? doc.tool : null)
+                        data: Object
                     }
-                    
+                    */
                     function success(result){
                         out ('# Project 데이터 조회 완료 : ', result);
 
-                        var data;
-                        if(result.data){
-                            data = angular.fromJson(result.data);
-                        }
-                        defer.resolve(data);
+                        var data = result.data;
+                        var project = angular.fromJson(data.project);
+                        defer.resolve(project);
                     }
 
                     function error(result){
                         out ('# Project 데이터 조회 에러 : ', result);
 
                         // defer.reject( data );
-                        defer.resolve();
+                        defer.resolve(null);
                     }
-                },
-                */
 
-                _loadProject: function (defer, uid){
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                    var self = this;
-                    var treeUID = 'tree-' + uid;
-                    var treeURL = _PATH.ROOT + 'data/' + treeUID + '.json';
-
-                    var promies = HttpService.load( {
-                            method: 'GET',
-                            url: treeURL
-                        } )
-                        .then(
-                            function success( data ) {
-                                out( '# Project 로드 완료 : ', data );
-                                out( 'TODO : // OpenCommand 실행' );
-
-                                //*****************************************
-                                
-                                // 데이터 변경
-                                Project.current = new Project();
-                                // Project.current.openProject(data);
-
-                                //*****************************************
-                                
-                                // if ( callback ) callback.apply( self, [ data ] );
-
-                                // document 리스트 로드
-                                // self.documentLoad( data );
-
-                                // 결과 리턴
-                                // self._success({tree:data});
-                                return data;
-                            },
-                            function error( data ) {
-
-                                out( '# 로드 에러 : ', treeUID, '\n-url : ', treeURL, data );
-
-                                // 데이터 변경
-                                Project.current = new Project();
-                                // Project.current.openProject(null);
-
-                                return null;
-                            }
-                        )
-                        .then(function(data){
-                            if(data == null){
-                                // 결과 리턴
-                                defer.reject();
-                                self._error();
-                            }else{
-                                defer.resolve(data);
-                            }
-                        });
-
-                },
-
-                _loadDocument: function (defer, uid){
-                },
-
-                _loadPresentation: function (defer, uid){
-                },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                //-----------------------------------
-                // Project 데이터 로드
-                //-----------------------------------
-
-                treeLoad: function( uid, callback ) {
-
-                    var self = this;
-                    var treeUID = 'tree-' + uid;
-                    var treeURL = _PATH.ROOT + 'data/' + treeUID + '.json';
-
-                    var promies = HttpService.load( {
-                            method: 'GET',
-                            url: treeURL
-                        } )
-                        .then(
-                            function success( data ) {
-                                out( '# Project 로드 완료 : ', data );
-                                out( 'TODO : // OpenCommand 실행' );
-
-                                //*****************************************
-                                
-                                // 데이터 변경
-                                Project.current = new Project();
-                                // Project.current.openProject(data);
-
-                                //*****************************************
-                                
-                                // if ( callback ) callback.apply( self, [ data ] );
-
-                                // document 리스트 로드
-                                // self.documentLoad( data );
-
-                                // 결과 리턴
-                                // self._success({tree:data});
-                                return data;
-                            },
-                            function error( data ) {
-
-                                out( '# 로드 에러 : ', treeUID, '\n-url : ', treeURL, data );
-
-                                // 데이터 변경
-                                Project.current = new Project();
-                                // Project.current.openProject(null);
-
-                                return null;
-                            }
-                        )
-                        .then(function(data){
-                            if(data == null){
-                                // 결과 리턴
-                                self._error();
-                            }else{
-                                if ( callback ) callback.apply( self, [ data ] );
-                            }
-                        });
-
-                    return promies;
                 },
 
                 //-----------------------------------
                 // Project Tree 내용에 따라 document 내용 로드
                 //-----------------------------------
 
-                documentLoad: function( treeData, callback ) {
+                _loadDocument: function (defer, project){
+                    // out(project);
+
                     var self = this;
+                    var userID = AuthService.session.id;
+
                     var promiseArray = [];
                     var dataMap = {};
 
                     // treeData 구조가 바뀌어 모든 노드를 검사할려면 forEach를 쓸 수 없다.
                     //  모든 노드를 탐색하여 document리스트를 로드한다.
-                    findItems(treeData, 0);
+                    findItems(project, 0);
 
                     function findItems(node, dep){
                         
@@ -373,20 +223,20 @@ define( [], function() {
                             var _depth = dep;
                             out( '---> ', _depth, '[', key, '] : ', value.uid );
 
-                            var documentURL = _PATH.ROOT + 'data/' + value.uid + '.json';
+                            var documentUID = value.uid;
+                            // var documentURL = _PATH.ROOT + 'data/' + documentUID + '.json';
                             var promise = HttpService.load( {
                                     method: 'GET',
-                                    url: documentURL
+                                    url: '/user'+ '/' + userID + '/document',
+                                    params: {
+                                        uid: documentUID
+                                    }
                                 } )
-                                .then( function success( result ) {
-                                    // out('success : ', result);
-                                    // 로드 성공한 경우 파일의 json 객체를 리턴한다.
-                                    return result;
-                                }, function fail( result ) {
-                                    // out('fail : ', result);
-                                    // 로드 실패한 경우 파일의 uid를 리턴한다.
-                                    return value.uid;
-                                } );
+                                .then( 
+                                    angular.bind(this, success, documentUID), 
+                                    angular.bind(this, error, documentUID)
+                                );
+
                             promiseArray.push( promise );
 
                             // 재귀 호출 (depth로 진행)
@@ -396,48 +246,37 @@ define( [], function() {
 
                         }, this );
                     }
-
-                    /*
-                    // out("treeData", treeData.items);
-                    angular.forEach( treeData.items, function( value, key ) {
-                        // out( key, ' : ', value.uid );
-                        var documentURL = _PATH.ROOT + 'data/' + value.uid + '.json';
-
-                        var promise = HttpService.load( {
-                                method: 'GET',
-                                url: documentURL
-                            } )
-                            .then( function success( result ) {
-                                // out('success : ', result);
-                                // 로드 성공한 경우 파일의 json 객체를 리턴한다.
-                                return result;
-                            }, function fail( result ) {
-                                // out('fail : ', result);
-                                // 로드 실패한 경우 파일의 uid를 리턴한다.
-                                return value.uid;
-                            } );
-
-                        promiseArray.push( promise );
-
-                    }, this );
-                    */
+                    
+                    function success(uid, result){
+                        out ('# Document 데이터 조회 완료 : ', result);
+                        // 로드 성공한 경우 파일의 json 객체를 리턴한다.
+                        var data = result.data;
+                        data.document = angular.fromJson(data.document);
+                        return data;
+                    }
+                    function error(uid, result){
+                        out ('# Document 데이터 조회 에러 : ', result);
+                        return uid;
+                    }
 
                     $q.all( promiseArray )
-                        .then( function success( result ) {
-                            angular.forEach( result, function( response ) {
+                        .then( function success( response ) {
+                            angular.forEach( response, function( result ) {
 
-                                if ( angular.isString( response ) ) {
+                                if ( angular.isString( result ) ) {
                                     // 로드 실패한 경우 파일의 uid를 리턴한다.
-                                    dataMap[ response ] = null;
+                                    dataMap[ result ] = null;
                                 } else {
+
+                                    var documentObj = result.document;
 
                                     //******************************************
 
                                     out('# 최신 기능 지원 위해 로드된 document 데이터 구조 업데이트');
-                                    response = Project.current.updateDocumentVersion(response.uid, response);
+                                    documentObj = Project.current.updateDocumentVersion(documentObj.uid, documentObj);
                                     
                                     // html String를 DOM 구조로 바꾸어 놓는다.
-                                    var htmlString = response.document.content;
+                                    var htmlString = documentObj.document.content;
                                     var dom = Project.current.stringToHtml(htmlString);
 
                                     //-------------------
@@ -449,19 +288,16 @@ define( [], function() {
                                     //******************************************
 
                                     // 데이터에 적용
-                                    response.document.content = dom;
-                                    dataMap[ response.uid ] = response;
+                                    documentObj.document.content = dom;
+                                    dataMap[ documentObj.uid ] = documentObj;
                                 }
 
                             } );
 
                             return dataMap;
                         } )
-                        .then( function(data) {
-
-                            // self._loadComplete( dataMap );
-                            if ( callback ) callback.apply( self, [ data ] );
-
+                        .then( function(map) {
+                            defer.resolve(map);
                         } );
 
                     // documentLoad end
@@ -471,8 +307,8 @@ define( [], function() {
                 // Presentation 데이터 로드
                 //-----------------------------------
 
-                presentationLoad: function( uid, callback ) {
-
+                /*
+                _loadPresentation: function (defer, uid){
                     var self = this;
                     var presentationUID = 'presentation-' + uid;
                     var url = _PATH.ROOT + 'data/' + presentationUID + '.json';
@@ -508,17 +344,18 @@ define( [], function() {
 
                     return promies;
                 },
+                */
 
                 //-----------------------------------
                 // 데이터 로드 종료
                 //-----------------------------------
 
-                _loadComplete: function( treeData, documentMap, presentationData ) {
+                _loadComplete: function( projectData, documentMap, presentationData ) {
 
                     //*****************************************
                     
                     // 데이터 저장
-                    Project.current.openProject(treeData, documentMap, presentationData);
+                    Project.current.openProject(projectData, documentMap, presentationData);
                     // out( 'documentMap : ', documentMap );
 
                     Tool.current.openProject();
@@ -530,9 +367,9 @@ define( [], function() {
                     });
                     
                     //*****************************************
-                    
                 }
 
+                // END OpenCommand
             } );
 
             //-------------------

@@ -2,8 +2,8 @@
 // 사용예) $>node app.js stage
 
 var config = {
-	local: {
-		mode: 'local',
+	development: {
+		mode: 'development',
 		port: 3000,
 		database: {
 			type: "mongodb",
@@ -62,7 +62,7 @@ var auth = {
 
 module.exports = {
 	server : function(mode) {
-		mode = mode || process.argv[2] || 'local';
+		mode = mode || process.argv[2] || 'development';
 		return config[mode];
 	},
 	auth : auth

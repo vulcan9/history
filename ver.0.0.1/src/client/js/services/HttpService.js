@@ -237,6 +237,7 @@ define( [], function( ) {
         // 리턴
         _service._regist = function(application){
             // 등록
+            out('HttpService 등록');
             application.service( 'HttpService', _service );
         };
         return _service;

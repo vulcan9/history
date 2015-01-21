@@ -45,7 +45,7 @@ function set (router){
         User.findOne({ _id: id }, function(err, user) {
 
             errorHandler(err);
-            if(err) return res.status(401).send(err);
+            if(err) return res.send(err);
 
             if (user) {
                 console.log('USER 검색 : ', user._id);
@@ -92,11 +92,12 @@ function set (router){
 
     // 저장
     .post(function(req, res, next) {
-        console.log('tool post : ', req.user.email);
+        console.log('Tool post : ', req.user.email);
+        console.log('* Tool 데이터 검색 : ', req.body.uid);
 
         Tool.findOne({ user: req.user._id }, function(err, doc){
             errorHandler(err);
-            if(err) return res.status(401).send(err);
+            if(err) return res.send(err);
 
             if (!doc) {
                 // 데이터 없음
@@ -127,20 +128,18 @@ function set (router){
     
     // 조회
     .get(function(req, res, next) {
-        console.log('tool get : ', req.user._id);
-        console.log('query : ', req.query);
+        console.log('Tool get : ', req.user._id);
+        console.log('Tool query : ', req.query);
 
         Tool.findOne({ user: req.user._id }, function(err, doc){
             errorHandler(err);
-            if(err) return res.status(401).send(err);
+            if(err) return res.send(err);
 
             return res.status(200).send({
                 message: 'success',
                 data: (doc? doc.tool : null)
             });
         });
-
-        // res.send('get success');
     })
 
     /*
@@ -166,7 +165,7 @@ function set (router){
 
         Project.findOne({ uid: req.body.uid }, function(err, doc){
             errorHandler(err);
-            if(err) return res.status(401).send(err);
+            if(err) return res.send(err);
 
             if (!doc) {
                 // 데이터 없음
@@ -200,11 +199,46 @@ function set (router){
 
         });
     })
-    /*
+
+    // 조회 : uid 전달하지 않으면 전체 검색
     .get(function(req, res, next) {
-        console.log('project get : ', req.user);
-        res.send('get success');
+        console.log('Project get : ', req.user._id);
+        console.log('Project query : ', req.query);
+
+        // 해당 UID 만 조회
+        var projectUID = req.query.uid;
+        if(projectUID)
+        {
+            Project.findOne({ uid: projectUID }, function(err, doc){
+                errorHandler(err);
+                if(err) return res.send(err);
+
+                console.log('Project doc : ', doc);
+
+                return res.status(200).send({
+                    message: 'success',
+                    data: doc
+                });
+            });
+            return;
+        }
+
+        // 모두 조회
+        var userID = req.user._id;
+        Project.find({ user: userID }, function(err, docs){
+            errorHandler(err);
+            if(err) return res.send(err);
+
+            console.log('Project docs : ', docs.length);
+
+            return res.status(200).send({
+                message: 'success',
+                data: docs
+            });
+        });
     })
+
+    /*
     .put(function(req, res, next) {
         console.log('project put : ', req.user);
         res.send('put success');
@@ -228,7 +262,7 @@ function set (router){
         Document.findOne({ uid: req.body.uid }, function(err, doc){
         
             errorHandler(err);
-            if(err) return res.status(401).send(err);
+            if(err) return res.send(err);
 
             if (!doc) {
                 // 데이터 없음
@@ -258,6 +292,45 @@ function set (router){
         });
         
     })
+
+    // 조회 : uid 전달하지 않으면 전체 검색
+    .get(function(req, res, next) {
+        console.log('Document get : ', req.user._id);
+        console.log('Document query : ', req.query);
+
+        // 해당 UID 만 조회
+        var documentUID = req.query.uid;
+        if(documentUID)
+        {
+            Document.findOne({ uid: documentUID }, function(err, doc){
+                errorHandler(err);
+                if(err) return res.send(err);
+
+                console.log('Document doc : ', doc);
+
+                return res.status(200).send({
+                    message: 'success',
+                    data: doc
+                });
+            });
+            return;
+        }
+
+        // 모두 조회
+        var userID = req.user._id;
+        Document.find({ user: userID }, function(err, docs){
+            errorHandler(err);
+            if(err) return res.send(err);
+
+            console.log('Document docs : ', docs.length);
+
+            return res.status(200).send({
+                message: 'success',
+                data: docs
+            });
+        });
+    })
+
     /*
     .get(function(req, res, next) {
         console.log('document get : ', req.user);
