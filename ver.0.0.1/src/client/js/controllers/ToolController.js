@@ -109,7 +109,7 @@ define( [], function() {
                     // attrs : $attrs
                 }
 
-                //*
+                /*
                 
                 CommandService.exe ( CommandService.CLOSE, param, function callback(isSuccess, result) {
                     out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
@@ -127,7 +127,7 @@ define( [], function() {
                     //$document.trigger('#tool.complete'); 
                 });
                 
-                */
+                //*/
             }
 
             

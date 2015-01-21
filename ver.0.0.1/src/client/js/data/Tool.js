@@ -29,7 +29,16 @@ define( ['U'], function( U ) {
             this.initialize(callback);
         }
 
-        function _factory( Data, $rootScope, $timeout ){
+        Tool.transition = {
+            // second
+            TICK : 0.2,
+            SHORTEST : 0.5,
+            SHORT : 1,
+            LONG : 2,
+            LONGEST : 0
+        };
+
+        function _factory( Data, $rootScope, $timeout, AuthService, $q, ProcessService, HttpService ){
 
             /////////////////////////////////////
             // Prototype 상속
@@ -42,6 +51,9 @@ define( ['U'], function( U ) {
             // angular의 Injection 활용을 위해 이곳에서 Prototype을 정의한다.
             //------------------------------------------
             
+            // 데이터를 한번만 로드하기 위해 임시 저장
+            var _menuData, _configData;
+
             // Prototype 상속
             angular.extend( Tool.prototype,  _super, {
 
@@ -51,62 +63,228 @@ define( ['U'], function( U ) {
 
                     _super.initialize.apply(this, arguments);
 
-                    // 초기화가 완료된 상태인지 체크
-                    this.initialized = false;
-
                     //---------------------
-                    // TOOL 속성 : tool 동작에 필요한 데이터 기록 (자동 생성)
+                    // Default 데이터 정의
                     //---------------------
-                    
-                    // 읽기 전용 TOOL 속성 생성
-                    // 속성 접근 : tool (key, value);
-                    this.tool = this.__createProxy ('this', 'TOOL', {
 
-                            // progress : ProgressService,
-                            // version : VersionService,
-
-                            // 문서별 undo/redo 데이터
-                            // __HISTORY: {},
+                    // var self = this;
+                    var process = ProcessService.process();
+                    process.start().then(
+                        angular.bind(this, function(){
                             
-                            // 현재 Tool 실행시 중요한 state값 저장
-                            __CURRENT: null,
+                            // 초기화가 완료된 상태인지 체크
+                            this.initialized = false;
 
-                            // 메뉴 구성 정보
-                            __MENU : null,
+                            //---------------------
+                            // TOOL 속성 : tool 동작에 필요한 데이터 기록 (자동 생성)
+                            //---------------------
+                            
+                            // 읽기 전용 TOOL 속성 생성
+                            // 속성 접근 : tool (key, value);
+                            this.tool = this.__createProxy ('this', 'TOOL', {
 
-                            __CONFIG : null
-                        }
+                                    // progress : ProgressService,
+                                    // version : VersionService,
+
+                                    // 문서별 undo/redo 데이터
+                                    // __HISTORY: {},
+                                    
+                                    // 현재 Tool 실행시 중요한 state값 저장
+                                    __CURRENT: null,
+
+                                    // 메뉴 구성 정보
+                                    __MENU : null,
+
+                                    __CONFIG : null
+                                }
+                            );
+
+                            // Tool 설정치
+                            this._config_default_CONFIG();
+                            this._config_default_CURRENT();
+
+                        })
                     );
-
-                    // Tool 설정치
-                    this._config_default_CONFIG();
-                    this._config_default_CURRENT();
-
+                    
                     //---------------------
                     // 데이터 로드 상태 확인
                     //---------------------
+                    
+                    process.add($q.defer(), angular.bind(this, this._load))
+                    .then(function(){
+                        //
+                    });
 
-                    this._setMenu(callback);
-
-                    out('TODO : Tool 설정값을 저장한 후 로드하여 적용하는 과정이 필요하다.');
+                    process.add($q.defer(), angular.bind(this, this._loadMenu))
+                    .then(function(){
+                        //
+                    });
 
                     //---------------------
-                    // 속성
+                    // 데이터 세팅 완료
                     //---------------------
-                    
-                    // 저장 성공 여부 기록
-                    // this._saveSuccessed = undefined;
-                    
-                    // 저장된 이후로 데이터가 변경되었는지를 체크
-                    this.dataChanged = false;
+
+                    process.end().then(
+                        angular.bind(this, function(){
+                            // 저장된 이후로 데이터가 변경되었는지를 체크
+                            this.dataChanged = false;
+
+                            // 랜더링 실행 시간을 고려하여 약간의 delay를 준다.
+                            if(callback){
+                                $timeout(callback, 0);
+                            }
+
+                            // 이벤트 발송
+                            var eventName = '#' + this.eventPrefix + '.initialized';
+                            out('# 이벤트 발생 : ', eventName);
+                            var args = {data:this};
+                            $rootScope.$broadcast(eventName, args); 
+
+                        })
+                    );
 
                     // end initialize
                 },
                 
+                newProject: function(calback){
+                    var self = this;
+                    this.initialize(function(){
+                        if(calback) calback();
+                        // self.dataChanged = false;
+                        // self.tool('CONFIG').dataChanged = false;
+                    });
+                },
+
+                openProject: function(){
+                    this.dataChanged = false;
+                    this.tool('CONFIG').dataChanged = false;
+                },
+                
+                closeProject: function(){
+                    this.dataChanged = false;
+                    this.tool('CONFIG').dataChanged = false;
+                },
+
+                ////////////////////////////////////////
+                // Tool  User 데이터
+                ////////////////////////////////////////
+
+                // User 로그인이 되어있는 경우 Tool 설정 로드
+                _load: function (defer){
+
+                    if(!AuthService.session){
+                        defer.resolve();
+                        return;
+                    }
+                    
+                    if(_configData){
+                        this.tool('CONFIG', _configData);
+                        defer.resolve();
+                        return;
+                    }
+
+                    out('AuthService.session  : ', AuthService.session);
+                    var uid = 'Tool Configuration Data';
+                    var userID = AuthService.session.id;
+
+                    var promise = HttpService.load( {
+                            method: 'GET',
+                            url: '/user'+ '/' + userID + '/tool',
+                            params: {
+                                // user: userID
+                            }
+                        } )
+                        .then( 
+                            angular.bind(this, success), 
+                            angular.bind(this, error)
+                        );
+
+                    /*
+                    result = {
+                        message: 'success',
+                        data: (doc? doc.tool : null)
+                    }
+                    */
+                    function success(result){
+                        out ('# Tool 데이터 조회 완료 : ', result);
+
+                        if(result.data){
+                            _configData = angular.fromJson(result.data);
+                            this.tool('CONFIG', _configData);
+                        }
+
+                        defer.resolve();
+                    }
+
+                    function error(result){
+                        out ('# Tool 데이터 조회 에러 : ', result);
+
+                        // defer.reject( data );
+                        defer.resolve();
+                    }
+                },
+
                 ////////////////////////////////////////
                 // MENU
                 ////////////////////////////////////////
-                
+
+                // MENU 데이터 로드 상태 확인
+                _loadMenu: function (defer){
+
+                    var self = this;
+                    var removeHandler = $rootScope.$on('#Tool.changed-MENU', angular.bind(this, onMenuDataChanged)); 
+
+                    // if(this.TOOL.MENU){
+                    if(_menuData){
+                        self.tool ('MENU', _menuData);
+                        return;
+                    }
+                    
+                    var menuURL = _PATH.ROOT + 'data/menu.json';
+                    var promise = HttpService.load( {
+                            method: 'GET',
+                            url: menuURL
+                        } )
+                        .then( success, error );
+
+                    function success(data){
+                        out ('# Menu 로드 완료 : ', data);
+                        // ProgressService.complete();
+
+                        // 데이터 변경
+                        _menuData = data;
+                        self.tool ('MENU', data);
+
+                        // setTimeout(function(){
+                        //     self.tool ('MENU', data);
+                        // }, 5000);
+                    }
+
+                    function error(){
+                        out ('# Menu 로드 에러 : ', menuURL);
+                        // ProgressService.complete();
+
+                        self.tool ('MENU', null);
+                    }
+
+                    function onMenuDataChanged(e, data){
+                        
+                        out('# 필요한 모든 데이터 로드가 완료 되었는지 확인');
+                        out('------->TODO : $q.defer(); tnen 이용');
+                        // http://blog.naver.com/youmasan/130189628570
+
+                        if(this.TOOL.MENU){
+                            this.initialized = true;
+                            removeHandler();
+                        }else{
+                            throw new Error('Menu 데이터를 설정할 수 없습니다.');
+                        }
+
+                        defer.resolve();
+                    }
+                },
+
+                /*
                 // 데이터 로드 상태 확인
                 _setMenu: function(callback){
                     if(this.TOOL.MENU){
@@ -133,27 +311,6 @@ define( ['U'], function( U ) {
                         }
                     }
                 },
-                
-                /*
-                // defer를 이용한 병렬 실행 처리 예시
-                function changeColorAsync(color) {
-                    var d = $.Deferred();
-                    setTimeout(function () {
-                        $('body').css('background', color);
-                        d.resolve();
-                    }, 4000);
-                    return d;
-                }
-                $(function () {
-                    $('#color-form').on('submit', function (e) {
-                        var d;
-                        var color = ['red', 'green', 'blue'];
-                         for(var prop in color){
-                             d = d? d.then(changeColorAsync.bind(this, color[prop])) : changeColorAsync(color[prop]);
-                         }
-                        return false;
-                    });
-                });
                 */
 
                 //---------------------
@@ -186,15 +343,6 @@ define( ['U'], function( U ) {
                         // 실행시 임시로 저장되는 데이터임 (저장여부를 판단하기 위해)
                         //  저장되면 이 변수는 다시 삭제됨
                         // dataChanged : false,
-
-                        transition : {
-                            // second
-                            TICK : 0.2,
-                            SHORTEST : 0.5,
-                            SHORT : 1,
-                            LONG : 2,
-                            LONGEST : 0
-                        },
 
                         display : {
                             

@@ -54,11 +54,14 @@ define(
                 // Transition 효과 사용 여부 설정
                 $scope.useTransition = true;
 
+                // var data = {data:project};
+                $scope.$on('#Tool.initialized', function(e, data){
+                    $scope.show_grid = Tool.current.config_display('show_grid');
+                });
+
                 //-------------------
                 // grid 보이기
                 //-------------------
-
-                $scope.show_grid = Tool.current.config_display('show_grid');
 
                 $scope.$on('#Tool.changed-CONFIG.display.show_grid' , function(e, data){
                     $scope.show_grid = data.newValue;

@@ -69,7 +69,7 @@ define( [], function() {
 				if(currRoute.$$route)
 				{
 					var path = currRoute.$$route.originalPath;
-					if(path === '/tool' || path === '/admin' || path === '/profile')
+					if(path === '/tool' || path === '/admin' || path === '/profile' || path === '/dashboard')
 					{
 						if(AuthService.isAuthenticated() == false){
 							// 세션 체크(로그인 페이지로 이동
@@ -268,17 +268,6 @@ define( [], function() {
 				}
 
 				//-----------------------------------
-				// ADMIN
-				//-----------------------------------
-
-				,'/admin': {
-					templateUrl: _PATH.TEMPLATE + 'admin.html',
-					dependencies: [
-						_PATH.CONTROLLER + 'AdminController.js'
-					]
-				}
-
-				//-----------------------------------
 				// LOGIN 경로 설정
 				//-----------------------------------
 				
@@ -303,6 +292,17 @@ define( [], function() {
 					templateUrl: _PATH.TEMPLATE + 'auth/login.html',
 					dependencies: [
 						_PATH.CONTROLLER + 'LoginController.js'
+					]
+				}
+
+				//-----------------------------------
+				// ADMIN
+				//-----------------------------------
+
+				,'/dashboard': {
+					templateUrl: _PATH.TEMPLATE + 'dashboard.html',
+					dependencies: [
+						_PATH.CONTROLLER + 'DashboardController.js'
 					]
 				}
 

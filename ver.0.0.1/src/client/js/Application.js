@@ -48,12 +48,12 @@ define(
                 $authProvider.facebook({
                     clientId: '1550481181857963'
                 });
-
+                
+                /*
                 $authProvider.twitter({
                     url: '/auth/twitter'
                 });
 
-                /*
                 $authProvider.live({
                     clientId: '000000004C12E68D'
                 });

@@ -5,18 +5,18 @@
     <div style="position: fixed; right: 0px; top: 0px;">
 
         <ul class="nav navbar-nav">
-            <li><a ng-click="home()">Home</a></li>
-            <li><a href="#/tool">Tool</a></li>
-            <li><a ng-click="back()">Back</a></li>
+            <li><a ng-click="go_home()">Home</a></li>
+            <li><a ng-click="go_dashboard()">Project</a></li>
+            <li><a ng-click="go_back()">Back</a></li>
         </ul>
 
         <ul class="nav navbar-nav">
-            <li ng-if="auth_isAuthenticated()"><a ng-click="auth_profile()">Profile</a></li>
+            <li ng-if="auth_isAuthenticated()"><a ng-click="go_profile()">Profile</a></li>
         </ul>
 
         <ul ng-if="!auth_isAuthenticated()" class="nav navbar-nav pull-right">
-            <!-- <li><a ng-click="auth_login()">Login</a></li> -->
-            <li><a ng-click="auth_signup()">Sign up</a></li>
+            <!-- <li><a ng-click="go_login()">Login</a></li> -->
+            <li><a ng-click="go_signup()">Sign up</a></li>
         </ul>
         
         <ul ng-if="auth_isAuthenticated()" class="nav navbar-nav pull-right">
@@ -81,11 +81,11 @@
                 <i class="ion-social-facebook"></i> Sign in with Facebook
             </button>
             
+            <!--
             <button class="btn btn-block btn-twitter" ng-click="auth_authenticate('twitter')">
                 <i class="ion-social-twitter"></i> Sign in with Twitter
             </button>
-
-            <!--
+            
             <button class="btn btn-block btn-linkedin" ng-click="auth_authenticate('linkedin')">
                 <i class="ion-social-linkedin"></i> Sign in with LinkedIn
             </button>

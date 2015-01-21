@@ -79,6 +79,7 @@ define( [], function() {
                 // 메뉴 설정 데이터 로드
                 ////////////////////////////////////////
                 
+                /*
                 this.setMenu = function (){
 
                     var menuURL = _PATH.ROOT + 'data/menu.json';
@@ -111,6 +112,7 @@ define( [], function() {
                     }
 
                 }
+                */
 
                 ////////////////////////////////////////
                 // End Controller
@@ -124,11 +126,12 @@ define( [], function() {
             ////////////////////////////////////////////////////////////////////////////////
             
             function Link( $scope, $element, $attrs, controller) {
-
+                /*
                 // 데이터 로드
                 if (Tool.current.TOOL.MENU == undefined){
                     controller.setMenu();
                 }
+                */
 
                 //-----------------------
                 // 메뉴 클릭 이벤트 처리

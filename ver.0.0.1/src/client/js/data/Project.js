@@ -30,7 +30,7 @@ define( ['U'], function( U ) {
             _superClass.apply(this, arguments);
         }
 
-        function _factory( Data, VersionService, $rootScope, $sce, $getScope, ELEMENT ){
+        function _factory( Data, Tool, VersionService, $rootScope, $sce, $getScope, ELEMENT ){
 
             /////////////////////////////////////
             // Prototype 상속
@@ -66,7 +66,6 @@ define( ['U'], function( U ) {
                     
                     // uid : element uid
                     newProject: function(){
-                        Tool.current.initialize();
                         this.initialize();
                         //this.project( 'TREE', null );
 
@@ -74,13 +73,10 @@ define( ['U'], function( U ) {
                         this.__checkRootDocument();
 
                         // this.dataChanged = false;
-                        // Tool.current.dataChanged = false;
-                        // Tool.current.tool('CONFIG').dataChanged = false;
                     },
 
                     // data : tree-uid.json 파일 내용
                     openProject: function(treeData, dataMap, presentationData){
-                        Tool.current.initialize();
                         this.initialize();
 
                         this.project( 'TREE', treeData );
@@ -97,9 +93,6 @@ define( ['U'], function( U ) {
                         this.setSelectDocument(documentUID);
 
                         this.dataChanged = false;
-                        // OpenComman에서 처리
-                        // Tool.current.dataChanged = false;
-                        Tool.current.tool('CONFIG').dataChanged = false;
                     },
                     closeProject: function(){
                         this.setSelectDocument(null);
@@ -109,8 +102,6 @@ define( ['U'], function( U ) {
                         this.project( 'DOCUMENT', null );
 
                         this.dataChanged = false;
-                        Tool.current.dataChanged = false;
-                        Tool.current.tool('CONFIG').dataChanged = false;
                     },
 
                     // 최초 첫 문서 한개를 임의로 세팅

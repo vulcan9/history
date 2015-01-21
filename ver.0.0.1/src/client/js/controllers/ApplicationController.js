@@ -55,23 +55,27 @@ define(
             // Auth 네비게이션
             //-----------------------
 
-            $rootScope.back = function(){
+            $rootScope.go_back = function(){
                 $window.history.back();
             }
 
-            $rootScope.home = function() {
+            $rootScope.go_home = function() {
                 $location.path('/');
             };
 
-            $rootScope.auth_login = function() {
+            $rootScope.go_dashboard = function() {
+                $location.path('/dashboard');
+            };
+
+            $rootScope.go_login = function() {
                 $location.path('/login');
             };
 
-            $rootScope.auth_signup = function() {
+            $rootScope.go_signup = function() {
                 $location.path('/signup');
             };
 
-            $rootScope.auth_profile = function() {
+            $rootScope.go_profile = function() {
                 $location.path('/profile');
             };
 

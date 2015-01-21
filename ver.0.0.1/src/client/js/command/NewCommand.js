@@ -15,7 +15,7 @@ define( [], function() {
 
 
         // 선언
-        function _service(Command, Project) {
+        function _service(Command, Project, $q, ProcessService) {
 
             out( 'Command 등록 : NewCommand' );
 
@@ -47,13 +47,44 @@ define( [], function() {
                     //-----------------------
                     // Project 데이터 세팅
                     //-----------------------
-                    
-                    // 편집 결과를 저장한 데이이터
-                    Project.current = new Project();
-                    Project.current.newProject();
 
-                    // 결과 리턴
-                    _super._run.apply(this, arguments);
+                    /*
+                    var process = ProcessService.process();
+                    process.start();
+                    
+                    process.add($q.defer(), angular.bind(this, function(d){
+                        Tool.current.newProject();
+                        d.resolve();
+                    }));
+
+                    process.add($q.defer(), angular.bind(this, function(d){
+                        // 편집 결과를 저장한 데이이터
+                        Project.current = new Project();
+                        Project.current.newProject();
+                        d.resolve();
+                    }));
+
+                    process.end().then(angular.bind(this, function(){
+                        // 결과 리턴
+                        _super._run.apply(this, arguments);
+                    }));
+                    
+                    /*/
+                    
+                    Tool.current.newProject(
+                        angular.bind(this, function(){
+
+                            // 편집 결과를 저장한 데이이터
+                            Project.current = new Project();
+                            Project.current.newProject();
+
+                            // 결과 리턴
+                            _super._run.apply(this, arguments);
+
+                        })
+                    );
+
+                    //*/
 
                     // END Execute
                 }

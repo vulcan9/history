@@ -291,7 +291,7 @@ define( [ 'U' ], function( U ) {
 
                     // transition 되돌림
                     if(_notUseTransition){
-                        var transitionTime = Tool.current.tool('CONFIG').transition.TICK;
+                        var transitionTime = Tool.transition.TICK;
                         $timeout(function (){
                             _notUseTransition = false;
                             $scope.transition = true;

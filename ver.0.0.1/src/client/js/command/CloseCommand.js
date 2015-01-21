@@ -47,6 +47,7 @@ define( [], function() {
 
                     if(Project.current){
                         Project.current.closeProject();
+                        Tool.current.closeProject();
                     }
                     Project.current = null;
 

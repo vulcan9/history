@@ -224,7 +224,9 @@ define( [
                     function callServer_tool(defer){
                         var tool = Tool.current.TOOL.CONFIG;
 
+                        // uid는 사용하지 않음
                         var uid = 'Tool Configuration Data';
+                        
                         var json = angular.toJson(tool);
                         var userID = AuthService.session.id;
 

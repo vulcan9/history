@@ -129,6 +129,7 @@ function setTool()
 
 // MongoError: E11000 Duplicate Key Error Index 가 발생하는 경우 
 // 콘솔에서 db.project.dropIndexes() 를 실행시킨다.
+// http://stackoverflow.com/questions/10081452/drop-database-with-mongoose
 
 function setProject()
 {

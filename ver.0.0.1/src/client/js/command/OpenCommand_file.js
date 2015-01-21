@@ -15,7 +15,7 @@ define( [], function() {
 
 
         // 선언
-        function _service( Command, ProcessService, AuthService, HttpService, $q, Tool, Project, $timeout ) {
+        function _service( Command, HttpService, $q, Tool, Project, $timeout ) {
 
             out( 'Command 등록 : OpenCommand' );
 
@@ -50,64 +50,9 @@ define( [], function() {
                         return;
                     }
 
-                    if(!AuthService.session){
-                        this._error.apply( this);
-                        return;
-                    }
-                    
-                    // var self = this;
-                    var projectData, documentMap, presentationData
-                    var process = ProcessService.process();
-                    process.start();
-                    
-                    //---------------------
-                    // 데이터 로드 상태 확인
-                    //---------------------
-                    
-                    process.add($q.defer(), angular.bind(this, function(defer){
-                        Tool.current.initialize(function(){
-                            defer.resolve();
-                        });
-                    }));
+                    // 데이터 로드 : Presentation - PT 관련 데이터
+                    var self = this;
 
-                    process.add($q.defer(), angular.bind(this, function(defer){
-                        // 1. 데이터 로드 : project 데이터
-                        this._loadProject(defer, uid);
-                        // defer.resolve();
-                    })).then(function(data){
-                        projectData = data;
-                    });
-
-                    process.add($q.defer(), angular.bind(this, function(defer){
-                        // 2. 데이터 로드 : document 리스트 로드
-                        this._loadDocument(defer, uid);
-                        // defer.resolve();
-                    })).then(function(data){
-                        documentMap = data;
-                    });
-
-                    process.add($q.defer(), angular.bind(this, function(defer){
-                        // 3. 데이터 로드 : presentation 리스트 로드
-                        this._loadPresentation(defer, uid);
-                        // defer.resolve();
-                    })).then(function(data){
-                        presentationData = data;
-                    });
-
-                    //---------------------
-                    // 데이터 세팅 완료
-                    //---------------------
-
-                    process.end().then(
-                        angular.bind(this, function(){
-                            // 4. 데이터 적용
-                            // Project.current.openProject(projectData, documentMap, presentationData);
-                            Tool.current.openProject();
-                        })
-                    );
-
-
-                    /*
                     // 데이터 로드 : project 데이터
                     self.treeLoad( uid, function( treeData ) {
 
@@ -127,12 +72,9 @@ define( [], function() {
 
                         // end project load
                     } );
-                    */
 
                     // END Execute
                 },
-
-                // _openProject: function(){},
 
                 _error: function( data ) {
 
@@ -160,139 +102,6 @@ define( [], function() {
                         }
                     );
                 },
-
-                ////////////////////////////////////////
-                // Project  데이터 (Tree)
-                ////////////////////////////////////////
-
-                /*
-                _loadProject: function (defer, uid){
-
-                    var userID = AuthService.session.id;
-
-                    var promise = HttpService.load( {
-                            method: 'GET',
-                            url: '/user'+ '/' + userID + '/tool',
-                            params: {
-                                // user: userID
-                            }
-                        } )
-                        .then( 
-                            angular.bind(this, success), 
-                            angular.bind(this, error)
-                        );
-
-                    
-                    result = {
-                        message: 'success',
-                        data: (doc? doc.tool : null)
-                    }
-                    
-                    function success(result){
-                        out ('# Project 데이터 조회 완료 : ', result);
-
-                        var data;
-                        if(result.data){
-                            data = angular.fromJson(result.data);
-                        }
-                        defer.resolve(data);
-                    }
-
-                    function error(result){
-                        out ('# Project 데이터 조회 에러 : ', result);
-
-                        // defer.reject( data );
-                        defer.resolve();
-                    }
-                },
-                */
-
-                _loadProject: function (defer, uid){
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                    var self = this;
-                    var treeUID = 'tree-' + uid;
-                    var treeURL = _PATH.ROOT + 'data/' + treeUID + '.json';
-
-                    var promies = HttpService.load( {
-                            method: 'GET',
-                            url: treeURL
-                        } )
-                        .then(
-                            function success( data ) {
-                                out( '# Project 로드 완료 : ', data );
-                                out( 'TODO : // OpenCommand 실행' );
-
-                                //*****************************************
-                                
-                                // 데이터 변경
-                                Project.current = new Project();
-                                // Project.current.openProject(data);
-
-                                //*****************************************
-                                
-                                // if ( callback ) callback.apply( self, [ data ] );
-
-                                // document 리스트 로드
-                                // self.documentLoad( data );
-
-                                // 결과 리턴
-                                // self._success({tree:data});
-                                return data;
-                            },
-                            function error( data ) {
-
-                                out( '# 로드 에러 : ', treeUID, '\n-url : ', treeURL, data );
-
-                                // 데이터 변경
-                                Project.current = new Project();
-                                // Project.current.openProject(null);
-
-                                return null;
-                            }
-                        )
-                        .then(function(data){
-                            if(data == null){
-                                // 결과 리턴
-                                defer.reject();
-                                self._error();
-                            }else{
-                                defer.resolve(data);
-                            }
-                        });
-
-                },
-
-                _loadDocument: function (defer, uid){
-                },
-
-                _loadPresentation: function (defer, uid){
-                },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 //-----------------------------------
                 // Project 데이터 로드
@@ -521,12 +330,13 @@ define( [], function() {
                     Project.current.openProject(treeData, documentMap, presentationData);
                     // out( 'documentMap : ', documentMap );
 
-                    Tool.current.openProject();
-                    
                     // 결과 리턴
                     var self = this;
                     $timeout(function(){
                         self._success( documentMap );
+
+                        // 저장 체크 변경
+                        Tool.current.dataChanged = false;
                     });
                     
                     //*****************************************

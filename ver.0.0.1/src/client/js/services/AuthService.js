@@ -26,7 +26,7 @@ define( [
      ], function( U ) {
 
         // 선언
-        function _service( $auth, $http, TalkService, NoticeService) {
+        function _service( $auth, $http, TalkService, NoticeService, $rootScope) {
 
             out( '# Service 등록 : AuthService' );
 
@@ -99,6 +99,7 @@ define( [
                     talk('You have successfully logged in');
                     out('* login result : ', result);
                     AuthService.session = getUserSession(result.data.user);
+                    $rootScope.go_dashboard();
                 })
                 .catch(function(response) {
                     notice(response.data.message);

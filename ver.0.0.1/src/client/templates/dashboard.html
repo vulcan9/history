@@ -1,12 +1,14 @@
-<section ng-controller='HomeController'>
-    <h3>Home</h3>
+
+<div ng-controller='DashboardController'>
+    <h3>Project</h3>
     
     <!-- 로그인이 필요한 페이지에 삽입한다. -->
     <div style="position: fixed; right: 0px; top: 0px;">
 
         <ul class="nav navbar-nav">
-            <li><a href="#/dashboard">Project</a></li>
-            <li><a ng-click="back()">Back</a></li>
+            <li><a ng-click="go_home()">Home</a></li>
+            <!-- <li><a ng-click="go_dashboard()">Project</a></li> -->
+            <li><a ng-click="go_back()">Back</a></li>
         </ul>
 
         <ul class="nav navbar-nav">
@@ -24,4 +26,5 @@
 
     </div>
     <version></version>
-</section>
+</div>
+

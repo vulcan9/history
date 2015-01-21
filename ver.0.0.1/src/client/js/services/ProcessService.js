@@ -49,7 +49,7 @@ define( [], function( ) {
                     out('- JSON Data : ', uid, ' : ', json);
 
                     // 요청
-                    process.add(defer, function(defer, param){
+                    process.add($q.defer(), function(defer, param){
                         defer.resolve( param );
                     }, param)
                     .then(function(data){

@@ -32,10 +32,40 @@ define( [], function( ) {
                 data: { test: 'test' },
                 ......
             }
+
+                    var promise = HttpService.load( {
+                            method: 'GET',
+                            url: url,
+                            params: {
+                                 user: userID,
+                                 uid: tool.uid,
+                                 tool: json
+                            }
+                        } )
+                        .then( success, error );
+
+                    function success(result){
+                        out ('# Menu 로드 완료 : ', result);
+                    }
+
+                    function error(result){
+                        out ('# Menu 로드 에러 : ', result);
+                    }
+
+                    var promise = HttpService.load( {
+                            method: 'POST',
+                            url: url,
+                            data: {
+                                 user: userID,
+                                 uid: tool.uid,
+                                 tool: json
+                            }
+                        } )
+                        .then( success, error );
             */
 
             var singleton = {
-                load: loadExecute,
+                load: load,
 
                 // HTTP 1.1 status codes
                 statuscode: {
@@ -80,18 +110,23 @@ define( [], function( ) {
             };
 
 
-            function loadExecute( config ) {
+            function load( config ) {
 
                 var defered = $q.defer();
 
                 out( '# 데이터 로드 : [', config.method, '] ', config.url );
                 if ( !config.url || !config.method ) {
 
-                    $timeout( function() {
-                        error( '서버 요청을 할 수 없습니다.' );
-                    }, 5000 );
+                    // $timeout( function() {
+                    //     error( '서버 요청을 할 수 없습니다.' );
+                    // }, 5000 );
+
+                    error( '서버 요청을 할 수 없습니다.' );
                     return;
                 }
+
+                // Timeout 설정
+                config.timeout = 10000;
 
                 $http( config )
                     .success( success )

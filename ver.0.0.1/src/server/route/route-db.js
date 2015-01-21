@@ -89,6 +89,8 @@ function set (router){
     //--------------------------------------------------------------------------
     
     router.route('/user/:user/tool')
+
+    // 저장
     .post(function(req, res, next) {
         console.log('tool post : ', req.user.email);
 
@@ -122,11 +124,26 @@ function set (router){
         });
 
     })
-    /*
+    
+    // 조회
     .get(function(req, res, next) {
-        console.log('project get : ', req.user);
-        res.send('get success');
+        console.log('tool get : ', req.user._id);
+        console.log('query : ', req.query);
+
+        Tool.findOne({ user: req.user._id }, function(err, doc){
+            errorHandler(err);
+            if(err) return res.status(401).send(err);
+
+            return res.status(200).send({
+                message: 'success',
+                data: (doc? doc.tool : null)
+            });
+        });
+
+        // res.send('get success');
     })
+
+    /*
     .put(function(req, res, next) {
         console.log('project put : ', req.user);
         res.send('put success');
