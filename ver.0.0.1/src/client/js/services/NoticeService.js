@@ -49,7 +49,7 @@ define([], function( ) {
             // http://angular-ui.github.io/bootstrap/
 
             // size : 'lg', 'sm', or undefined
-            // backdrop : true, false, static (static:바닥 클릭시 닫힘)
+            // backdrop : true, false, static (true:바닥 클릭시 닫힘, false: 배경없음)
             // keyboard : true, false (esc 키 동작)
             
             // var modalInstance = Notice.open( config, callback );
@@ -123,7 +123,9 @@ define([], function( ) {
 
             var Notice = {
                 open : confirmPopup,
-                close : closePopup
+                close : closePopup,
+                // 모든 창을 강제로 닫기(cencel)
+                clear: clear
             };
             
             
@@ -273,10 +275,15 @@ define([], function( ) {
                 modalInstance.close( reason );
             }
 
+            ////////////////////////////////////////
+            // 모든 창을 강제로 닫기(cencel)
+            ////////////////////////////////////////
 
-
-
-
+            // reason : -1:cancel, 1:yes, 0:no
+            function clear() {
+                // modalInstance.close( reason );
+                $modalStack.dismissAll(-1);
+            }
 
 
 

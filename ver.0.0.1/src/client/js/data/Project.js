@@ -58,6 +58,73 @@ define( ['U'], function( U ) {
 
                     eventPrefix : 'Project',
 
+                    initialize: function(param){
+                        param = param || {};
+
+                        _super.initialize.apply(this, arguments);
+
+                        //---------------------
+                        // PROJECT 속성 : 편집 결과를 저장한 데이이터 (자동 생성)
+                        //---------------------
+                        
+                        // 읽기 전용 PROJECT 속성 생성
+                        // 속성 접근 : project (key, value);
+                        this.project = this.__createProxy ('this', 'PROJECT', {
+
+                                // project 문서 구성 정보
+                                __TREE : null,
+
+                                // project 문서 내용
+                                __DOCUMENT : null,
+
+                                // Presentation 데이터
+                                __PRESENTATION : null,
+
+                                // paper 정보
+                                // __PAPER: null
+
+                            }
+                        );
+                        
+                        var version = VersionService.version();
+                        var projectUID = param.uid || this.createProjectUID();
+                        var projectTitle = param.title;// || '새로운 프로젝트';
+                        var projectDescription = param.description;// || '새 프로젝트가 생성되었습니다.';
+
+                        this.project('DOCUMENT', {items:{}});
+
+                        this.project('TREE', {
+                            "version": version,
+                            "title": projectTitle,
+                            "description": projectDescription,
+                            "uid": projectUID,
+                            items:[]
+                        });
+
+                        // 아직 구체적으로 구현되지 않음
+                        this.project('PRESENTATION', {
+                            "version": version,
+                            // "uid": presentationUID,
+                            items:{}
+                        });
+
+                        //this.project('SELECT_DOCUMENT', {items:{}});
+
+                        // 저장된 이후로 Projet (TREE) 데이터가 변경되었는지를 체크
+                        this.dataChanged = false;
+
+                        // 이벤트 발송
+                        var eventName = '#' + this.eventPrefix + '.initialized';
+                        out('# 이벤트 발생 : ', eventName);
+                        var args = {data:this};
+                        $rootScope.$broadcast(eventName, args); 
+
+                        // Root Element (Overview)
+                        // this.__checkRootDocument();
+
+                        // end initialize
+                    },
+
                     //////////////////////////////////////////////////////////////////////////
                     //
                     // Command 관련 API
@@ -65,20 +132,26 @@ define( ['U'], function( U ) {
                     //////////////////////////////////////////////////////////////////////////
                     
                     // uid : element uid
-                    newProject: function(){
-                        this.initialize();
+                    newProject: function(param){
+                        this.initialize(param);
                         //this.project( 'TREE', null );
 
                         // Root Element (Overview)
                         this.__checkRootDocument();
 
-                        // this.dataChanged = false;
+                        this.dataChanged = false;
                     },
 
                     // data : tree-uid.json 파일 내용
                     openProject: function(treeData, dataMap, presentationData){
+                        /*
                         var projectUID = treeData.uid;
-                        this.initialize(projectUID);
+                        this.initialize({
+                            uid: treeData.uid,
+                            description: treeData.description
+                        });
+                        */
+                        this.initialize();
 
                         this.project( 'TREE', treeData );
                         this.project( 'DOCUMENT', {
@@ -131,76 +204,47 @@ define( ['U'], function( U ) {
                         this.addDocument(param);
                     },
 
-                    initialize: function(projectUID){
-                        
-                        _super.initialize.apply(this, arguments);
-
-                        //---------------------
-                        // PROJECT 속성 : 편집 결과를 저장한 데이이터 (자동 생성)
-                        //---------------------
-                        
-                        // 읽기 전용 PROJECT 속성 생성
-                        // 속성 접근 : project (key, value);
-                        this.project = this.__createProxy ('this', 'PROJECT', {
-
-                                // project 문서 구성 정보
-                                __TREE : null,
-
-                                // project 문서 내용
-                                __DOCUMENT : null,
-
-                                // Presentation 데이터
-                                __PRESENTATION : null,
-
-                                // paper 정보
-                                // __PAPER: null
-
-                            }
-                        );
-                        
-                        var version = VersionService.version();
-                        projectUID = projectUID || this.createProjectUID();
-
-                        this.project('DOCUMENT', {items:{}});
-
-                        this.project('TREE', {
-                            "version": version,
-                            "description": "문서간 Tree 구조(depth)를 정의, 문서 uid와 1:1 매칭 (key-value)",
-                            "uid": projectUID,
-                            items:[]
-                        });
-
-                        // 아직 구체적으로 구현되지 않음
-                        this.project('PRESENTATION', {
-                            "version": version,
-                            // "uid": presentationUID,
-                            items:{}
-                        });
-
-                        //this.project('SELECT_DOCUMENT', {items:{}});
-
-                        // 저장된 이후로 Projet (TREE) 데이터가 변경되었는지를 체크
-                        this.dataChanged = false;
-
-                        // 이벤트 발송
-                        var eventName = '#' + this.eventPrefix + '.initialized';
-                        out('# 이벤트 발생 : ', eventName);
-                        var args = {data:this};
-                        $rootScope.$broadcast(eventName, args); 
-
-                        // Root Element (Overview)
-                        // this.__checkRootDocument();
-
-                        // end initialize
-                    },
-
                     createProjectUID: function(){
                         var projectUID = 'project-' + U.createUID();
                         return projectUID;
                     },
 
                     // Project.current.projectAPI().add(documentUID);
-                    projectAPI: function(){
+                    // Project.current.projectAPI('title', '프로젝트 제목')
+                    projectAPI: function(name, value){
+                        
+                        if(name === undefined && value === undefined){
+                            //
+                        }else{
+                            var prop = this.project('TREE');
+
+                            // GET
+                            var oldValue = prop[name];
+                            if(value === undefined){
+                                return oldValue;
+                            }
+
+                            // SET
+                            prop[name] = value;
+                            var newValue = value;
+
+                            if(angular.equals(oldValue, newValue)) return;
+                            // if(oldValue == newValue) return;
+
+                            // 적용 확인
+                            // this.project('TREE')[name] = newValue;
+
+                            this.dataChanged = true;
+                            Tool.current.dataChanged = true;
+
+                            // EVENT
+                            var eventName = '#Project.changed-TREE.' + name;
+                            out('# 이벤트 발생 : ', eventName);
+
+                            var args = {newValue:newValue, oldValue:oldValue};
+                            $rootScope.$broadcast(eventName, args); 
+                            return;
+                        }
 
                         var self = this;
                         return {
@@ -266,7 +310,6 @@ define( ['U'], function( U ) {
                                 self.dataChanged = true;
                                 Tool.current.dataChanged = true;
                             }
-
                         };
                     },
 

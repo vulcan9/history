@@ -38,7 +38,16 @@
     box-shadow: 0 0px 20px rgba(255, 0, 0, 0.7);
     -webkit-box-shadow: 0 0px 20px rgba(255, 0, 0, 0.7);
 }
+/*
+.disable{
+    opacity: 0.5;
+    pointer-events: none;
+}
 
+input.ng-invalid {
+  border: 1px solid red;
+}
+*/
 /*//////////////////////////////////////
 // Depth 관리
 //////////////////////////////////////*/
@@ -87,7 +96,7 @@ z-index :
     bottom: 0px;
     left: 0px;
     right: 0px;
-    padding: 10px;
+    margin: 10px;
 
     /* Dock에서 스크롤 유무 계산을 정확히 하기 위해
     (스크롤이 깜빡이면 계산이 부정확해짐)*/

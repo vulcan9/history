@@ -122,7 +122,7 @@ function set (router, app){
     // Home Page
     //-----------------------------------
 
-    router.get('/history', function(req, res, next) {
+    router.get(URL_HOME_PREFIX, function(req, res, next) {
         var actualPath;
         if(PATH_USE_STATIC){
             actualPath = PATH_SERVER + '/route/index';
@@ -131,7 +131,7 @@ function set (router, app){
             actualPath = './index';
         }
 
-        checkServerPage('/history', actualPath, req, res, next);
+        checkServerPage(URL_HOME_PREFIX, actualPath, req, res, next);
     });
 
     /*
@@ -211,7 +211,7 @@ function set (router, app){
         console.log("# 404 Not found");
         var content = "<h1>404 Not found</h1>READ FILE ERROR: Internal Server Error!";
 
-        res.writeHead(500, 'text/html');
+        res.writeHead(404, 'text/html');
         res.write(content);
         res.end();
     }
@@ -286,7 +286,8 @@ function set (router, app){
                 console.log(err, err.stack);
                 console.log('\n//////////////////////////////////////////////////////////////////\n');
                 
-                res.status(err.status).end();
+                // res.status(err.status).end();
+                res_404 (req, res);
 
             }else {
                 console.log('-> Response Result  success : ', filePath);

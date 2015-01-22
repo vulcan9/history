@@ -11,9 +11,9 @@
 
 define(
     [
-        //
+        'U'
     ],
-    function() {
+    function(U) {
 
         // 선언
         function _controller( $scope, $element, $attrs, $log, $location, $rootScope, $window, AuthService ) {
@@ -80,7 +80,8 @@ define(
             };
 
             $rootScope.go_tool = function(uid) {
-                uid = uid || 'newproject:project-';
+                // uid = uid || 'newproject:project-';
+                uid = uid || 'new:project-' + U.createUID();
                 $location.path('/tool/' + uid);
             };
 

@@ -12,7 +12,7 @@
 define( [], function() {
 
         // 선언
-        function _directive(HttpService, $location, CommandService, Tool) {
+        function _directive(HttpService, $location, CommandService, Tool, $rootScope) {
 
             //out( 'version' );
 
@@ -136,7 +136,7 @@ define( [], function() {
                 //-----------------------
                 // 메뉴 클릭 이벤트 처리
                 //-----------------------
-
+                
                 // 메뉴 항목을 클릭한 경우 호출되는 함수
                 $scope.onClick = function(item){
                     out(' * MENU item : ', item);
@@ -149,12 +149,42 @@ define( [], function() {
                         return;
                     }
 
+                    /*
+                    // 함수 호출
+                    var methodName = item.method;
+                    if(methodName){
+                        self['method_' + methodName].apply(this);
+                        return;
+                    }
+                    */
+
                     // 메뉴 클릭 이벤트 처리
                     var command = item.command;
+
+                    if(command == CommandService.NEW){
+                        $rootScope.go_tool();
+                        return;
+                    }else if(command == CommandService.OPEN){
+                        $rootScope.go_dashboard();
+                        return;
+                    }
+
                     var param = {};
                     CommandService.exe(command, param);
                     
                 };
+
+                $scope.projectConfiguration = function (){
+                    this.$parent.showProjectConfigurationPopup();
+                }
+
+                $scope.logout = function (){
+                    $rootScope.auth_logout();
+                }
+
+                $scope.signout = function (){
+                    $rootScope.auth_signout();
+                }
 
                 ////////////////////////////////////////
                 // End Link

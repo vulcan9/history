@@ -150,8 +150,8 @@ define( ['U'], function( U ) {
                     var self = this;
                     this.initialize(function(){
                         if(calback) calback();
-                        // self.dataChanged = false;
-                        // self.tool('CONFIG').dataChanged = false;
+                        self.dataChanged = false;
+                        self.tool('CONFIG').dataChanged = false;
                     });
                 },
 

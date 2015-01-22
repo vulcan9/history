@@ -12,7 +12,7 @@
 define( [ 'U' ], function( U ) {
 
         // 선언
-        function _directive(CommandService, Tool, ELEMENT, $getScope, TalkService) {
+        function _directive(CommandService, Tool, ELEMENT, $getScope, TalkService, $rootScope) {
 
             //out( 'version' );
 
@@ -103,11 +103,15 @@ define( [ 'U' ], function( U ) {
                 ////////////////////////////////////////
 
                 function newProject (){
-                    CommandService.exe(CommandService.NEW, {});
+                    // CommandService.exe(CommandService.NEW, {});
+                    $rootScope.go_tool();
                 }
 
                 function openProject (){
-                    CommandService.exe(CommandService.OPEN, {});
+                    // CommandService.exe(CommandService.OPEN, {});
+                    // var uid = 'uid를 선택할 수 있는 창을 띄운다.';
+                    // $rootScope.go_tool(uid);
+                    $rootScope.go_dashboard();
                 }
 
                 function saveProject (){

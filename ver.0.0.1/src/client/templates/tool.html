@@ -27,34 +27,38 @@
 
 <!--
     <div>
-            
-            
             <hr>
             <timeline-view></timeline-view>
             <hr>
             <property-view></property-view>
-
     </div>
 -->
+
+    <script type="text/ng-template" id="project_configuration_popup">
+
+        <form name="form">
+            <div class="form-group title-form clearfix">
+                <label for="proTitle" class="col-sm-3" style="padding-top: 7px;margin-bottom: 0;text-align: right;"> 프로젝트 이름 </label>
+                <div class="col-sm-8 has-feedback">
+                    <input type="text" class="form-control" name="field_title" placeholder="프로젝트의 이름을 입력해주세요 (필수)"  required autofocus  style="padding-left: inherit;" ng-model="project_title" ng-minlength="2" ng-maxlength="20">
+                    <span class="glyphicon glyphicon-asterisk" style="position: absolute;
+                        top: 0px; right: 15px; z-index: 2; display: block; width: 34px; height: 34px; line-height: 34px; text-align: center;"></span>
+                </div>
+            </div>
+
+            <div class="form-group clearfix">
+                <label for="proDescription" class="col-sm-3" style="padding-top: 7px; margin-bottom: 0; text-align: right;">상세내용</label>
+                <div class="col-sm-8">
+                    <textarea style="height:auto;" class="tab_for_continue form-control" name="field_description" rows="10" placeholder="프로젝트에 대한 설명을 기입해주세요 (선택)" ng-model="project_description"></textarea>
+                </div>
+            </div>
+        </form>
+
+    </script>
 
 </div>
 
-<!--
-<script type="text/ng-template" id="notice.html">
-    
-    <div class="modal-header">
-        <span class="close glyphicon glyphicon-remove" style="font-size: 12px;" ng-click="cancel()"></span>
-        <h3 class="modal-title">{{title}}</h3>
-    </div>
 
-    <div class="modal-body"></div>
-    
-    <div class="modal-footer">
-        <button class="btn btn-success" ng-click="yes()">Yes</button>
-        <button class="btn btn-default" ng-click="no()">No</button>
-        <button class="btn btn-default" ng-click="cancel()">Cancel</button>
-    </div>
 
-</script>
--->
+
 

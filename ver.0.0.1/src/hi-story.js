@@ -109,9 +109,22 @@ app.use(logger('dev'));
 // app.use(logger('combined', {stream: accessLogStream}));
 
 //-----------------------------------
+// body-parser : https://www.npmjs.com/package/body-parser
+//-----------------------------------
+// methodOverride보다 먼저 선언
+var bodyParser = require('body-parser');
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+// parse application/json
+app.use(bodyParser.json());
+
+var multer = require('multer');
+app.use(multer());
+
+//-----------------------------------
 // method-override :  https://www.npmjs.com/package/method-override
 //-----------------------------------
-
+// 라우터보다 먼저 선언
 var methodOverride = require('method-override');
 app.use(methodOverride());
 // override with the X-HTTP-Method-Override header in the request
@@ -140,22 +153,9 @@ app.use(session({
 */
 
 //-----------------------------------
-// body-parser : https://www.npmjs.com/package/body-parser
-//-----------------------------------
-
-var bodyParser = require('body-parser');
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
-// parse application/json
-app.use(bodyParser.json());
-
-var multer = require('multer');
-app.use(multer());
-
-//-----------------------------------
 // cookie-parser : https://www.npmjs.com/package/cookie-parser
 //-----------------------------------
-
+// 라우터보다 먼저 선언
 var cookieParser = require('cookie-parser');
 app.use(cookieParser(secret));
 
@@ -181,9 +181,9 @@ app.use(serve);
 */
 // app.use(express.static(path.join(PATH_SERVER, 'public')));
 
-app.use(serveStatic(PATH_ROOT + '/'));
-app.use(serveStatic(PATH_ROOT + '/data'));
-app.use(serveStatic(PATH_ROOT + '/server'));
+// app.use(serveStatic(PATH_ROOT + '/'));
+// app.use(serveStatic(PATH_ROOT + '/data'));
+// app.use(serveStatic(PATH_ROOT + '/server'));
 app.use(serveStatic(PATH_ROOT + '/client', {
     // dotfiles: 'deny',
     // extensions : ['js']
@@ -206,6 +206,12 @@ var router = express.Router({
 });
 var routeConfig = require('./server/route/route-configuration');
 routeConfig.set(router, app);
+
+/*
+app.use(function(err, req, res, next){
+    res.status(500).send('500 Error');
+});
+*/
 
 //-----------------------------------
 // 서버 응답 시간 표시 (헤더) : https://www.npmjs.com/package/response-time

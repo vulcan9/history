@@ -44,6 +44,9 @@ define( [], function() {
                     // Override
                     out( '# ExitCommand Execute' );
 
+                    Project.current = null;
+                    Tool.current = null;
+
                     // 결과 리턴
                     _super._run.apply(this, arguments);
                 }

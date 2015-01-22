@@ -13,7 +13,7 @@
 define( [], function() {
 
 	// 선언
-	function _service( AuthService, $location, $rootScope, $route, $injector ) {
+	function _service( AuthService, $location, $rootScope, $route, $injector, NoticeService ) {
 
 		function RouterService( ) {
 			//
@@ -41,8 +41,8 @@ define( [], function() {
 				// 하지만, 주소표시줄에 나타난 주소로 직접 접근할 수는 없다.
 				// false로 설정하는 경우엔 [#hash] 또는 [#/hash] 형태로 링크 건다.
 
-				this.application.$locationProvider.html5Mode( false );
-				//$locationProvider.hashPrefix('!');
+				application.$locationProvider.html5Mode( false );
+				// application.$locationProvider.hashPrefix('!');
 
 				//-----------------------------------
 				//  Route
@@ -71,9 +71,12 @@ define( [], function() {
 						if(path === '/tool/:projectUID'){
 							var nextPath = $location.path();
 							checkSave(event, nextPath);
+							checkNoticePopup(event);
 							return;
 						}
 					}
+
+					checkNoticePopup(event);
 
 					// redirect된 상황인지를 필터링
 					// var path = $location.path();
@@ -107,6 +110,11 @@ define( [], function() {
 					out('# routeChangeSuccess : ', $location.path(), currRoute);
 					// #/tool/currRoute.projectUID
 				});
+				
+				function checkNoticePopup(event){
+					// alert('popup 모두 닫기');
+					NoticeService.clear();
+				}
 
 				function checkAuth(event){
 					if(AuthService.isAuthenticated()){
@@ -126,16 +134,32 @@ define( [], function() {
 
 				function checkUID(uid, event){
 					// uid 유효성 검사
-					var available = uid && (uid.indexOf('project-') == 0 || uid.indexOf('newproject:project-') == 0);
+					var available = uid && (uid.indexOf('project-') == 0 || uid.indexOf('new:project-') == 0);
 					if(!available){
 						if(event) event.preventDefault();
 						$location.path('/dashboard');
 					}
+					/*
+					// uid 유효성 검사
+					if(uid && uid.indexOf('new:project-')) == 0){
+						if(event) event.preventDefault();
+						var projectUID = 'project-' + U.createUID();
+						$location.path('/tool/' + projectUID);
+						return;
+					}
+
+					var available = uid && (uid.indexOf('project-') == 0);
+					if(!available){
+						if(event) event.preventDefault();
+						$location.path('/dashboard');
+					}
+					*/
 				}
 
 				function checkSave(event, nextPath){
 					out('# RouterService에서 저장 상태 확인');
-					if(Tool.current.dataChanged == false) return;
+					// if(Tool.current && Tool.current.dataChanged == false) return;
+					if(!Tool.current) return;
 
 					if(event) event.preventDefault();
 					require( [_PATH.SERVICE + 'CommandService.js'], function(CommandService) {

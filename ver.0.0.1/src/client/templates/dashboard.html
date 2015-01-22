@@ -1,6 +1,7 @@
 
 <div ng-controller='DashboardController as ctrl'>
     <h3>Project</h3>
+    <version></version>
     
     <!-- 로그인이 필요한 페이지에 삽입한다. -->
     <div style="position: fixed; right: 0px; top: 0px;">
@@ -50,25 +51,28 @@
     <button class="btn btn-block btn-facebook" ng-click="ctrl.newProject()">
         새로운 프로젝트 만들기
     </button>
+    
+    <div style="width:100%; height:calc(100% - 130px); top:130px; position:absolute; overflow: auto;">
+        <ul class="hi-project">
+            <li ng-repeat="item in (ctrl.projects | orderBy : '_create' : false)">
+                <!-- <div>{{item._id}}</div> -->
+                <!-- <div>{{item.uid}}</div> -->
+                <h4>Title : {{item.project.title}}</h4>
+                <div>Description : {{item.project.description}}</div>
+                <!--썸네일-->
+                <div class="hi-thumbnail" ng-click="ctrl.openProject(item)">
+                    <img ng-show="item.thumbnail"
+                        ng-src="{{item.thumbnail.src}}"
+                        style="width:100%; height:100%; 
+                        background-color: #FFF; 
+                        border-radius: 4px;"/>
+                </div>
+                <div>Create : {{item._create | date:"MM/dd/yyyy 'at' h:mma"}}</div>
+                <div>Update : {{item._update | date:"MM/dd/yyyy 'at' h:mma"}}</div>
+                <div>delete</div>
+            </li>
+        </ul>
+    </div>
 
-    <ul class="hi-project">
-        <li ng-repeat="item in (ctrl.projects | orderBy : '_create' : false)">
-            <div>{{item._id}}</div>
-            <div>{{item.uid}}</div>
-            <!--썸네일-->
-            <div class="hi-thumbnail" ng-click="ctrl.openProject(item)">
-                <img ng-show="item.thumbnail"
-                    ng-src="{{item.thumbnail.src}}"
-                    style="width:100%; height:100%; 
-                    background-color: #FFF; 
-                    border-radius: 4px;"/>
-            </div>
-            <div>Create : {{item._create | date:"MM/dd/yyyy 'at' h:mma"}}</div>
-            <div>Update : {{item._update | date:"MM/dd/yyyy 'at' h:mma"}}</div>
-            <div>delete</div>
-        </li>
-    </ul>
-
-    <version></version>
 </div>
 

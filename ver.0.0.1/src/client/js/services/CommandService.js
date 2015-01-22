@@ -248,7 +248,7 @@ define( [ 'U' ], function( U ) {
                     var deferred = $q.defer();
 
                     // 저장 체크
-                    if ( Tool.current.dataChanged ) {
+                    if ( Tool.current && Tool.current.dataChanged ) {
 
                         var config = {
                             title: '저장',

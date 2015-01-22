@@ -76,7 +76,7 @@ define( [], function() {
 
                             // 편집 결과를 저장한 데이이터
                             Project.current = new Project();
-                            Project.current.newProject();
+                            Project.current.newProject(param);
 
                             // 결과 리턴
                             _super._run.apply(this, arguments);

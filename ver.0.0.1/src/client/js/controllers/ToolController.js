@@ -9,13 +9,13 @@
 
 'use strict';
 
-define( [], function() {
+define( ['U'], function(U) {
     
         // controller간 통신 방법
         // http://programmingsummaries.tistory.com/124
         
         // 선언
-        function _controller( $scope, $element, $attrs, ProgressService, CommandService, $route, $routeParams, $location ) {
+        function _controller( $scope, $element, ProgressService, CommandService, $route, $routeParams, NoticeService, $location, $timeout ) {
 
             //-----------------------
             // CSS 설정
@@ -47,12 +47,6 @@ define( [], function() {
             }
             
             $scope.$on('$destroy', function(event){
-                /*
-                var message = _checkExit();
-                if(message){
-                    // 닫기
-                }
-                */
                 _checkExit();
             });
 
@@ -67,7 +61,7 @@ define( [], function() {
             }
 
             function _checkExit(){
-                if(Tool.current.dataChanged){
+                if(Tool.current && Tool.current.dataChanged){
                     var message = '저장되지 않은 데이터가 있습니다.';
                     return message;
                 }else{
@@ -108,7 +102,7 @@ define( [], function() {
             // 새로운 데이터 구조 생성하기
             
             ////////////////////////////////////////
-            // 닫기 상태로 초기화 완료
+            // 초기화 상태 지정
             ////////////////////////////////////////
             
             function initComplate(route, routeParams){
@@ -128,12 +122,23 @@ define( [], function() {
                     CommandService.exe(CommandService.OPEN, param, function callback(isSuccess, result) {
                         out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
                         ProgressService.complete();
+
+                        // Project 설정창 띄우기
+                        var data = Project.current.PROJECT.TREE;
+                        if(data.title) return;
+
+                        $scope.showProjectConfigurationPopup(function(){
+                            out('# Project 설정 완료');
+                        });
                     });
                     return;
                 }
 
-                if(projectUID.indexOf('newproject:project-') != 0){
+                if(projectUID.indexOf('new:project-') != 0){
                     throw new Error('잘못된 접근입니다.');
+                    // var projectUID = Project.current.PROJECT.TREE.uid;
+                    // var projectUID = 'project-' + U.createUID();
+                    // $location.path('/tool/' + projectUID);
                     return;
                 }
 
@@ -147,16 +152,22 @@ define( [], function() {
                 /*/
 
                 // 새문서 열기
-                var param = {};
+                var param = {
+                    uid: projectUID.substring(4),
+                    // title: '프로젝트 새로 만들기',
+                    // description: '프로젝트에 대한 상세 설명'
+                };
                 CommandService.exe(CommandService.NEW, param, function callback(isSuccess, result) {
                     out('# 초기화 실행 종료 : ', isSuccess, ' - ', result);
                     ProgressService.complete();
 
-                    alert('NEW PROJECT : ' + Project.current.PROJECT.TREE.uid);
-==========================================================================================
                     // Project 설정창 띄우기
+                    var data = Project.current.PROJECT.TREE;
+                    if(data.title) return;
 
-                    // Project 설정창 닫을때 서버 저장
+                    $scope.showProjectConfigurationPopup(function(){
+                        out('# Project 설정 완료');
+                    });
                 });
                 
                 //*/
@@ -164,6 +175,98 @@ define( [], function() {
 
             
             
+
+            ////////////////////////////////////////
+            // Project Configuration
+            ////////////////////////////////////////
+
+            //----------------
+            // 팝업창
+            //----------------
+
+            $scope.showProjectConfigurationPopup = function (callback){
+                if(!Project.current){
+                    if(callback) callback();
+                    return;
+                }
+                var data = Project.current.PROJECT.TREE;
+
+                var config = {
+                    title: '프로젝트 설정',
+                    content: U.getTemplate('#project_configuration_popup', $element),
+                    isHTML: true,
+                    backdrop: true,
+                    // hideCloseButton: true,
+                    // keyboard: false
+                    // templateUrl: _PATH.TEMPLATE + 'popup/notice.html',
+                    // buttons: ['예', '아니오', '취소']
+                    buttons: ['확인', '취소']
+                };
+
+                var handler = {
+                    
+                    opened: function( element, scope ) {
+                        out( 'opened : ', element, scope );
+                        scope.project_title = data.title;
+                        scope.project_description = data.description;
+
+                        /*
+                        // form은 form태그의 name값임
+                        var form = scope.form;
+                        scope.$watch('project_title', function(newValue, oldValue) {
+                            // out('invalid : ', form.$valid);
+                            if(form.$invalid){
+                                element.find('.modal-footer').addClass('disable');
+                            }else{
+                                element.find('.modal-footer').removeClass('disable');
+                            }
+                        });
+                        */
+                        $timeout(function() {
+                            element.find('[name="field_title"]')[0].focus();
+                        }, 500);
+                    },
+                    
+                    closed: function( result, element, scope ) {
+                        // result : -1:cancel, 1:yes, 0:no
+                        if(result == -1){
+                            return;
+                        }
+
+                        Project.current.projectAPI('title', scope.project_title);
+                        Project.current.projectAPI('description', scope.project_description);
+                        if(callback) callback();
+                    }
+                };
+                
+                // 삭제 대상이되는 uid 표시
+                // $scope.removeUID = item.uid;
+
+                //----------------
+                // 팝업 닫힘 후 처리
+                //----------------
+
+                /*
+                var self = this;
+                var deferred = $q.defer();
+                deferred.promise.then( 
+                    function resolve( optionValue ) {
+                        out('- 로그인 : 작업 실행');
+                        // var uid = item.uid;
+                        // self.removeDocument(optionValue, uid);
+                        // $scope.removeUID = null;
+                    }, 
+                    function reject(){
+                        out('- 로그인 : 작업 취소');
+                        // $scope.removeUID = null;
+                        // $scope.removeOption = null;
+                    } 
+                );
+                */
+
+                // 팝업창 띄우기
+                NoticeService.open( config, handler );
+            }
 
 
 

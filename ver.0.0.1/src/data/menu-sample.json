@@ -5,6 +5,12 @@
     "items": [
 
         {
+            "label": "Home", 
+            "link":"http://localhost/history/ver.0.0.1/src", 
+            "command":""
+        },
+
+        {
             "label": "File", 
             "link":"", "command":"file",
             "menus":[
@@ -51,10 +57,16 @@
                 {"label": "presentation", "link":"", "command":"play"},
                 {"label": "edit", "link":"", "command":"edit"}
             ]
-        }
+        },
 
 
         
+        {
+            "label": "admin url 테스트", 
+            "link":"#/admin", 
+            "command":""
+        }
+
     ]
 
 }
