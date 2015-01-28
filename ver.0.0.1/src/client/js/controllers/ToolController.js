@@ -15,7 +15,7 @@ define( ['U'], function(U) {
         // http://programmingsummaries.tistory.com/124
         
         // 선언
-        function _controller( $scope, $element, ProgressService, CommandService, $route, $routeParams, NoticeService, $location, $timeout ) {
+        function _controller( $scope, $element, ProgressService, CommandService, $route, $routeParams, NoticeService, $location, $timeout, $rootScope ) {
 
             //-----------------------
             // CSS 설정
@@ -127,7 +127,7 @@ define( ['U'], function(U) {
                         var data = Project.current.PROJECT.TREE;
                         if(data.title) return;
 
-                        $scope.showProjectConfigurationPopup(function(){
+                        $rootScope.showPopup_projectConfiguration(function(){
                             out('# Project 설정 완료');
                         });
                     });
@@ -165,7 +165,7 @@ define( ['U'], function(U) {
                     var data = Project.current.PROJECT.TREE;
                     if(data.title) return;
 
-                    $scope.showProjectConfigurationPopup(function(){
+                    $rootScope.showPopup_projectConfiguration(function(){
                         out('# Project 설정 완료');
                     });
                 });
@@ -184,7 +184,7 @@ define( ['U'], function(U) {
             // 팝업창
             //----------------
 
-            $scope.showProjectConfigurationPopup = function (callback){
+            $rootScope.showPopup_projectConfiguration = function (callback){
                 if(!Project.current){
                     if(callback) callback();
                     return;

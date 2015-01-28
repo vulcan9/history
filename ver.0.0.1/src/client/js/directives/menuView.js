@@ -175,7 +175,7 @@ define( [], function() {
                 };
 
                 $scope.projectConfiguration = function (){
-                    this.$parent.showProjectConfigurationPopup();
+                    $rootScope.showPopup_projectConfiguration();
                 }
 
                 $scope.logout = function (){
