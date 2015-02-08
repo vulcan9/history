@@ -190,6 +190,11 @@ define( [ 'U' ], function( U ) {
                     var el_new = Project.current.getElement(data.documentUID, data.newValue)
                     angular.element(el_new).addClass('selectedElement');
                     */
+                    /*
+                    $timeout(function(){
+                        __updateBoundary();
+                    }, 10);
+                    */
                 });
 
                 $scope.$on('#Project.remove-ELEMENT', function(e, data){
@@ -260,7 +265,7 @@ define( [ 'U' ], function( U ) {
                         return;
                     }
 
-                    // // 편집 UI를 구성한다.
+                    // 편집 UI를 구성한다.
                     var rect = {
                         x: U.toNumber($select.css('left')),
                         y: U.toNumber($select.css('top')),
@@ -393,7 +398,7 @@ define( [ 'U' ], function( U ) {
 
                     var initObj = {
                         //direction : "x", // x, y, both
-                        dragLimitOption : "inner", // inner, center, outter, none
+                        dragLimitOption : 'none', // inner, center, outter, none
                         // 한계치 지정하지 않으려면 반드시 null을 설정한다.
                         minX : null,
                         minY : null,
@@ -540,7 +545,7 @@ define( [ 'U' ], function( U ) {
                     clearResize();
 
                     var initObj = {
-                        dragLimitOption : true, // true, false(=default)
+                        dragLimitOption : false, // true, false(=default)
                         // 한계치 지정하지 않으려면 반드시 null을 설정한다.
                         minX : null,
                         minY : null,
@@ -659,7 +664,7 @@ define( [ 'U' ], function( U ) {
                             'top': y,
                             'width': w,
                             'height': h,
-                            'word-wrap': 'break-word'
+                            // 'word-wrap': 'break-word'
                         };
                     }else{
                         css = {
@@ -667,7 +672,7 @@ define( [ 'U' ], function( U ) {
                             'top': y,
                             'width': w,
                             'height': h,
-                            'word-wrap': 'inherit'
+                            // 'word-wrap': 'inherit'
                         };
                     }
 
@@ -705,15 +710,15 @@ define( [ 'U' ], function( U ) {
                         var $el = angular.element(el);
                         $el.css({
                             'width': 'initial',
-                            'word-wrap': 'initial'
+                            // 'word-wrap': 'initial'
                         });
                         var maxW = toInt ($el.width()+1);
                         var wordWrap;
                         if(maxW <= w){
-                            wordWrap = 'initial';
+                            // wordWrap = 'initial';
                             w = maxW;
                         }else{
-                            wordWrap = 'break-word';
+                            // wordWrap = 'break-word';
                         }
 
                         // text box에 크기 맞춤
@@ -722,7 +727,7 @@ define( [ 'U' ], function( U ) {
                             'top': y,
                             'width': w,
                             'height': 'initial',
-                            'word-wrap': wordWrap
+                            // 'word-wrap': wordWrap
                         };
                     }else{
                         // 사용자 지정 크기에 text 크기 맞춤
@@ -731,7 +736,7 @@ define( [ 'U' ], function( U ) {
                             'top': y,
                             'width': w,
                             'height': h,
-                            'word-wrap': 'initial'
+                            // 'word-wrap': 'initial'
                         };
                     }
 

@@ -35,7 +35,9 @@ define(
             $scope.$emit( 'updateCSS', [ 
                 _PATH.CSS + 'basic.css',
                 _PATH.CSS + 'application.css',
-                
+                _PATH.CSS + 'element.css',
+
+                _PATH.LIB + 'angular-bootstrap-colorpicker/colorpicker.css',
                 '//cdnjs.cloudflare.com/ajax/libs/ionicons/1.5.2/css/ionicons.min.css',
                 _PATH.CSS + 'login.css'
             ] );

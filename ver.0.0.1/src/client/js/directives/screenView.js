@@ -608,7 +608,8 @@ define(
                     compareHeight: Math.max(0, $element.height() - marginH)
                 });
 
-                $scope.scaleMode.scale(ScaleMode.SCALE_WINDOW);
+                // $scope.scaleMode.scale(ScaleMode.SCALE_WINDOW);
+                $scope.scaleMode.scale(1);
                 $scope.size = getSize(1);
                 
                 //-----------------------------------

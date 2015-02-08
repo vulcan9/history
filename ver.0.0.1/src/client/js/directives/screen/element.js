@@ -153,19 +153,7 @@ define( [ 'U' ], function( U ) {
                         // $dom.css('z-index', 2000);
                         $dom.attr('contenteditable', true);
 
-                        $dom.css({
-                            /*Chrome all / Safari all*/
-                            '-webkit-user-select' :'initial',
-                            /*Firefox all*/
-                            '-moz-user-select' :'initial',
-                            /*IE 10+ */
-                            '-ms-user-select' :'initial',
-                            /*No support for these yet, use at own risk */
-                            '-o-user-select' :'initial',
-                            'user-select' :'initial',
-
-                            'background-color' : '#FFF'
-                        });
+                       $dom.addClass('edit');
 
                         $scope.$evalAsync(function(){
                             angular.element(dom).focus();
@@ -185,19 +173,7 @@ define( [ 'U' ], function( U ) {
                         // $dom.css('z-index', 0);
                         $dom.attr('contenteditable', false);
 
-                        $dom.css({
-                            /*Chrome all / Safari all*/
-                            '-webkit-user-select' :'none',
-                            /*Firefox all*/
-                            '-moz-user-select' :'none',
-                            /*IE 10+ */
-                            '-ms-user-select' :'none',
-                            /*No support for these yet, use at own risk */
-                            '-o-user-select' :'none',
-                            'user-select' :'none',
-
-                            'background-color' :'transparent'
-                        });
+                        $dom.removeClass('edit');
 
                         // 보정 해지
                         __removeCheckForSpan($dom);
@@ -212,20 +188,135 @@ define( [ 'U' ], function( U ) {
                 */
                 
                 function __addCheckForSpan($editor) {
-                    $editor.on("DOMNodeInserted", __check_SPAN);
+                    // $editor.on("DOMNodeInserted", __check_SPAN);
+                    // $editor.on("keydown", __check_newline);
+                    // $editor.on("keyup", __check_DIV);
+
+                    $editor.on("keydown", __check_keydown);
+                    $editor.on("keyup", __check_keyup);
                 }
                 function __removeCheckForSpan($editor) {
-                    $editor.off("DOMNodeInserted", __check_SPAN);
+                    // $editor.off("DOMNodeInserted", __check_SPAN);
+                    // $editor.off("keydown", __check_newline);
+                    // $editor.off("keyup", __check_DIV);
+
+                    $editor.off("keydown", __check_keydown);
+                    $editor.off("keyup", __check_keyup);
                 }
+
+                function __check_keydown(e){
+                    var $editor = $(e.target);
+                    var text = $editor.html();
+
+                    // console.log('keydown:', text);
+                    
+                    // 직접 <br>코드를 삽입한다. - (그러면 DIV 추가 안됨)
+                    // 커서는 손대지 않는다.
+                    if ( e.which == 13 ) {
+
+                        var newline = document.createElement("br");
+                        // var newline = document.createTextNode("\n");
+
+                        if (window.getSelection) {
+                            // all browsers, except IE before version 9
+                            var selection = window.getSelection ();
+                            if (selection.rangeCount > 0) {
+                                var range = selection.getRangeAt (0);
+                                range.collapse (false);
+                                range.insertNode (newline);
+
+                                //*
+                                range.setStartAfter(newline);
+                                range.setEndAfter(newline);
+                                selection.removeAllRanges();
+                                selection.addRange(range);
+                                /*/
+                                // node value ; text or \n or ""
+                                var node = newline.nextSibling;
+                                if(node){
+                                    selection.collapse (node, 0);
+                                }else{
+                                    // selection.collapseToEnd ();
+                                    selection.collapse (selection.anchorNode, selection.anchorOffset+1);
+                                }
+                                //*/
+                            }
+                        }
+
+                        // 노드 normalize
+                        e.target.normalize();
+                        e.preventDefault();
+                    }
+                }
+
+                function __check_keyup(e){
+
+                    var $editor = $(e.target);
+                    var newline = document.createElement("br");
+                    // var newline = document.createTextNode("\n");
+
+                    // 줄바꿈 엔터 칠때 많이 발생하나 __check_keydown 메서드 실행으로
+                    //  거의 발생되지 않음 (COPY & PASTE 실행시를 위해 남겨둠)
+
+                    //remove all span tags, keeping the content
+                    $editor.find('span').contents().unwrap();
+                    //add a br at the start of each p or div, then remove p or div 
+                    //use append instead of prepend to add the  line break at the end, not at the start.
+                    $editor.find('p, div').prepend(newline).contents().unwrap();
+                    // $editor.find('br').before(newline).remove();
+
+                    // COPY & PASTE 할때 보정
+                    var text = $editor.html();
+                    if(text.search(/[\r\n]/) > -1){
+                        // \r\n 처리
+                        text = text.replace(/[\r\n]/g, '<br>');
+                        $editor.html(text);
+                    }
+                    $editor.find('br').removeAttr('style');
+
+                    // 컨텐츠의 마지막 요소가 br이 아닌 경우 
+                    // 마지막 라인에서 엔터를 두번쳐야 줄바뀜이 일어나는 현상때문에
+                    // 항상 br 태그를 마지막에 둠
+                    var $last = $editor.contents().last();
+                    if(!$last.is('br')){
+                        $editor.contents().after(newline);
+                    }
+
+                    // 노드 normalize
+                    e.target.normalize();
+                    e.preventDefault();
+                }
+
+                /*
+                    // 엔터 줄바꿈의 경우 (부모 태그가 div인 경우)
+                    // <div><span>...</div></span> 형식으로 문자열이 분리되면서 태그로 감싸지게 된다.
+                    // 이후 <br> 태그가 붙는다.
+
+                    // \r\n 처리
+                    text = text.replace(/[\r\n]/g, '');
+                    // SPAN 처리
+                    text = text.replace(/<\s*\/?\s*S\s*P\s*A\s*N\s*.*?>/gi, '');
+                    // DIV --> <br>처리
+                    text = text.replace(/<\s*D\s*I\s*V\s*.*?>/gi, '<br>');
+                    text = text.replace(/<\s*\/\s*D\s*I\s*V\s*>/gi, '');
+                    
+                    // DIV --> '' 처리
+                    // text = text.replace(/<\s*\/?\s*D\s*I\s*V\s*.*?>/gi, '');
+
+                    // 노드 normalize
+                    e.target.normalize();
+
+
                 function __check_SPAN(e) {
                     if (e.target.tagName == "SPAN" ) {
-                        var helper = $("<b>helper</b>");
+                        var helper = $("<b>__helper__</b>");
                         $(e.target).before(helper);
                         helper.after($(e.target).contents());
                         helper.remove();
                         $(e.target).remove();
                     }
                 }
+                */
 
                 /*******************************************/
 
@@ -293,8 +384,8 @@ define( [ 'U' ], function( U ) {
                         css: {
                             left: U.toNumber($dom.css('left')), 
                             top: U.toNumber($dom.css('top')), 
-                            width: $dom.width(), 
-                            height: $dom.height()
+                            width: $dom.outerWidth(), 
+                            height: $dom.outerHeight(),
                         }
                     };
 
@@ -316,10 +407,12 @@ define( [ 'U' ], function( U ) {
 
                     if(type == ELEMENT.TEXT){
                         var text = param['text'];
-                        out('* Modify Content : ', text);
-                        // $dom.text(text);
-                        $dom.html(text);
-
+                        if(text !== undefined){
+                            out('* Modify Content : ', text);
+                            $dom.html(text);
+                            // $dom[0].normalize();
+                        }
+                        
                     }else if(type == ELEMENT.IMAGE){
                         //
                     }

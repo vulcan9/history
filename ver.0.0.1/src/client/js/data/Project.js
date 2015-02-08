@@ -48,8 +48,8 @@ define( ['U'], function( U ) {
             // MS ppt : 1193x671
             // Google docs는 화면 비율로 맞춤 - 4:3, 16:9, 16:10 (960x540)
             Project.paper = {
-                width:1190, 
-                height:670 
+                width:595, 
+                height:842 
             };
 
             // Prototype 상속
@@ -1228,7 +1228,9 @@ define( ['U'], function( U ) {
                     // 유형에 따라 comp 내용을 구성
                     // type : html(문서), tag(태그묶음), text(글상자)...
                     createElementContent: function(type, elementUID, option, css){
-                        var comp = '<div uid="' + elementUID + '">TEXT</div>';
+                        // ng-class사용하는 경우 compile 시간이 지연된다. (class가 선택후 적용된다.)
+                        // var comp = '<div uid="' + elementUID + '" ng-class="{hiElement:true, ' + type + ':true}" style="min-width:100px;min-height:100px">TEXT</div>';
+                        var comp = '<div uid="' + elementUID + '" class="hiElement ' + type + '">TEXT</div>';
                         // var comp = '<textarea uid="' + elementUID + '">TEXT</textarea>';
                         var $comp = angular.element(comp);
                         if(css) $comp.css(css);

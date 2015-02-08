@@ -193,6 +193,8 @@ require.config( {
         //-----------------
         'bootstrap':                _PATH.LIB + 'bootstrap-3.2.0/js/bootstrap',
         'ui-bootstrap':                _PATH.LIB + 'ui-bootstrap-tpls-0.11.2',
+        // https://github.com/buberdds/angular-bootstrap-colorpicker
+        'colorpicker.module':      _PATH.LIB + 'angular-bootstrap-colorpicker/bootstrap-colorpicker-module',
 
         //-----------------
         // 모듈
@@ -250,6 +252,7 @@ require.config( {
         'ui-bootstrap': { deps: [ 'angular' ]},
         'ui.tree': { deps: [ 'angular' ]},
         'satellizer': { deps: [ 'angular' ], exports: 'satellizer' },
+        'colorpicker.module': { deps: [ 'angular' ]},
 
         'dockModule': { deps: [ 'angular' ]},
         'alignModule': { deps: [ 'angular' ]},
@@ -258,7 +261,7 @@ require.config( {
             deps: [ 
                 'angular', 'angular-route', 'angular-animate', 'angular-messages', 
                 'dockModule', 'alignModule', 
-                'ui-bootstrap', 'ui.tree', 
+                'ui-bootstrap', 'ui.tree', 'colorpicker.module',
                 'satellizer'
             ]
         },

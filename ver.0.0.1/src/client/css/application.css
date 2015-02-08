@@ -642,14 +642,14 @@ z-index :
 
 .hi-screenContainer{
     position: relative;
-    overflow: auto;
+    /*overflow: auto;*/
     display: inline-block;
     /*JS코드에서 위치, 크기 동적으로 바뀜*/
     width: 100%;
     height: 100%;
 }
 .hi-screen{
-    overflow: hidden;
+    overflow: auto;
     position: absolute;
     /*border: 1px solid #FF0000;*/
     width: 100%;
@@ -716,100 +716,6 @@ z-index :
     top: 0px;
     left: 0px;
 }
-
-/*------------------------------------
-// Element
-------------------------------------*/
-.hi-screenContainer .hi-content{
-    position: absolute;
-    /*border: 1px solid #FF0000;*/
-    padding: 0px !important;
-    width:100%;
-    height:100%;
-}
-
-/* document 요소 */
-.hi-screenContainer .hi-content div[uid^="document-"],
-.hi-screenContainer .hi-content div[uid^="document-"]:hover
-.hi-screenContainer .hi-content div[uid^="document-"].selectedElement
-.hi-screenContainer .hi-content div[uid^="document-"].selectedElement:hover {
-    outline: none;
-    position: relative;
-}
-
-/* element 요소 */
-.hi-screenContainer .hi-content  div[uid^="element-"] {
-    outline: rgba(0, 216, 255, 0.2) solid 1px;
-    /*border: rgba(0, 216, 255, 0.2) solid 1px;*/
-    position: absolute;
-}
-.hi-screenContainer .hi-content div[uid^="element-"]:hover {
-    /*border: none;*/
-    outline: rgba(0, 216, 255, 0.1) solid 10px;
-}
-/*
-.hi-screenContainer .hi-content div[uid^="element-"].selectedElement {
-    outline: rgba(0, 216, 255, 0.2) solid 1px;
-}
-.hi-screenContainer .hi-content div[uid^="element-"].selectedElement:hover {
-    outline: rgba(255, 194, 0, 0.2) solid 1px;
-}
-*/
-.hi-screenContainer .hi-content div[contenteditable=true],
-.hi-screenContainer .hi-content div[contenteditable=true]:hover {
-    /*border: none;*/
-    outline: rgba(255, 194, 0, 0.2) solid 10000px;
-    cursor: text;
-}
-
-/*------------------------------------
-// Capture Clone 레이어
-------------------------------------*/
-
-/*텍스트 옵션, 
-<element contenteditable="true|false">
-
-text-align : left|right|center|justify;
-text-decoration: none|underline|overline|line-through|initial|inherit;
-text-indent: px, pt, cm, em, %
-text-overflow: clip|ellipsis|string|initial|inherit; (width 지정되고 overflow: hidden;인 경우)
-text-shadow: h-shadow v-shadow blur color|none|initial|inherit;
-text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문자 변환)
-
-폰트 옵션
-font
-@font-face
-font-family
-font-size
-font-size-adjust
-font-stretch
-font-style
-font-variant
-font-weight
-
-Paragraphs 옵션
-letter-spacing
-line-height
-list-style
-list-style-image
-list-style-position
-list-style-type
-
-여백 (layout)
-margin
-margin-bottom
-margin-left
-margin-right
-margin-top
-padding
-padding-bottom
-padding-left
-padding-right
-padding-top
-
-객체 align (IE11이상 지원)
-justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
-*/
 
 /*------------------------------------
 // 편집모드 전환 버튼
@@ -918,7 +824,8 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
 
     padding:0px;
     
-    border:1px dashed #E42806;
+    /*border:1px dashed #E42806;*/
+    outline:1px dashed #E42806;
     z-index: 501 !important;
     top:0px;
     left:0px;
