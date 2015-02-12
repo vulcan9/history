@@ -1,4 +1,12 @@
 
+.form{
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
 /*------------------------------------
 // Element
 ------------------------------------*/
@@ -49,6 +57,13 @@
 
 div[uid^="element-"].hiElement,
 div[uid^="element-"].hiElement > *{
+
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+
     /*편집 불가*/
     -webkit-user-select :none;
     -moz-user-select:none;
@@ -65,16 +80,21 @@ div[uid^="element-"].hiElement > *{
     word-wrap: break-word;
     white-space: pre-line;
     /*텍스트 자동 줄바꿈, 말줄임표 표시
-    text-overflow: ellipsis;
     white-space: nowrap;
     */
-    
+    text-overflow: clip;
+
+    line-height: 1em;
+    letter-spacing: 0px;
+    text-align: left;
+
     font-family: '맑은 고딕', '나눔고딕';
+    font-size:14px;
+    color:rgb(0,0,0);
     
     /*초기(default) 크기를 지정*/
     width: 100px;
     height: 40px;
-    font-size:24px;
 }
 div[uid^="element-"].hiElement.edit{
     /*편집 허용*/

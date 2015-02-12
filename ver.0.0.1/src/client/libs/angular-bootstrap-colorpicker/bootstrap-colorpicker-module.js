@@ -437,7 +437,20 @@ angular.module('colorpicker.module', [])
           };
 
           var getColorpickerTemplatePosition = function() {
-            var
+
+              //*************************************
+              // 스크롤 위치에 대응하도록 수정함
+              var p = elem.offsetParent();
+              var ot = p.scrollTop();
+              var ol = p.scrollLeft();
+              var offset = elem.position();
+              offset.top = offset.top + ot;
+              offset.left = offset.left + ol;
+
+              //*************************************
+
+
+              var
                 positionValue,
                 positionOffset = Helper.getOffset(elem[0]);
 
@@ -468,8 +481,8 @@ angular.module('colorpicker.module', [])
               };
             }
             return {
-              'top': positionValue.top + 'px',
-              'left': positionValue.left + 'px'
+              'top': (positionValue.top + offset.top) + 'px',
+              'left': (positionValue.left + offset.left) + 'px'
             };
           };
 

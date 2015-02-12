@@ -506,8 +506,8 @@ define( [ 'U' ], function( U ) {
                         // element 설정값
                         option: {},
                         css: {
-                            'left': x,
-                            'top': y
+                            'left': x + 'px',
+                            'top': y + 'px'
                         }
                     };
                     CommandService.exe(CommandService.MODIFY_ELEMENT, param, function(){
@@ -723,19 +723,19 @@ define( [ 'U' ], function( U ) {
 
                         // text box에 크기 맞춤
                         css = {
-                            'left': x,
-                            'top': y,
-                            'width': w,
+                            'left': x + 'px',
+                            'top': y + 'px',
+                            'width': w + 'px',
                             'height': 'initial',
                             // 'word-wrap': wordWrap
                         };
                     }else{
                         // 사용자 지정 크기에 text 크기 맞춤
                         css = {
-                            'left': x,
-                            'top': y,
-                            'width': w,
-                            'height': h,
+                            'left': x + 'px',
+                            'top': y + 'px',
+                            'width': w + 'px',
+                            'height': h + 'px',
                             // 'word-wrap': 'initial'
                         };
                     }

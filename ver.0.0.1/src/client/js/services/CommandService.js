@@ -382,6 +382,11 @@ define( [ 'U' ], function( U ) {
                     var macro = [];
                     var deferred = $q.defer();
 
+                    var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl');
+                    if(scope.editableUID) {
+                        scope.editableUID = '';
+                    }
+
                     // 저장
                     var command = new SaveCommand();
                     macro.push( {command:command, param:param} );
@@ -401,6 +406,11 @@ define( [ 'U' ], function( U ) {
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
+
+                    var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl');
+                    if(scope.editableUID) {
+                        scope.editableUID = '';
+                    }
 
                     if(!param || !param.uid){
                         var uid = 'b16fea9c-d10a-413b-ba20-08344f937336';
@@ -542,7 +552,7 @@ define( [ 'U' ], function( U ) {
                     //**********************************************************
 
                     // 현재 편집 상태라면 먼저 편집 모드 해지하여 ModifyElementCommand를 실행시킨다.
-                    var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl')
+                    var scope = $getScope('.ui-draggable-handle, .ui-resizable-handle', 'uiControl');
                     if(scope.editableUID){
                         // scope.editableUID = '';
                         // 여기에서 scope.editableUID 값 변경에 대한 watch코드는 발생하지 않으므로 직접 코드를 호출한다.

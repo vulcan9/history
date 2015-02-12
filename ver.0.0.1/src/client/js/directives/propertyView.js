@@ -38,10 +38,15 @@ define( [ 'U' ], function( U ) {
             
             function Controller ( $scope, $element, $attrs) {
 
+                //$scope.css = {};
+                //$scope.option = {};
+                //$scope.temp = {};
+                //$scope.tempOption = {};
+
                 ////////////////////////////////////////////////////////////////////////////////
                 // 환경설정
                 ////////////////////////////////////////////////////////////////////////////////
-                
+
                 //-------------------------------------
                 // Tool
                 //-------------------------------------
@@ -51,11 +56,11 @@ define( [ 'U' ], function( U ) {
                     var documentUID = Project.current.getSelectDocument();
                     $scope.updateContent(documentUID);
                 });
-                
+
                 ////////////////////////////////////////////////////////////////////////////////
                 // Document
                 ////////////////////////////////////////////////////////////////////////////////
-                
+
                 //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
                 $scope.$on('#Project.selected-DOCUMENT', function(e, data){
                     out('#Project.selected-DOCUMENT (property) : ', data);
@@ -71,11 +76,8 @@ define( [ 'U' ], function( U ) {
                 ////////////////////////////////////////
                 // DOM 업데이트
                 ////////////////////////////////////////
-                
-                function __onSelectDocument (newValue, oldValue){
-                    out(' - oldValue : ', oldValue);
-                    out(' - newValue : ', newValue);
 
+                function __onSelectDocument (newValue, oldValue){
                     var elementUID = Project.current.getSelectElement(newValue);
                     $scope.updateContent(newValue, elementUID);
                 }
@@ -90,11 +92,11 @@ define( [ 'U' ], function( U ) {
                     var documentUID = Project.current.getSelectDocument();
                     $scope.updateContent(documentUID);
                 });
-                
+
                 ////////////////////////////////////////////////////////////////////////////////
                 // Element
                 ////////////////////////////////////////////////////////////////////////////////
-                
+
                 // {newValue: 'element-18d53f95-2ffa-433a-9a9a-c57ca1534f04', name: 'ELEMENT', oldValue: 'element-c2d5091c-3d06-470c-b7b0-343a8bd41c88', document: 'document-9c2bd172-edbe-4ed3-a145-c7e25dc515d1'}
                 $scope.$on('#Project.selected-ELEMENT', function(e, data){
                     out('#Project.selected-ELEMENT (propertyView) : ', data);
@@ -114,10 +116,6 @@ define( [ 'U' ], function( U ) {
                 }
 
                 function __onSelectElement(newValue, oldValue, documentUID){
-                    out(' - oldValue (propertyView) : ', oldValue);
-                    out(' - newValue (propertyView) : ', newValue);
-                    
-                    // var item = Project.current.getElement(documentUID);
                     var elementUID = newValue;
                     $scope.updateContent(documentUID, elementUID);
                 }
@@ -126,14 +124,9 @@ define( [ 'U' ], function( U ) {
                 // DOM 인터렉션
                 ////////////////////////////////////////////////////////////////////////////////
 
-                // var _dom;
                 var _documentUID;
                 var _elementUID;
-
-                // updateContent 실행에 의해 css, option값이 바뀐 경우에는 modifyContent를 실행하지 않기위해 체크함
-                var _fromUpdate = false;
-                // modifyContent 실행에 의해 속성, 옵션값이 바뀐 경우에는 updateContent를 실행하지 않기위해 체크함
-                var _fromModify = false;
+                var _currentElement;
 
                 ////////////////////////////////////////
                 // Document 환경설정
@@ -142,11 +135,6 @@ define( [ 'U' ], function( U ) {
                 //-------------------
                 // snap 크기
                 //-------------------
-                /*
-                $scope.$watch('option.display.snap_pixel',  function (newValue, oldValue){
-                    $scope.modifyContent( _documentUID, _elementUID );
-                });
-                */
 
                 $scope.$on('#Tool.changed-CONFIG.display.snap_pixel' , function(e, data){
                     $scope.updateContent( _documentUID, _elementUID );
@@ -155,11 +143,6 @@ define( [ 'U' ], function( U ) {
                 //-------------------
                 // grid 보이기
                 //-------------------
-                /*
-                $scope.$watch('option.display.show_grid',  function (newValue, oldValue){
-                    $scope.modifyContent( _documentUID, _elementUID );
-                });
-                */
 
                 $scope.$on('#Tool.changed-CONFIG.display.show_grid' , function(e, data){
                     $scope.updateContent( _documentUID, _elementUID );
@@ -168,7 +151,7 @@ define( [ 'U' ], function( U ) {
                 ////////////////////////////////////////
                 // Element 환경설정
                 ////////////////////////////////////////
-                
+
                 //-------------------
                 // 텍스트 크기 맞춤 옵션
                 //-------------------
@@ -181,16 +164,16 @@ define( [ 'U' ], function( U ) {
                     // api.option('display_size_toText', newValue);
                     $scope.modifyContent( _documentUID, _elementUID );
                 });
-                */
 
                 $scope.$on('#Project.changed-element.option.display_size_toText' , function(e, data){
                     $scope.updateContent( _documentUID, _elementUID );
                 });
+                */
 
                 ////////////////////////////////////////
                 // DOM 업데이트
                 ////////////////////////////////////////
-                
+
                 // 속성창 내용을 갱신한다.
                 $scope.updateContent = function( documentUID, elementUID, param ){
                     _documentUID = documentUID;
@@ -199,7 +182,7 @@ define( [ 'U' ], function( U ) {
                     var type = Project.current.getType(documentUID, elementUID);
                     $scope.type = type;
 
-                    // type 이 바뀌지 않은 상태에서도 속성값은 계속 수정되므로 
+                    // type 이 바뀌지 않은 상태에서도 속성값은 계속 수정되므로
                     // type watch에서 실행하지 않늗다.
                     if(type == ELEMENT.DOCUMENT){
                         $scope.uid = documentUID;
@@ -208,171 +191,622 @@ define( [ 'U' ], function( U ) {
                     }
 
                     if(!Project.current) return;
+                    if(!documentUID) return;
 
-                    _getCSS(type, documentUID, elementUID, param);
-                    _getOption(type, documentUID, elementUID);
-                }
-                
-                // $scope.$watch('type', function(newValue, oldValue) {
-                // });
-
-                //------------------
-                // Property
-                //------------------
-
-                function _getCSS(type, documentUID, elementUID, param){
-                    
-                    // var documentItem = Project.current.getDocument(documentUID);
-                    // _dom = documentItem.document.content;
-                    var css;
-                    if(type == ELEMENT.DOCUMENT){
-                        
-                        css = {
-                            // left : U.toNumber( $dom.css('left') ),
-                            // top : U.toNumber( $dom.css('top') ),
-                            width : Project.paper.width,
-                            height : Project.paper.height
-                        }
-
+                    if(elementUID){
+                        _currentElement = Project.current.getElement(documentUID, elementUID);
                     }else{
-
-                        if(!documentUID && !elementUID){
-                            _fromUpdate = true;
-                            $scope.css = null;
-                            return;
-                        }
-
-                        var dom = Project.current.getElement(documentUID, elementUID);
-                        var $dom = angular.element(dom);
-                        
-                        css = {
-                            // left : U.toNumber( $dom.css('left') ) || 0,
-                            // top : U.toNumber( $dom.css('top') ) || 0,
-                            // width : $dom.width() || 0,
-                            // height : $dom.height() || 0
-                        }
-
-                        /*
-                        var newCss;
-                        if(type == ELEMENT.TEXT)
-                        {
-                            //
-                        }
-                        else if(type == ELEMENT.IMAGE)
-                        {
-                            //
-                        }
-                        // scope.getModifyElementParameter(documentUID, elementUID);
-
-                        if(newCss) css = angular.extend(css, newCss);
-                        */
-
-                        out('TODO : 불필요한 style string Clear 할것');
-
-                        var paramCSS = (param)? param.css : {};
-
-                        // 테두리
-                        var border = paramCSS.borderWidth || U.toNumber( $dom.css('borderWidth') ) || 0;
-                        css.borderWidth = border;
-                        css.borderColor = paramCSS.borderColor || $dom.css('borderColor');
-                        css.borderStyle = paramCSS.borderStyle || $dom.css('borderStyle');
-                        if(!css.borderStyle || css.borderStyle == 'none') css.borderStyle = 'solid';
-
-                        // 위치
-                        css.left = paramCSS.left || U.toNumber( $dom.css('left') ) || 0;
-                        css.top = paramCSS.top || U.toNumber( $dom.css('top') ) || 0;
-
-                        // 크기
-                        css.width = paramCSS.width || $dom.outerWidth() || 0;
-                        css.height = paramCSS.height || $dom.outerHeight() || 0;
-
-                        // 테두리 라운딩
-                        css.borderTopLeftRadius = paramCSS.borderTopLeftRadius || U.toNumber($dom.css('borderTopLeftRadius'));
-                        css.borderTopRightRadius = paramCSS.borderTopRightRadius || U.toNumber($dom.css('borderTopRightRadius'));
-                        css.borderBottomRightRadius = paramCSS.borderBottomRightRadius || U.toNumber($dom.css('borderBottomRightRadius'));
-                        css.borderBottomLeftRadius = paramCSS.borderBottomLeftRadius || U.toNumber($dom.css('borderBottomLeftRadius'));
-
-                        css.paddingTop = paramCSS.paddingTop || U.toNumber($dom.css('paddingTop'));
-                        css.paddingRight = paramCSS.paddingRight || U.toNumber($dom.css('paddingRight'));
-                        css.paddingBottom = paramCSS.paddingBottom || U.toNumber($dom.css('paddingBottom'));
-                        css.paddingLeft = paramCSS.paddingLeft || U.toNumber($dom.css('paddingLeft'));
-
-                        // 스크롤
-                        css.overflow = paramCSS.overflow || $dom.css('overflow');
-                        // css.overflowX = paramCSS.overflowX || $dom.css('overflowX');
-                        // css.overflowY = paramCSS.overflowY || $dom.css('overflowY');
-
-                        // 문단
-                        // css.wordWrap = paramCSS.wordWrap || $dom.css('wordWrap');
-                        css.whiteSpace = paramCSS.whiteSpace || $dom.css('whiteSpace');
-                        // 말줄임 표시 (overflow === 'hidden' && whiteSpace === 'nowrap' 일때)
-                        css.textOverflow = paramCSS.textOverflow || $dom.css('textOverflow');
+                        _currentElement = null;
                     }
 
-                    // __onModifyElement에 의해 호출된 경우임
-                    var isEqual= angular.equals($scope.css, css);
-                    if(isEqual) return;
+                    var $dom = angular.element(_currentElement);
+                    if(_currentElement && !$dom.css('fontSize')){
+                        out('wait...');
+                        $timeout(function(){
+                            $scope.updateContent( documentUID, elementUID, param );
+                        }, 100);
+                        return;
+                    }
 
-                    // modifyContent 호출 무시
-                    _fromUpdate = true;
+                    if($scope.$unwatch){
+                        $scope.$unwatch();
+                        $scope.$unwatch = null;
+                    }
 
-                    // 값 설정
-                    $scope.css = css;
+                    $scope.css = null;
+                    $scope.temp = null;
+                    $scope.option = null;
+                    $scope.tempOption = null;
+
+                    _getCSS(type, param);
+//_getOption(type, documentUID, elementUID, param);
+
+                    $scope.$unwatch = watch();
                 }
+
+                ////////////////////////////////////////
+                // Watch
+                ////////////////////////////////////////
+
+                //------------------
+                // CSS
+                //------------------
+
+                function watch(){
+                    // oldValue와 검사하면 안됨
+                    var unwatch = $scope.$watch('temp', function (newValue, oldValue){
+                        if(newValue == oldValue) return;
+
+                        var changeList;
+                        for(var name in newValue){
+                            var valueCSS = newValue[name];
+
+                            if(_currentElement){
+                                // element
+                                if(_currentElement.style[name] === undefined) continue;
+
+                                var isNumber = (typeof valueCSS == 'number');
+                                var currentCSS = getCSSValue(name, null, isNumber);
+============================================================================================================
+                                // 객체로 구성되는 CSS 예외처리
+                                var currentObj;
+                                var valueObj;
+                                switch (name){
+                                    case 'border':
+                                        //valueCSS = getBorderCSS(newValue['borderGroup']);
+                                        valueObj = newValue['borderGroup'];
+                                        currentObj = getBorderGroup(currentCSS);
+                                        break;
+                                    case 'lineHeight':
+                                        //valueCSS = getLineHeightCSS(newValue['lineHeightGroup']);
+                                        valueObj = newValue['lineHeightGroup'];
+                                        currentObj = getLineHeightGroup(currentCSS);
+                                        break;
+                                    case 'letterSpacing':
+                                        //valueCSS = getLetterSpacingCSS(newValue['letterSpacingGroup']);
+                                        valueObj = newValue['letterSpacingGroup'];
+                                        currentObj = getLetterSpacingGroup(currentCSS);
+                                        break;
+                                    case 'fontSize':
+                                        //valueCSS = getFontSizeCSS(newValue['fontSizeGroup']);
+                                        valueObj = newValue['fontSizeGroup'];
+                                        currentObj = getFontSizeGroup(currentCSS);
+                                        break;
+                                    default:
+                                        valueObj = valueCSS;
+                                        currentObj = currentCSS;
+                                        break;
+                                }
+                                var isObjectEqual = compareGroup(valueObj, currentObj);
+                                var isCSSEqual = angular.equals(valueCSS, currentCSS);
+                                if(isObjectEqual && isCSSEqual) continue;
+
+                                // 색상 검사
+                                var isColorEqual = compareColor(valueCSS, currentCSS);
+                                if(isColorEqual) continue;
+
+                                out('watch : ', name, ' : ', currentCSS, ' --> ', valueCSS)
+                                if(!changeList) changeList = {};
+                                changeList[name] = valueCSS;
+                            }else{
+                                // document는 아직 CSS 변경 항목 없음
+                            }
+                        }
+
+                        // 변경 사항이 있다면 modify가 호출됨
+                        $scope.css = changeList;
+                    }, true);
+                    return unwatch;
+                }
+
+                function compareGroup(valueObj, currentObj){
+                    var isEqual = angular.equals(valueObj, currentObj);
+                    if(isEqual) return true;
+                    if(!angular.isObject(valueObj)) return false;
+
+                    isEqual = true;
+                    for(var prop in valueObj){
+                        var valueCSS = valueObj[prop];
+                        var currentCSS = currentObj[prop];
+                        if(valueCSS != currentCSS){
+                            var isColorEqual = compareColor(valueCSS, currentCSS);
+                            if(isColorEqual) continue;
+                            isEqual = false;
+                            break;
+                        }
+                    }
+                    return isEqual;
+                }
+                function compareColor(valueCSS, currentCSS){
+                    var isColorEqual = angular.equals(valueCSS, currentCSS);
+                    if(typeof valueCSS == 'string'){
+                        var valueColor = getRGBA(valueCSS);
+                        var currentCSSColor = getRGBA(currentCSS);
+                        isColorEqual = angular.equals(valueColor, currentCSSColor);
+                    }
+                    return isColorEqual;
+                }
+
+                function getRGBA(rgbColor){
+                    if(rgbColor.indexOf('rgb') < 0) return null;
+                    var colorString = rgbColor.match(/rgba?\(.+\)/g)[0];
+                    var rgba = colorString.match(/-?\d+(\.\d+)?/g);
+                    return {
+                        r: Number(rgba[0]) || 0,
+                        g: Number(rgba[1]) || 0,
+                        b: Number(rgba[2]) || 0,
+                        a: (rgba[3] === undefined)? 1 : Number(rgba[3])
+                    }
+                }
+
+
+                // 속성 변경값 적용
+                $scope.$watch('css', function (newValue, oldValue){
+                    if(newValue === undefined || newValue === null){
+                        newValue = {};
+                        return;
+                    }
+                    $scope.modifyContent(_documentUID, _elementUID);
+                }, true);
+
+                //------------------
+                // Option Property
+                //------------------
+
+                /*
+                // 옵션 변경값 적용
+                $scope.$watch('option', function (newValue, oldValue){
+                    if(newValue === undefined) return;
+                    if($scope.type == ELEMENT.DOCUMENT){
+                        $scope.configDocument();
+                    }else{
+                        $scope.modifyContent(_documentUID, _elementUID);
+                    }
+
+                }, true);
+                */
+
+                ////////////////////////////////////////
+                // CSS 변경
+                ////////////////////////////////////////
+
+                function _getCSS(type, param){
+                    var paramCSS = (param) ? param.css : null;
+                    if(!paramCSS) paramCSS = {};
+
+                    var temp;
+                    if(type == ELEMENT.DOCUMENT){
+                        temp = {};
+                        temp.width = Project.paper.width;
+                        temp.height = Project.paper.height;
+
+                    }else{
+                        temp = updateElementCSS(paramCSS);
+                    }
+                    $scope.temp = temp;
+                }
+
+                function getCSSValue(name, paramCSS, isNumber){
+                    var style = _currentElement.style;
+                    var $dom = angular.element(_currentElement);
+                    paramCSS = paramCSS || {};
+
+                    var value;
+                    if(isNumber){
+                        value = U.toNumber(paramCSS[name]) || U.toNumber(style[name]) || U.toNumber($dom.css(name));
+                        out(name, ' : ', value, '(',U.toNumber(paramCSS[name]), '-', U.toNumber(style[name]), '-', U.toNumber($dom.css(name)), ')');
+                    }else{
+                        value = paramCSS[name] || style[name] || $dom.css(name);
+                        // px가 안붙는 버그(크롬)
+                        if(name == 'letterSpacing' && value.toString().indexOf('px' < 0)) value = value + 'px';
+                        out(name, ' : ', value, '(', paramCSS[name], '-', style[name], '-', $dom.css(name), ')');
+                    }
+                    return value;
+                }
+                /*
+                function toNumber(str){
+                    if(!str) return 0;
+                    var num = str.match(/-?\d+(\.\d+)?/g)
+                    return (num == null)? 0 : num[0];
+                }
+                */
+
+                function updateElementCSS(paramCSS){
+                    var temp = {};
+                    var $dom = angular.element(_currentElement);
+                    //var dom  = _currentElement;
+
+                    // 위치
+                    temp.left = getCSSValue('left', paramCSS, true);
+                    temp.top = getCSSValue('top', paramCSS, true);
+
+                    // 크기
+                    var boxSizing = $dom.css('box-sizing');
+                    temp.width = U.toNumber(paramCSS.width) || U.toNumber((boxSizing == 'border-box')? $dom.outerWidth():$dom.css('width'));
+                    temp.height = U.toNumber(paramCSS.height) || U.toNumber((boxSizing == 'border-box')? $dom.outerHeight():$dom.css('height'));
+
+                    // 여백
+                    temp.paddingTop = getCSSValue('paddingTop', paramCSS, true);
+                    temp.paddingRight = getCSSValue('paddingRight', paramCSS, true);
+                    temp.paddingBottom = getCSSValue('paddingBottom', paramCSS, true);
+                    temp.paddingLeft = getCSSValue('paddingLeft', paramCSS, true);
+
+                    // 테두리 파싱
+                    var border = getCSSValue('border', paramCSS);
+                    temp.borderGroup = getBorderGroup(border);
+                    temp.border = getBorderCSS(temp.borderGroup);
+
+                    // 테두리 라운딩
+                    temp.borderTopLeftRadius = getCSSValue('borderTopLeftRadius', paramCSS, true);
+                    temp.borderTopRightRadius = getCSSValue('borderTopRightRadius', paramCSS, true);
+                    temp.borderBottomRightRadius = getCSSValue('borderBottomRightRadius', paramCSS, true);
+                    temp.borderBottomLeftRadius = getCSSValue('borderBottomLeftRadius', paramCSS, true);
+
+                    // 스크롤
+                    temp.overflow = getCSSValue('overflow', paramCSS);
+                    // css.overflowX = getCSSValue('overflowX', paramCSS);
+                    // css.overflowY = getCSSValue('overflowY', paramCSS);
+
+                    // 문단
+                    // css.wordWrap = paramCSS.wordWrap || $dom.css('wordWrap');
+                    temp.whiteSpace = getCSSValue('whiteSpace', paramCSS);
+                    // 말줄임 표시 (overflow === 'hidden' && whiteSpace === 'nowrap' 일때)
+                    temp.textOverflow = getCSSValue('textOverflow', paramCSS);
+
+                    // jquery에서 lineHeight 스타일은 무조건 px를 반환하므로 style에 직접 접근한다.
+                    var lineHeight = getCSSValue('lineHeight', paramCSS);
+                    temp.lineHeightGroup = getLineHeightGroup(lineHeight);
+                    temp.lineHeight = getLineHeightCSS(temp.lineHeightGroup);
+
+                    var letterSpacing = getCSSValue('letterSpacing', paramCSS);
+                    temp.letterSpacingGroup = getLetterSpacingGroup(letterSpacing);
+                    temp.letterSpacing = getLetterSpacingCSS(temp.letterSpacingGroup);
+
+                    // 텍스트 정렬
+                    temp.textAlign = getCSSValue('textAlign', paramCSS);
+
+                    // 폰트
+                    //css.fontFamily : $scope.fontFamilyChange 에서 처리함
+                    var fontFamily = getCSSValue('fontFamily', paramCSS);
+                    temp.fontFamilyGroup = (fontFamily)? compareFontFamily(fontFamily) : $scope.fontOptions[2];
+
+                    var fontSize = getCSSValue('fontSize', paramCSS);
+                    temp.fontSizeGroup = getFontSizeGroup(fontSize);
+                    temp.fontSize = getFontSizeCSS(temp.fontSizeGroup);
+
+                    temp.color = getCSSValue('color', paramCSS);
+                    temp.fontWeight = getCSSValue('fontWeight', paramCSS);
+                    temp.fontStyle = getCSSValue('fontStyle', paramCSS);
+                    temp.textDecoration = getCSSValue('textDecoration', paramCSS);
+
+                    return temp;
+                }
+
+                function getBorderGroup(borderCSS){
+                    var borderWidth = borderCSS.match(/-?\d+?\s?px/g);
+                    var borderColor = borderCSS.match(/rgba?\(.+\)/g);
+                    var borderStyle = borderCSS.match(/none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|initial|inherit/g);
+                    return {
+                        borderWidth: borderWidth ? U.toNumber(borderWidth[0]) : undefined,
+                        borderColor: borderColor ? borderColor[0] : undefined,
+                        borderStyle: borderStyle ? borderStyle[0] : undefined
+                    };
+                }
+                function getBorderCSS(border){
+                    border = border || {};
+                    if(border.borderWidth === undefined) border.borderWidth = 0;
+                    border.borderStyle = border.borderStyle || 'rgb(0,0,0)';
+                    if(!border.borderStyle || border.borderStyle == 'none') border.borderStyle = 'solid';
+                    var style = border.borderWidth + 'px' + ' ' + border.borderStyle + ' ' + border.borderColor;
+                    return style;
+                }
+
+                function getLineHeightGroup(lineHeightCSS){
+                    return {
+                        num: (lineHeightCSS)? U.toNumber(lineHeightCSS) : undefined,
+                        unit: (lineHeightCSS)? lineHeightCSS.match(/[%|em|px].?/)[0] : undefined
+                    }
+                }
+                function getLineHeightCSS(lineHeight){
+                    lineHeight = lineHeight || {};
+                    lineHeight.num = lineHeight.num || 1;
+                    lineHeight.unit = lineHeight.unit || 'em';
+                    return lineHeight.num + lineHeight.unit;
+                }
+
+                function getLetterSpacingGroup(letterSpacingCSS){
+                    return {
+                        num: (letterSpacingCSS)? U.toNumber(letterSpacingCSS) : undefined,
+                        unit: (letterSpacingCSS)? letterSpacingCSS.match(/[px].?/)[0] : undefined
+                    }
+                }
+                function getLetterSpacingCSS(letterSpacing){
+                    letterSpacing = letterSpacing || {};
+                    letterSpacing.num = letterSpacing.num || 0;
+                    letterSpacing.unit = letterSpacing.unit || 'px';
+                    return letterSpacing.num + letterSpacing.unit;
+                }
+
+                function getFontSizeGroup(fontSizeCSS){
+                    return {
+                        num: (fontSizeCSS)? U.toNumber(fontSizeCSS) : undefined,
+                        unit: (fontSizeCSS)? fontSizeCSS.match(/[px|em|%].?/)[0] : undefined
+                    }
+                }
+                function getFontSizeCSS(fontSize){
+                    fontSize = fontSize || {};
+                    fontSize.num = fontSize.num || 1;
+                    fontSize.unit = fontSize.unit || 'em';
+                    return fontSize.num + fontSize.unit;
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                /*
+                function hasStyle(name){
+                    if(!_currentElement.attributes.style) return false;
+                    var styleAttrs = _currentElement.attributes.style.value;
+                    return styleAttrs.indexOf(_currentElement) >= 0;
+                }
+                */
+
+                /*
+                function updateCSS(name, style, newValue, oldValue){
+                    //if($scope.temp.$ignoreCommand) return;
+
+                    if(newValue === undefined){
+                        delete $scope.css[name];
+                        return;
+                    }
+                    if(newValue == oldValue) return;
+
+                    var currentCSS = angular.element(_currentElement).css(name);
+                    if(angular.isObject(style)){
+                        if(angular.equals(style, currentCSS)) return;
+                        if(angular.equals(style, $scope.css[name])) return;
+                    }else{
+                        if(style == currentCSS) return;
+                        if(style == $scope.css[name]) return;
+                    }
+
+                    delete $scope.css.$ignoreCommand;
+                    $scope.css[name] = style;
+                }
+
+                // 위치, 크기
+                $scope.$watch('temp.left', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('left', newValue + 'px', newValue, oldValue);
+                });
+                $scope.$watch('temp.top', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('top', newValue + 'px', newValue, oldValue);
+                });
+                $scope.$watch('temp.width', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('width', newValue + 'px', newValue, oldValue);
+                });
+                $scope.$watch('temp.height', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('height', newValue + 'px', newValue, oldValue);
+                });
+
+                // 여백
+                $scope.$watch('temp.paddingTop', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('paddingTop', newValue + 'px', newValue, oldValue);
+                });
+                $scope.$watch('temp.paddingRight', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('paddingRight', newValue + 'px', newValue, oldValue);
+                });
+                $scope.$watch('temp.paddingBottom', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('paddingBottom', newValue + 'px', newValue, oldValue);
+                });
+                $scope.$watch('temp.paddingLeft', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('paddingLeft', newValue + 'px', newValue, oldValue);
+                });
+
+                // 테두리
+                $scope.$watch('temp.border', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    if(newValue === undefined){
+                        delete $scope.css.$ignoreCommand;
+                        $scope.css.border = undefined;
+                        return;
+                    }
+                    if(newValue.borderWidth === undefined && newValue.borderColor === undefined && newValue.borderStyle === undefined){
+                        delete $scope.css.$ignoreCommand;
+                        $scope.css.border = undefined;
+                        return;
+                    }
+
+                    newValue = defaultBorderCSS(newValue);
+                    var style = newValue.borderWidth + 'px' + ' ' + newValue.borderStyle + ' ' + newValue.borderColor;
+                    updateCSS('border', style, newValue, oldValue);
+                }, true);
+
+                // 테두리 라운딩
+                $scope.$watch('temp.borderTopLeftRadius', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('borderTopLeftRadius', newValue + 'px', newValue, oldValue);
+                });
+                $scope.$watch('temp.borderTopRightRadius', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('borderTopRightRadius', newValue + 'px', newValue, oldValue);
+                });
+                $scope.$watch('temp.borderBottomRightRadius', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('borderBottomRightRadius', newValue + 'px', newValue, oldValue);
+                });
+                $scope.$watch('temp.borderBottomLeftRadius', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('borderBottomLeftRadius', newValue + 'px', newValue, oldValue);
+                });
+
+                // 스크롤
+                $scope.$watch('temp.overflow', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('overflow', newValue, newValue, oldValue);
+                });
+                // 자동 줄바꿈
+                $scope.$watch('temp.whiteSpace', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('whiteSpace', newValue, newValue, oldValue);
+                });
+                // 말줄임 표시 (overflow === 'hidden' && whiteSpace === 'nowrap' 일때)
+                $scope.$watch('temp.textOverflow', function (newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('textOverflow', newValue, newValue, oldValue);
+                });
+                // 행간
+                $scope.$watch('temp.lineHeight', function(newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    if(!newValue) newValue = {};
+                    if(newValue.num === undefined) newValue.num = 1;
+                    if(newValue.unit === undefined) newValue.unit = 'em';
+                    var style = U.toNumber(newValue.num) + newValue.unit;
+                    updateCSS('lineHeight', style, newValue, oldValue);
+                }, true);
+                // 자간
+                $scope.$watch('temp.letterSpacing', function(newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    if(!newValue) newValue = {};
+                    if(newValue.num === undefined) newValue.num = 0;
+                    if(newValue.unit === undefined) newValue.unit = 'px';
+                    var style = U.toNumber(newValue.num) + newValue.unit;
+                    updateCSS('letterSpacing', style, newValue, oldValue);
+                }, true);
+
+                // 텍스트 정렬
+                $scope.$watch('temp.textAlign', function(newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('textAlign', newValue, newValue, oldValue);
+                });
+
+                // 폰트
+                $scope.$watch('temp.fontFamilyGroup', function(newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    var style = fontFamilyChange(newValue);
+                    updateCSS('fontFamily', style, newValue, oldValue);
+                });
+                $scope.$watch('temp.fontSize', function(newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    if(!newValue) newValue = {};
+                    if(newValue.num === undefined) newValue.num = 1;
+                    if(newValue.unit === undefined) newValue.unit = 'em';
+
+                    if(newValue.unit == 'em'){
+                        newValue.min = 1;
+                        newValue.max = 100;
+                    }else if(newValue.unit == '%'){
+                        newValue.min = 1;
+                        newValue.max = 1000;
+                    }else{
+                        newValue.min = 12;
+                        newValue.max = 1000;
+                    }
+
+                    var currentCSS = angular.element(_currentElement).css('fontSize');
+                    var style = U.toNumber(newValue.num) + newValue.unit;
+                    if(currentCSS == style) return;
+                    updateCSS('fontSize', style, newValue, oldValue);
+                }, true);
+                $scope.$watch('temp.color', function(newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('color', newValue, newValue, oldValue);
+                });
+                $scope.$watch('temp.fontWeight', function(newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('fontWeight', newValue, newValue, oldValue);
+                });
+                $scope.$watch('temp.fontStyle', function(newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('fontStyle', newValue, newValue, oldValue);
+                });
+                $scope.$watch('temp.textDecoration', function(newValue, oldValue){
+                    //if(newValue == oldValue) return;
+                    updateCSS('textDecoration', newValue, newValue, oldValue);
+                });
+                */
 
                 //------------------
                 // Config Option
                 //------------------
 
-                function _getOption(type, documentUID, elementUID){
+                function _getOption(type, documentUID, elementUID, param){
+                    if(!elementUID) _currentElement = null;
+                    if(!documentUID) return;
                     if(!Project.current) return;
-                    
-                    var option;
+
+                    var paramOption = (param) ? param.option : null;
+                    //var updated = Boolean(paramOption);
+                    if(!paramOption) paramOption = {};
+
+                    var tempOption = {};
                     if(type == ELEMENT.DOCUMENT){
-                        
-                        option = {
-                            display : {
-                                snap_pixel: Tool.current.config_display('snap_pixel'),
-                                show_grid: Tool.current.config_display('show_grid')
-                            }
+
+                        tempOption.display = {
+                            snap_pixel: Tool.current.config_display('snap_pixel'),
+                            show_grid: Tool.current.config_display('show_grid')
                         }
 
                     }else{
 
-                        if(!documentUID && !elementUID){
-                            _fromUpdate = true;
-                            $scope.option = null;
-                            return;
-                        }
-
                         var api = Project.current.elementAPI (documentUID, elementUID);
-                        option = {}
-
-                        var newOption;
                         if(type == ELEMENT.TEXT)
                         {
-                             newOption = {
-                                display_size_toText: api.option('display_size_toText')
-                            };
+                            //tempOption.display_size_toText = api.option('display_size_toText');
                         }
                         else if(type == ELEMENT.IMAGE)
                         {
                             //
                         }
-
-                        if(newOption) option = angular.extend(option, newOption);
                     }
 
-                    // __onModifyElement에 의해 호출된 경우임
-                    var isEqual= angular.equals($scope.option, option);
-                    if(isEqual) return;
-
-                    // modifyContent 호출 무시
-                    _fromUpdate = true;
-
                     // 값 설정
-                    $scope.option = option;
+                    //paramOption.$ignoreCommand = true;
+                    $scope.option = paramOption;
+                    $scope.tempOption = tempOption;
                 }
+
+                function updateOPT(name, value){
+                    if(angular.isObject(value)){
+                        if(angular.equals($scope.option[name], value)) return;
+                    }else{
+                        if($scope.option[name] == value) return;
+                    }
+                    //delete $scope.option.$ignoreCommand;
+                    $scope.option[name] = value;
+                }
+
+                //$scope.$watch('tempOption.display', function (newValue, oldValue){
+                //    //if(newValue == oldValue) return;
+                //    updateOPT('display', newValue);
+                //}, true);
 
                 ////////////////////////////////////////
                 // Data 업데이트
@@ -381,58 +815,25 @@ define( [ 'U' ], function( U ) {
                 // 서버 저장값 변경된 경우
                 // select가 변경되어 값이 변한 경우
                 // type이 변경된 경우
-                
-                // 속성 변경값 적용
-                $scope.$watch('css', function (newValue, oldValue){
-                    if(newValue === undefined) return;
-                    // out('css : ', newValue, oldValue);
-                    
-                    $scope.modifyContent(_documentUID, _elementUID);
-                }, true);
-
-                // 옵션 변경값 적용
-                $scope.$watch('option', function (newValue, oldValue){
-                    if(newValue === undefined) return;
-                    // out('option');
-                    
-                    if($scope.type == ELEMENT.DOCUMENT){
-                        $scope.configDocument();
-                    }else{
-                        $scope.modifyContent(_documentUID, _elementUID);
-                    }
-                    
-                }, true);
 
                 //------------------
                 // 데이터 수정 - CSS
                 //------------------
-                
-                var __delayTimeout;
+
+                // 연속으로 호출된 경우 업데이트를 무시하고 최종값을 한번에 적용시킨다.
+                // (주의) delay 시간이 250 이하이면 delay 적용되지 않고 실행됨
+                // 연속 클릭 속도 감안하여 500으로 설정해 놓음
+                // $digest 호출 시간이 245정도이기 때문인듯함
+
+                //ng-model-options="{ debounce: 500 }" 설정함
+                $scope.modelOption = {
+                    debounce: 500
+                }
 
                 // 속성창 내용을 데이터에 갱신한다.
                 $scope.modifyContent = function( documentUID, elementUID ){
 
-                    // 연속으로 호출된 경우 업데이트를 무시하고 최종값을 한번에 적용시킨다.
-                    $timeout.cancel(__delayTimeout);
-
-                    __delayTimeout = $timeout(function () {
-                        __delayTimeout = null;
-                        __modifyContent(documentUID, elementUID);
-                    }, 300);
-                    
-                    // (주의) delay 시간이 250 이하이면 delay 적용되지 않고 실행됨
-                    // 연속 클릭 속도 감안하여 500으로 설정해 놓음
-                    // $digest 호출 시간이 245정도이기 때문인듯함
-                }
-
-                function __modifyContent( documentUID, elementUID ){
                     if(!Project.current) return;
-
-                    if(_fromUpdate){
-                        out('* 속성창 CSS, Option 업데이트 완료 (_fromUpdate=false)');
-                        _fromUpdate = false;
-                        return;
-                    }
 
                     var type = $scope.type;
                     var command;
@@ -452,7 +853,7 @@ define( [ 'U' ], function( U ) {
                             //*********************************
                             
                             // option은 configDocument에서 설정
-                            // option: $scope.option,
+                            // option: paramOption,
 
                             //*********************************
 
@@ -462,20 +863,12 @@ define( [ 'U' ], function( U ) {
 
                     }else{
                         
-                        // ELEMENT 수정
-
-                        /*
-                        var border = paramCSS.borderWidth;
-                        if(border < 1){
-                            delete paramCSS.borderColor;
-                            delete paramCSS.borderStyle;
-                        }
-                        */
-
+                        // ELEMENT 최종 수정
                         if(type == ELEMENT.TEXT){
                             //
                         }
 
+                        var paramOption = angular.copy($scope.option);
                         command = CommandService.MODIFY_ELEMENT;
                         param = {
                             // 삽입될 문서
@@ -483,19 +876,15 @@ define( [ 'U' ], function( U ) {
                             elementUID: elementUID,
 
                             // element 설정값
-                            option: $scope.option,
+                            option: paramOption,
                             css: paramCSS
                         };
 
                     }
 
-                    // updateContent 호출 무시
-                    _fromModify = true;
-
                     // Modify command 호출
                     CommandService.exe(command, param, function(){
-                        out('* 속성창 변경값 데이터 저장 완료 (_fromModify=false)');
-                        _fromModify = false;
+                        out('* 속성창 변경값 데이터 저장 완료');
                     });
                 }
 
@@ -508,7 +897,6 @@ define( [ 'U' ], function( U ) {
                     if(!Project.current) return;
 
                     var type = $scope.type;
-                    var command;
                     var param;
 
                     if(type != ELEMENT.DOCUMENT){
@@ -516,9 +904,10 @@ define( [ 'U' ], function( U ) {
                     }
                         
                     // CONFIGURATION  설정값 수정
+                    var paramOption = angular.copy($scope.option);
                     param = {
                         // option 설정값
-                        option: $scope.option
+                        option: paramOption
                     };
 
                     // command 호출
@@ -606,35 +995,56 @@ define( [ 'U' ], function( U ) {
                     {group:'Google webfonts Handwriting', style:'Handwriting', label:'Meddon', value:'http://fonts.googleapis.com/css?family=Meddon', uri:'http://themes.googleusercontent.com/static/fonts/meddon/v2/ksvoKtnK5R4WK1JfWFPPWuvvDin1pK8aKteLpeZ5c0A'}
                 ];
 
-                $scope.fontFamilyChange = function(e){
-                    
-                    function getFontFamily(label){
-                        var fonts = label.split(',');
-                        for(var prop in fonts){
-                            var font = fonts[prop];
-                            if((font.indexOf(" ") > 0) && (font.indexOf(",") == -1)){
-                                font = "'" + font + "'";
-                                fonts[prop] = font;
-                            }
+                function compareFontFamily(fontFamily){
+                    if(!fontFamily) return null;
+
+                    var fonts = $scope.fontOptions;
+                    for(var prop in fonts){
+                        var value = fonts[prop].value;
+                        if(value.indexOf('http://') == 0){
+                            value = fonts[prop].label;
                         }
-                        return fonts.join(',');
+                        var font = getFontFamilyLabel(value);
+                        if(font == fontFamily){
+                            return fonts[prop];
+                        }
+                    }
+                    return null;
+                }
+                function getFontFamilyLabel(label){
+                    var fonts = label.split(',');
+                    for(var prop in fonts){
+                        var font = fonts[prop];
+                        font = font.trim();
+                        if((font.indexOf(" ") > 0) && (font.indexOf(",") == -1)){
+                            font = "'" + font + "'";
+                            fonts[prop] = font;
+                        }
+                    }
+                    return fonts.join(',');
+                }
+                function fontFamilyChange(item){
+                    if(!item){
+                        return null;
                     }
 
-                    var item = this.fontFamilyObject;
+                    //var item = $scope.temp.fontFamilyGroup;
                     if(item.group == 'web safe fonts' || item.group == 'hangul'){
-                        var fontFamily = getFontFamily(item.value);
-                        $scope.css.fontFamily = fontFamily;
-                        return;
+                        var fontFamily = getFontFamilyLabel(item.value);
+                        return fontFamily;
                     }
 
                     var fontName = item.value;
                     var fontURI = item.uri;
-                    if(!fontURI) return;
+                    if(!fontURI) return null;
 
-                    var fontFamily = getFontFamily(item.label);
-                    if((fontFamily.indexOf(" ") > 0) && (fontFamily.indexOf(",") == -1)){
+                    var fontFamily = getFontFamilyLabel(item.label);
+                    /*
+                    fontFamily = fontFamily.trim();
+                    if((fontFamily.indexOf("'") != 0) && (fontFamily.indexOf(" ") > 0) && (fontFamily.indexOf(",") == -1)){
                         fontFamily = "'" + fontFamily + "'";
                     }
+                    */
                     
                     /*
                     @font-face {
@@ -690,8 +1100,9 @@ define( [ 'U' ], function( U ) {
                         }
                     }
 
-                    $scope.css.fontFamily = fontFamily;
+                    return fontFamily;
                 }
+
 
                 ////////////////////////////////////////
                 // End Controller

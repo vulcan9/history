@@ -279,7 +279,7 @@ define( [ 'U' ], function( U ) {
                     // 항상 br 태그를 마지막에 둠
                     var $last = $editor.contents().last();
                     if(!$last.is('br')){
-                        $editor.contents().after(newline);
+                        $last.after(newline);
                     }
 
                     // 노드 normalize
@@ -382,10 +382,10 @@ define( [ 'U' ], function( U ) {
                         option: {},
                         // element 설정값
                         css: {
-                            left: U.toNumber($dom.css('left')), 
-                            top: U.toNumber($dom.css('top')), 
-                            width: $dom.outerWidth(), 
-                            height: $dom.outerHeight(),
+                            left: $dom.css('left'),
+                            top: $dom.css('top'),
+                            width: $dom.outerWidth() + 'px',
+                            height: $dom.outerHeight() + 'px'
                         }
                     };
 

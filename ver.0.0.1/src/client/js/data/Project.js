@@ -1298,6 +1298,13 @@ define( ['U'], function( U ) {
                         var $comp = this.createElementContent(type, elementUID, option, css);
                         $content.append($comp);
 
+                        // 크기를 CSS에 명시
+                        var size = {
+                            width: $comp.outerWidth(),
+                            height: $comp.outerHeight()
+                        }
+                        $comp.css(size);
+
                         // 데이터 갱신 (이미 dom 차원에서 갱신되어 있지만 그냥 명시적으로 기술함)
                         documentItem.document.content = $content[0];
 

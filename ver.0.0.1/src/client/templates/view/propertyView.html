@@ -17,18 +17,27 @@
               <div>UID : {{uid}}</div><br>
               <div>Name : (타이틀)</div><br>
 
-              <div>
+              <div class="form">
+
               Dimensions : 
                 <select>
                   <option ng-selected="paper==='Custom'">Custom</option>
                   <option ng-selected="paper==='A4'">A4</option>
                   <option ng-selected="paper==='A3'">A3</option>
                 </select>
-                
-                width : <input type="number" name="width" ng-model="css.width" min="0" max="3000" required ng-readonly="true"
+
+                  <div ng-include src="'properties-form-size'" style="pointer-events: none" class="deactive"></div>
+
+                  <!--
+                width : <input type="number" name="width"
+                               ng-model="temp.width" ng-model-options="modelOption"
+                               min="0" max="3000" required ng-readonly="true"
                 ng-class="{error: !form_document.width.$valid}" style="width:45px;">
-                height : <input type="number" name="height" ng-model="css.height" min="0" max="3000" required ng-readonly="true"
+                height : <input type="number" name="height"
+                                ng-model="temp.height" ng-model-options="modelOption"
+                                min="0" max="3000" required ng-readonly="true"
                 ng-class="{error: !form_document.height.$valid}" style="width:45px;">
+                -->
 
                 <br/>
                 방향 : 
@@ -36,22 +45,32 @@
                 <input type="radio" ng-model="paper.direction" value="portrait">  세로 <br/>
               </div>
               <!-- <div>width : <input type="text" name="width" value="{{css.width}}" required ng-pattern="onlyNumbers"></div> -->
-              
 
-        <br><br>
-        CONFIGURATION
-              <!-- 화면 표시 -->
-              <div><input type="checkbox" ng-model="option.display.show_grid"> 그리드 표시</div>
-              <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="option.display.show_guide"></div>
-              <div>[*] 눈금자 표시 (준비중) : <input type="checkbox" ng-model="option.display.show_ruler"></div>
-              <div>[*] 도형 윤곽선 표시 (준비중) : <input type="checkbox" ng-model="option.display.show_outline"></div>
-              
-              <br>
-              <br><div>snap 크기 : <input type="number" name="snap_pixel" ng-model="option.display.snap_pixel" min="0" max="100" required
-                ng-class="{error: !form_document.snap_pixel.$valid}"></div>
+            <br><br>
+            CONFIGURATION
+
+            <!-- 화면 표시 -->
+            <div class="form">
+              <div>
+                  <input type="checkbox" ng-model="tempOption.display.show_grid"> 그리드 표시
+              </div>
+
+              <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_guide"></div>
+              <div>[*] 눈금자 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_ruler"></div>
+              <div>[*] 도형 윤곽선 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_outline"></div>
+            </div>
+
+            <div class="form">
+              <div>
+                  snap 크기 :
+                  <input type="number" name="snap_pixel"
+                         ng-model="tempOption.display.snap_pixel" ng-model-options="modelOption"
+                         min="0" max="100" required
+                         ng-class="{error: !form_document.snap_pixel.$valid}">
+              </div>
                 <br> snap 적용 : (그리드, 객체, 가이드라인)
+            </div>
 
-                <br><br>
                 
 
         </form>
@@ -74,40 +93,38 @@
     ////////////////////////////////////////////// -->
 
     <!-- 위치 -->
-    <script type="text/ng-template" id="propertise-form-position">
-          <form novalidate name="propertise_form">
-              
-              <br><br>
+    <script type="text/ng-template" id="properties-form-position">
+          <form novalidate name="properties_form">
               [위치]<br>
 
-              <div>x : <input type="number" name="left" ng-model="css.left" min="0" max="3000" required
-                ng-class="{error: !propertise_form.left.$valid}"></div>
-              <div>y : <input type="number" name="top" ng-model="css.top" min="0" max="3000" required
-                ng-class="{error: !propertise_form.top.$valid}"></div>
+              <div>x : <input type="number" name="left"
+                              ng-model="temp.left"  ng-model-options="modelOption"
+                              min="0" max="3000" required></div>
+              <div>y : <input type="number" name="top"
+                              ng-model="temp.top"  ng-model-options="modelOption"
+                              min="0" max="3000" required></div>
 
           </form>
     </script>
     
     <!-- 크기 -->
-    <script type="text/ng-template" id="propertise-form-size">
-          <form novalidate name="propertise_form">
-              
-              <br><br>
+    <script type="text/ng-template" id="properties-form-size">
+          <form novalidate name="properties_form">
               [크기]<br>
 
-              <div>width : <input type="number" name="width" ng-model="css.width" min="0" max="3000" required
-                ng-class="{error: !propertise_form.width.$valid}"></div>
-              <div>height : <input type="number" name="height" ng-model="css.height" min="0" max="3000" required
-                ng-class="{error: !propertise_form.height.$valid}"></div>
+              <div>width : <input type="number" name="width"
+                                  ng-model="temp.width" ng-model-options="modelOption"
+                                  min="0" max="3000" required></div>
+              <div>height : <input type="number" name="height"
+                                   ng-model="temp.height" ng-model-options="modelOption"
+                                   min="0" max="3000" required></div>
               
           </form>
     </script>
     
     <!-- 배경 -->
-    <script type="text/ng-template" id="propertise-form-background">
-          <form novalidate name="propertise_form">
-              
-              <br><br>
+    <script type="text/ng-template" id="properties-form-background">
+          <form novalidate name="properties_form">
               [배경]<br>
               <br>배경 색상 : 
               <br>불투명도 : 
@@ -115,73 +132,91 @@
     </script>
 
     <!-- 테두리 -->
-    <script type="text/ng-template" id="propertise-form-border">
-          <form novalidate name="propertise_form">
-              
-              <br><br>
+    <script type="text/ng-template" id="properties-form-border">
+          <form novalidate name="properties_form">
               [테두리]<br>
 
-              <div>테두리 두께 : <input type="number" name="borderWidth" ng-model="css.borderWidth" min="0" max="100" required
-                ng-class="{error: !propertise_form.borderWidth.$valid}"></div>
-              <div ng-if="css.borderWidth > 0">
-                  <br>테두리 색상 : <input name="borderColor" colorpicker="rgb" type="text" ng-model="css.borderColor" required
-                      ng-class="{error: !propertise_form.borderColor || !propertise_form.borderColor.$valid}"/>
-                  <br>불투명도 : 
-                  <br>테두리 스타일 : 
-                  <select name="borderStyle" ng-model="css.borderStyle" ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']" required
-                      ng-class="{error: !propertise_form.borderStyle.$valid}">
+              <div>테두리 두께 :
+                  <input type="number" name="borderWidth"
+                         ng-model="temp.borderGroup.borderWidth"  ng-model-options="modelOption"
+                         min="0" max="100"></div>
+
+              <div ng-if="temp.borderGroup.borderWidth > 0">
+                  <br>테두리 색상 :
+                  <input name="borderColor" type="text"
+                         colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
+                         ng-model="temp.borderGroup.borderColor"  ng-model-options="modelOption"/>
+
+                  <br>테두리 스타일 :
+                  <select name="borderStyle"
+                          ng-model="temp.borderGroup.borderStyle" ng-model-options="modelOption"
+                          ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']">
                       <option value="" style="display:none;"></option>
                   </select>
               </div>
 
 
               <br>테두리 라운딩 : (모서리 4군데 각각 속성 지정)
-              <div>border-top-left-radius : <input type="number" name="borderTopLeftRadius" ng-model="css.borderTopLeftRadius" min="0" max="100"
-                ng-class="{error: !propertise_form.borderTopLeftRadius.$valid}"></div>
-                <div>border-top-right-radius : <input type="number" name="borderTopRightRadius" ng-model="css.borderTopRightRadius" min="0" max="100"
-                ng-class="{error: !propertise_form.borderTopRightRadius.$valid}"></div>
-                <div>border-bottom-right-radius : <input type="number" name="borderBottomRightRadius" ng-model="css.borderBottomRightRadius" min="0" max="100"
-                ng-class="{error: !propertise_form.borderBottomRightRadius.$valid}"></div>
-                <div>border-bottom-left-radius : <input type="number" name="borderBottomLeftRadius" ng-model="css.borderBottomLeftRadius" min="0" max="100"
-                ng-class="{error: !propertise_form.borderBottomLeftRadius.$valid}"></div>
+              <div>border-top-left-radius :
+                  <input type="number" name="borderTopLeftRadius"
+                         ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
+                         min="0" max="1000"> px
+              </div>
+              <div>border-top-right-radius :
+                <input type="number" name="borderTopRightRadius"
+                       ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
+                       min="0" max="1000"> px
+              </div>
+              <div>border-bottom-right-radius :
+                  <input type="number" name="borderBottomRightRadius"
+                         ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
+                         min="0" max="1000"> px
+              </div>
+              <div>border-bottom-left-radius :
+                  <input type="number" name="borderBottomLeftRadius"
+                         ng-model="temp.borderBottomLeftRadius"  ng-model-options="modelOption"
+                         min="0" max="1000"> px
+              </div>
 
           </form>
     </script>
 
     <!-- 여백 -->
-    <script type="text/ng-template" id="propertise-form-padding">
-          <form novalidate name="propertise_form">
-              
-              <br><br>
+    <script type="text/ng-template" id="properties-form-padding">
+          <form novalidate name="properties_form">
               [여백]<br>
               <br>패딩 :  (4군데 각각 속성 지정)
-              <div>padding-top : <input type="number" name="paddingTop" ng-model="css.paddingTop" min="0" max="100"
-                ng-class="{error: !propertise_form.paddingTop.$valid}"></div>
-                <div>padding-right : <input type="number" name="paddingRight" ng-model="css.paddingRight" min="0" max="100"
-                ng-class="{error: !propertise_form.paddingRight.$valid}"></div>
-                <div>padding-bottom : <input type="number" name="paddingBottom" ng-model="css.paddingBottom" min="0" max="100"
-                ng-class="{error: !propertise_form.paddingBottom.$valid}"></div>
-                <div>padding-left : <input type="number" name="paddingLeft" ng-model="css.paddingLeft" min="0" max="100"
-                ng-class="{error: !propertise_form.paddingLeft.$valid}"></div>
+              <div>padding-top : <input type="number" name="paddingTop"
+                                        ng-model="temp.paddingTop" ng-model-options="modelOption"
+                                        min="0" max="100"></div>
+                <div>padding-right : <input type="number" name="paddingRight"
+                                            ng-model="temp.paddingRight" ng-model-options="modelOption"
+                                            min="0" max="100"></div>
+                <div>padding-bottom : <input type="number" name="paddingBottom"
+                                             ng-model="temp.paddingBottom" ng-model-options="modelOption"
+                                             min="0" max="100"></div>
+                <div>padding-left : <input type="number" name="paddingLeft"
+                                           ng-model="temp.paddingLeft" ng-model-options="modelOption"
+                                           min="0" max="100"></div>
 
           </form>
     </script>
 
     <!-- 스크롤
-    <script type="text/ng-template" id="propertise-form-overflow">
-          <form novalidate name="propertise_form">
+    <script type="text/ng-template" id="properties-form-overflow">
+          <form novalidate name="properties_form">
               
               <br><br>
               [스크롤]<br>
 
               <br>overflow-x:
               <select name="overflowX" ng-model="css.overflowX" ng-options="value as value for value in ['visible','hidden','auto','scroll']"
-                  ng-class="{error: !propertise_form.overflowX.$valid}">
+                  ng-class="{error: !properties_form.overflowX.$valid}">
                   <option value="" style="display:none;"></option>
               </select>
               <br>overflow-y:
               <select name="overflowY" ng-model="css.overflowY" ng-options="value as value for value in ['visible','hidden','auto','scroll']"
-                  ng-class="{error: !propertise_form.overflowY.$valid}">
+                  ng-class="{error: !properties_form.overflowY.$valid}">
                   <option value="" style="display:none;"></option>
               </select>
 
@@ -190,32 +225,64 @@
      -->
 
      <!-- 문단 모양 -->
-    <script type="text/ng-template" id="propertise-form-paragraph">
-          <form novalidate name="propertise_form">
-              
-              <br><br>
+    <script type="text/ng-template" id="properties-form-paragraph">
+          <form novalidate name="properties_form">
               [문단]<br>
               <!--
               <div>word-wrap : <input type="checkbox" ng-model="css.wordWrap" ng-true-value="'break-word'" ng-false-value="'normal'"></div>
               <br>
               -->
               스크롤(overflow) : 
-              <select name="overflow" ng-model="css.overflow" ng-options="value as value for value in ['visible','hidden','auto','scroll']">
+              <select name="overflow"
+                      ng-model="temp.overflow" ng-model-options="modelOption"
+                      ng-options="value as value for value in ['visible','hidden','auto','scroll']">
                   <option value="" style="display:none;"></option>
               </select>
-              <div>자동 줄바꿈(white-space) : <input type="checkbox" ng-model="css.whiteSpace" ng-true-value="'pre-line'" ng-false-value="'nowrap'"></div>
-              <div ng-show="css.overflow === 'hidden' && css.whiteSpace === 'nowrap'">
-                  말줄임표시(text-overflow) : <input type="checkbox" ng-model="css.textOverflow" ng-true-value="'ellipsis'" ng-false-value="'clip'">
+              <br>
+
+              <div>자동 줄바꿈(white-space) :
+                  <input type="checkbox" ng-model="temp.whiteSpace" ng-model-options="modelOption"
+                         ng-true-value="'pre-line'" ng-false-value="'nowrap'">
               </div>
-              
+              <div ng-show="css.overflow === 'hidden' && css.whiteSpace === 'nowrap'">
+                  말줄임표시(text-overflow) :
+                  <input type="checkbox"
+                         ng-model="temp.textOverflow" ng-model-options="modelOption"
+                         ng-true-value="'ellipsis'" ng-false-value="'clip'">
+              </div>
+              <br>
+
+              <div>letter-spacing(자간) :
+                  <input type="number" ng-model="temp.letterSpacingGroup.num" ng-model-options="modelOption"
+                         min="-500" max="500">
+                  <input type="text" ng-model="temp.letterSpacingGroup.unit" ng-model-options="modelOption"
+                         style="width: 25px" disabled>
+              </div>
+
+              <div>line-height(행간) :
+                  <input type="number" ng-model="temp.lineHeightGroup.num" ng-model-options="modelOption"
+                         min="0" max="500">
+                  <select ng-model="temp.lineHeightGroup.unit" ng-model-options="modelOption"
+                          ng-options="value as value for value in ['px','em','%']">
+                      <option value="" style="display:none;"></option>
+                  </select>
+              </div>
+              <br>
+
+              <div>text-align(정렬) :
+                  <select ng-model="temp.textAlign" ng-model-options="modelOption"
+                          ng-options="value as value for value in ['left','center','right']">
+                      <option value="" style="display:none;"></option>
+                  </select>
+              </div>
 
               <br>[목록 설정] (번호, 기호)
               <br>[다단]
               <br>[intdent]  (내어쓰기, 들여쓰기)
               <br>paragraph : (left, center, right, justify)
 * Paragraphs 옵션
-letter-spacing
-line-height
+
+
 list-style
 list-style-image
 list-style-position
@@ -225,49 +292,52 @@ list-style-type
     </script>
 
     <!-- 폰트 -->
-    <script type="text/ng-template" id="propertise-form-font">
-          <form novalidate name="propertise_form">
-          
-          <br><br>
+    <script type="text/ng-template" id="properties-form-font">
+          <form novalidate name="properties_form">
               [폰트]<br>
 
-          font-family : 
-              <select name="fontFamily" ng-model="fontFamilyObject" ng-options="font.label group by font.group for font in fontOptions" style="width: 150px;" ng-change="fontFamilyChange()">
+              font-family :
+              <select name="fontFamily"
+                      ng-model="temp.fontFamilyObject"
+                      ng-options="font.label group by font.group for font in fontOptions"
+                      style="width: 150px;">
                   <option value="" style="display:none;"></option>
               </select>
 
-              <br>크기 : 12px
-              <br>색상 : 
-              <br>decoration : (bold, italic, underline, line-through)
-* 폰트 옵션
-font
-@font-face
-font-family
-font-size
-font-size-adjust
-font-stretch
-font-style
-font-variant
-font-weight
+              <div>font-size :
+                  <input type="number"
+                         ng-model="temp.fontSizeGroup.num" ng-model-options="modelOption"
+                         min="{{temp.fontSize.min}}" max="{{temp.fontSize.max}}">
+                  <select ng-model="temp.fontSizeGroup.unit" ng-model-options="modelOption"
+                          ng-options="value as value for value in ['px','em','%']">
+                      <option value="" style="display:none;"></option>
+                  </select>
+              </div>
+              <br>
+
+              <div>color :
+                  <input name="color" type="text"
+                         colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
+                         ng-model="temp.color" ng-model-options="modelOption"/>
+              </div>
 
           </form>
     </script>
 
-    <!-- 폰트 -->
-    <script type="text/ng-template" id="propertise-form-text">
-          <form novalidate name="propertise_form">
-          
-          <br><br>
-              [텍스트]<br>
+    <!-- 텍스트 -->
+    <script type="text/ng-template" id="properties-form-text">
+          <form novalidate name="properties_form">
 
-* 텍스트 옵션, 
-text-align : left|right|center|justify;
-text-decoration: none|underline|overline|line-through|initial|inherit;
-text-indent: px, pt, cm, em, %
-text-overflow: clip|ellipsis|string|initial|inherit; (width 지정되고 overflow: hidden;인 경우)
-text-shadow: h-shadow v-shadow blur color|none|initial|inherit;
-text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문자 변환)
-
+              [텍스트]
+              <br>font-weight(bold) : <input type="checkbox" ng-model="temp.fontWeight" ng-model-options="modelOption"
+                                       ng-true-value="'bold'" ng-false-value="'normal'">
+              <br>font-style(italic) : <input type="checkbox" ng-model="temp.fontStyle" ng-model-options="modelOption"
+                                      ng-true-value="'italic'" ng-false-value="'normal'">
+              <!--text-decoration: none|underline|overline|line-through|initial|inherit;-->
+              <br>text-decoration(underline) : <input type="checkbox"
+                                           ng-model="temp.textDecoration" ng-model-options="modelOption"
+                                           ng-true-value="'underline'" ng-false-value="'none'">
+              <br>text-decoration(line-through)
           </form>
     </script>
 
@@ -295,7 +365,7 @@ text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문�
     <div ng-show="type == 'text'">
         ELEMENT ({{type}}) PROPERTY
 
-        <form name="propertise_form">
+        <form name="properties_form">
               
               <div>UID : {{uid}}</div>
               <br><br>
@@ -303,16 +373,16 @@ text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문�
               <div>ID : 사용자가 지정한 아이디</div>
 
               <!-- 기본 속성 -->
-              <div ng-include src="'propertise-form-position'"></div>
-              <div ng-include src="'propertise-form-size'"></div>
+              <div class="form" ng-include src="'properties-form-position'"></div>
+              <div class="form" ng-include src="'properties-form-size'"></div>
 
-              <div ng-include src="'propertise-form-border'"></div>
-              <div ng-include src="'propertise-form-padding'"></div>
-              <div ng-include src="'propertise-form-background'"></div>
+              <div class="form" ng-include src="'properties-form-border'"></div>
+              <div class="form" ng-include src="'properties-form-padding'"></div>
+              <div class="form" ng-include src="'properties-form-background'"></div>
 
-              <div ng-include src="'propertise-form-font'"></div>
-              <div ng-include src="'propertise-form-paragraph'"></div>
-              <div ng-include src="'propertise-form-text'"></div>
+              <div class="form" ng-include src="'properties-form-font'"></div>
+              <div class="form" ng-include src="'properties-form-paragraph'"></div>
+              <div class="form" ng-include src="'properties-form-text'"></div>
 
               
 
@@ -365,7 +435,7 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
     <div ng-show="type == 'unknown'">
         ELEMENT ({{type}}) PROPERTY
 
-        <form name="propertise_form">
+        <form name="properties_form">
               
               <div>UID : {{uid}}</div>
               <br><br>
@@ -373,12 +443,12 @@ justify-content: flex-start|flex-end|center|space-between|space-around|initial|i
               <div>ID : 사용자가 지정한 아이디</div>
 
               <!-- 기본 속성 -->
-              <div ng-include src="'propertise-form-position'"></div>
-              <div ng-include src="'propertise-form-size'"></div>
+              <div ng-include src="'properties-form-position'"></div>
+              <div ng-include src="'properties-form-size'"></div>
               
-              <div ng-include src="'propertise-form-border'"></div>
-              <div ng-include src="'propertise-form-padding'"></div>
-              <div ng-include src="'propertise-form-background'"></div>
+              <div ng-include src="'properties-form-border'"></div>
+              <div ng-include src="'properties-form-padding'"></div>
+              <div ng-include src="'properties-form-background'"></div>
 
               
 

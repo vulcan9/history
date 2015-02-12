@@ -398,7 +398,7 @@ define(
                 
                 $scope.updateThumbnail = function (documentUID){
                     // documentUID = documentUID || Project.current.getSelectDocument();
-                    
+                    return;
                     var size = Tool.current.config_thumbnail ('size');
                     var sourceWidth = Project.paper.width;
                     var sourceHeight = Project.paper.height;
@@ -440,7 +440,7 @@ define(
                             'height' : th
                         });
 
-                        // out('Thumbnail src : ', data);
+                        out('Thumbnail src : ', data);
 
                         // DOM에 결과물 Display
                         /*
@@ -513,12 +513,6 @@ define(
                     // 캡쳐 후 콜백
                     function onrendered(oCanvas){
 
-                        // Clone 객체 제거
-                        if($captureLayer){
-                            $captureLayer.css('display', 'none');
-                            $captureLayer.empty();
-                        }
-
                         // Scale 적용 작업
                         var tw = Math.round(oCanvas.width * ratio);
                         var th = Math.round(oCanvas.height * ratio);
@@ -528,11 +522,15 @@ define(
                             canvas = oCanvas;
                         }else{
                             canvas = _scaleCanvas(oCanvas, tw, th);
-                            oCanvas = null;
                         }
 
-                        if(callback){
-                            callback(canvas);
+                        if(callback) callback(canvas);
+                        oCanvas = null;
+
+                        // Clone 객체 제거
+                        if($captureLayer){
+                            $captureLayer.css('display', 'none');
+                            $captureLayer.empty();
                         }
                     }
                 }
