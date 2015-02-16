@@ -55,10 +55,11 @@ define( [ 'U' ], function( U ) {
                 //-------------------
                 // 텍스트 크기 맞춤 옵션
                 //-------------------
-
+                /*
                 $scope.$on('#Project.changed-element.option.display_size_toText' , function(e, data){
                     $scope.display_size_toText = data.newValue;
                 });
+                */
 
                 //-------------------
                 // snap 크기
@@ -80,8 +81,8 @@ define( [ 'U' ], function( U ) {
                     $scope.snap_pixel = Tool.current.config_display('snap_pixel');
 
                     // 개별 지정 옵션
-                    var api = Project.current.elementAPI ();
-                    $scope.display_size_toText = api.option('display_size_toText');
+                    //var api = Project.current.elementAPI ();
+                    //$scope.display_size_toText = api.option('display_size_toText');
                 }
 
                 ////////////////////////////////////////
@@ -195,6 +196,8 @@ define( [ 'U' ], function( U ) {
                         __updateBoundary();
                     }, 10);
                     */
+                    // target 변경
+                    if(_resizeUtil) _resizeUtil.proxyTarget = getSelectTarget(data.newValue);
                 });
 
                 $scope.$on('#Project.remove-ELEMENT', function(e, data){
@@ -228,7 +231,7 @@ define( [ 'U' ], function( U ) {
                 */
                 function __updateBoundary(){
 
-                    out('* UI CONTROL selectUID : ', $scope.selectInfo);
+                    //out('* UI CONTROL selectUID : ', $scope.selectInfo);
                     var info = $scope.selectInfo;
                     if(info === undefined || !info.uid){
                         $scope.selected = false;
@@ -241,13 +244,9 @@ define( [ 'U' ], function( U ) {
                         $scope.transition = false;
                     }
 
-                    var selectUID = info.uid;
-
                     // 해당 문서의 Element DOM 찾기
-                    // var content = $scope.$parent.item.content;
-                    var content = $scope.item.content;
-                    var $content = angular.element(content);
-                    var $select = (selectUID) ? $content.find('[uid=' + selectUID + ']') : null;
+                    var selectUID = info.uid;
+                    var $select = getSelectTarget(selectUID);
 
                     // var $parent = $element.parent();
                     // var $contentContainer = $parent.find('#hi-contentContainer');
@@ -285,14 +284,11 @@ define( [ 'U' ], function( U ) {
                         height:  (rect.height * scale),
                         x:  (rect.x * scale),
                         y:  (rect.y * scale)
-                        // width: rect.width * scale,
-                        // height: rect.height * scale,
-                        // x: rect.x * scale,
-                        // y: rect.y * scale
                     }
 
                     $scope.boundary = boundary;
                     $scope.selected = true;
+                    //out('boundary : ', boundary );
 
                     // transition 되돌림
                     if(_notUseTransition){
@@ -540,7 +536,14 @@ define( [ 'U' ], function( U ) {
                     _resizeUtil.removeEvent("Resizer.clicked", _onClickResize );
                     // _resizeUtil = null;
                 }
-                
+
+                function getSelectTarget(elementUID){
+                    var content = $scope.item.content;
+                    var $content = angular.element(content);
+                    var proxyTarget = (elementUID) ? $content.find('[uid=' + elementUID + ']') : null;
+                    return proxyTarget;
+                }
+
                 function setResize(eventOwner, resizeTarget){
                     clearResize();
 
@@ -556,6 +559,7 @@ define( [ 'U' ], function( U ) {
                         swapIndex: true,
                         // 드래그 적용 대상
                         resizeTarget: resizeTarget,
+                        proxyTarget : getSelectTarget($scope.selectInfo.uid),
                         snap : _snap
                     };
 
@@ -635,6 +639,12 @@ define( [ 'U' ], function( U ) {
                     // _resizeEvent = e;
 
                     resizeHandler(e);
+
+                    //*********************
+                    // 여기에서 값 초기화 해 주어야 up상태가 됬을때 boundary에의해 UI가 다시 갱신된다.
+                    // 이전 값과 같은 상태이면 angular는 DOM을 update 시키지 않기 때문임
+                    $scope.boundary = null;
+                    //*********************
                 }
 
                 function resizeHandler(_resizeEvent){
@@ -658,12 +668,13 @@ define( [ 'U' ], function( U ) {
                     var h = toInt (_resizeEvent.height * (1/scale));
                     
                     var css;
+                    /*
                     if($scope.display_size_toText){
                         css = {
                             'left': x,
                             'top': y,
                             'width': w,
-                            'height': h,
+                            'height': h
                             // 'word-wrap': 'break-word'
                         };
                     }else{
@@ -671,10 +682,22 @@ define( [ 'U' ], function( U ) {
                             'left': x,
                             'top': y,
                             'width': w,
-                            'height': h,
+                            'height': h
                             // 'word-wrap': 'inherit'
                         };
                     }
+                    */
+                    var border = U.toNumber($el.css('borderWidth'));
+                    var minW = U.toNumber($el.css('paddingLeft')) + U.toNumber($el.css('paddingRight')) + border*2;
+                    var minH = U.toNumber($el.css('paddingTop')) + U.toNumber($el.css('paddingBottom')) + border*2;
+                    css = {
+                        'left': x + 'px',
+                        'top': y + 'px',
+                        //'min-width': minW + 'px',
+                        //'min-height': minH + 'px',
+                        'width': Math.max(w, minW) + 'px',
+                        'height': Math.max(h,minH) + 'px'
+                    };
 
                     $el.css(css);
                     __updateBoundary();
@@ -704,12 +727,13 @@ define( [ 'U' ], function( U ) {
                     var h = toInt (e.height * (1/scale));
 
                     var css;
+                    /*
                     if($scope.display_size_toText) {
                         // text box 최대 너비값 구하기
                         var el = Project.current.getElement(documentUID, elementUID);
                         var $el = angular.element(el);
                         $el.css({
-                            'width': 'initial',
+                            'width': 'initial'
                             // 'word-wrap': 'initial'
                         });
                         var maxW = toInt ($el.width()+1);
@@ -726,7 +750,7 @@ define( [ 'U' ], function( U ) {
                             'left': x + 'px',
                             'top': y + 'px',
                             'width': w + 'px',
-                            'height': 'initial',
+                            'height': 'initial'
                             // 'word-wrap': wordWrap
                         };
                     }else{
@@ -735,10 +759,25 @@ define( [ 'U' ], function( U ) {
                             'left': x + 'px',
                             'top': y + 'px',
                             'width': w + 'px',
-                            'height': h + 'px',
+                            'height': h + 'px'
                             // 'word-wrap': 'initial'
                         };
                     }
+                    */
+
+                    var el = Project.current.getElement(documentUID, elementUID);
+                    var $el = angular.element(el);
+                    var border = U.toNumber($el.css('borderWidth'));
+                    var minW = U.toNumber($el.css('paddingLeft')) + U.toNumber($el.css('paddingRight')) + border*2;
+                    var minH = U.toNumber($el.css('paddingTop')) + U.toNumber($el.css('paddingBottom')) + border*2;
+                    css = {
+                        'left': x + 'px',
+                        'top': y + 'px',
+                        //'min-width': minW + 'px',
+                        //'min-height': minH + 'px',
+                        'width': Math.max(w, minW) + 'px',
+                        'height': Math.max(h,minH) + 'px'
+                    };
 
                     var param = {
                         // 삽입될 문서
@@ -751,11 +790,11 @@ define( [ 'U' ], function( U ) {
                     };
                     CommandService.exe(CommandService.MODIFY_ELEMENT, param, function(){
                         // initial 인 경우 사이즈 원래대로
-                        if($scope.display_size_toText) {
+                        //if($scope.display_size_toText) {
                             $scope.$evalAsync(function(){
                                 __updateBoundary();
                             });
-                        }
+                        //}
                     });
                 }
 

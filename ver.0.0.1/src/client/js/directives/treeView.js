@@ -254,6 +254,8 @@ define( [ 'U' ], function( U ) {
                 // Thumbnail 업데이트
                 //-------------------------------------
 
+                // TODO : tree 썸네일 업데이트 시점 문제있음 (document선택 이동시)
+
                 // thumbnial 초기 세팅
                 // $scope.thumbnail = {};
 

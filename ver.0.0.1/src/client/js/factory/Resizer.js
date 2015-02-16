@@ -60,6 +60,8 @@ define( ['U'], function( U ) {
 
 			// 드래그 적용 대상 ($객체임)
 			this.resizeTarget = null;
+            // 실제 적용 객체가 있다면...
+            this.proxyTarget = null;
 
 			// 현재 마우스 이벤트를 받고있는 이벤트 리스너 ownwr
 			this.$currentEventTarget = null;
@@ -229,46 +231,59 @@ define( ['U'], function( U ) {
 				// h
 				if(this.direction == 'sw' || this.direction == 's' || this.direction == 'se'){
 					snapH = this.snap.snapToPixel(y+h, distY);
-					out('snapH : ', y+h, snapH, distY);
+					//out('snapH : ', y+h, snapH, distY);
 				}
 
 				//--------------------
 				// 이동한 포인트 제한 체크
 				//--------------------
 
-				if(this.dragLimitOption)
-				{
+                var minW = 0
+                var minH = 0;
+                if(this.proxyTarget){
+                    var $el = angular.element(this.proxyTarget);
+                    var border = U.toNumber($el.css('borderWidth'));
+                    minW = U.toNumber($el.css('paddingLeft')) + U.toNumber($el.css('paddingRight')) + border*2;
+                    minH = U.toNumber($el.css('paddingTop')) + U.toNumber($el.css('paddingBottom')) + border*2;
+                }
+
+				if(this.dragLimitOption){
 					// 드래그 범위 지정
 					this._setDragLimit();
-					
-					// 앵커 위치에 따라 제한값 달라짐
-					// x
-					if(this.direction == 'nw' || this.direction == 'w' || this.direction == 'sw'){
-						this.dragUtil.maxX = x + w;
-					}
-					// y
-					if(this.direction == 'nw' || this.direction == 'n' || this.direction == 'ne'){
-						this.dragUtil.maxY = y + h;
-					}
-					// w
-					if(this.direction == 'ne' || this.direction == 'e' || this.direction == 'se'){
-						this.dragUtil.minX = x;
-					}
-					// h
-					if(this.direction == 'sw' || this.direction == 's' || this.direction == 'se'){
-						this.dragUtil.minY = y;
-					}
+				}else{
+                    // 앵커 위치에 따라 제한값 달라짐
+                    this.dragUtil.minX = -10000;
+                    this.dragUtil.minY = -10000;
+                    this.dragUtil.maxX = 10000;
+                    this.dragUtil.maxY = 10000;
+                }
 
-					// 드래그 범위 지정 보정치
-					var limit = this._checkLimit.apply(this, [snapX, snapY]);
-					snapX = limit.x;
-					snapY = limit.y;
+                // 앵커 위치에 따라 제한값 달라짐
+                // x
+                if(this.direction == 'nw' || this.direction == 'w' || this.direction == 'sw'){
+                    this.dragUtil.maxX = x + (w - minW);
+                }
+                // y
+                if(this.direction == 'nw' || this.direction == 'n' || this.direction == 'ne'){
+                    this.dragUtil.maxY = y + (h - minH);
+                }
+                // w
+                if(this.direction == 'ne' || this.direction == 'e' || this.direction == 'se'){
+                    this.dragUtil.minX = x;
+                }
+                // h
+                if(this.direction == 'sw' || this.direction == 's' || this.direction == 'se'){
+                    this.dragUtil.minY = y;
+                }
 
-					var limit = this._checkLimit.apply(this, [snapW, snapH]);
-					snapW = limit.x;
-					snapH = limit.y;
-					out('---> : ',  this.dragUtil.maxY, snapH );
-				}
+                // 드래그 범위 지정 보정치
+                var limit = this._checkLimit.apply(this, [snapX, snapY]);
+                snapX = limit.x;
+                snapY = limit.y;
+
+                var limit = this._checkLimit.apply(this, [snapW, snapH]);
+                snapW = limit.x;
+                snapH = limit.y;
 
 				//--------------------
 				// 이동량에 따른 크기 보정 체크
@@ -297,12 +312,14 @@ define( ['U'], function( U ) {
 					newH = h + distH;
 				}
 
+                out('---> : ',  newW, newH );
+
 				//--------------------
 
 				x = snapX;
 				y = snapY;
-				w = newW;
-				h = newH;
+				w = Math.max(newW, minW);
+				h = Math.max(newH, minH);
 
 				// 최종값 저장
 				this._last = { x: x, y: y, w: w, h: h };

@@ -352,14 +352,14 @@ define( ['U'], function( U ) {
                             // 텍스트 outline 맞춤 옵션 (true: text에 맞춤, false: 박스에 맞춤)
                             // display_size_toText: false,
 
-                            // snap 크기 (pixel >= 1)
-                            snap_pixel: 10,
                             // grid 보이기
                             show_grid: true,
                             // guide 라인 보이기
                             // show_guide: true,
                             // ruler 보이기
-                            // show_ruler: true
+                            // show_ruler: true,
+                            // snap 크기 (pixel >= 1)
+                            snap_pixel: 10
                         },
 
                         thumbnail : {
