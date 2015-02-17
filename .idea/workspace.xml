@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d4f1f230-857a-45be-ae40-88330a1198d1" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ver.0.0.1/src/client/js/factory/Resizer.js" afterPath="$PROJECT_DIR$/ver.0.0.1/src/client/js/factory/Resizer.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Tool.js" afterPath="$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Tool.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ver.0.0.1/src/client/css/element.css" afterPath="$PROJECT_DIR$/ver.0.0.1/src/client/css/element.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ver.0.0.1/src/client/css/application.css" afterPath="$PROJECT_DIR$/ver.0.0.1/src/client/css/application.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/propertyView.html" afterPath="$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/propertyView.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/propertyView.js" afterPath="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/propertyView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/treeView.js" afterPath="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/treeView.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ver.0.0.1/src/client/templates/ui/uiControl.html" afterPath="$PROJECT_DIR$/ver.0.0.1/src/client/templates/ui/uiControl.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/ui/uiControl.js" afterPath="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/ui/uiControl.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="history.iws" />
@@ -39,8 +34,8 @@
           <file leaf-file-name="propertyView.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/propertyView.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.5671785" vertical-offset="12082" max-vertical-offset="20083">
-                  <caret line="667" column="0" selection-start-line="667" selection-start-column="0" selection-end-line="667" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.59980804" vertical-offset="12086" max-vertical-offset="19912">
+                  <caret line="669" column="23" selection-start-line="669" selection-start-column="23" selection-end-line="669" selection-end-column="23" />
                   <folding>
                     <element signature="n#!!doc" expanded="true" />
                   </folding>
@@ -61,8 +56,8 @@
           <file leaf-file-name="screenView.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/screenView.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-5.220339" vertical-offset="5012" max-vertical-offset="16910">
-                  <caret line="280" column="41" selection-start-line="280" selection-start-column="41" selection-end-line="280" selection-end-column="41" />
+                <state vertical-scroll-proportion="-6.440678" vertical-offset="893" max-vertical-offset="16910">
+                  <caret line="67" column="19" selection-start-line="67" selection-start-column="19" selection-end-line="67" selection-end-column="19" />
                   <folding>
                     <element signature="n#!!doc" expanded="true" />
                   </folding>
@@ -73,8 +68,8 @@
           <file leaf-file-name="screenView.html" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/screenView.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-0.0" vertical-offset="285" max-vertical-offset="3040">
-                  <caret line="15" column="30" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
+                <state vertical-scroll-proportion="-15.607142" vertical-offset="1026" max-vertical-offset="3040">
+                  <caret line="77" column="65" selection-start-line="77" selection-start-column="56" selection-end-line="77" selection-end-column="65" />
                   <folding />
                 </state>
               </provider>
@@ -121,8 +116,8 @@
           <file leaf-file-name="propertyView.html" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/propertyView.html">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="-20.928572" vertical-offset="5722" max-vertical-offset="8930">
-                  <caret line="332" column="88" selection-start-line="332" selection-start-column="88" selection-end-line="332" selection-end-column="88" />
+                <state vertical-scroll-proportion="-9.392858" vertical-offset="763" max-vertical-offset="8930">
+                  <caret line="54" column="79" selection-start-line="54" selection-start-column="70" selection-end-line="54" selection-end-column="79" />
                   <folding>
                     <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                     <element signature="n#style#0;n#div#0;n#div#2;n#form#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -134,8 +129,8 @@
           <file leaf-file-name="Project.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Project.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="22245" max-vertical-offset="31445">
-                  <caret line="1199" column="35" selection-start-line="1199" selection-start-column="35" selection-end-line="1199" selection-end-column="35" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="22017" max-vertical-offset="31445">
+                  <caret line="1175" column="25" selection-start-line="1175" selection-start-column="25" selection-end-line="1175" selection-end-column="25" />
                   <folding>
                     <element signature="n#!!doc" expanded="true" />
                   </folding>
@@ -146,8 +141,8 @@
           <file leaf-file-name="Tool.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Tool.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.37131232" vertical-offset="6361" max-vertical-offset="12103">
-                  <caret line="361" column="42" selection-start-line="361" selection-start-column="42" selection-end-line="361" selection-end-column="42" />
+                <state vertical-scroll-proportion="-1.2136317" vertical-offset="8489" max-vertical-offset="12103">
+                  <caret line="391" column="0" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
                   <folding />
                 </state>
               </provider>
@@ -165,11 +160,9 @@
       <list>
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/libs/angular-bootstrap-colorpicker/colorpicker.css" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/libs/angular-bootstrap-colorpicker/bootstrap-colorpicker-module.js" />
-        <option value="$PROJECT_DIR$/ver.0.0.1/src/client/css/application.css" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Project.js" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/treeView.html" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/services/CommandService.js" />
-        <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/screenView.js" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/screen/element.js" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/screen/content.js" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/nodeRun.bat" />
@@ -178,9 +171,11 @@
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/templates/ui/uiControl.html" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/factory/Resizer.js" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/ui/uiControl.js" />
-        <option value="$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/propertyView.html" />
-        <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/propertyView.js" />
         <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Tool.js" />
+        <option value="$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/propertyView.html" />
+        <option value="$PROJECT_DIR$/ver.0.0.1/src/client/css/application.css" />
+        <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/screenView.js" />
+        <option value="$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/propertyView.js" />
       </list>
     </option>
   </component>
@@ -705,14 +700,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/screenView.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="285" max-vertical-offset="3040">
-          <caret line="15" column="12" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/screen/element.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="7362" max-vertical-offset="8417">
@@ -938,13 +925,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/css/application.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.6101695" vertical-offset="1085" max-vertical-offset="18601">
-          <caret line="59" column="28" selection-start-line="59" selection-start-column="28" selection-end-line="59" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/libs/dom2image/html2canvas.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-4.977927" vertical-offset="6099" max-vertical-offset="54587">
@@ -1079,16 +1059,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/screenView.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.220339" vertical-offset="5012" max-vertical-offset="16910">
-          <caret line="280" column="41" selection-start-line="280" selection-start-column="41" selection-end-line="280" selection-end-column="41" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/factory/Resizer.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.23416507" vertical-offset="4354" max-vertical-offset="21546">
@@ -1105,14 +1075,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/screenView.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.0" vertical-offset="285" max-vertical-offset="3040">
-          <caret line="15" column="30" selection-start-line="15" selection-start-column="30" selection-end-line="15" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/ui/uiControl.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="10140" max-vertical-offset="17898">
@@ -1121,10 +1083,56 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/css/application.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7168906" vertical-offset="16467" max-vertical-offset="18620">
+          <caret line="906" column="1" selection-start-line="906" selection-start-column="1" selection-end-line="906" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/screenView.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-15.607142" vertical-offset="1026" max-vertical-offset="3040">
+          <caret line="77" column="65" selection-start-line="77" selection-start-column="56" selection-end-line="77" selection-end-column="65" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Project.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="22017" max-vertical-offset="31445">
+          <caret line="1175" column="25" selection-start-line="1175" selection-start-column="25" selection-end-line="1175" selection-end-column="25" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/command/ConfigurationCommand.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.4862559" vertical-offset="627" max-vertical-offset="1748">
+          <caret line="60" column="40" selection-start-line="60" selection-start-column="40" selection-end-line="60" selection-end-column="40" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/screenView.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.440678" vertical-offset="893" max-vertical-offset="16910">
+          <caret line="67" column="19" selection-start-line="67" selection-start-column="19" selection-end-line="67" selection-end-column="19" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/templates/view/propertyView.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-20.928572" vertical-offset="5722" max-vertical-offset="8930">
-          <caret line="332" column="88" selection-start-line="332" selection-start-column="88" selection-end-line="332" selection-end-column="88" />
+        <state vertical-scroll-proportion="-9.392858" vertical-offset="763" max-vertical-offset="8930">
+          <caret line="54" column="79" selection-start-line="54" selection-start-column="70" selection-end-line="54" selection-end-column="79" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#2;n#form#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -1132,31 +1140,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Project.js">
+    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Tool.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="22245" max-vertical-offset="31445">
-          <caret line="1199" column="35" selection-start-line="1199" selection-start-column="35" selection-end-line="1199" selection-end-column="35" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="-1.2136317" vertical-offset="8489" max-vertical-offset="12103">
+          <caret line="391" column="0" selection-start-line="391" selection-start-column="0" selection-end-line="391" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/directives/propertyView.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5671785" vertical-offset="12082" max-vertical-offset="20083">
-          <caret line="667" column="0" selection-start-line="667" selection-start-column="0" selection-end-line="667" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.59980804" vertical-offset="12086" max-vertical-offset="19912">
+          <caret line="669" column="23" selection-start-line="669" selection-start-column="23" selection-end-line="669" selection-end-column="23" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ver.0.0.1/src/client/js/data/Tool.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.37131232" vertical-offset="6361" max-vertical-offset="12103">
-          <caret line="361" column="42" selection-start-line="361" selection-start-column="42" selection-end-line="361" selection-end-column="42" />
-          <folding />
         </state>
       </provider>
     </entry>

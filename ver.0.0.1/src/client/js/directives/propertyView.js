@@ -230,14 +230,22 @@ define( [ 'U' ], function( U ) {
 
                 }
 
-                ////////////////////////////////////////
-                // Watch
-                ////////////////////////////////////////
-
-                //------------------
+                ////////////////////////////////////////////////////////////////////////////////
+                //
                 // CSS
-                //------------------
+                //
+                ////////////////////////////////////////////////////////////////////////////////
 
+                // 속성 변경값을 Command 에 전달할때 사용
+                $scope.$watch('css', function (newValue, oldValue){
+                    if(newValue === undefined || newValue === null){
+                        newValue = {};
+                        return;
+                    }
+                    $scope.modifyContent(_documentUID, _elementUID);
+                }, true);
+
+                // DOM 으로부터 값 변경된 경우
                 function watch(){
                     // oldValue와 검사하면 안됨
                     // (oldValue는 같은 element끼리의 값이 아닌 이전 select element의 값이 될수도 있으므로)
@@ -371,15 +379,6 @@ define( [ 'U' ], function( U ) {
                     }
                 }
 
-                // 속성 변경값 적용
-                $scope.$watch('css', function (newValue, oldValue){
-                    if(newValue === undefined || newValue === null){
-                        newValue = {};
-                        return;
-                    }
-                    $scope.modifyContent(_documentUID, _elementUID);
-                }, true);
-
                 ////////////////////////////////////////
                 // CSS 변경
                 ////////////////////////////////////////
@@ -417,6 +416,7 @@ define( [ 'U' ], function( U ) {
                     }
                     return value;
                 }
+
                 /*
                 function toNumber(str){
                     if(!str) return 0;
@@ -425,6 +425,7 @@ define( [ 'U' ], function( U ) {
                 }
                 */
 
+                // Element 개별 옵션값 탐색
                 function updateElementCSS(paramCSS){
                     var temp = {};
                     var $dom = angular.element(_currentElement);
@@ -567,33 +568,19 @@ define( [ 'U' ], function( U ) {
                     return fontFamilyChange(fontFamilyGroup);
                 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                //------------------
+                ////////////////////////////////////////////////////////////////////////////////
+                //
                 // Option Property
-                //------------------
+                //
+                ////////////////////////////////////////////////////////////////////////////////
 
                 // 옵션 변경값 적용
                 $scope.$watch('option', function (newValue, oldValue){
-                    if(newValue === undefined) return;
+                    if(newValue === undefined || newValue === null){
+                        newValue = {};
+                        return;
+                    }
+
                     if($scope.type == ELEMENT.DOCUMENT){
                         $scope.configDocument();
                     }else{
@@ -601,6 +588,7 @@ define( [ 'U' ], function( U ) {
                     }
                 }, true);
 
+                // DOM 에서 값이 변경될때
                 function watchOption(){
                     var unwatch = $scope.$watch('tempOption', function (newValue, oldValue){
                         if(newValue == oldValue) return;
@@ -622,7 +610,7 @@ define( [ 'U' ], function( U ) {
                                 var isColorEqual = compareColor(newObj, currentObj);
                                 if(isColorEqual) continue;
 
-                                var obj = angular.extend(currentObj, newObj);
+                                var obj = angular.extend({}, currentObj, newObj);
                                 if(!changeList) changeList = {};
                                 changeList[name] = obj;
                                 out('watch : ', name, ' : ', currentObj, ' --> ', obj)
@@ -630,12 +618,9 @@ define( [ 'U' ], function( U ) {
                             }else{
 
                                 var api = Project.current.elementAPI (_documentUID, _elementUID);
-                                if(type == ELEMENT.TEXT)
-                                {
+                                if(type == ELEMENT.TEXT){
                                     //tempOption.display_size_toText = api.option('display_size_toText');
-                                }
-                                else if(type == ELEMENT.IMAGE)
-                                {
+                                }else if(type == ELEMENT.IMAGE){
                                     //
                                 }
                             }
@@ -651,6 +636,7 @@ define( [ 'U' ], function( U ) {
                 // Config Option
                 //------------------
 
+                // 속성창에 표시할 Option 값 탐색
                 function _getOption(type, param){
                     if(!Project.current) return;
                     var paramOption = (param) ? param.css : null;
@@ -665,14 +651,6 @@ define( [ 'U' ], function( U ) {
                         }
 
                     }else{
-
-                        var api = Project.current.elementAPI (_documentUID, _elementUID);
-                        if(type == ELEMENT.TEXT){
-                            //tempOption.display_size_toText = api.option('display_size_toText');
-                        }
-                        else if(type == ELEMENT.IMAGE){
-                            //
-                        }
                         tempOption = updateElementOPT(paramOption);
                     }
 
@@ -680,16 +658,29 @@ define( [ 'U' ], function( U ) {
                     $scope.tempOption = tempOption;
                 }
 
+                // Element 개별 옵션값을 지정한다.
                 function updateElementOPT(paramOption){
                     var tempOption = {};
                     out('paramOption', paramOption);
                     //var $dom = angular.element(_currentElement);
+
+                    var type = $scope.type;
+                    var api = Project.current.elementAPI (_documentUID, _elementUID);
+                    if(type == ELEMENT.TEXT){
+                        //tempOption.display_size_toText = api.option('display_size_toText');
+                    }
+                    else if(type == ELEMENT.IMAGE){
+                        //
+                    }
+
                     return tempOption;
                 }
 
-                ////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////
+                //
                 // Data 업데이트
-                ////////////////////////////////////////
+                //
+                ////////////////////////////////////////////////////////////////////////////////
 
                 // 서버 저장값 변경된 경우
                 // select가 변경되어 값이 변한 경우
