@@ -258,13 +258,21 @@ define( [ 'U' ], function( U ) {
 
                         for(var name in newValue){
 
+                            out('*** : ', name, ' : ', newValue[name]);
+
                             //if(!_currentElement){
                             if($scope.type == ELEMENT.DOCUMENT){
                                 // document는 아직 CSS 변경 항목 없음
 
                             }else{
                                 // element
-                                if(_currentElement.style[name] === undefined) continue;
+                                if(_currentElement.style[name] === undefined && $(_currentElement).css(name) === undefined){
+                                    //if(name.match(/-[webkit|moz|o]+-/g) == null) continue;
+                                    continue;
+                                }
+
+                                // prefix 구문 찾기
+                                //-[webkit|moz|o]+-(.*?:)(.*?)(?=[;|\"])
 
                                 // 객체로 구성되는 CSS 예외처리 (Group Object)
                                 var currentObj;
@@ -300,7 +308,20 @@ define( [ 'U' ], function( U ) {
                                         newObj = newValue['fontFamilyGroup'];
                                         newCSS = getFontFamilyCSS(newObj);
                                         currentCSS = getCSSValue(name, null);
-                                        currentObj = fontFamilyGroup(currentCSS);
+                                        currentObj = getFontFamilyGroup(currentCSS);
+                                        break;
+                                    case 'textIndent':
+                                        newObj = newValue['textIndentGroup'];
+                                        newCSS = getTextIndentCSS(newObj);
+                                        currentCSS = getCSSValue(name, null);
+                                        currentObj = getTextIndentGroup(currentCSS);
+                                        break;
+
+                                    case 'columnRule':
+                                        newObj = newValue['columnRuleGroup'];
+                                        newCSS = getColumnRuleCSS(newObj);
+                                        currentCSS = getCSSValue(name, null);
+                                        currentObj = getColumnRuleGroup(currentCSS);
                                         break;
                                     default:
                                         newObj = newValue[name];
@@ -322,9 +343,22 @@ define( [ 'U' ], function( U ) {
                                 //var isColorEqual = compareColor(newCSS, currentCSS);
                                 //if(isColorEqual) continue;
 
-                                out('watch : ', name, ' : ', currentCSS, ' --> ', newCSS)
+                                out('watch : ', name, ' : ', currentCSS, ' --> ', newCSS);
                                 if(!changeList) changeList = {};
                                 changeList[name] = newCSS;
+
+                                // 필요한 prefix 추가
+                                //if(name == "columnCount"){
+                                //    changeList['-webkit-column-count'] = newCSS;
+                                //    changeList['-moz-column-count'] = newCSS;
+                                //}else if(name == "columnRule"){
+                                //    changeList['-webkit-column-rule'] = newCSS;
+                                //    changeList['-moz-column-rule'] = newCSS;
+                                //}else if(name == "columnGap"){
+                                //    changeList['-webkit-column-gap'] = newCSS;
+                                //    changeList['-moz-column-gap'] = newCSS;
+                                //}
+                                ================================================================
                             }
                         }
 
@@ -487,7 +521,7 @@ define( [ 'U' ], function( U ) {
                     //css.fontFamily : $scope.fontFamilyChange 에서 처리함
                     //temp.fontFamilyGroup = (fontFamily)? compareFontFamily(fontFamily) : $scope.fontOptions[2];
                     var fontFamily = getCSSValue('fontFamily', paramCSS);
-                    temp.fontFamilyGroup = fontFamilyGroup(fontFamily);
+                    temp.fontFamilyGroup = getFontFamilyGroup(fontFamily);
                     temp.fontFamily = getFontFamilyCSS(temp.fontFamilyGroup);
 
                     var fontSize = getCSSValue('fontSize', paramCSS);
@@ -499,7 +533,46 @@ define( [ 'U' ], function( U ) {
                     temp.fontStyle = getCSSValue('fontStyle', paramCSS);
                     temp.textDecoration = getCSSValue('textDecoration', paramCSS);
 
+                    // 들여쓰기
+                    var textIndent = getCSSValue('textIndent', paramCSS);
+                    temp.textIndentGroup = getTextIndentGroup(textIndent);
+                    temp.textIndent = getTextIndentCSS(temp.textIndentGroup);
+
+                    // 다단
+                    //temp.columnCountGroup = getColumnCountGroup(columnCount);
+                    temp.columnCount = getCSSValue('columnCount', paramCSS);
+                    //temp['-webkit-column-count'] = temp.columnCount;
+                    //temp['-moz-column-count'] = temp.columnCount;
+
+                    var columnRuleString = getCSSValue('columnRule', paramCSS);
+                    temp.columnRuleGroup = getColumnRuleGroup(columnRuleString);
+                    temp.columnRule = getColumnRuleCSS(temp.columnRuleGroup);
+                    //temp['-webkit-column-rule'] = temp.columnRule;
+                    //temp['-moz-column-rule'] = temp.columnRule;
+
+                    temp.columnGap = getCSSValue('columnGap', paramCSS, true);
+                    //temp['-webkit-column-gap'] = temp.columnGap;
+                    //temp['-moz-column-gap'] = temp.columnGap;
                     return temp;
+                }
+
+                function getColumnRuleGroup(columnRuleCSS){
+                    var columnRuleWidth = columnRuleCSS.match(/-?\d+?\s?px/g);
+                    var columnRuleColor = columnRuleCSS.match(/rgba?\(.+\)/g);
+                    var columnRuleStyle = columnRuleCSS.match(/none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|initial|inherit/g);
+                    return {
+                        columnRuleWidth: columnRuleWidth ? U.toNumber(columnRuleWidth[0]) : undefined,
+                        columnRuleColor: columnRuleColor ? columnRuleColor[0] : undefined,
+                        columnRuleStyle: columnRuleStyle ? columnRuleStyle[0] : undefined
+                    };
+                }
+                function getColumnRuleCSS(columnRule){
+                    columnRule = columnRule || {};
+                    if(columnRule.columnRuleWidth === undefined) columnRule.columnRuleWidth = 0;
+                    columnRule.columnRuleColor = columnRule.columnRuleColor || 'rgb(0,0,0)';
+                    if(!columnRule.columnRuleStyle || columnRule.columnRuleStyle == 'none') columnRule.columnRuleStyle = 'solid';
+                    var style = columnRule.columnRuleWidth + 'px' + ' ' + columnRule.columnRuleStyle + ' ' + columnRule.columnRuleColor;
+                    return style;
                 }
 
                 function getBorderGroup(borderCSS){
@@ -515,7 +588,7 @@ define( [ 'U' ], function( U ) {
                 function getBorderCSS(border){
                     border = border || {};
                     if(border.borderWidth === undefined) border.borderWidth = 0;
-                    border.borderStyle = border.borderStyle || 'rgb(0,0,0)';
+                    border.borderColor = border.borderColor || 'rgb(0,0,0)';
                     if(!border.borderStyle || border.borderStyle == 'none') border.borderStyle = 'solid';
                     var style = border.borderWidth + 'px' + ' ' + border.borderStyle + ' ' + border.borderColor;
                     return style;
@@ -560,12 +633,25 @@ define( [ 'U' ], function( U ) {
                     return fontSize.num + fontSize.unit;
                 }
 
-                function fontFamilyGroup(fontFamilyCSS){
+                function getFontFamilyGroup(fontFamilyCSS){
                     return (fontFamilyCSS)? compareFontFamily(fontFamilyCSS) : $scope.fontOptions[2];
                 }
                 function getFontFamilyCSS(fontFamilyGroup){
                     fontFamilyGroup = fontFamilyGroup || $scope.fontOptions[2];
                     return fontFamilyChange(fontFamilyGroup);
+                }
+
+                function getTextIndentGroup(textIndent){
+                    return {
+                        num: (textIndent)? U.toNumber(textIndent) : undefined,
+                        unit: (textIndent)? textIndent.match(/[px|em|%|pt|cm].?/)[0] : undefined
+                    }
+                }
+                function getTextIndentCSS(textIndentGroup){
+                    textIndentGroup = textIndentGroup || {};
+                    textIndentGroup.num = textIndentGroup.num || 0;
+                    textIndentGroup.unit = textIndentGroup.unit || 'px';
+                    return textIndentGroup.num + textIndentGroup.unit;
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////
@@ -941,8 +1027,8 @@ define( [ 'U' ], function( U ) {
 
                     var ourStyleSheet;
                     for (var i=0; i < styleSheets.length; i++) {
-                        var currentStyleSheet = styleSheets[i].title;
-                        if(styleSheets[i].title=="dynamicLoadFont"){
+                        //var currentStyleSheet = styleSheets[i].title;
+                        if(styleSheets[i].title == "dynamicLoadFont"){
                             //this is the one we use for adding @keyframnes rules
                             ourStyleSheet = styleSheets[i]
                         }

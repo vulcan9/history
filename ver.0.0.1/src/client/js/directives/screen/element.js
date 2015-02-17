@@ -38,11 +38,7 @@ define( [ 'U' ], function( U ) {
             ////////////////////////////////////////
             
             function Link ( $scope, $element, $attrs) {
-
                 // alert('uid : ' + $attrs.uid);
-
-
-                //--------------
                 // End Link
             }
 

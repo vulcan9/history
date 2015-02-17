@@ -63,10 +63,9 @@
             <div class="form">
               <div>
                   snap 크기 :
-                  <input type="number" name="snap_pixel"
+                  <input type="number"
                          ng-model="tempOption.display.snap_pixel" ng-model-options="modelOption"
-                         min="0" max="100" required
-                         ng-class="{error: !form_document.snap_pixel.$valid}">
+                         min="0" max="100" required>
               </div>
                 <br> snap 적용 : (그리드, 객체, 가이드라인)
             </div>
@@ -97,10 +96,10 @@
           <form novalidate name="properties_form">
               [위치]<br>
 
-              <div>x : <input type="number" name="left"
+              <div>x : <input type="number"
                               ng-model="temp.left"  ng-model-options="modelOption"
                               min="0" max="3000" required></div>
-              <div>y : <input type="number" name="top"
+              <div>y : <input type="number"
                               ng-model="temp.top"  ng-model-options="modelOption"
                               min="0" max="3000" required></div>
 
@@ -112,10 +111,10 @@
           <form novalidate name="properties_form">
               [크기]<br>
 
-              <div>width : <input type="number" name="width"
+              <div>width : <input type="number"
                                   ng-model="temp.width" ng-model-options="modelOption"
                                   min="0" max="3000" required></div>
-              <div>height : <input type="number" name="height"
+              <div>height : <input type="number"
                                    ng-model="temp.height" ng-model-options="modelOption"
                                    min="0" max="3000" required></div>
               
@@ -137,19 +136,18 @@
               [테두리]<br>
 
               <div>테두리 두께 :
-                  <input type="number" name="borderWidth"
+                  <input type="number"
                          ng-model="temp.borderGroup.borderWidth"  ng-model-options="modelOption"
                          min="0" max="100"></div>
 
               <div ng-if="temp.borderGroup.borderWidth > 0">
                   <br>테두리 색상 :
-                  <input name="borderColor" type="text"
+                  <input type="text"
                          colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
                          ng-model="temp.borderGroup.borderColor"  ng-model-options="modelOption"/>
 
                   <br>테두리 스타일 :
-                  <select name="borderStyle"
-                          ng-model="temp.borderGroup.borderStyle" ng-model-options="modelOption"
+                  <select ng-model="temp.borderGroup.borderStyle" ng-model-options="modelOption"
                           ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']">
                       <option value="" style="display:none;"></option>
                   </select>
@@ -158,22 +156,22 @@
 
               <br>테두리 라운딩 : (모서리 4군데 각각 속성 지정)
               <div>border-top-left-radius :
-                  <input type="number" name="borderTopLeftRadius"
+                  <input type="number"
                          ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
                          min="0" max="1000"> px
               </div>
               <div>border-top-right-radius :
-                <input type="number" name="borderTopRightRadius"
+                <input type="number"
                        ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
                        min="0" max="1000"> px
               </div>
               <div>border-bottom-right-radius :
-                  <input type="number" name="borderBottomRightRadius"
+                  <input type="number"
                          ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
                          min="0" max="1000"> px
               </div>
               <div>border-bottom-left-radius :
-                  <input type="number" name="borderBottomLeftRadius"
+                  <input type="number"
                          ng-model="temp.borderBottomLeftRadius"  ng-model-options="modelOption"
                          min="0" max="1000"> px
               </div>
@@ -186,16 +184,16 @@
           <form novalidate name="properties_form">
               [여백]<br>
               <br>패딩 :  (4군데 각각 속성 지정)
-              <div>padding-top : <input type="number" name="paddingTop"
+              <div>padding-top : <input type="number"
                                         ng-model="temp.paddingTop" ng-model-options="modelOption"
                                         min="0" max="100"></div>
-                <div>padding-right : <input type="number" name="paddingRight"
+                <div>padding-right : <input type="number"
                                             ng-model="temp.paddingRight" ng-model-options="modelOption"
                                             min="0" max="100"></div>
-                <div>padding-bottom : <input type="number" name="paddingBottom"
+                <div>padding-bottom : <input type="number"
                                              ng-model="temp.paddingBottom" ng-model-options="modelOption"
                                              min="0" max="100"></div>
-                <div>padding-left : <input type="number" name="paddingLeft"
+                <div>padding-left : <input type="number"
                                            ng-model="temp.paddingLeft" ng-model-options="modelOption"
                                            min="0" max="100"></div>
 
@@ -233,8 +231,7 @@
               <br>
               -->
               스크롤(overflow) : 
-              <select name="overflow"
-                      ng-model="temp.overflow" ng-model-options="modelOption"
+              <select ng-model="temp.overflow" ng-model-options="modelOption"
                       ng-options="value as value for value in ['visible','hidden','auto','scroll']">
                   <option value="" style="display:none;"></option>
               </select>
@@ -271,24 +268,59 @@
 
               <div>text-align(정렬) :
                   <select ng-model="temp.textAlign" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['left','center','right']">
+                          ng-options="value as value for value in ['left','center','right', 'justify']">
+                      <option value="" style="display:none;"></option>
+                  </select>
+                 <br> * justify는 IE제외
+              </div>
+
+              <div>text-indent(들여쓰기) :
+                  <input type="number" ng-model="temp.textIndentGroup.num" ng-model-options="modelOption"
+                         min="0" max="500">
+                  <select ng-model="temp.textIndentGroup.unit" ng-model-options="modelOption"
+                          ng-options="value as value for value in ['px', 'pt', 'cm', 'em', '%']">
                       <option value="" style="display:none;"></option>
                   </select>
               </div>
-
-              <br>[목록 설정] (번호, 기호)
-              <br>[다단]
-              <br>[intdent]  (내어쓰기, 들여쓰기)
-              <br>paragraph : (left, center, right, justify)
-* Paragraphs 옵션
-
-
-list-style
-list-style-image
-list-style-position
-list-style-type
-
           </form>
+    </script>
+
+    <!-- 단락 모양 -->
+    <script type="text/ng-template" id="properties-form-column">
+        <form novalidate name="properties_form">
+            [다단]<br>
+
+            <div>column-count :
+                <!--auto(column 의 수가 column-width등의 값에 따라 결정됨) | number-->
+                <select ng-model="temp.columnCount" ng-model-options="modelOption"
+                        ng-options="value as value for value in ['auto','2','3','4','5']">
+                    <option value="" style="display:none;">auto</option>
+                </select>
+            </div>
+            <div>column-gap :
+                <!--column-gap: px|normal-->
+                <input type="number" ng-model="temp.columnGap" ng-model-options="modelOption"
+                       min="1" max="500"> px
+            </div>
+            <div>column-rule-width :
+                <!--column-rule-width: medium|thin|thick|length-->
+                <input type="number" ng-model="temp.columnRuleGroup.columnRuleWidth" ng-model-options="modelOption"
+                       min="1" max="500"> px
+            </div>
+            <div>column-rule-style :
+                <!--column-rule-style: none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset-->
+                <select ng-model="temp.columnRuleGroup.columnRuleStyle" ng-model-options="modelOption"
+                        ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']">
+                    <option value="" style="display:none;"></option>
+                </select>
+            </div>
+            <div>column-rule-color :
+                <input type="text"
+                       colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
+                       ng-model="temp.columnRuleGroup.columnRuleColor" ng-model-options="modelOption"/>
+            </div>
+
+        </form>
     </script>
 
     <!-- 폰트 -->
@@ -297,8 +329,7 @@ list-style-type
               [폰트]<br>
 
               font-family :
-              <select name="fontFamily"
-                      ng-model="temp.fontFamilyGroup"
+              <select ng-model="temp.fontFamilyGroup"
                       ng-options="font.label group by font.group for font in fontOptions"
                       style="width: 150px;">
                   <option value="" style="display:none;"></option>
@@ -316,7 +347,7 @@ list-style-type
               <br>
 
               <div>color :
-                  <input name="color" type="text"
+                  <input type="text"
                          colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
                          ng-model="temp.color" ng-model-options="modelOption"/>
               </div>
@@ -382,9 +413,10 @@ list-style-type
 
               <div class="form" ng-include src="'properties-form-font'"></div>
               <div class="form" ng-include src="'properties-form-paragraph'"></div>
+            <div class="form" ng-include src="'properties-form-column'"></div>
               <div class="form" ng-include src="'properties-form-text'"></div>
 
-              
+
 
 
               <!-- 폰트 설정 -->

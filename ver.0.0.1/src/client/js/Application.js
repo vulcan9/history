@@ -85,8 +85,8 @@ define(
         application.constant( 'ELEMENT', {
 
             DOCUMENT: 'document',
-            TEXT: 'text'
-            
+            TEXT: 'text',
+            IMAGE: 'image'
         });
 
         //-------------------------------------

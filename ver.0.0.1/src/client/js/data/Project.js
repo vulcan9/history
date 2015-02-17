@@ -1479,6 +1479,7 @@ define( ['U'], function( U ) {
 
                         var documentItem = this.getDocument(documentUID);
                         var dom = this.getElement(documentUID, elementUID);
+                        var $dom = angular.element(dom);
 
                         //---------------------
                         // 이벤트 발송 : #Project.modifiy-ELEMENT
@@ -1494,7 +1495,20 @@ define( ['U'], function( U ) {
 
                         //---------------------
                         // 데이터 갱신 (css)                        
-                        if(css) angular.element(dom).css(css);
+                        if(css){
+                            $(dom).css(css);
+                            var columnCount = css['column-count'] || css['columnCount'];
+                            if(columnCount !== undefined){
+                                // Jquery는 안먹힘
+                                //dom.style['column-count'] = columnCount;
+                                //dom.style['-webkit-column-count'] = columnCount;
+                                //dom.style['-moz-column-count'] = columnCount;
+
+                                //$dom.addClass('hiColumn-count-' + columnCount);
+                                $dom.attr('ng-class', '{"hiColumn-count-'+columnCount+'":true}');
+                                ================================================================
+                            }
+                        }
 
                         // 데이터 갱신 (option)
                         var api = Project.current.elementAPI (documentUID, elementUID);
