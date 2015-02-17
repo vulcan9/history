@@ -1506,7 +1506,8 @@ define( ['U'], function( U ) {
 
                                 //$dom.addClass('hiColumn-count-' + columnCount);
                                 $dom.attr('ng-class', '{"hiColumn-count-'+columnCount+'":true}');
-                                ================================================================
+
+                                alert('ㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏㅏ');
                             }
                         }
 
