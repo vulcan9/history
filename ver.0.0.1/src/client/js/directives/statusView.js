@@ -1,18 +1,18 @@
 /*////////////////////////////////////////////////////////////////////////////////
 
-    * 
-    * Developer : (c) Dong-il Park (pdi1066@naver.com)
-    * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : status bar 표시
+ *
+ * Developer : (c) Dong-il Park (pdi1066@naver.com)
+ * Project : HI-STORY (https://github.com/vulcan9/history)
+ * Description : status bar 표시
 
-////////////////////////////////////////////////////////////////////////////////*/
+ ////////////////////////////////////////////////////////////////////////////////*/
 
 'use strict';
 
-define( [], function() {
+define([], function () {
 
         // 선언
-        function _directive( $timeout ) {
+        function _directive($timeout) {
 
             //out( 'version' );
 
@@ -22,7 +22,7 @@ define( [], function() {
                 // element, attribute, class, comment
                 restrict: 'EA',
                 templateUrl: _PATH.TEMPLATE + 'view/statusView.html',
-                
+
                 replace: true,
                 priority: 0,
                 transclude: true,
@@ -35,7 +35,7 @@ define( [], function() {
                 controller: Controller,
 
                 link: Link
-                
+
             };
 
             ////////////////////////////////////////////////////////////////////////////////
@@ -43,22 +43,21 @@ define( [], function() {
             // Controller
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Controller( $scope, $element, $attrs) {
+
+            function Controller($scope, $element, $attrs) {
                 //$scope.version = VersionService;
                 // $element.trigger('#view.layoutUpdate');
 
 
-
                 /*
-                $scope.$evalAsync( function(){
-                    // $element.trigger('#view.layoutUpdate');
-                } );
-                
-                $scope.$watch(function(){
-                    // $element.trigger('#view.layoutUpdate'); 
-                });
-                */
+                 $scope.$evalAsync( function(){
+                 // $element.trigger('#view.layoutUpdate');
+                 } );
+
+                 $scope.$watch(function(){
+                 // $element.trigger('#view.layoutUpdate');
+                 });
+                 */
 
                 ////////////////////////////////////////
                 // End Controller
@@ -70,10 +69,10 @@ define( [], function() {
             // Link
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Link ( $scope, $element, $attrs) {
 
-                $timeout (function() {
+            function Link($scope, $element, $attrs) {
+
+                $timeout(function () {
                     $element.trigger('#view.layoutUpdate');
                 }, 100);
 
@@ -86,9 +85,9 @@ define( [], function() {
         }
 
         // 리턴
-        _directive._regist = function(application){
+        _directive._regist = function (application) {
             // 등록
-            application.directive( 'statusView', _directive );
+            application.directive('statusView', _directive);
         };
         return _directive;
 

@@ -1,11 +1,11 @@
 /*////////////////////////////////////////////////////////////////////////////////
 
-    * 
-    * Developer : (c) Dong-il Park (pdi1066@naver.com)
-    * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : 
+ *
+ * Developer : (c) Dong-il Park (pdi1066@naver.com)
+ * Project : HI-STORY (https://github.com/vulcan9/history)
+ * Description :
 
-////////////////////////////////////////////////////////////////////////////////*/
+ ////////////////////////////////////////////////////////////////////////////////*/
 
 'use strict';
 
@@ -13,7 +13,7 @@ define(
     [
         'U'
     ],
-    function( U ) {
+    function (U) {
 
 
         // 선언
@@ -28,12 +28,12 @@ define(
                 // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
                 // template: '<span>Session 체크</span>',
                 templateUrl: _PATH.TEMPLATE + 'session/session.html',
-                
+
                 replace: true,
                 transclude: true,
                 // priority: 0,
                 // scope: {},
-                
+
                 controller: Controller,
                 link: Link
             };
@@ -43,8 +43,8 @@ define(
             // Link
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Link ( $scope, $element, $attrs) {
+
+            function Link($scope, $element, $attrs) {
 
                 // $timeout (function() {
                 //     $element.trigger('#view.layoutUpdate');
@@ -61,9 +61,9 @@ define(
             //
             ////////////////////////////////////////////////////////////////////////////////
 
-            function Controller( $scope, $element, $attrs, NoticeService, $q) {
-                
-                
+            function Controller($scope, $element, $attrs, NoticeService, $q) {
+
+
 
 
 
@@ -76,20 +76,20 @@ define(
 // session="deactive" (default)
 //  <div session="active">로그인이 필요한 페이지에 삽입한다.</div>
 
-                
-                $scope.login = function(){
+
+                $scope.login = function () {
                     login();
                 };
 
-                $scope.signup = function(){
+                $scope.signup = function () {
                     signup();
                 };
 
                 ////////////////////////////////////////
                 // Login
                 ////////////////////////////////////////
-                
-                function login(){
+
+                function login() {
                     showLoginPopup();
                 }
 
@@ -97,7 +97,7 @@ define(
                 // Sign up
                 ////////////////////////////////////////
 
-                function signup(){
+                function signup() {
                     // 로그인 페이지로 이동
                     application.$location.path('/signup');
                 }
@@ -106,28 +106,28 @@ define(
                 // 팝업창
                 ////////////////////////////////////////
 
-                function showLoginPopup(){
+                function showLoginPopup() {
 
                     var config = {
-                        
-                        /*
-                        // http://stackoverflow.com/questions/21149653/ng-include-not-working-with-script-type-text-ng-template
 
-                        content: '<script type="text/ng-template" id="tree_message_remove">'+
-                                    '<span>삭제 하시겠습니까?</span>' + 
-                                    '</script>'+
-                                    '<div ng-include src="templateID"></div>',
-                        // scope.templateID = 'tree_message_remove';
-                        
-                        content: '<div ng-include src="tree_message_remove.html">' + 
-                                    '<span>삭제 하시겠습니까?</span>' +
-                                    '<p style="margin: 20px 40px;" ng-init="removeOption=1">' + 
-                                    '<label><input type="radio" ng-model="removeOption" name="removeOption" value="1" ng-checked="removeOption==1"> 모든 하위 페이지 함께 제거</label>' + 
-                                    '<br>'+
-                                    '<label><input type="radio" ng-model="removeOption" name="removeOption" value="2" ng-checked="removeOption==2"> 해당 페이지만 제거</label>' + 
-                                    '</p>' + 
-                                    '</div>',
-                        */
+                        /*
+                         // http://stackoverflow.com/questions/21149653/ng-include-not-working-with-script-type-text-ng-template
+
+                         content: '<script type="text/ng-template" id="tree_message_remove">'+
+                         '<span>삭제 하시겠습니까?</span>' +
+                         '</script>'+
+                         '<div ng-include src="templateID"></div>',
+                         // scope.templateID = 'tree_message_remove';
+
+                         content: '<div ng-include src="tree_message_remove.html">' +
+                         '<span>삭제 하시겠습니까?</span>' +
+                         '<p style="margin: 20px 40px;" ng-init="removeOption=1">' +
+                         '<label><input type="radio" ng-model="removeOption" name="removeOption" value="1" ng-checked="removeOption==1"> 모든 하위 페이지 함께 제거</label>' +
+                         '<br>'+
+                         '<label><input type="radio" ng-model="removeOption" name="removeOption" value="2" ng-checked="removeOption==2"> 해당 페이지만 제거</label>' +
+                         '</p>' +
+                         '</div>',
+                         */
 
                         title: '로그인',
                         content: U.getTemplate('#session_login_popup', $element),
@@ -139,44 +139,44 @@ define(
                     };
 
                     var callback = {
-                        
-                        opened: function( element, scope ) {
-                            out( 'opened : ', element, scope );
+
+                        opened: function (element, scope) {
+                            out('opened : ', element, scope);
                             // scope.templateID = template;
 
                             // content scope 초기화
                             // scope.removeOption = 'all';
                             // scope.showDeleteButton = item.items && (item.items.length > 0);
-                            
-                            scope.$watch('removeOption', function(newValue, oldValue) {
+
+                            scope.$watch('removeOption', function (newValue, oldValue) {
                                 $scope.removeOption = newValue;
                                 out('removeOption : ', newValue);
                             });
                         },
-                        
-                        closed: function( result, element, scope ) {
+
+                        closed: function (result, element, scope) {
                             // result : -1:cancel, 1:yes, 0:no
-                            if ( result > 0 ) {
+                            if (result > 0) {
                                 // yes
                                 out('- result : 예 (', scope.removeOption, ')');
                                 deferred.resolve(scope.removeOption);
 
-                            }else if(result < 0){
+                            } else if (result < 0) {
                                 // cancel
                                 out('- result : 취소 (', scope.removeOption, ')');
-                                
-                            }else{
+
+                            } else {
                                 out('- result : 아니오 (', scope.removeOption, ')');
                                 deferred.reject(scope.removeOption);
                             }
                         }
                     };
-                    
+
                     // 삭제 대상이되는 uid 표시
                     // $scope.removeUID = item.uid;
 
                     // 팝업창 띄우기
-                    NoticeService.open( config, callback );
+                    NoticeService.open(config, callback);
 
                     //----------------
                     // 팝업 닫힘 후 처리
@@ -184,18 +184,18 @@ define(
 
                     var self = this;
                     var deferred = $q.defer();
-                    deferred.promise.then( 
-                        function resolve( optionValue ) {
+                    deferred.promise.then(
+                        function resolve(optionValue) {
                             out('- 로그인 : 작업 실행');
                             // var uid = item.uid;
                             // self.removeDocument(optionValue, uid);
                             // $scope.removeUID = null;
-                        }, 
-                        function reject(){
+                        },
+                        function reject() {
                             out('- 로그인 : 작업 취소');
                             // $scope.removeUID = null;
                             // $scope.removeOption = null;
-                        } 
+                        }
                     );
                 }
 
@@ -208,9 +208,9 @@ define(
         }
 
         // 리턴
-        _directive._regist = function(application){
+        _directive._regist = function (application) {
             // 등록
-            application.directive( 'session', _directive );
+            application.directive('session', _directive);
         };
         return _directive;
 

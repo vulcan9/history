@@ -1,15 +1,15 @@
 /*////////////////////////////////////////////////////////////////////////////////
 
-    * 
-    * Developer : (c) Dong-il Park (pdi1066@naver.com)
-    * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : 
+ *
+ * Developer : (c) Dong-il Park (pdi1066@naver.com)
+ * Project : HI-STORY (https://github.com/vulcan9/history)
+ * Description :
 
-////////////////////////////////////////////////////////////////////////////////*/
+ ////////////////////////////////////////////////////////////////////////////////*/
 
 'use strict';
 
-define([], function( ) {
+define([], function () {
 
         // 선언
         function _directive() {
@@ -19,12 +19,12 @@ define([], function( ) {
                 scope: {
                     otherModelValue: '=passwordMatch'
                 },
-                link: function(scope, element, attributes, ngModel) {
-                    ngModel.$validators.compareTo = function(modelValue) {
+                link: function (scope, element, attributes, ngModel) {
+                    ngModel.$validators.compareTo = function (modelValue) {
                         // out('* Password Match : ', modelValue, ' / ', scope.otherModelValue);
                         return modelValue === scope.otherModelValue;
                     };
-                    scope.$watch('otherModelValue', function() {
+                    scope.$watch('otherModelValue', function () {
                         ngModel.$validate();
                     });
                 }
@@ -34,9 +34,9 @@ define([], function( ) {
         }
 
         // 리턴
-        _directive._regist = function(application){
+        _directive._regist = function (application) {
             // 등록
-            application.directive( 'passwordMatch', _directive );
+            application.directive('passwordMatch', _directive);
         };
         return _directive;
 

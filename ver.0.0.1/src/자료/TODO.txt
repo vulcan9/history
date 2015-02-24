@@ -75,8 +75,7 @@ http://www.youtube.com/watch?v=imO5S9fbQXk
 
 
 * Property
-- 텍스트 관련 속성 설정 추가
-- margin, padding 속성 설정 추가
+- CSS prefix가 필요한 속성은 저장할때 따로 정보를 기록해두었다가 런타임에 prefix를 붙여주어야 한다.
 
 * screen
 - 텍스트 편집 시 (텍스 크기에 맞추기 옵션인 경우) 선택상자 크기 업데이트하기

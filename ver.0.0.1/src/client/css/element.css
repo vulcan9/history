@@ -70,6 +70,18 @@ div[uid^="element-"].hiElement {
     -o-user-select:none;
     user-select:none;
 
+    border: 0px solid rgb(0,0,0);
+
+    column-rule: 0px solid rgb(0,0,0);
+    -webkit-column-rule: 0px solid rgb(0,0,0);
+    -moz-column-rule: 0px solid rgb(0,0,0);
+    column-count: auto;
+    -webkit-column-count: auto;
+    -moz-column-count: auto;
+    column-gap: 20px;
+    -webkit-column-gap: 20px;
+    -moz-column-gap: 20px;
+
     overflow:visible;
     /*
     overflow-x:auto;
@@ -87,28 +99,29 @@ div[uid^="element-"].hiElement {
 
     line-height: 1.5em;
     letter-spacing: 0px;
-    text-align: left;
+    text-align: justify;
 
     font-family: '맑은 고딕', '나눔고딕';
     font-size:14px;
     color:rgb(0,0,0);
-    
-    /*초기(default) 크기를 지정*/
-    width: 100px;
-    height: 40px;
 }
 div[uid^="element-"].hiElement.edit{
     /*편집 허용*/
-    -webkit-user-select :initial;
-    -moz-user-select:initial;
-    -ms-user-select:initial;
-    -o-user-select:initial;
-    user-select:initial;
+    -webkit-user-select :text;
+    -moz-user-select:text;
+    -ms-user-select:text;
+    -o-user-select:text;
+    user-select:text;
 }
 
 div[uid^="element-"].hiElement.text{
     background-color: transparent;
     padding: 10px;
+}
+/*초기(default) 크기를 지정*/
+div[uid^="element-"].hiElement.text.hiMinSize{
+    min-width: 100px;
+    min-height: 40px;
 }
 
 div[uid^="element-"].hiElement.text > *{
@@ -120,86 +133,44 @@ div[uid^="element-"].hiElement.text > p{
     margin-bottom: 1em;
 }
 
-/*------------------------------------
-// Column Style
-------------------------------------*/
-
-div[uid^="element-"].hiElement.text.hiColumn-count-auto{
-    column-count: auto;
-    -webkit-column-count: auto;
-    -moz-column-count: auto;
-    background-color: #0f9d58;
-}
-div[uid^="element-"].hiElement.text.hiColumn-count-2{
-    column-count: 2;
-    -webkit-column-count: 2;
-    -moz-column-count: 2;
-    background-color: #0073ae;
-}
-div[uid^="element-"].hiElement.text.hiColumn-count-3{
-    column-count: 3;
-    -webkit-column-count: 3;
-    -moz-column-count: 3;
-    background-color: #303030;
-}
-div[uid^="element-"].hiElement.text.hiColumn-count-4{
-    column-count: 4;
-    -webkit-column-count: 4;
-    -moz-column-count: 4;
-    background-color: #d58512;
-}
-div[uid^="element-"].hiElement.text.hiColumn-count-5{
-    column-count: 5;
-    -webkit-column-count: 5;
-    -moz-column-count: 5;
-    background-color: #d6e9c6;
-}
+/*
+텍스트 옵션
+text-shadow: h-shadow v-shadow blur color|none|initial|inherit;
+text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문자 변환)
+*/
 
 /*------------------------------------
 // Capture Clone 레이어
 ------------------------------------*/
 
-/*텍스트 옵션, 
-<element contenteditable="true|false">
 
-text-align : left|right|center|justify;
-text-decoration: none|underline|overline|line-through|initial|inherit;
-text-indent: px, pt, cm, em, %
-text-overflow: clip|ellipsis|string|initial|inherit; (width 지정되고 overflow: hidden;인 경우)
-text-shadow: h-shadow v-shadow blur color|none|initial|inherit;
-text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문자 변환)
 
-폰트 옵션
-font
-@font-face
-font-family
-font-size
-font-size-adjust
-font-stretch
-font-style
-font-variant
-font-weight
 
-Paragraphs 옵션
-letter-spacing
-line-height
-list-style
-list-style-image
-list-style-position
-list-style-type
 
-여백 (layout)
-margin
-margin-bottom
-margin-left
-margin-right
-margin-top
-padding
-padding-bottom
-padding-left
-padding-right
-padding-top
 
-객체 align (IE11이상 지원)
-justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
-*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

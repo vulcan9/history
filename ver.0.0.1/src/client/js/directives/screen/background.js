@@ -1,16 +1,16 @@
 /*////////////////////////////////////////////////////////////////////////////////
 
-    * 
-    * Developer : (c) Dong-il Park (pdi1066@naver.com)
-    * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : 버전을 표시
+ *
+ * Developer : (c) Dong-il Park (pdi1066@naver.com)
+ * Project : HI-STORY (https://github.com/vulcan9/history)
+ * Description : 버전을 표시
 
-////////////////////////////////////////////////////////////////////////////////*/
+ ////////////////////////////////////////////////////////////////////////////////*/
 
 'use strict';
 
 
-define( [], function() {
+define([], function () {
 
         // 선언
         function _directive() {
@@ -26,13 +26,13 @@ define( [], function() {
                 // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
                 //template: '<span><span ng-transclude></span> {{background}} </span>',
                 templateUrl: _PATH.TEMPLATE + 'screen/background.html',
-                
+
                 replace: true,
                 transclude: true,
                 scope: {
                     scale: "@scale"
                 },
-                
+
                 controller: Controller,
                 link: Link
             };
@@ -42,26 +42,26 @@ define( [], function() {
             // Controller
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Controller( $scope, $element, $attrs) {
+
+            function Controller($scope, $element, $attrs) {
                 $scope.ratio = 1;
                 $scope.stroke = 1;
 
 
-                $scope.$watch('scale', function(newValue, oldValue) {
+                $scope.$watch('scale', function (newValue, oldValue) {
                     var scale = $scope.$eval(newValue);
                     $scope.ratio = getRatio(scale);
                 }, true);
 
                 /*
-                $scope.$evalAsync( function(){
-                    // $element.trigger('#view.layoutUpdate');
-                } );
-                
-                $scope.$watch(function(){
-                    // $element.trigger('#view.layoutUpdate'); 
-                });
-                */
+                 $scope.$evalAsync( function(){
+                 // $element.trigger('#view.layoutUpdate');
+                 } );
+
+                 $scope.$watch(function(){
+                 // $element.trigger('#view.layoutUpdate');
+                 });
+                 */
 
                 //-----------------------------------
                 // Background Pattern, align-center 데이터
@@ -70,13 +70,13 @@ define( [], function() {
                 //-----------------------------------
 
                 // 배경 패턴을 그리기 위한 위치 정보
-                function getRatio(scale){
+                function getRatio(scale) {
                     var obj = {
                         value: scale
                     };
-                    for(var i=0; i<11; ++i){
+                    for (var i = 0; i < 11; ++i) {
                         var unit = i * 10;
-                        obj['r' + unit] = unit  * scale;
+                        obj['r' + unit] = unit * scale;
                     }
                     return obj;
                 }
@@ -91,8 +91,8 @@ define( [], function() {
             // Link
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Link ( $scope, $element, $attrs) {
+
+            function Link($scope, $element, $attrs) {
 
                 // $timeout (function() {
                 //     $element.trigger('#view.layoutUpdate');
@@ -107,9 +107,9 @@ define( [], function() {
         }
 
         // 리턴
-        _directive._regist = function(application){
+        _directive._regist = function (application) {
             // 등록
-            application.directive( 'background', _directive );
+            application.directive('background', _directive);
         };
         return _directive;
 

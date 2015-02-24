@@ -225,7 +225,7 @@
      <!-- 문단 모양 -->
     <script type="text/ng-template" id="properties-form-paragraph">
           <form novalidate name="properties_form">
-              [문단]<br>
+              [문단 Paragraphs]<br>
               <!--
               <div>word-wrap : <input type="checkbox" ng-model="css.wordWrap" ng-true-value="'break-word'" ng-false-value="'normal'"></div>
               <br>
@@ -272,6 +272,10 @@
                       <option value="" style="display:none;"></option>
                   </select>
                  <br> * justify는 IE제외
+                  <!--
+                    객체 align (IE11이상 지원)
+                    justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
+                  -->
               </div>
 
               <div>text-indent(들여쓰기) :
@@ -293,8 +297,8 @@
             <div>column-count :
                 <!--auto(column 의 수가 column-width등의 값에 따라 결정됨) | number-->
                 <select ng-model="temp.columnCount" ng-model-options="modelOption"
-                        ng-options="value as value for value in ['auto','2','3','4','5']">
-                    <option value="" style="display:none;">auto</option>
+                        ng-options="value as value for value in ['auto','1','2','3','4','5']">
+                    <option value="" style="display:none;"></option>
                 </select>
             </div>
             <div>column-gap :
@@ -397,62 +401,39 @@
         ELEMENT ({{type}}) PROPERTY
 
         <form name="properties_form">
-              
-              <div>UID : {{uid}}</div>
-              <br><br>
-              <div>type : {{type}}</div>
-              <div>ID : 사용자가 지정한 아이디</div>
 
-              <!-- 기본 속성 -->
-              <div class="form" ng-include src="'properties-form-position'"></div>
-              <div class="form" ng-include src="'properties-form-size'"></div>
+            <div>UID : {{uid}}</div>
+            <br><br>
 
-              <div class="form" ng-include src="'properties-form-border'"></div>
-              <div class="form" ng-include src="'properties-form-padding'"></div>
-              <div class="form" ng-include src="'properties-form-background'"></div>
+            <div>type : {{type}}</div>
+            <div>ID : 사용자가 지정한 아이디</div>
 
-              <div class="form" ng-include src="'properties-form-font'"></div>
-              <div class="form" ng-include src="'properties-form-paragraph'"></div>
+            <!-- 기본 속성 -->
+            <div class="form" ng-include src="'properties-form-position'"></div>
+            <div class="form" ng-include src="'properties-form-size'"></div>
+
+            <div class="form" ng-include src="'properties-form-border'"></div>
+            <div class="form" ng-include src="'properties-form-padding'"></div>
+            <div class="form" ng-include src="'properties-form-background'"></div>
+
+            <div class="form" ng-include src="'properties-form-font'"></div>
+            <div class="form" ng-include src="'properties-form-paragraph'"></div>
             <div class="form" ng-include src="'properties-form-column'"></div>
-              <div class="form" ng-include src="'properties-form-text'"></div>
+            <div class="form" ng-include src="'properties-form-text'"></div>
 
+            <br><br>
 
+            <!--<br><div>* 텍스트 박스 크기에 맞춤 : <input type="checkbox" ng-model="option.display_size_toText"></div>-->
 
-
-              <!-- 폰트 설정 -->
-              <br><br>
-              <br>태그 선택
-
-              <br><br>
-              <br>[하이퍼 링크]
-
-              <!-- Element 설정 표시 -->
-              <br><br>
-              [Element 설정]
-              <!--<br><div>* 텍스트 박스 크기에 맞춤 : <input type="checkbox" ng-model="option.display_size_toText"></div>-->
-
-
-
-
-
-
-
-
-
-
-<pre>
-* 편집
-contenteditable="true|false"
-
-* 객체 align (IE11이상 지원)
-justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
-</pre>
-
-
-
-
-
-
+            <div class="form">
+                * 기타 편집
+                contenteditable="true|false"
+                <br>
+                [하이퍼 링크]
+                <br>
+                * 객체 align (IE11이상 지원)
+                justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
+            </div>
 
 
 

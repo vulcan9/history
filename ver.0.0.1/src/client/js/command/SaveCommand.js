@@ -361,6 +361,17 @@ define( [
                         var content = documentItem.document.content;
                         var htmlString = content.outerHTML;
 
+                        //************************************
+                        // prefix 구문 찾기
+                        // (잠재적 버그 가능성 있음, 태그 안의 prefix만 검색해야함)
+
+                        // prefix는 attribute (element directive)에 의해 동적으로 적용되므로 style에서는 삭제해 준다.
+                        // Rex : -[webkit|moz|o]+-(.*?:)(.*?)(?=[;|\"])
+                        //htmlString = htmlString.replace(/-[ms|webkit|moz|o]+-(.*?:)(.*?)(?=[;|\"])/g, '-ms-$1$2;-moz-$1$2;-o-$1$2;-webkit-$1$2;$1$2');
+                        htmlString = htmlString.replace(/-[ms|webkit|moz|o]+-(.*?:)(.*?)(?=[;|\"].)/g, '');
+
+                        //************************************
+
                         documentItem.document.content = htmlString;
                         var json = angular.toJson(documentItem);
                         documentItem.document.content = content;

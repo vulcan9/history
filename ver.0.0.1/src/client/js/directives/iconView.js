@@ -1,15 +1,15 @@
 /*////////////////////////////////////////////////////////////////////////////////
 
-    * 
-    * Developer : (c) Dong-il Park (pdi1066@naver.com)
-    * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : directive 정의, 등록
+ *
+ * Developer : (c) Dong-il Park (pdi1066@naver.com)
+ * Project : HI-STORY (https://github.com/vulcan9/history)
+ * Description : directive 정의, 등록
 
-////////////////////////////////////////////////////////////////////////////////*/
+ ////////////////////////////////////////////////////////////////////////////////*/
 
 'use strict';
 
-define( [ 'U' ], function( U ) {
+define(['U'], function (U) {
 
         // 선언
         function _directive(CommandService, Tool, ELEMENT, $getScope, TalkService, $rootScope) {
@@ -25,7 +25,7 @@ define( [ 'U' ], function( U ) {
                 // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
                 //template: '<span><span ng-transclude></span> {{version}} </span>',
                 templateUrl: _PATH.TEMPLATE + 'view/iconView.html',
-                
+
                 replace: true,
                 priority: 0,
                 transclude: true,
@@ -47,8 +47,8 @@ define( [ 'U' ], function( U ) {
             // Link
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Link( $scope, $element, $attrs ) {
+
+            function Link($scope, $element, $attrs) {
                 //
             }
 
@@ -57,8 +57,8 @@ define( [ 'U' ], function( U ) {
             // Controller
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Controller( $scope, $element, $attrs ) {
+
+            function Controller($scope, $element, $attrs) {
 
                 //------------------
                 // 데이터 변경 감지 순서
@@ -66,29 +66,29 @@ define( [ 'U' ], function( U ) {
 
                 // 1. 이벤트를 받는다.
                 var self = this;
-                $scope.$on('#Tool.changed-MENU', function(e, data){
+                $scope.$on('#Tool.changed-MENU', function (e, data) {
                     out(data.name, '#Tool.changed-MENU : ', arguments);
                     //self.updateMenu();
 
-                    if (Tool.current.TOOL.MENU == undefined){
+                    if (Tool.current.TOOL.MENU == undefined) {
                         out('TODO : MENU 버튼 비활성화');
-                    }else{
+                    } else {
                         out('TODO : MENU 버튼 활성화');
                     }
                 });
-                
+
                 //-----------------------
                 // 메뉴 클릭 이벤트 처리
                 //-----------------------
 
                 // 메뉴 항목을 클릭한 경우 호출되는 함수
-                $scope.callAPI = function(){
-                    
+                $scope.callAPI = function () {
+
                     var arg = U.toArray(arguments);
                     var funcName = arg.shift();
                     out(' * ICON MENU item : ', funcName);
 
-                    if(funcName){
+                    if (funcName) {
                         eval(funcName).apply(null, arg);
                     }
 
@@ -102,19 +102,19 @@ define( [ 'U' ], function( U ) {
                 // Project
                 ////////////////////////////////////////
 
-                function newProject (){
+                function newProject() {
                     // CommandService.exe(CommandService.NEW, {});
                     $rootScope.go_tool();
                 }
 
-                function openProject (){
+                function openProject() {
                     // CommandService.exe(CommandService.OPEN, {});
                     // var uid = 'uid를 선택할 수 있는 창을 띄운다.';
                     // $rootScope.go_tool(uid);
                     $rootScope.go_dashboard();
                 }
 
-                function saveProject (){
+                function saveProject() {
                     CommandService.exe(CommandService.SAVE, {});
                 }
 
@@ -122,20 +122,20 @@ define( [ 'U' ], function( U ) {
                 // 편집
                 ////////////////////////////////////////
 
-                function undo(){
+                function undo() {
                     CommandService.exe(CommandService.UNDO, {});
                 }
 
-                function redo(){
+                function redo() {
                     CommandService.exe(CommandService.REDO, {});
                 }
 
-                function copy(){
+                function copy() {
                     alert('// TODO : copy');
                     // CommandService.exe(CommandService.UNDO, {});
                 }
 
-                function paste(){
+                function paste() {
                     alert('// TODO : paste');
                     // CommandService.exe(CommandService.REDO, {});
                 }
@@ -145,22 +145,22 @@ define( [ 'U' ], function( U ) {
                 ////////////////////////////////////////
 
                 //var data = {data:dataOwner, item:itemObject, name:propertyName, oldValue:oldValue};
-                $scope.$on('#Project.select-DOCUMENT', function(e, data){
+                $scope.$on('#Project.select-DOCUMENT', function (e, data) {
                     out('#Project.select-DOCUMENT (iconView)');
                     _removeMousePointEvent();
                 });
 
                 // Document 추가 
                 // position : 'next', 'sub', 'prev'
-                function addDocument (position, documentUID, selectUID){
+                function addDocument(position, documentUID, selectUID) {
 
-                    if(Project.current == null) return;
-                    
+                    if (Project.current == null) return;
+
                     // command 호출
                     var param = {
                         //document : null,
                         // documentUID: uid가 지정되지 않았으면 자동 생성됨
-                        documentUID : documentUID || Project.current.createDocumentUID(),
+                        documentUID: documentUID || Project.current.createDocumentUID(),
 
                         option: {
                             position: position,
@@ -175,30 +175,30 @@ define( [ 'U' ], function( U ) {
                 ////////////////////////////////////////
                 // Element
                 ////////////////////////////////////////
-                
+
                 // 등록된 마우스 이벤트
                 var __lastHandler = null;
                 var __oldCursor;
                 var __messageObj;
 
-                function addElement (type, elementUID, documentUID){
+                function addElement(type, elementUID, documentUID) {
 
-                    if(Project.current == null) return;
+                    if (Project.current == null) return;
 
                     //------------------
                     // 안내 문구 띄우기
                     //------------------
-                    
+
                     var msgExist = TalkService.has(__messageObj);
-                    if(msgExist < 0){
+                    if (msgExist < 0) {
                         __messageObj = TalkService.open('문서에서 추가할 ' + type + '의 위치를 클릭하세요.', {
-                            delayTime : TalkService.NONE,
-                            type : 'info', //normal | success | info | warning | danger
-                            closeCallback: function(){
+                            delayTime: TalkService.NONE,
+                            type: 'info', //normal | success | info | warning | danger
+                            closeCallback: function () {
                                 __messageObj = null;
                             }
                         });
-                    }else{
+                    } else {
                         __messageObj = TalkService.delay(__messageObj, TalkService.NONE);
                     }
 
@@ -212,7 +212,7 @@ define( [ 'U' ], function( U ) {
                     // 마우스 위치 결정
                     //------------------
 
-                    function add(e){
+                    function add(e) {
 
                         _removeMousePointEvent();
 
@@ -222,8 +222,8 @@ define( [ 'U' ], function( U ) {
                         };
                         var param = {
                             // 삽입될 문서
-                            documentUID : documentUID || Project.current.getSelectDocument(),
-                            
+                            documentUID: documentUID || Project.current.getSelectDocument(),
+
                             // uid가 지정되지 않았으면 command에서 자동 생성됨
                             elementUID: elementUID || Project.current.createElementUID(),
                             type: type,
@@ -239,13 +239,13 @@ define( [ 'U' ], function( U ) {
                 }
 
                 // Element를 추가할 위치 찾기
-                function _addMousePointEvent(listener){
+                function _addMousePointEvent(listener) {
                     var scope = $getScope('#hi-contentContainer', 'screenView');
                     var $container = scope.getScreenEventTarget();
                     var eventName = 'mousedown';
 
                     // 이전 핸들러 해지
-                    if(__lastHandler){
+                    if (__lastHandler) {
                         _removeMousePointEvent(true);
                     }
                     // 이벤트 새로 등록
@@ -253,14 +253,14 @@ define( [ 'U' ], function( U ) {
                     $container.one(eventName, __lastHandler);
 
                     // 커서 설정(최초 한번만)
-                    if(__oldCursor == null){
+                    if (__oldCursor == null) {
                         __oldCursor = scope.setCursor('cell');
                     }
                 }
 
-                function _removeMousePointEvent(keepMessage){
-                    if(!__lastHandler) return;
-                    
+                function _removeMousePointEvent(keepMessage) {
+                    if (!__lastHandler) return;
+
                     var scope = $getScope('#hi-contentContainer', 'screenView');
                     var $container = scope.getScreenEventTarget();
                     var eventName = 'mousedown';
@@ -274,7 +274,7 @@ define( [ 'U' ], function( U ) {
                     __lastHandler = null;
 
                     // 메세지 제거
-                    if(__messageObj && !keepMessage){
+                    if (__messageObj && !keepMessage) {
                         TalkService.close(__messageObj);
                     }
                 }
@@ -283,7 +283,7 @@ define( [ 'U' ], function( U ) {
                 // Presentation
                 ////////////////////////////////////////
 
-                function play(){
+                function play() {
                     alert('play 구현안됨');
                 }
 
@@ -297,9 +297,9 @@ define( [ 'U' ], function( U ) {
 
 
         // 리턴
-        _directive._regist = function(application){
+        _directive._regist = function (application) {
             // 등록
-            application.directive( 'iconView', _directive );
+            application.directive('iconView', _directive);
         };
         return _directive;
 

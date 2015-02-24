@@ -1,15 +1,15 @@
 /*////////////////////////////////////////////////////////////////////////////////
 
-    * 
-    * Developer : (c) Dong-il Park (pdi1066@naver.com)
-    * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : directive 정의, 등록
+ *
+ * Developer : (c) Dong-il Park (pdi1066@naver.com)
+ * Project : HI-STORY (https://github.com/vulcan9/history)
+ * Description : directive 정의, 등록
 
-////////////////////////////////////////////////////////////////////////////////*/
+ ////////////////////////////////////////////////////////////////////////////////*/
 
 'use strict';
 
-define( [], function() {
+define([], function () {
 
         // 선언
         function _directive() {
@@ -23,7 +23,7 @@ define( [], function() {
                 controller: Controller,
 
                 link: Link
-                
+
             };
 
             ////////////////////////////////////////////////////////////////////////////////
@@ -31,22 +31,21 @@ define( [], function() {
             // Controller
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Controller( $scope, $element, $attrs) {
+
+            function Controller($scope, $element, $attrs) {
                 //$scope.version = VersionService;
                 // $element.trigger('#view.layoutUpdate');
 
 
-
                 /*
-                $scope.$evalAsync( function(){
-                    // $element.trigger('#view.layoutUpdate');
-                } );
-                
-                $scope.$watch(function(){
-                    // $element.trigger('#view.layoutUpdate'); 
-                });
-                */
+                 $scope.$evalAsync( function(){
+                 // $element.trigger('#view.layoutUpdate');
+                 } );
+
+                 $scope.$watch(function(){
+                 // $element.trigger('#view.layoutUpdate');
+                 });
+                 */
 
                 ////////////////////////////////////////
                 // End Controller
@@ -58,11 +57,11 @@ define( [], function() {
             // Link
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Link ( $scope, $element, $attrs) {
-                
-                $element.text( "timelineView" );
-                $element.trigger('#view.layoutUpdate'); 
+
+            function Link($scope, $element, $attrs) {
+
+                $element.text("timelineView");
+                $element.trigger('#view.layoutUpdate');
 
                 ////////////////////////////////////////
                 // End Controller
@@ -73,9 +72,9 @@ define( [], function() {
         }
 
         // 리턴
-        _directive._regist = function(application){
+        _directive._regist = function (application) {
             // 등록
-            application.directive( 'timelineView', _directive );
+            application.directive('timelineView', _directive);
         };
         return _directive;
 

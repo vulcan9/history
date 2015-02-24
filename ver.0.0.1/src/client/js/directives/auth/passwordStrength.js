@@ -1,15 +1,15 @@
 /*////////////////////////////////////////////////////////////////////////////////
 
-    * 
-    * Developer : (c) Dong-il Park (pdi1066@naver.com)
-    * Project : HI-STORY (https://github.com/vulcan9/history)
-    * Description : 
+ *
+ * Developer : (c) Dong-il Park (pdi1066@naver.com)
+ * Project : HI-STORY (https://github.com/vulcan9/history)
+ * Description :
 
-////////////////////////////////////////////////////////////////////////////////*/
+ ////////////////////////////////////////////////////////////////////////////////*/
 
 'use strict';
 
-define([], function( ) {
+define([], function () {
 
         // 선언
         function _directive() {
@@ -23,13 +23,13 @@ define([], function( ) {
                 // templateUrl을 사용할 경우 index.html 위치를 기준으로 로드할 html의 상대위치를 정의합니다.
                 template: '<span class="password-strength-indicator"><span></span><span></span><span></span><span></span></span>',
                 // templateUrl: _PATH.TEMPLATE + 'version.html',
-                
+
                 // replace: true,
                 // priority: 0,
                 // transclude: true,
                 // scope: {},
                 require: 'ngModel',
-                
+
                 controller: Controller,
                 link: Link
             };
@@ -39,9 +39,9 @@ define([], function( ) {
             // Controller
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Controller( $scope, $element, $attrs, VersionService) {
-                
+
+            function Controller($scope, $element, $attrs, VersionService) {
+
                 ////////////////////////////////////////
                 // End Controller
                 ////////////////////////////////////////
@@ -52,21 +52,21 @@ define([], function( ) {
             // Link
             //
             ////////////////////////////////////////////////////////////////////////////////
-            
-            function Link (scope, element, attrs, ngModel) {
 
-              var indicator = element.children();
+            function Link(scope, element, attrs, ngModel) {
+
+                var indicator = element.children();
                 var dots = Array.prototype.slice.call(indicator.children());
                 var weakest = dots.slice(-1)[0];
                 var weak = dots.slice(-2);
                 var strong = dots.slice(-3);
                 var strongest = dots.slice(-4);
                 element.after(indicator);
-                element.bind('keyup', function() {
+                element.bind('keyup', function () {
                     var matches = {
-                        positive: {},
-                        negative: {}
-                    },
+                            positive: {},
+                            negative: {}
+                        },
                         counts = {
                             positive: {},
                             negative: {}
@@ -77,7 +77,7 @@ define([], function( ) {
                         numbers = '01234567890',
                         symbols = '\\!@#$%&/()=?¿',
                         strValue;
-                    angular.forEach(dots, function(el) {
+                    angular.forEach(dots, function (el) {
                         el.style.backgroundColor = '#ebeef1';
                     });
                     if (ngModel.$viewValue) {
@@ -131,15 +131,15 @@ define([], function( ) {
                         }
                         strength = Math.max(0, Math.min(100, Math.round(strength)));
                         if (strength > 85) {
-                            angular.forEach(strongest, function(el) {
+                            angular.forEach(strongest, function (el) {
                                 el.style.backgroundColor = '#008cdd';
                             });
                         } else if (strength > 65) {
-                            angular.forEach(strong, function(el) {
+                            angular.forEach(strong, function (el) {
                                 el.style.backgroundColor = '#6ead09';
                             });
                         } else if (strength > 30) {
-                            angular.forEach(weak, function(el) {
+                            angular.forEach(weak, function (el) {
                                 el.style.backgroundColor = '#e09115';
                             });
                         } else {
@@ -157,9 +157,9 @@ define([], function( ) {
         }
 
         // 리턴
-        _directive._regist = function(application){
+        _directive._regist = function (application) {
             // 등록
-            application.directive( 'passwordStrength', _directive );
+            application.directive('passwordStrength', _directive);
         };
         return _directive;
 
