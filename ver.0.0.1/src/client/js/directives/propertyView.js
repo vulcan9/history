@@ -324,6 +324,23 @@ define(['U'], function (U) {
                                         currentObj = getColumnRuleGroup(currentCSS);
                                         break;
 
+                                    /*
+                                    case 'backgroundColor':
+                                        out('backgroundColor : ', newValue[name]);
+                                     newObj = newValue['backgroundColorGroup'];
+                                        newCSS = getBackgroundColorCSS(newObj);
+                                        currentObj = getBackgroundColorGroup(getCSSValue(name, null));
+                                        currentCSS = getBackgroundColorCSS(currentObj);
+                                        break;
+                                        */
+
+                                    case 'backgroundImage':
+                                        newObj = newValue['backgroundImageGroup'];
+                                        newCSS = getBackgroundImageCSS(newObj);
+                                        currentObj = getBackgroundImageGroup(getCSSValue(name, null));
+                                        currentCSS = getBackgroundImageCSS(currentObj);
+                                        break;
+
                                     default:
                                         newObj = newValue[name];
                                         newCSS = newObj;
@@ -343,6 +360,23 @@ define(['U'], function (U) {
                                 // 색상 검사 (문자열 비교이기 때문에 같은 색상이더라도 not Equal로 비교될수 있으니 이를 체크한다.)
                                 //var isColorEqual = compareColor(newCSS, currentCSS);
                                 //if(isColorEqual) continue;
+
+
+                                switch (name) {
+                                    /*
+                                    case 'backgroundColor':
+                                        var rgba = getRGBA(newCSS);
+                                        if(rgba.a == 0) newCSS = '';
+                                        break;
+                                        */
+                                    case 'backgroundImage':
+                                        var rgba = getRGBA(newCSS);
+                                        if(newCSS == 'none') newCSS = '';
+                                        break;
+                                    default:
+                                        break;
+                                }
+
 
                                 out('watch : ', name, ' : ', currentCSS, ' --> ', newCSS);
                                 if (!changeList) changeList = {};
@@ -390,16 +424,24 @@ define(['U'], function (U) {
                 }
 
                 function getRGBA(rgbColor) {
-                    if (typeof rgbColor != 'string') return null;
-                    if (rgbColor.indexOf('rgb') < 0) return null;
-                    var colorString = rgbColor.match(/rgba?\(.+\)/g)[0];
-                    var rgba = colorString.match(/-?\d+(\.\d+)?/g);
+                    var rgba;
+                    if(rgbColor == 'transparent'){
+                        rgba = [255, 255, 255, 0];
+                    }else{
+                        if (typeof rgbColor != 'string') return null;
+                        if (rgbColor.indexOf('rgb') < 0) return null;
+                        var colorString = rgbColor.match(/rgba?\(.+\)/g)[0];
+                        rgba = colorString.match(/-?\d+(\.\d+)?/g);
+                    }
                     return {
                         r: Number(rgba[0]) || 0,
                         g: Number(rgba[1]) || 0,
                         b: Number(rgba[2]) || 0,
                         a: (rgba[3] === undefined) ? 1 : Number(rgba[3])
                     }
+                }
+                function setRGBA(r, g, b, a) {
+                    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
                 }
 
                 ////////////////////////////////////////
@@ -465,6 +507,15 @@ define(['U'], function (U) {
                     //temp.height = U.toNumber(paramCSS.height) || U.toNumber((boxSizing == 'border-box')? $dom.outerHeight():$dom.css('height'));
                     temp.width = U.toNumber((boxSizing == 'border-box') ? $dom.outerWidth() : $dom.css('width'));
                     temp.height = U.toNumber((boxSizing == 'border-box') ? $dom.outerHeight() : $dom.css('height'));
+
+                    // content.js 에서 초기 사이즈를 정하기 위해 추가한 class를 제거
+                    if($dom.hasClass('hiMinSize')){
+                        $dom.removeClass('hiMinSize');
+                        $dom.css({
+                            'width': temp.width,
+                            'height': temp.height
+                        })
+                    }
 
                     // 여백
                     temp.paddingTop = getCSSValue('paddingTop', paramCSS, true);
@@ -537,7 +588,17 @@ define(['U'], function (U) {
 
                     temp.columnGap = getCSSValue('columnGap', paramCSS, true);
 
+                    //--------------
+                    // 배경
+                    //--------------
 
+
+
+                    // 배경색
+                    //var backgroundColor = getCSSValue('backgroundColor', paramCSS);
+                    //temp.backgroundColorGroup = getBackgroundColorGroup(backgroundColor);
+                    //temp.backgroundColor = getBackgroundColorCSS(temp.backgroundColorGroup);
+                    temp.backgroundColor = getCSSValue('backgroundColor', paramCSS);
 
                     //background : 0;
                     //background-attachment : scroll;
@@ -551,8 +612,59 @@ define(['U'], function (U) {
                     //background-repeat : repeat;
                     //background-size : auto auto;
 
+                    //temp.backgroundGroup = getBackgroundGroup('background');
+
+                    // url(***) : none|(?:url\s*?\()(.*)\)
+                    var backgroundImage = getCSSValue('backgroundImage', paramCSS);
+                    temp.backgroundImageGroup = getBackgroundImageGroup(backgroundImage);
+                    temp.backgroundImage = getBackgroundImageCSS(temp.backgroundImageGroup);
+
                     return temp;
                 }
+
+                // urlCSS : url("https://~~~~~~~~~");
+                function getUrlCSS(urlCSS) {
+                    var url = urlCSS.replace(/none|(?:url\s*?\()(.*)\)/g, '$1');
+                    if(url) url = url.trim();
+                    return url;
+                }
+                function getBackgroundImageCSS(backgroundImageGroup) {
+                    var url = backgroundImageGroup.url;
+                    if(url){
+                        url = 'url(' + url + ')';
+                    }
+                    return url;
+                }
+
+                function getBackgroundImageGroup(backgroundImageCSS) {
+                    var url = getUrlCSS(backgroundImageCSS);
+                    if(url === 'none') url = '';
+                    return {
+                        url : url
+                    }
+                }
+
+                /*
+                function getBackgroundColorGroup(backgroundCSS){
+                    var rgb = getRGBA(backgroundCSS);
+                    var isTransparent = (backgroundCSS == 'transparent' || rgb.a == 0);
+                    return {
+                        transparent: isTransparent,
+                        backgroundColor: (isTransparent)? 'transparent' : backgroundCSS
+                    }
+                }
+                function getBackgroundColorCSS(backgroundGroup) {
+                    var backgroundColor;
+                    if(backgroundGroup.transparent){
+                        backgroundColor = 'transparent';
+                    }else{
+                        var rgb = getRGBA(backgroundGroup.backgroundColor);
+                        if(rgb.a == undefined || rgb.a === 0) rgb.a = 1;
+                        backgroundColor = setRGBA(rgb.r, rgb.g, rgb.b, rgb.a);
+                    }
+                    return backgroundColor;
+                }
+                */
 
                 function getColumnRuleGroup(columnRuleCSS) {
                     var columnRuleWidth = columnRuleCSS.match(/-?\d+?\s?px/g);

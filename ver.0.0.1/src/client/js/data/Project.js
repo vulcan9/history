@@ -1225,7 +1225,7 @@ define(['U'], function (U) {
                         // ng-class사용하는 경우 compile 시간이 지연된다. (class가 선택후 적용된다.)
                         // var comp = '<div uid="' + elementUID + '" ng-class="{hiElement:true, ' + type + ':true}" style="min-width:100px;min-height:100px">TEXT</div>';
                         //var comp = '<div uid="' + elementUID + '" class="hiElement ' + type + '">TEXT</div>';
-                        var comp = '<div uid="' + elementUID + '">TEXT</div>';
+                        var comp = '<div uid="' + elementUID + '"></div>';
 
                         // 세부 설정은 content.js에서 설정함
 
@@ -1505,6 +1505,7 @@ define(['U'], function (U) {
                         if (css) {
                             $dom.css(css);
 
+                            //************************************
                             // prefix 가 필요한 css의 경우 별도로 attr에 정보를 남겨놓는다
                             // 현재 브라우져에서 prefix가 적용 되더라도 편집시 저장된 데이터로
                             // 다른 브라우저에서 실행될때 prefix가 일치하지 않아 해당 css가 무시되는 경우가 있으므로
@@ -1517,7 +1518,11 @@ define(['U'], function (U) {
                                 // 오리지널 데이터 저장
                                 var styleString = $dom.attr('style-string') || '{}';
                                 var obj = angular.fromJson(styleString);
-                                obj[prop] = css[prop];
+                                if(css[prop] === ''){
+                                    delete obj[prop];
+                                }else{
+                                    obj[prop] = css[prop];
+                                }
                                 $dom.attr('style-string', angular.toJson(obj));
                             }
                             //var prefixStyle = css['column-count'] || css['columnCount'];
@@ -1529,9 +1534,10 @@ define(['U'], function (U) {
                             //}
 
                             // content.js 에서 초기 사이즈를 정하기 위해 추가한 class를 제거
-                            if($dom.hasClass('hiMinSize')){
-                                $dom.removeClass('hiMinSize');
-                            }
+                            //if($dom.hasClass('hiMinSize')){
+                            //    $dom.removeClass('hiMinSize');
+                            //}
+                            //************************************
                         }
 
                         // 데이터 갱신 (option)

@@ -104,6 +104,8 @@ div[uid^="element-"].hiElement {
     font-family: '맑은 고딕', '나눔고딕';
     font-size:14px;
     color:rgb(0,0,0);
+
+    background-color : rgba(255,255,255,0);
 }
 div[uid^="element-"].hiElement.edit{
     /*편집 허용*/
@@ -114,10 +116,15 @@ div[uid^="element-"].hiElement.edit{
     user-select:text;
 }
 
+/*------------------------------------
+// TEXT
+------------------------------------*/
+
 div[uid^="element-"].hiElement.text{
-    background-color: transparent;
+    /*background-color: transparent;*/
     padding: 10px;
 }
+
 /*초기(default) 크기를 지정*/
 div[uid^="element-"].hiElement.text.hiMinSize{
     min-width: 100px;
@@ -140,8 +147,46 @@ text-transform: none|capitalize|uppercase|lowercase|initial|inherit; (대소문�
 */
 
 /*------------------------------------
-// Capture Clone 레이어
+// IMAGE
 ------------------------------------*/
+
+div[uid^="element-"].hiElement.image{
+    padding: 10px;
+
+    /*background: #00ff00 url("smiley.gif") no-repeat fixed center;*/
+    background-color: #f5f5f5;
+
+    /*background-repeat: repeat|repeat-x|repeat-y|no-repeat;*/
+    background-repeat: no-repeat;
+
+    /*background-image: url|none;*/
+    /*background-image: url("https://ssl.pstatic.net/static/pwe/common/sp_deskhome_gnb_140403_opt.png");*/
+
+    /*background-position : 0 0;*/
+    background-position-x : 50%;
+    background-position-y : 50%;
+
+    /*background-size: auto|length|cover|contain;*/
+    background-size : auto; /*원본 크기, repeat 최적*/
+    background-size : 100% 100%; /*비율 X 크기 조절, repeat 적용안됨*/
+
+    background-size : contain; /*비율 유지, 크기 바뀐상태로 repeat*/
+    /*background-size : cover; 사용안함*/
+
+    /*background-attachment: scroll|fixed|local; Text에서 사용*/
+    background-attachment : scroll;
+
+    /*background-clip: border-box|padding-box|content-box;*/
+    background-clip : border-box;
+    /*background-origin: padding-box|border-box|content-box;*/
+    background-origin : padding-box;
+}
+
+/*초기(default) 크기를 지정*/
+div[uid^="element-"].hiElement.image.hiMinSize{
+    min-width: 100px;
+    min-height: 100px;
+}
 
 
 

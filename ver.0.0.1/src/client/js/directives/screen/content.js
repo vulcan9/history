@@ -13,7 +13,7 @@ define(['U'], function (U) {
 
 
         // 선언
-        function _directive($compile, CommandService, Project) {
+        function _directive($compile, CommandService, Project, ELEMENT) {
 
             //out( 'content' );
 
@@ -103,13 +103,14 @@ define(['U'], function (U) {
                  option: Object
                  }
                  */
-                function __onAddElement(item, param) {
+                function __onAddElement(documentItem, param) {
 
                     // 이미 제작되어 있는 컨텐츠에 대해 directive를 생성
                     var elementUID = param.elementUID;
                     // var $screenContainer = $element.find('.hi-screenContainer');
-                    var $screenContainer = angular.element(item);
+                    var $screenContainer = angular.element(documentItem);
                     var $elements = $screenContainer.find("[uid='" + elementUID + "']");
+                    var type = param.type;
 
                     //-------------------------
                     // element directive 활성화
@@ -121,6 +122,16 @@ define(['U'], function (U) {
                     // 초기 최소 사이즈 지정(나중에 remove 됨)
                     $elements.addClass('hiMinSize');
                     //$elements.attr('ng-class', '{hiElement:true,' + param.type + ':true}');
+
+                    //-------------------------
+                    // Type별 설정
+                    //-------------------------
+
+                    if(type == ELEMENT.TEXT){
+                        $elements.text('TEXT');
+                    }else if(type == ELEMENT.IMAGE){
+                        $elements.text('IMAGE');
+                    }
 
                     //-------------------------
                     // css prefix 적용 지원 (prefix directive 활성화)

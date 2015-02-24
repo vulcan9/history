@@ -120,15 +120,6 @@
               
           </form>
     </script>
-    
-    <!-- 배경 -->
-    <script type="text/ng-template" id="properties-form-background">
-          <form novalidate name="properties_form">
-              [배경]<br>
-              <br>배경 색상 : 
-              <br>불투명도 : 
-          </form>
-    </script>
 
     <!-- 테두리 -->
     <script type="text/ng-template" id="properties-form-border">
@@ -241,7 +232,9 @@
                   <input type="checkbox" ng-model="temp.whiteSpace" ng-model-options="modelOption"
                          ng-true-value="'pre-line'" ng-false-value="'nowrap'">
               </div>
-              <div ng-show="temp.overflow === 'hidden' && temp.whiteSpace === 'nowrap'">
+
+              <div ng-class="{deactive:(temp.overflow === 'visible' || temp.whiteSpace === 'pre-line')}">
+              <!--<div ng-show="temp.overflow === 'hidden' && temp.whiteSpace === 'nowrap'">-->
                   말줄임표시(text-overflow) :
                   <input type="checkbox"
                          ng-model="temp.textOverflow" ng-model-options="modelOption"
@@ -381,6 +374,36 @@
 
 
 
+    <!-- 배경 -->
+    <script type="text/ng-template" id="properties-form-background">
+        <form novalidate name="properties_form">
+            [배경]<br>
+            <!--
+            <br>transparent :
+            <input type="checkbox"
+                   ng-model="temp.backgroundColorGroup.transparent" ng-model-options="modelOption">
+
+             ng-class="{deactive:temp.backgroundColorGroup.transparent}"
+            -->
+            <br>배경 색상(background-color) :
+            <div>
+                <input type="text"
+                       colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
+                       ng-model="temp.backgroundColor"  ng-model-options="modelOption"/>
+            </div>
+
+            <!--
+            /*background-size: auto|length|cover|contain;*/
+            background-size : auto auto;
+            /*background-attachment: scroll|fixed|local;*/
+            background-attachment : scroll;
+            /*background-clip: border-box|padding-box|content-box;*/
+            background-clip : border-box;
+            /*background-origin: padding-box|border-box|content-box;*/
+            background-origin : padding-box;
+            -->
+        </form>
+    </script>
 
 
 
@@ -394,7 +417,7 @@
 
 
     <!-- /////////////////////////////////////////////
-    // type = text
+    // type = ELEMENT.TEXT
     ////////////////////////////////////////////// -->
 
     <div ng-show="type == 'text'">
@@ -440,6 +463,117 @@
         </form>
 
     </div><!-- END text -->
+
+            <!-- /////////////////////////////////////////////
+            // type = ELEMENT.IMAGE
+            ////////////////////////////////////////////// -->
+
+            <script type="text/ng-template" id="properties-form-image">
+                <form novalidate name="properties_form">
+
+                    [이미지]<br>
+
+                    <div>
+                        URL(background-image) :
+                        <input type="text"
+                               ng-model="temp.backgroundImageGroup.url" ng-model-options="modelOption"/>
+                    </div>
+
+                    <!--
+                    /*background-repeat: repeat|repeat-x|repeat-y|no-repeat;*/
+                    background-repeat: no-repeat;
+
+                    /*background-position : 0 0;*/
+                    background-position-x : 0;
+                    background-position-y : 0;
+
+                    /*background-size: auto|length|cover|contain;*/
+                    background-size : auto auto;
+
+                    /*background-image: url|none;*/
+                    background-image: url("https://ssl.pstatic.net/static/pwe/common/sp_deskhome_gnb_140403_opt.png");
+                    -->
+                    <div>
+                        크기(background-size) :
+                        <!--
+                        background-size: auto|length|cover|contain;
+                        예) auto(원본고정) | 75px 75px | 200px(1:1) | 50%(1:1) | 100% 100% |
+                        cover(큰비율로 꽉채움) | contain(작은비율로 Fit = 100%)
+
+                        원본 크기 : auto, repeat, position 50%
+                        비율 유지 : contain (꽉채움) or 100%~ (너비맞춤), repeat, position 50%
+                        비율 유지 안함 : 100% 100%, no-repeat
+
+                        크기 고정 : min-width, min-height, max-width, max-height 이용
+                        -->
+
+                        <br><br>
+                        <br>원본 크기 : <input type="radio" ng-model="temp.backgroundSizeGroup.mode" value="auto"> (auto)
+                        <br>비율 유지 : <input type="radio" ng-model="temp.backgroundSizeGroup.mode" value="contain"> (contain)
+                        <br>비율 유지 안함 : <input type="radio" ng-model="temp.backgroundSizeGroup.mode" value="%"> (%)
+
+                        <br><br>
+                        <div ng-class="{deactive:(temp.backgroundSizeGroup.mode == '%')}">
+                            패턴 반복 :
+                            <!--repeat
+                            <br><input type="radio" ng-model="temp.backgroundSizeGroup.repeat" value="repeat">-->
+                            <br>repeat-x : <input type="radio" ng-model="temp.backgroundSizeGroup.repeatX" value="repeat-x">
+                            <br>repeat-y : <input type="radio" ng-model="temp.backgroundSizeGroup.repeatY" value="repeat-y">
+                        </div>
+
+                        <!--
+                        <div>
+                            <input type="number"
+                                   ng-model="temp.backgroundSizeGroup.num" ng-model-options="modelOption">
+
+                            <select ng-model="temp.backgroundSizeGroup.unit" ng-model-options="modelOption"
+                                    ng-options="value as value for value in ['px','%']">
+                                <option value="" style="display:none;"></option>
+                            </select>
+                        </div>
+                        -->
+
+                    </div>
+
+                </form>
+            </script>
+
+            <div ng-show="type == 'image'">
+                ELEMENT ({{type}}) PROPERTY
+
+                <form name="properties_form">
+
+                    <div>UID : {{uid}}</div>
+                    <br><br>
+
+                    <div>type : {{type}}</div>
+                    <div>ID : 사용자가 지정한 아이디</div>
+
+                    <div class="form" ng-include src="'properties-form-background'"></div>
+                    <div class="form" ng-include src="'properties-form-image'"></div>
+
+                    <!-- 기본 속성 -->
+                    <div class="form" ng-include src="'properties-form-position'"></div>
+                    <div class="form" ng-include src="'properties-form-size'"></div>
+
+                    <div class="form" ng-include src="'properties-form-border'"></div>
+                    <div class="form" ng-include src="'properties-form-padding'"></div>
+
+
+
+
+                    <br><br>
+
+                    <div class="form">
+                        * 기타 편집
+                        [하이퍼 링크]
+                    </div>
+
+
+
+                </form>
+
+            </div><!-- END text -->
 
     <!-- /////////////////////////////////////////////
     // type = unknown
