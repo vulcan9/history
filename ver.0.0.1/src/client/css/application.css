@@ -974,3 +974,15 @@ z-index :
     border-top: 1px solid rgba(255, 99, 71, 0.5);
     width: 100%;
 }
+
+/*//////////////////////////////////////
+// Jquery-ui Slider
+//////////////////////////////////////*/
+
+.ui-slider-tick {
+    position: absolute;
+    background-color: #aaa;
+    width: 2px;
+    height: 8px;
+    top: 16px;
+}

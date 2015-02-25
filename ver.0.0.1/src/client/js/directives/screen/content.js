@@ -130,7 +130,7 @@ define(['U'], function (U) {
                     if(type == ELEMENT.TEXT){
                         $elements.text('TEXT');
                     }else if(type == ELEMENT.IMAGE){
-                        $elements.text('IMAGE');
+                        $elements.addClass('noImage');
                     }
 
                     //-------------------------

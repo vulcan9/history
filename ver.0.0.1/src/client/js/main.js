@@ -200,6 +200,7 @@ require.config( {
         // 모듈
         //-----------------
         'ui.tree':                _PATH.LIB + 'tree/angular-ui-tree',
+        'ui.slider':              _PATH.LIB + 'slider',
         'satellizer':              _PATH.LIB + 'auth/satellizer',
 
         // 모듈
@@ -251,6 +252,7 @@ require.config( {
         },
         'ui-bootstrap': { deps: [ 'angular' ]},
         'ui.tree': { deps: [ 'angular' ]},
+        'ui.slider':{ deps: [ 'angular' ]},
         'satellizer': { deps: [ 'angular' ], exports: 'satellizer' },
         'colorpicker.module': { deps: [ 'angular' ]},
 
@@ -261,7 +263,7 @@ require.config( {
             deps: [ 
                 'angular', 'angular-route', 'angular-animate', 'angular-messages', 
                 'dockModule', 'alignModule', 
-                'ui-bootstrap', 'ui.tree', 'colorpicker.module',
+                'ui-bootstrap', 'ui.tree', 'ui.slider', 'colorpicker.module',
                 'satellizer'
             ]
         },

@@ -30,7 +30,7 @@ define(
             [ 
                 'ngRoute', 'ngAnimate', 'ngMessages', 
                 'dockModule', 'alignModule', 
-                'ui.bootstrap', 'ui.tree', 'colorpicker.module',
+                'ui.bootstrap', 'ui.tree', 'ui.slider', 'colorpicker.module',
                 'satellizer' 
             ],
             // Configuration Function

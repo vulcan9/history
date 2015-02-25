@@ -11,7 +11,7 @@
 
 /*
 screen에 적용된 padding값에 의해 50% 계산치와  실제계산 값과 오차가 발생할 수 있다.
-50% --> px Ehsms px --> 50% 변환시 위치를 보정해줘야 한다.
+50% --> px 또는 px --> 50% 변환시 위치를 보정해줘야 한다.
 */
 .u-screen{
     position:absolute;

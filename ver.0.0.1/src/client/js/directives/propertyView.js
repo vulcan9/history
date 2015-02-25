@@ -246,6 +246,7 @@ define(['U'], function (U) {
                 }, true);
 
                 // DOM 으로부터 값 변경된 경우
+                var __delayTimeout;
                 function watch() {
                     // oldValue와 검사하면 안됨
                     // (oldValue는 같은 element끼리의 값이 아닌 이전 select element의 값이 될수도 있으므로)
@@ -341,6 +342,22 @@ define(['U'], function (U) {
                                         currentCSS = getBackgroundImageCSS(currentObj);
                                         break;
 
+                                    case 'backgroundRepeat':
+                                        newObj = newValue['backgroundRepeatGroup'];
+                                        newCSS = getBackgroundRepeatCSS(newObj);
+                                        currentObj = getBackgroundRepeatGroup(getCSSValue(name, null));
+                                        currentCSS = getBackgroundRepeatCSS(currentObj);
+                                        break;
+
+                                    case 'backgroundPositionX':
+                                    case 'backgroundPositionY':
+                                        newObj = newValue[name];
+                                        newCSS = newObj + '%';
+                                        currentCSS = getCSSValue(name, null, true);
+                                        currentObj = currentCSS + '%';
+                                        isGroup = false;
+                                        break;
+
                                     default:
                                         newObj = newValue[name];
                                         newCSS = newObj;
@@ -384,10 +401,71 @@ define(['U'], function (U) {
                             }
                         }
 
+                        /*
+
                         // 변경 사항이 있다면 modify가 호출됨
                         $scope.css = changeList;
+
+                        /*/
+
+                        //---------------------
+                        // 미리 적용해봄
+                        //---------------------
+
+                        // $(_currentElement).css(changeList);
+                        modifyPreview(changeList, newValue);
+
                     }, true);
                     return unwatch;
+                }
+
+                // 미리 적용해봄
+                function modifyPreview(changeList, tempObj){
+
+                    $timeout.cancel(__delayTimeout);
+
+                    if(!changeList['backgroundImage']) {
+                        $(_currentElement).css(changeList);
+                        delayModify(changeList);
+                        return;
+                    }
+
+                    // background 이미지가 유효한 이미지인지 체크
+                    var backgroundImage = getUrlCSS(changeList['backgroundImage']);
+                    //var backgroundImage = getUrlCSS(changeList['backgroundImage']);
+
+                    var isValuable = backgroundImage.search(/(http|data|https):\/\/.?/g) == 0;
+
+                    var $currentElement = $(_currentElement);
+                    if(backgroundImage && isValuable){
+                        $.ajax({url: backgroundImage})
+                            .done(function() {
+                                alert( "second success" );
+                                $currentElement.removeClass('noImage');
+                                //delayModify(changeList);
+                            })
+                            .fail(function() {
+                                alert( "error" );
+                                $currentElement.addClass('noImage');
+                                //$currentElement.css('backgroundImage', tempObj.backgroundImageGroup.error);
+                            })
+                            .always(function() {
+                                delayModify(changeList);
+                            });
+                    }else{
+                        $currentElement.addClass('noImage');
+                        //$currentElement.css('backgroundImage', tempObj.backgroundImageGroup.error);
+                        delayModify(changeList);
+                    }
+                    ================================================================================
+
+                    function delayModify(cssObject){
+                        __delayTimeout = $timeout(function () {
+                            __delayTimeout = null;
+                            // 데이터 갱신
+                            $scope.css = cssObject;
+                        }, 1000);
+                    }
                 }
 
                 function compareGroup(valueObj, currentObj) {
@@ -592,34 +670,84 @@ define(['U'], function (U) {
                     // 배경
                     //--------------
 
-
-
-                    // 배경색
+                    // 배경색 (background-color : transparent|rgba())
                     //var backgroundColor = getCSSValue('backgroundColor', paramCSS);
                     //temp.backgroundColorGroup = getBackgroundColorGroup(backgroundColor);
                     //temp.backgroundColor = getBackgroundColorCSS(temp.backgroundColorGroup);
                     temp.backgroundColor = getCSSValue('backgroundColor', paramCSS);
 
-                    //background : 0;
-                    //background-attachment : scroll;
-                    //background-clip : border-box;
-                    //background-color : transparent;
-                    //background-image : none;
-                    //background-origin : padding-box;
-                    //background-position : 0 0;
-                    //background-position-x : 0;
-                    //background-position-y : 0;
-                    //background-repeat : repeat;
-                    //background-size : auto auto;
-
-                    //temp.backgroundGroup = getBackgroundGroup('background');
-
+                    // 이미지
                     // url(***) : none|(?:url\s*?\()(.*)\)
                     var backgroundImage = getCSSValue('backgroundImage', paramCSS);
                     temp.backgroundImageGroup = getBackgroundImageGroup(backgroundImage);
                     temp.backgroundImage = getBackgroundImageCSS(temp.backgroundImageGroup);
 
+                    //background-clip : border-box;
+                    //background-origin : padding-box;
+
+                    // 크기
+                    //background-size : auto auto; (prefix, auto|contain|100% 100%)
+                    temp.backgroundSize = getCSSValue('backgroundSize', paramCSS);
+
+                    // 패턴
+                    //background-repeat : repeat; (repeat|repeat-x|repeat-y|no-repeat)
+                    var backgroundRepeat = getCSSValue('backgroundRepeat', paramCSS);
+                    temp.backgroundRepeatGroup = getBackgroundRepeatGroup(backgroundRepeat);
+                    temp.backgroundRepeat = getBackgroundRepeatCSS(temp.backgroundRepeatGroup);
+
+                    // 위치 정렬
+                    temp.backgroundPositionX = getCSSValue('backgroundPositionX', paramCSS, true);
+                    temp.backgroundPositionY = getCSSValue('backgroundPositionY', paramCSS, true);
+
+
+
+
+                    //background-position-x : 50%;
+                    //background-position-y : 50%;
+
+
+
+
+                    //temp.backgroundGroup = getBackgroundGroup('background');
+
                     return temp;
+                }
+
+                function getBackgroundRepeatGroup(css) {
+                    var repeatX = false;
+                    var repeatY = false;
+                    if(css == 'repeat-x'){
+                        repeatX = true;
+                        repeatY = false;
+                    }else if(css == 'repeat-y'){
+                        repeatX = false;
+                        repeatY = true;
+                    }else if(css == 'repeat'){
+                        repeatX = repeatY = true;
+                    }else if(css == 'no-repeat'){
+                        repeatX = repeatY = false;
+                    }
+
+                    return {
+                        repeatX: repeatX,
+                        repeatY: repeatY
+                    }
+                }
+                function getBackgroundRepeatCSS(group) {
+                    var css;
+                    if(group.repeatX && group.repeatY){
+                        css = 'repeat';
+
+                    }else{
+                        if(group.repeatX){
+                            css = 'repeat-x';
+                        }else if(group.repeatY){
+                            css = 'repeat-y';
+                        }else{
+                            css = 'no-repeat';
+                        }
+                    }
+                    return css;
                 }
 
                 // urlCSS : url("https://~~~~~~~~~");
@@ -635,12 +763,18 @@ define(['U'], function (U) {
                     }
                     return url;
                 }
-
                 function getBackgroundImageGroup(backgroundImageCSS) {
                     var url = getUrlCSS(backgroundImageCSS);
-                    if(url === 'none') url = '';
+                    var tempURL = url;
+
+                    // content.js 에서 이미지 없음 표시 위해 추가한 noImage class에 기본 이미지 정의됨
+                    if(url.indexOf('data:image') == 0 || url === 'none'){
+                        url = '';
+                    }
+
                     return {
-                        url : url
+                        url : url,
+                        error: tempURL
                     }
                 }
 
@@ -900,7 +1034,7 @@ define(['U'], function (U) {
 
                 //ng-model-options="{ debounce: 500 }" 설정함
                 $scope.modelOption = {
-                    debounce: 500
+                    debounce: 0
                 }
 
                 // 속성창 내용을 데이터에 갱신한다.

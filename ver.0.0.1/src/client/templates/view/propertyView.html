@@ -129,7 +129,8 @@
               <div>테두리 두께 :
                   <input type="number"
                          ng-model="temp.borderGroup.borderWidth"  ng-model-options="modelOption"
-                         min="0" max="100"></div>
+                         min="0" max="50">
+              </div>
 
               <div ng-if="temp.borderGroup.borderWidth > 0">
                   <br>테두리 색상 :
@@ -146,26 +147,50 @@
 
 
               <br>테두리 라운딩 : (모서리 4군데 각각 속성 지정)
-              <div>border-top-left-radius :
-                  <input type="number"
-                         ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
-                         min="0" max="1000"> px
-              </div>
-              <div>border-top-right-radius :
-                <input type="number"
-                       ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
-                       min="0" max="1000"> px
-              </div>
-              <div>border-bottom-right-radius :
-                  <input type="number"
-                         ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
-                         min="0" max="1000"> px
-              </div>
-              <div>border-bottom-left-radius :
-                  <input type="number"
-                         ng-model="temp.borderBottomLeftRadius"  ng-model-options="modelOption"
-                         min="0" max="1000"> px
-              </div>
+              <br><br>
+              <table>
+                  <tr>
+                      <td style="padding: 5px;">
+                          <input type="number"
+                                 ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
+                                 min="0" max="1000"> px
+                          <div ui-slider
+                               ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
+                               min="0" max="1000"></div>
+                      </td>
+                      <td style="padding: 5px;">
+                          <input type="number"
+                                 ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
+                                 min="0" max="1000"> px
+                          <div ui-slider
+                               ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
+                               min="0" max="1000"></div>
+                      </td>
+                  </tr>
+                  <tr>
+                      <td style="padding: 5px;">
+                          <input type="number"
+                                 ng-model="temp.borderBottomLeftRadius" ng-model-options="modelOption"
+                                 min="0" max="1000"> px
+                          <div ui-slider
+                               ng-model="temp.borderBottomLeftRadius" ng-model-options="modelOption"
+                               min="0" max="1000"></div>
+                      </td>
+                      <td style="padding: 5px;">
+                          <input type="number"
+                                 ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
+                                 min="0" max="1000"> px
+                          <div ui-slider
+                               ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
+                               min="0" max="1000"></div>
+                      </td>
+                  </tr>
+              </table>
+              <br>
+              <div>top-left-radius : {{temp.borderTopLeftRadius}} px</div>
+              <div>top-right-radius : {{temp.borderTopRightRadius}} px</div>
+              <div>bottom-left-radius : {{temp.borderBottomLeftRadius}} px</div>
+              <div>bottom-right-radius : {{temp.borderBottomRightRadius}} px</div>
 
           </form>
     </script>
@@ -175,18 +200,41 @@
           <form novalidate name="properties_form">
               [여백]<br>
               <br>패딩 :  (4군데 각각 속성 지정)
-              <div>padding-top : <input type="number"
-                                        ng-model="temp.paddingTop" ng-model-options="modelOption"
-                                        min="0" max="100"></div>
-                <div>padding-right : <input type="number"
-                                            ng-model="temp.paddingRight" ng-model-options="modelOption"
-                                            min="0" max="100"></div>
-                <div>padding-bottom : <input type="number"
-                                             ng-model="temp.paddingBottom" ng-model-options="modelOption"
-                                             min="0" max="100"></div>
-                <div>padding-left : <input type="number"
-                                           ng-model="temp.paddingLeft" ng-model-options="modelOption"
-                                           min="0" max="100"></div>
+              <br><br>
+              <table>
+                  <tr>
+                      <td> </td>
+                      <td style="white-space: nowrap;"><input type="number"
+                                 ng-model="temp.paddingTop" ng-model-options="modelOption"
+                                 min="0" max="1000"
+                                 style="width: 40px"> px</td>
+                      <td> </td>
+                  </tr>
+                  <tr>
+                      <td style="white-space: nowrap;"><input type="number"
+                                 ng-model="temp.paddingLeft"  ng-model-options="modelOption"
+                                 min="0" max="1000"
+                                 style="width: 40px"> px</td>
+                      <td> </td>
+                      <td style="white-space: nowrap;"><input type="number"
+                                 ng-model="temp.paddingRight" ng-model-options="modelOption"
+                                 min="0" max="1000"
+                                 style="width: 40px"> px</td>
+                  </tr>
+                  <tr>
+                      <td> </td>
+                      <td style="white-space: nowrap;"><input type="number"
+                                 ng-model="temp.paddingBottom" ng-model-options="modelOption"
+                                 min="0" max="1000"
+                                 style="width: 40px"> px</td>
+                      <td> </td>
+                  </tr>
+              </table>
+              <br>
+              <div>padding-top : {{temp.paddingTop}}</div>
+              <div>padding-right : {{temp.paddingRight}}</div>
+              <div>padding-bottom : {{temp.paddingBottom}}</div>
+              <div>padding-left : {{temp.paddingLeft}}</div>
 
           </form>
     </script>
@@ -244,21 +292,24 @@
 
               <div>letter-spacing(자간) :
                   <input type="number" ng-model="temp.letterSpacingGroup.num" ng-model-options="modelOption"
-                         min="-500" max="500">
+                         min="-500" max="500"
+                         style="width: 40px;">
                   <input type="text" ng-model="temp.letterSpacingGroup.unit" ng-model-options="modelOption"
                          style="width: 25px" disabled>
               </div>
 
+              <br>
               <div>line-height(행간) :
                   <input type="number" ng-model="temp.lineHeightGroup.num" ng-model-options="modelOption"
-                         min="0" max="500">
+                         min="0" max="500"
+                         style="width: 40px;">
                   <select ng-model="temp.lineHeightGroup.unit" ng-model-options="modelOption"
                           ng-options="value as value for value in ['px','em','%']">
                       <option value="" style="display:none;"></option>
                   </select>
               </div>
-              <br>
 
+              <br>
               <div>text-align(정렬) :
                   <select ng-model="temp.textAlign" ng-model-options="modelOption"
                           ng-options="value as value for value in ['left','center','right', 'justify']">
@@ -271,9 +322,11 @@
                   -->
               </div>
 
-              <div>text-indent(들여쓰기) :
+              <br>
+              <div>text-indent :
                   <input type="number" ng-model="temp.textIndentGroup.num" ng-model-options="modelOption"
-                         min="0" max="500">
+                         min="0" max="500"
+                         style="width: 40px;">
                   <select ng-model="temp.textIndentGroup.unit" ng-model-options="modelOption"
                           ng-options="value as value for value in ['px', 'pt', 'cm', 'em', '%']">
                       <option value="" style="display:none;"></option>
@@ -328,21 +381,23 @@
               font-family :
               <select ng-model="temp.fontFamilyGroup"
                       ng-options="font.label group by font.group for font in fontOptions"
-                      style="width: 150px;">
+                      style="width: 120px;">
                   <option value="" style="display:none;"></option>
               </select>
 
+              <br><br>
               <div>font-size :
                   <input type="number"
                          ng-model="temp.fontSizeGroup.num" ng-model-options="modelOption"
-                         min="{{temp.fontSize.min}}" max="{{temp.fontSize.max}}">
+                         min="{{temp.fontSize.min}}" max="{{temp.fontSize.max}}"
+                         style="width: 50px;">
                   <select ng-model="temp.fontSizeGroup.unit" ng-model-options="modelOption"
                           ng-options="value as value for value in ['px','em','%']">
                       <option value="" style="display:none;"></option>
                   </select>
               </div>
-              <br>
 
+              <br>
               <div>color :
                   <input type="text"
                          colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
@@ -493,6 +548,7 @@
                     /*background-image: url|none;*/
                     background-image: url("https://ssl.pstatic.net/static/pwe/common/sp_deskhome_gnb_140403_opt.png");
                     -->
+                    <br>
                     <div>
                         크기(background-size) :
                         <!--
@@ -506,21 +562,67 @@
 
                         크기 고정 : min-width, min-height, max-width, max-height 이용
                         -->
+                        <br>원본 크기 : <input type="radio" ng-model="temp.backgroundSize" value="auto"> (auto)
+                        <br>배율 적용 : <input type="radio" ng-model="temp.backgroundSize" value="contain"> (contain)
+                        <br>강제 맞춤 : <input type="radio" ng-model="temp.backgroundSize" value="100% 100%"> (100%)
 
                         <br><br>
-                        <br>원본 크기 : <input type="radio" ng-model="temp.backgroundSizeGroup.mode" value="auto"> (auto)
-                        <br>비율 유지 : <input type="radio" ng-model="temp.backgroundSizeGroup.mode" value="contain"> (contain)
-                        <br>비율 유지 안함 : <input type="radio" ng-model="temp.backgroundSizeGroup.mode" value="%"> (%)
-
-                        <br><br>
-                        <div ng-class="{deactive:(temp.backgroundSizeGroup.mode == '%')}">
+                        <div ng-class="{deactive:(temp.backgroundSize == '100% 100%')}">
                             패턴 반복 :
                             <!--repeat
                             <br><input type="radio" ng-model="temp.backgroundSizeGroup.repeat" value="repeat">-->
-                            <br>repeat-x : <input type="radio" ng-model="temp.backgroundSizeGroup.repeatX" value="repeat-x">
-                            <br>repeat-y : <input type="radio" ng-model="temp.backgroundSizeGroup.repeatY" value="repeat-y">
+                            <br>
+                            repeat-x : <input type="checkbox" ng-model="temp.backgroundRepeatGroup.repeatX">
+                            repeat-y : <input type="checkbox" ng-model="temp.backgroundRepeatGroup.repeatY">
                         </div>
 
+                        <br>
+                        <div ng-class="{deactive:(temp.backgroundSize == '100% 100%')}">
+                            정렬 :
+
+                            <br><br>
+                            <div>
+                                가로 :
+                                <div ui-slider
+                                     ng-model="temp.backgroundPositionX" ng-model-options="modelOption"
+                                     min="0" max="100"
+                                     style="width: 100px; display: inline-block;"></div>
+                                <input type="number"
+                                       ng-model="temp.backgroundPositionX" ng-model-options="modelOption"
+                                       min="0" max="100"
+                                       style="width: 40px">%
+                            </div>
+                            <div>
+                                세로 :
+                                <div ui-slider
+                                     ng-model="temp.backgroundPositionY" ng-model-options="modelOption"
+                                     min="0" max="100"
+                                     style="width: 100px; display: inline-block;"></div>
+                                <input type="number"
+                                       ng-model="temp.backgroundPositionY" ng-model-options="modelOption"
+                                       min="0" max="100"
+                                       style="width: 40px">%
+                            </div>
+
+                            <br><br>
+                            <table>
+                                <tr>
+                                    <td><input type="button" value="0,0" style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="50,0" style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="100,0" style="width: 50px; margin: 2px;"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="button" value="0,50" style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="50,50" style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="100,50" style="width: 50px; margin: 2px;"></td>
+                                </tr>
+                                <tr>
+                                    <td><input type="button" value="0,100" style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="50,100" style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="100,100" style="width: 50px; margin: 2px;"></td>
+                                </tr>
+                            </table>
+                        </div>
                         <!--
                         <div>
                             <input type="number"
