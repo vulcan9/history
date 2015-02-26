@@ -98,9 +98,11 @@
 
               <div>x : <input type="number"
                               ng-model="temp.left"  ng-model-options="modelOption"
+
                               min="0" max="3000" required></div>
               <div>y : <input type="number"
                               ng-model="temp.top"  ng-model-options="modelOption"
+                              
                               min="0" max="3000" required></div>
 
           </form>
@@ -531,7 +533,8 @@
                     <div>
                         URL(background-image) :
                         <input type="text"
-                               ng-model="temp.backgroundImageGroup.url" ng-model-options="modelOption"/>
+                               ng-model="_backgroundImageGroup.url"
+                               key-bind="{ enter: 'enter_backgroundImage', esc: 'esc_backgroundImage' }"/>
                     </div>
 
                     <!--

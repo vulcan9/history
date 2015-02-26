@@ -230,11 +230,55 @@ define(['U'], function (U) {
 
                 }
 
-                ////////////////////////////////////////////////////////////////////////////////
-                //
-                // CSS
-                //
-                ////////////////////////////////////////////////////////////////////////////////
+                //--------------------------------------
+                // CSS 리셋
+                //--------------------------------------
+
+                function _getCSS(type, param) {
+                    var paramCSS = (param) ? param.css : null;
+                    if (!paramCSS) paramCSS = {};
+
+                    var temp;
+                    if (type == ELEMENT.DOCUMENT) {
+                        temp = {};
+                        temp.width = Project.paper.width;
+                        temp.height = Project.paper.height;
+
+                    } else {
+                        temp = updateElementCSS(paramCSS);
+                    }
+                    $scope.temp = temp;
+                }
+
+                //--------------------------------------
+                // Option 리셋
+                //--------------------------------------
+
+                // 속성창에 표시할 Option 값 탐색
+                function _getOption(type, param) {
+                    if (!Project.current) return;
+                    var paramOption = (param) ? param.css : null;
+                    if (!paramOption) paramOption = {};
+
+                    var tempOption;
+                    if (type == ELEMENT.DOCUMENT) {
+                        tempOption = {};
+                        tempOption.display = {
+                            snap_pixel: Tool.current.config_display('snap_pixel'),
+                            show_grid: Tool.current.config_display('show_grid')
+                        }
+
+                    } else {
+                        tempOption = updateElementOPT(paramOption);
+                    }
+
+                    // 값 설정
+                    $scope.tempOption = tempOption;
+                }
+
+                //--------------------------------------
+                // 변경값 추적
+                //--------------------------------------
 
                 // 속성 변경값을 Command 에 전달할때 사용
                 $scope.$watch('css', function (newValue, oldValue) {
@@ -252,221 +296,381 @@ define(['U'], function (U) {
                     // (oldValue는 같은 element끼리의 값이 아닌 이전 select element의 값이 될수도 있으므로)
                     var unwatch = $scope.$watch('temp', function (newValue, oldValue) {
                         if (newValue == oldValue) return;
-
-                        var changeList;
-                        var newCSS;
-                        var currentCSS;
-
-                        for (var name in newValue) {
-
-                            out('*** : ', name, ' : ', newValue[name]);
-
-                            //if(!_currentElement){
-                            if ($scope.type == ELEMENT.DOCUMENT) {
-                                // document는 아직 CSS 변경 항목 없음
-
-                            } else {
-                                // element
-                                if (_currentElement.style[name] === undefined && $(_currentElement).css(name) === undefined) {
-                                    //if(name.match(/-[webkit|moz|o]+-/g) == null) continue;
-                                    continue;
-                                }
-
-                                // prefix 구문 찾기
-                                //-[webkit|moz|o]+-(.*?:)(.*?)(?=[;|\"])
-
-                                // 객체로 구성되는 CSS 예외처리 (Group Object)
-                                var currentObj;
-                                var newObj;
-                                var isGroup = true;
-                                switch (name) {
-                                    case 'border':
-                                        newObj = newValue['borderGroup'];
-                                        newCSS = getBorderCSS(newObj);
-                                        currentCSS = getCSSValue(name, null);
-                                        currentObj = getBorderGroup(currentCSS);
-                                        break;
-                                    case 'lineHeight':
-                                        newObj = newValue['lineHeightGroup'];
-                                        newCSS = getLineHeightCSS(newObj);
-
-                                        currentCSS = getCSSValue(name, null);
-                                        currentObj = getLineHeightGroup(currentCSS);
-                                        break;
-                                    case 'letterSpacing':
-                                        newObj = newValue['letterSpacingGroup'];
-                                        newCSS = getLetterSpacingCSS(newObj);
-                                        currentCSS = getCSSValue(name, null);
-                                        currentObj = getLetterSpacingGroup(currentCSS);
-                                        break;
-                                    case 'fontSize':
-                                        newObj = newValue['fontSizeGroup'];
-                                        newCSS = getFontSizeCSS(newObj);
-                                        currentCSS = getCSSValue(name, null);
-                                        currentObj = getFontSizeGroup(currentCSS);
-                                        break;
-                                    case 'fontFamily':
-                                        newObj = newValue['fontFamilyGroup'];
-                                        newCSS = getFontFamilyCSS(newObj);
-                                        currentCSS = getCSSValue(name, null);
-                                        currentObj = getFontFamilyGroup(currentCSS);
-                                        break;
-                                    case 'textIndent':
-                                        newObj = newValue['textIndentGroup'];
-                                        newCSS = getTextIndentCSS(newObj);
-                                        currentCSS = getCSSValue(name, null);
-                                        currentObj = getTextIndentGroup(currentCSS);
-                                        break;
-
-                                    case 'columnRule':
-                                        newObj = newValue['columnRuleGroup'];
-                                        newCSS = getColumnRuleCSS(newObj);
-                                        currentCSS = getCSSValue(name, null);
-                                        currentObj = getColumnRuleGroup(currentCSS);
-                                        break;
-
-                                    /*
-                                    case 'backgroundColor':
-                                        out('backgroundColor : ', newValue[name]);
-                                     newObj = newValue['backgroundColorGroup'];
-                                        newCSS = getBackgroundColorCSS(newObj);
-                                        currentObj = getBackgroundColorGroup(getCSSValue(name, null));
-                                        currentCSS = getBackgroundColorCSS(currentObj);
-                                        break;
-                                        */
-
-                                    case 'backgroundImage':
-                                        newObj = newValue['backgroundImageGroup'];
-                                        newCSS = getBackgroundImageCSS(newObj);
-                                        currentObj = getBackgroundImageGroup(getCSSValue(name, null));
-                                        currentCSS = getBackgroundImageCSS(currentObj);
-                                        break;
-
-                                    case 'backgroundRepeat':
-                                        newObj = newValue['backgroundRepeatGroup'];
-                                        newCSS = getBackgroundRepeatCSS(newObj);
-                                        currentObj = getBackgroundRepeatGroup(getCSSValue(name, null));
-                                        currentCSS = getBackgroundRepeatCSS(currentObj);
-                                        break;
-
-                                    case 'backgroundPositionX':
-                                    case 'backgroundPositionY':
-                                        newObj = newValue[name];
-                                        newCSS = newObj + '%';
-                                        currentCSS = getCSSValue(name, null, true);
-                                        currentObj = currentCSS + '%';
-                                        isGroup = false;
-                                        break;
-
-                                    default:
-                                        newObj = newValue[name];
-                                        newCSS = newObj;
-                                        var isNumber = (typeof newCSS == 'number');
-                                        currentCSS = getCSSValue(name, null, isNumber);
-                                        currentObj = currentCSS;
-                                        isGroup = false;
-                                        break;
-                                }
-
-                                // borderGroup의 경우 객체 비교는 false이지만 색상 비교는 true가 되므로
-                                // Group 요소를 개별 비교
-                                var isObjectEqual = compareGroup(newObj, currentObj);
-                                var isCSSEqual = angular.equals(newCSS, currentCSS);
-                                if (isObjectEqual && isCSSEqual) continue;
-
-                                // 색상 검사 (문자열 비교이기 때문에 같은 색상이더라도 not Equal로 비교될수 있으니 이를 체크한다.)
-                                //var isColorEqual = compareColor(newCSS, currentCSS);
-                                //if(isColorEqual) continue;
-
-
-                                switch (name) {
-                                    /*
-                                    case 'backgroundColor':
-                                        var rgba = getRGBA(newCSS);
-                                        if(rgba.a == 0) newCSS = '';
-                                        break;
-                                        */
-                                    case 'backgroundImage':
-                                        var rgba = getRGBA(newCSS);
-                                        if(newCSS == 'none') newCSS = '';
-                                        break;
-                                    default:
-                                        break;
-                                }
-
-
-                                out('watch : ', name, ' : ', currentCSS, ' --> ', newCSS);
-                                if (!changeList) changeList = {};
-                                changeList[name] = newCSS;
-                            }
-                        }
-
-                        /*
-
-                        // 변경 사항이 있다면 modify가 호출됨
-                        $scope.css = changeList;
-
-                        /*/
-
-                        //---------------------
-                        // 미리 적용해봄
-                        //---------------------
-
-                        // $(_currentElement).css(changeList);
-                        modifyPreview(changeList, newValue);
-
+                        tempChanged(newValue);
                     }, true);
                     return unwatch;
                 }
 
-                // 미리 적용해봄
-                function modifyPreview(changeList, tempObj){
-
-                    $timeout.cancel(__delayTimeout);
-
-                    if(!changeList['backgroundImage']) {
-                        $(_currentElement).css(changeList);
-                        delayModify(changeList);
+                // 옵션 변경값 적용
+                $scope.$watch('option', function (newValue, oldValue) {
+                    if (newValue === undefined || newValue === null) {
+                        newValue = {};
                         return;
                     }
 
-                    // background 이미지가 유효한 이미지인지 체크
-                    var backgroundImage = getUrlCSS(changeList['backgroundImage']);
-                    //var backgroundImage = getUrlCSS(changeList['backgroundImage']);
-
-                    var isValuable = backgroundImage.search(/(http|data|https):\/\/.?/g) == 0;
-
-                    var $currentElement = $(_currentElement);
-                    if(backgroundImage && isValuable){
-                        $.ajax({url: backgroundImage})
-                            .done(function() {
-                                alert( "second success" );
-                                $currentElement.removeClass('noImage');
-                                //delayModify(changeList);
-                            })
-                            .fail(function() {
-                                alert( "error" );
-                                $currentElement.addClass('noImage');
-                                //$currentElement.css('backgroundImage', tempObj.backgroundImageGroup.error);
-                            })
-                            .always(function() {
-                                delayModify(changeList);
-                            });
-                    }else{
-                        $currentElement.addClass('noImage');
-                        //$currentElement.css('backgroundImage', tempObj.backgroundImageGroup.error);
-                        delayModify(changeList);
+                    if ($scope.type == ELEMENT.DOCUMENT) {
+                        $scope.configDocument();
+                    } else {
+                        $scope.modifyContent(_documentUID, _elementUID);
                     }
-                    ================================================================================
+                }, true);
 
-                    function delayModify(cssObject){
-                        __delayTimeout = $timeout(function () {
-                            __delayTimeout = null;
-                            // 데이터 갱신
-                            $scope.css = cssObject;
-                        }, 1000);
-                    }
+                // DOM 에서 값이 변경될때
+                function watchOption() {
+                    var unwatch = $scope.$watch('tempOption', function (newValue, oldValue) {
+                        if (newValue == oldValue) return;
+                        tempOptionChanged(newValue);
+                    }, true);
+                    return unwatch;
                 }
+
+                ////////////////////////////////////////////////////////////////////////////////
+                //
+                // Data 업데이트
+                //
+                ////////////////////////////////////////////////////////////////////////////////
+
+                // 서버 저장값 변경된 경우
+                // select가 변경되어 값이 변한 경우
+                // type이 변경된 경우
+
+                //------------------
+                // 데이터 수정 - CSS
+                //------------------
+
+                // 연속으로 호출된 경우 업데이트를 무시하고 최종값을 한번에 적용시킨다.
+                // (주의) delay 시간이 250 이하이면 delay 적용되지 않고 실행됨
+                // 연속 클릭 속도 감안하여 500으로 설정해 놓음
+                // $digest 호출 시간이 245정도이기 때문인듯함
+
+                //ng-model-options="{ debounce: 500 }" 설정함
+                $scope.modelOption = {
+                    debounce: 0
+                }
+
+                // 속성창 내용을 데이터에 갱신한다.
+                $scope.modifyContent = function (documentUID, elementUID) {
+
+                    if (!Project.current) return;
+
+                    var type = $scope.type;
+                    var command;
+                    var param;
+
+                    // 수정시에 watch 발생하므로 복사해서 사용
+                    var paramCSS = angular.copy($scope.css);
+
+                    if (type == ELEMENT.DOCUMENT) {
+
+                        // DOCUMENT  수정
+
+                        command = CommandService.MODIFY_DOCUMENT;
+                        param = {
+                            documentUID: documentUID,
+
+                            //*********************************
+
+                            // option은 configDocument에서 설정
+                            // option: paramOption,
+
+                            //*********************************
+
+                            // element css 설정값
+                            css: paramCSS
+                        };
+
+                    } else {
+
+                        // ELEMENT 최종 수정
+                        if (type == ELEMENT.TEXT) {
+                            //
+                        }
+
+                        var paramOption = angular.copy($scope.option);
+                        command = CommandService.MODIFY_ELEMENT;
+                        param = {
+                            // 삽입될 문서
+                            documentUID: documentUID,
+                            elementUID: elementUID,
+
+                            // element 설정값
+                            option: paramOption,
+                            css: paramCSS
+                        };
+
+                    }
+
+                    // Modify command 호출
+                    CommandService.exe(command, param, function () {
+                        out('* 속성창 변경값 데이터 저장 완료');
+                    });
+                }
+
+                //--------------------------------------
+                // 데이터 수정 - Configuration Option
+                //--------------------------------------
+
+                // Deley Time 없이 업데이트 (History에 기록하지 않으므로)
+                $scope.configDocument = function () {
+                    if (!Project.current) return;
+
+                    var type = $scope.type;
+                    var param;
+
+                    if (type != ELEMENT.DOCUMENT) {
+                        throw '이 옵션 설정은 Document type일때만 가능합니다.';
+                    }
+
+                    // CONFIGURATION  설정값 수정
+                    var paramOption = angular.copy($scope.option);
+                    param = {
+                        // option 설정값
+                        option: paramOption
+                    };
+
+                    // command 호출
+                    CommandService.exe(CommandService.CONFIGURATION, param);
+                }
+
+                ////////////////////////////////////////////////////////////////////////////////
+                //
+                // Option Property
+                //
+                ////////////////////////////////////////////////////////////////////////////////
+
+                function tempOptionChanged(newValue){
+
+                    var changeList;
+                    var newOption;
+                    var currentOption;
+
+                    for (var name in newValue) {
+                        var newObj;
+                        var currentObj;
+                        //out('option : ', name, ' : ', newValue[name]);
+                        if ($scope.type == ELEMENT.DOCUMENT) {
+
+                            newObj = newValue[name];
+                            currentObj = Tool.current.TOOL.CONFIG[name];
+                            if (angular.equals(newObj, currentObj)) continue;
+                            // 색상 검사 (문자열 비교이기 때문에 같은 색상이더라도 not Equal로 비교될수 있으니 이를 체크한다.)
+                            var isColorEqual = compareColor(newObj, currentObj);
+                            if (isColorEqual) continue;
+
+                            var obj = angular.extend({}, currentObj, newObj);
+                            if (!changeList) changeList = {};
+                            changeList[name] = obj;
+                            out('watch : ', name, ' : ', currentObj, ' --> ', obj)
+
+                        } else {
+
+                            var api = Project.current.elementAPI(_documentUID, _elementUID);
+                            if (type == ELEMENT.TEXT) {
+                                //tempOption.display_size_toText = api.option('display_size_toText');
+                            } else if (type == ELEMENT.IMAGE) {
+                                //
+                            }
+                        }
+                    }
+
+                    // 변경 사항이 있다면 modify가 호출됨
+                    $scope.option = changeList;
+                }
+
+                ////////////////////////////////////////
+                // 속성창 Option 초기화
+                ////////////////////////////////////////
+
+                // Element 개별 옵션값을 지정한다.
+                function updateElementOPT(paramOption) {
+                    var tempOption = {};
+                    out('paramOption', paramOption);
+                    //var $dom = angular.element(_currentElement);
+
+                    var type = $scope.type;
+                    var api = Project.current.elementAPI(_documentUID, _elementUID);
+                    if (type == ELEMENT.TEXT) {
+                        //tempOption.display_size_toText = api.option('display_size_toText');
+                    }
+                    else if (type == ELEMENT.IMAGE) {
+                        //
+                    }
+
+                    return tempOption;
+                }
+
+                ////////////////////////////////////////////////////////////////////////////////
+                //
+                // CSS Property
+                //
+                ////////////////////////////////////////////////////////////////////////////////
+
+                function tempChanged(newValue) {
+
+                    var changeList;
+                    var newCSS;
+                    var currentCSS;
+
+                    for (var name in newValue) {
+
+                        out('*** : ', name, ' : ', newValue[name]);
+
+                        //if(!_currentElement){
+                        if ($scope.type == ELEMENT.DOCUMENT) {
+                            // document는 아직 CSS 변경 항목 없음
+
+                        } else {
+                            // element
+                            if (_currentElement.style[name] === undefined && $(_currentElement).css(name) === undefined) {
+                                //if(name.match(/-[webkit|moz|o]+-/g) == null) continue;
+                                continue;
+                            }
+
+                            // prefix 구문 찾기
+                            //-[webkit|moz|o]+-(.*?:)(.*?)(?=[;|\"])
+
+                            // 객체로 구성되는 CSS 예외처리 (Group Object)
+                            var currentObj;
+                            var newObj;
+                            var isGroup = true;
+                            switch (name) {
+                                case 'border':
+                                    newObj = newValue['borderGroup'];
+                                    newCSS = getBorderCSS(newObj);
+                                    currentCSS = getCSSValue(name, null);
+                                    currentObj = getBorderGroup(currentCSS);
+                                    break;
+                                case 'lineHeight':
+                                    newObj = newValue['lineHeightGroup'];
+                                    newCSS = getLineHeightCSS(newObj);
+
+                                    currentCSS = getCSSValue(name, null);
+                                    currentObj = getLineHeightGroup(currentCSS);
+                                    break;
+                                case 'letterSpacing':
+                                    newObj = newValue['letterSpacingGroup'];
+                                    newCSS = getLetterSpacingCSS(newObj);
+                                    currentCSS = getCSSValue(name, null);
+                                    currentObj = getLetterSpacingGroup(currentCSS);
+                                    break;
+                                case 'fontSize':
+                                    newObj = newValue['fontSizeGroup'];
+                                    newCSS = getFontSizeCSS(newObj);
+                                    currentCSS = getCSSValue(name, null);
+                                    currentObj = getFontSizeGroup(currentCSS);
+                                    break;
+                                case 'fontFamily':
+                                    newObj = newValue['fontFamilyGroup'];
+                                    newCSS = getFontFamilyCSS(newObj);
+                                    currentCSS = getCSSValue(name, null);
+                                    currentObj = getFontFamilyGroup(currentCSS);
+                                    break;
+                                case 'textIndent':
+                                    newObj = newValue['textIndentGroup'];
+                                    newCSS = getTextIndentCSS(newObj);
+                                    currentCSS = getCSSValue(name, null);
+                                    currentObj = getTextIndentGroup(currentCSS);
+                                    break;
+
+                                case 'columnRule':
+                                    newObj = newValue['columnRuleGroup'];
+                                    newCSS = getColumnRuleCSS(newObj);
+                                    currentCSS = getCSSValue(name, null);
+                                    currentObj = getColumnRuleGroup(currentCSS);
+                                    break;
+
+                                /*
+                                 case 'backgroundColor':
+                                 out('backgroundColor : ', newValue[name]);
+                                 newObj = newValue['backgroundColorGroup'];
+                                 newCSS = getBackgroundColorCSS(newObj);
+                                 currentObj = getBackgroundColorGroup(getCSSValue(name, null));
+                                 currentCSS = getBackgroundColorCSS(currentObj);
+                                 break;
+                                 */
+
+                                case 'backgroundImage':
+                                    newObj = newValue['backgroundImageGroup'];
+                                    newCSS = getBackgroundImageCSS(newObj);
+                                    currentObj = getBackgroundImageGroup(getCSSValue(name, null));
+                                    currentCSS = getBackgroundImageCSS(currentObj);
+                                    break;
+
+                                case 'backgroundRepeat':
+                                    newObj = newValue['backgroundRepeatGroup'];
+                                    newCSS = getBackgroundRepeatCSS(newObj);
+                                    currentObj = getBackgroundRepeatGroup(getCSSValue(name, null));
+                                    currentCSS = getBackgroundRepeatCSS(currentObj);
+                                    break;
+
+                                case 'backgroundPositionX':
+                                case 'backgroundPositionY':
+                                    newObj = newValue[name];
+                                    newCSS = newObj + '%';
+                                    currentCSS = getCSSValue(name, null, true);
+                                    currentObj = currentCSS + '%';
+                                    isGroup = false;
+                                    break;
+
+                                default:
+                                    newObj = newValue[name];
+                                    newCSS = newObj;
+                                    var isNumber = (typeof newCSS == 'number');
+                                    currentCSS = getCSSValue(name, null, isNumber);
+                                    currentObj = currentCSS;
+                                    isGroup = false;
+                                    break;
+                            }
+
+                            // borderGroup의 경우 객체 비교는 false이지만 색상 비교는 true가 되므로
+                            // Group 요소를 개별 비교
+                            var isObjectEqual = compareGroup(newObj, currentObj);
+                            var isCSSEqual = angular.equals(newCSS, currentCSS);
+                            if (isObjectEqual && isCSSEqual) continue;
+
+                            // 색상 검사 (문자열 비교이기 때문에 같은 색상이더라도 not Equal로 비교될수 있으니 이를 체크한다.)
+                            //var isColorEqual = compareColor(newCSS, currentCSS);
+                            //if(isColorEqual) continue;
+
+
+                            switch (name) {
+                                /*
+                                 case 'backgroundColor':
+                                 var rgba = getRGBA(newCSS);
+                                 if(rgba.a == 0) newCSS = '';
+                                 break;
+                                 */
+                                case 'backgroundImage':
+                                    var rgba = getRGBA(newCSS);
+                                    if(newCSS == 'none') newCSS = '';
+                                    break;
+                                default:
+                                    break;
+                            }
+
+
+                            out('watch : ', name, ' : ', currentCSS, ' --> ', newCSS);
+                            if (!changeList) changeList = {};
+                            changeList[name] = newCSS;
+                        }
+                    }
+
+                    /*
+
+                     // 변경 사항이 있다면 modify가 호출됨
+                     $scope.css = changeList;
+
+                     /*/
+
+                    // 미리 적용해서 화면에 나타내기
+                    // $(_currentElement).css(changeList);
+                    modifyPreview(changeList, newValue);
+
+                }
+
+                //--------------------------------------
+                // 값비교
+                //--------------------------------------
 
                 function compareGroup(valueObj, currentObj) {
                     var isEqual = angular.equals(valueObj, currentObj);
@@ -501,72 +705,59 @@ define(['U'], function (U) {
                     return isColorEqual;
                 }
 
-                function getRGBA(rgbColor) {
-                    var rgba;
-                    if(rgbColor == 'transparent'){
-                        rgba = [255, 255, 255, 0];
+                //--------------------------------------
+                // 수정내용 미리 적용하기
+                //--------------------------------------
+
+                // 미리 적용해봄
+                function modifyPreview(changeList, tempObj){
+
+                    $timeout.cancel(__delayTimeout);
+
+                    if(!changeList['backgroundImage']) {
+                        $(_currentElement).css(changeList);
+                        delayModify(changeList);
+                        return;
+                    }
+
+                    // background 이미지가 유효한 이미지인지 체크
+                    var backgroundImage = getUrlCSS(changeList['backgroundImage']);
+                    //var backgroundImage = getUrlCSS(changeList['backgroundImage']);
+                    var isValuable = backgroundImage.search(/(http|data|https):\/\/.?/g) == 0;
+
+                    var $currentElement = $(_currentElement);
+                    if(backgroundImage && isValuable){
+                        var $img = angular.element("<img>")
+                            .on('load', function() {
+                                $currentElement.removeClass('noImage');
+                            })
+                            .on('error', function() {
+                                $currentElement.addClass('noImage');
+                            })
+                            .on('abort', function() {
+                                $currentElement.addClass('noImage');
+                            })
+                        //.appendTo($('body'))
+                        //.hide();
+                        $img.attr( "src", backgroundImage );
+                        delayModify(changeList);
                     }else{
-                        if (typeof rgbColor != 'string') return null;
-                        if (rgbColor.indexOf('rgb') < 0) return null;
-                        var colorString = rgbColor.match(/rgba?\(.+\)/g)[0];
-                        rgba = colorString.match(/-?\d+(\.\d+)?/g);
+                        $currentElement.addClass('noImage');
+                        delayModify(changeList);
                     }
-                    return {
-                        r: Number(rgba[0]) || 0,
-                        g: Number(rgba[1]) || 0,
-                        b: Number(rgba[2]) || 0,
-                        a: (rgba[3] === undefined) ? 1 : Number(rgba[3])
+
+                    function delayModify(cssObject){
+                        __delayTimeout = $timeout(function () {
+                            __delayTimeout = null;
+                            // 데이터 갱신
+                            $scope.css = cssObject;
+                        }, 300);
                     }
-                }
-                function setRGBA(r, g, b, a) {
-                    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
                 }
 
                 ////////////////////////////////////////
-                // CSS 변경
+                // 속성창 Model 초기화
                 ////////////////////////////////////////
-
-                function _getCSS(type, param) {
-                    var paramCSS = (param) ? param.css : null;
-                    if (!paramCSS) paramCSS = {};
-
-                    var temp;
-                    if (type == ELEMENT.DOCUMENT) {
-                        temp = {};
-                        temp.width = Project.paper.width;
-                        temp.height = Project.paper.height;
-
-                    } else {
-                        temp = updateElementCSS(paramCSS);
-                    }
-                    $scope.temp = temp;
-                }
-
-                function getCSSValue(name, paramCSS, isNumber) {
-                    var style = _currentElement.style;
-                    var $dom = angular.element(_currentElement);
-                    paramCSS = paramCSS || {};
-
-                    var value;
-                    if (isNumber) {
-                        value = U.toNumber(paramCSS[name]) || U.toNumber(style[name]) || U.toNumber($dom.css(name));
-                        //out(name, ' : ', value, '(',U.toNumber(paramCSS[name]), '-', U.toNumber(style[name]), '-', U.toNumber($dom.css(name)), ')');
-                    } else {
-                        value = paramCSS[name] || style[name] || $dom.css(name);
-                        // px가 안붙는 버그(크롬)
-                        if (name == 'letterSpacing' && value.toString().indexOf('px' < 0)) value = value + 'px';
-                        //out(name, ' : ', value, '(', paramCSS[name], '-', style[name], '-', $dom.css(name), ')');
-                    }
-                    return value;
-                }
-
-                /*
-                 function toNumber(str){
-                 if(!str) return 0;
-                 var num = str.match(/-?\d+(\.\d+)?/g)
-                 return (num == null)? 0 : num[0];
-                 }
-                 */
 
                 // Element 개별 옵션값 탐색
                 function updateElementCSS(paramCSS) {
@@ -699,19 +890,88 @@ define(['U'], function (U) {
                     temp.backgroundPositionX = getCSSValue('backgroundPositionX', paramCSS, true);
                     temp.backgroundPositionY = getCSSValue('backgroundPositionY', paramCSS, true);
 
-
-
-
-                    //background-position-x : 50%;
-                    //background-position-y : 50%;
-
-
-
-
-                    //temp.backgroundGroup = getBackgroundGroup('background');
+                    // 기타 인터렉션에 필요한 값 리셋
+                    initializeProperties(temp);
 
                     return temp;
                 }
+
+                //--------------------------------------
+                // 기타 속성창 Form 동작에 필요한 property값을 초기화한다.
+                //--------------------------------------
+
+                function initializeProperties(temp){
+                    $scope._backgroundImageGroup = {
+                        url: temp.backgroundImageGroup.url
+                    }
+                }
+
+                //--------------------------------------
+                // Enter Key 콜백
+                //--------------------------------------
+
+                $scope.enter_backgroundImage = function(){
+                    if($scope.temp.backgroundImageGroup.url == $scope._backgroundImageGroup.url) return;
+                    $scope.temp.backgroundImageGroup.url = $scope._backgroundImageGroup.url;
+                    tempChanged($scope.temp);
+                }
+                $scope.esc_backgroundImage = function(){
+                    $scope._backgroundImageGroup.url = '';
+                }
+
+                ////////////////////////////////////////
+                // 유틸
+                ////////////////////////////////////////
+
+                function getCSSValue(name, paramCSS, isNumber) {
+                    var style = _currentElement.style;
+                    var $dom = angular.element(_currentElement);
+                    paramCSS = paramCSS || {};
+
+                    var value;
+                    if (isNumber) {
+                        value = U.toNumber(paramCSS[name]) || U.toNumber(style[name]) || U.toNumber($dom.css(name));
+                        //out(name, ' : ', value, '(',U.toNumber(paramCSS[name]), '-', U.toNumber(style[name]), '-', U.toNumber($dom.css(name)), ')');
+                    } else {
+                        value = paramCSS[name] || style[name] || $dom.css(name);
+                        // px가 안붙는 버그(크롬)
+                        if (name == 'letterSpacing' && value.toString().indexOf('px' < 0)) value = value + 'px';
+                        //out(name, ' : ', value, '(', paramCSS[name], '-', style[name], '-', $dom.css(name), ')');
+                    }
+                    return value;
+                }
+
+                function getRGBA(rgbColor) {
+                    var rgba;
+                    if(rgbColor == 'transparent'){
+                        rgba = [255, 255, 255, 0];
+                    }else{
+                        if (typeof rgbColor != 'string') return null;
+                        if (rgbColor.indexOf('rgb') < 0) return null;
+                        var colorString = rgbColor.match(/rgba?\(.+\)/g)[0];
+                        rgba = colorString.match(/-?\d+(\.\d+)?/g);
+                    }
+                    return {
+                        r: Number(rgba[0]) || 0,
+                        g: Number(rgba[1]) || 0,
+                        b: Number(rgba[2]) || 0,
+                        a: (rgba[3] === undefined) ? 1 : Number(rgba[3])
+                    }
+                }
+                function setRGBA(r, g, b, a) {
+                    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+                }
+
+                // urlCSS : url("https://~~~~~~~~~");
+                function getUrlCSS(urlCSS) {
+                    var url = urlCSS.replace(/none|(?:url\s*?\()(.*)\)/g, '$1');
+                    if(url) url = url.trim();
+                    return url;
+                }
+
+                //--------------------------------------
+                // CSS 개별 설정 함수들
+                //--------------------------------------
 
                 function getBackgroundRepeatGroup(css) {
                     var repeatX = false;
@@ -750,12 +1010,6 @@ define(['U'], function (U) {
                     return css;
                 }
 
-                // urlCSS : url("https://~~~~~~~~~");
-                function getUrlCSS(urlCSS) {
-                    var url = urlCSS.replace(/none|(?:url\s*?\()(.*)\)/g, '$1');
-                    if(url) url = url.trim();
-                    return url;
-                }
                 function getBackgroundImageCSS(backgroundImageGroup) {
                     var url = backgroundImageGroup.url;
                     if(url){
@@ -765,7 +1019,6 @@ define(['U'], function (U) {
                 }
                 function getBackgroundImageGroup(backgroundImageCSS) {
                     var url = getUrlCSS(backgroundImageCSS);
-                    var tempURL = url;
 
                     // content.js 에서 이미지 없음 표시 위해 추가한 noImage class에 기본 이미지 정의됨
                     if(url.indexOf('data:image') == 0 || url === 'none'){
@@ -773,8 +1026,7 @@ define(['U'], function (U) {
                     }
 
                     return {
-                        url : url,
-                        error: tempURL
+                        url : url
                     }
                 }
 
@@ -904,223 +1156,6 @@ define(['U'], function (U) {
                     textIndentGroup.unit = textIndentGroup.unit || 'px';
                     return textIndentGroup.num + textIndentGroup.unit;
                 }
-
-                ////////////////////////////////////////////////////////////////////////////////
-                //
-                // Option Property
-                //
-                ////////////////////////////////////////////////////////////////////////////////
-
-                // 옵션 변경값 적용
-                $scope.$watch('option', function (newValue, oldValue) {
-                    if (newValue === undefined || newValue === null) {
-                        newValue = {};
-                        return;
-                    }
-
-                    if ($scope.type == ELEMENT.DOCUMENT) {
-                        $scope.configDocument();
-                    } else {
-                        $scope.modifyContent(_documentUID, _elementUID);
-                    }
-                }, true);
-
-                // DOM 에서 값이 변경될때
-                function watchOption() {
-                    var unwatch = $scope.$watch('tempOption', function (newValue, oldValue) {
-                        if (newValue == oldValue) return;
-
-                        var changeList;
-                        var newOption;
-                        var currentOption;
-
-                        for (var name in newValue) {
-                            var newObj;
-                            var currentObj;
-                            //out('option : ', name, ' : ', newValue[name]);
-                            if ($scope.type == ELEMENT.DOCUMENT) {
-
-                                newObj = newValue[name];
-                                currentObj = Tool.current.TOOL.CONFIG[name];
-                                if (angular.equals(newObj, currentObj)) continue;
-                                // 색상 검사 (문자열 비교이기 때문에 같은 색상이더라도 not Equal로 비교될수 있으니 이를 체크한다.)
-                                var isColorEqual = compareColor(newObj, currentObj);
-                                if (isColorEqual) continue;
-
-                                var obj = angular.extend({}, currentObj, newObj);
-                                if (!changeList) changeList = {};
-                                changeList[name] = obj;
-                                out('watch : ', name, ' : ', currentObj, ' --> ', obj)
-
-                            } else {
-
-                                var api = Project.current.elementAPI(_documentUID, _elementUID);
-                                if (type == ELEMENT.TEXT) {
-                                    //tempOption.display_size_toText = api.option('display_size_toText');
-                                } else if (type == ELEMENT.IMAGE) {
-                                    //
-                                }
-                            }
-                        }
-
-                        // 변경 사항이 있다면 modify가 호출됨
-                        $scope.option = changeList;
-                    }, true);
-                    return unwatch;
-                }
-
-                //------------------
-                // Config Option
-                //------------------
-
-                // 속성창에 표시할 Option 값 탐색
-                function _getOption(type, param) {
-                    if (!Project.current) return;
-                    var paramOption = (param) ? param.css : null;
-                    if (!paramOption) paramOption = {};
-
-                    var tempOption;
-                    if (type == ELEMENT.DOCUMENT) {
-                        tempOption = {};
-                        tempOption.display = {
-                            snap_pixel: Tool.current.config_display('snap_pixel'),
-                            show_grid: Tool.current.config_display('show_grid')
-                        }
-
-                    } else {
-                        tempOption = updateElementOPT(paramOption);
-                    }
-
-                    // 값 설정
-                    $scope.tempOption = tempOption;
-                }
-
-                // Element 개별 옵션값을 지정한다.
-                function updateElementOPT(paramOption) {
-                    var tempOption = {};
-                    out('paramOption', paramOption);
-                    //var $dom = angular.element(_currentElement);
-
-                    var type = $scope.type;
-                    var api = Project.current.elementAPI(_documentUID, _elementUID);
-                    if (type == ELEMENT.TEXT) {
-                        //tempOption.display_size_toText = api.option('display_size_toText');
-                    }
-                    else if (type == ELEMENT.IMAGE) {
-                        //
-                    }
-
-                    return tempOption;
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////
-                //
-                // Data 업데이트
-                //
-                ////////////////////////////////////////////////////////////////////////////////
-
-                // 서버 저장값 변경된 경우
-                // select가 변경되어 값이 변한 경우
-                // type이 변경된 경우
-
-                //------------------
-                // 데이터 수정 - CSS
-                //------------------
-
-                // 연속으로 호출된 경우 업데이트를 무시하고 최종값을 한번에 적용시킨다.
-                // (주의) delay 시간이 250 이하이면 delay 적용되지 않고 실행됨
-                // 연속 클릭 속도 감안하여 500으로 설정해 놓음
-                // $digest 호출 시간이 245정도이기 때문인듯함
-
-                //ng-model-options="{ debounce: 500 }" 설정함
-                $scope.modelOption = {
-                    debounce: 0
-                }
-
-                // 속성창 내용을 데이터에 갱신한다.
-                $scope.modifyContent = function (documentUID, elementUID) {
-
-                    if (!Project.current) return;
-
-                    var type = $scope.type;
-                    var command;
-                    var param;
-
-                    // 수정시에 watch 발생하므로 복사해서 사용
-                    var paramCSS = angular.copy($scope.css);
-
-                    if (type == ELEMENT.DOCUMENT) {
-
-                        // DOCUMENT  수정
-
-                        command = CommandService.MODIFY_DOCUMENT;
-                        param = {
-                            documentUID: documentUID,
-
-                            //*********************************
-
-                            // option은 configDocument에서 설정
-                            // option: paramOption,
-
-                            //*********************************
-
-                            // element css 설정값
-                            css: paramCSS
-                        };
-
-                    } else {
-
-                        // ELEMENT 최종 수정
-                        if (type == ELEMENT.TEXT) {
-                            //
-                        }
-
-                        var paramOption = angular.copy($scope.option);
-                        command = CommandService.MODIFY_ELEMENT;
-                        param = {
-                            // 삽입될 문서
-                            documentUID: documentUID,
-                            elementUID: elementUID,
-
-                            // element 설정값
-                            option: paramOption,
-                            css: paramCSS
-                        };
-
-                    }
-
-                    // Modify command 호출
-                    CommandService.exe(command, param, function () {
-                        out('* 속성창 변경값 데이터 저장 완료');
-                    });
-                }
-
-                //------------------
-                // 데이터 수정 - Configuration Option
-                //------------------
-
-                // Deley Time 없이 업데이트 (History에 기록하지 않으므로)
-                $scope.configDocument = function () {
-                    if (!Project.current) return;
-
-                    var type = $scope.type;
-                    var param;
-
-                    if (type != ELEMENT.DOCUMENT) {
-                        throw '이 옵션 설정은 Document type일때만 가능합니다.';
-                    }
-
-                    // CONFIGURATION  설정값 수정
-                    var paramOption = angular.copy($scope.option);
-                    param = {
-                        // option 설정값
-                        option: paramOption
-                    };
-
-                    // command 호출
-                    CommandService.exe(CommandService.CONFIGURATION, param);
-                }
-
 
                 ////////////////////////////////////////
                 // 폰트 지정

@@ -431,6 +431,7 @@ define( [], function() {
 							_PATH.DIRECTIVE + 'screen/element.js',
 							
 							_PATH.DIRECTIVE + 'ui/uiControl.js',
+                            _PATH.DIRECTIVE + 'ui/keyBind.js',
 
 			        				// FACTORY
 			        				_PATH.DATA + 'Data.js',
