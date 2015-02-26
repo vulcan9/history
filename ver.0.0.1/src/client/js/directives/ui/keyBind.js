@@ -17,6 +17,7 @@ define(['U'], function (U) {
 
         // 선언
         function _directive(KEY_CODE) {
+
             function map(obj) {
                 var mapped = {};
                 for (var key in obj) {
@@ -29,22 +30,31 @@ define(['U'], function (U) {
             }
 
             return function (scope, element, attrs) {
+                if(attrs.keyBind.indexOf('liveChange') > -1){
+                    var func = scope.$eval(attrs.keyBind);
+                    if(func && typeof func == 'function') func.apply(scope, [element]);
+                    return;
+                }
+
+                //element.off("change", onChange);
                 var bindings = map(scope.$eval(attrs.keyBind));
-                element.bind("keydown keypress", function (event) {
+
+                element.on("keydown keypress", function (event) {
                     if (bindings.hasOwnProperty(event.which)) {
                         //scope.$apply(function() {
                         //    scope.$eval(bindings[event.which]);
                         //});
 
-                        scope.$eval(bindings[event.which]).apply(scope, [element, event]);
+                        var func = scope.$eval(bindings[event.which]);
+                        if(func && typeof func == 'function') func.apply(scope, [element, event]);
                         event.preventDefault();
                     }
                 });
-                element.bind("blur", function (event) {
+                element.on("blur", function (event) {
                     var key = KEY_CODE.enter;
                     if (bindings.hasOwnProperty(key)) {
                         scope.$eval(bindings[key]).apply(scope, [element, event]);
-                        event.preventDefault();
+                        //event.preventDefault();
                     }
                 });
             };

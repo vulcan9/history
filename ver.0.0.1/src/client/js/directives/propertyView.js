@@ -280,6 +280,8 @@ define(['U'], function (U) {
                 // 변경값 추적
                 //--------------------------------------
 
+                $scope.livePreview = false;
+
                 // 속성 변경값을 Command 에 전달할때 사용
                 $scope.$watch('css', function (newValue, oldValue) {
                     if (newValue === undefined || newValue === null) {
@@ -296,7 +298,12 @@ define(['U'], function (U) {
                     // (oldValue는 같은 element끼리의 값이 아닌 이전 select element의 값이 될수도 있으므로)
                     var unwatch = $scope.$watch('temp', function (newValue, oldValue) {
                         if (newValue == oldValue) return;
-                        tempChanged(newValue);
+
+                        //****************************
+                        // 일정 시간 후 변경 사항 저장 (자동 업데이트)
+                        if($scope.livePreview) tempChanged(newValue);
+                        //****************************
+
                     }, true);
                     return unwatch;
                 }
@@ -513,7 +520,7 @@ define(['U'], function (U) {
 
                     for (var name in newValue) {
 
-                        out('*** : ', name, ' : ', newValue[name]);
+                        //out('*** : ', name, ' : ', newValue[name]);
 
                         //if(!_currentElement){
                         if ($scope.type == ELEMENT.DOCUMENT) {
@@ -714,8 +721,9 @@ define(['U'], function (U) {
 
                     $timeout.cancel(__delayTimeout);
 
+                    var $currentElement = $(_currentElement);
                     if(!changeList['backgroundImage']) {
-                        $(_currentElement).css(changeList);
+                        $currentElement.css(changeList);
                         delayModify(changeList);
                         return;
                     }
@@ -725,7 +733,6 @@ define(['U'], function (U) {
                     //var backgroundImage = getUrlCSS(changeList['backgroundImage']);
                     var isValuable = backgroundImage.search(/(http|data|https):\/\/.?/g) == 0;
 
-                    var $currentElement = $(_currentElement);
                     if(backgroundImage && isValuable){
                         var $img = angular.element("<img>")
                             .on('load', function() {
@@ -747,11 +754,13 @@ define(['U'], function (U) {
                     }
 
                     function delayModify(cssObject){
+                        var time = ($scope.livePreview) ? 300 : 0;
+
                         __delayTimeout = $timeout(function () {
                             __delayTimeout = null;
                             // 데이터 갱신
                             $scope.css = cssObject;
-                        }, 300);
+                        }, time);
                     }
                 }
 
@@ -906,17 +915,78 @@ define(['U'], function (U) {
                     }
                 }
 
-                //--------------------------------------
-                // Enter Key 콜백
-                //--------------------------------------
+                ////////////////////////////////////////
+                // Enter Key 콜백 - live preview 기능과 관련있음
+                ////////////////////////////////////////
+
+                //key-bind="{ enter: 'submit'}"
+                $scope.submit = function(){
+                    //****************************
+                    // Enter 키 또는 Blur 이벤트에 의해 업데이트
+
+                    if(!$scope.livePreview) tempChanged($scope.temp);
+
+                    //****************************
+                }
 
                 $scope.enter_backgroundImage = function(){
                     if($scope.temp.backgroundImageGroup.url == $scope._backgroundImageGroup.url) return;
                     $scope.temp.backgroundImageGroup.url = $scope._backgroundImageGroup.url;
                     tempChanged($scope.temp);
                 }
-                $scope.esc_backgroundImage = function(){
-                    $scope._backgroundImageGroup.url = '';
+
+                //--------------------------------------
+                // 실시간 업데이트 컨트롤 (keyBind)
+                //--------------------------------------
+
+                // 입력박스 객체 : key-bind="liveChangeFocus"
+                $scope.liveChangeFocus = function($element){
+                    var failback = false;
+                    $element.on("focusin", function (event) {
+                        if(!$scope.livePreview){
+                            failback = true;
+                            $scope.livePreview = true;
+                            $scope.$digest();
+                        }
+                    });
+                    $element.on("focusout", function (event) {
+                        if(failback){
+                            failback = false;
+                            $scope.livePreview = false;
+                            $scope.$digest();
+                        }
+                    });
+                }
+                // drag 객체 : key-bind="liveChangeDrag"
+                $scope.liveChangeDrag = function($element){
+                    var failback = false;
+                    $element.on("mousedown", function (event) {
+                        $element.on("mousemove", onMousemove);
+                        angular.element(document).on("mouseup", onMouseup);
+                    });
+                    function onMousemove(event) {
+                        if(!$scope.livePreview){
+                            failback = true;
+                            $scope.livePreview = true;
+                            $scope.$digest();
+                        }
+                    }
+                    function onMouseup(event) {
+                        $element.off("mousemove", onMousemove);
+                        angular.element(document).off("mouseup", onMouseup);
+                        if(failback){
+                            failback = false;
+                            $scope.livePreview = false;
+                            $scope.$digest();
+                        }
+                    }
+                }
+
+                // select 객체 : key-bind="liveChangeSelect"
+                $scope.liveChangeSelect = function($element){
+                    $element.on("change", function (event) {
+                        tempChanged($scope.temp);
+                    });
                 }
 
                 ////////////////////////////////////////

@@ -9,82 +9,78 @@
     // type = document
     ////////////////////////////////////////////// -->
 
+    <div><input type="checkbox" ng-model="liveUpdate"> : live update</div>
+            <br><br>
+
     <div ng-show="type=='document'">
         DOCUMENT PROPERTY
 
         <form name="form_document">
 
-              <div>UID : {{uid}}</div><br>
-              <div>Name : (타이틀)</div><br>
+            <div>UID : {{uid}}</div>
+            <br>
 
-              <div class="form">
+            <div>Name : (타이틀)</div>
+            <br>
 
-              Dimensions : 
+            <div class="form">
+
+                Dimensions :
                 <select>
-                  <option ng-selected="paper==='Custom'">Custom</option>
-                  <option ng-selected="paper==='A4'">A4</option>
-                  <option ng-selected="paper==='A3'">A3</option>
+                    <option ng-selected="paper==='Custom'">Custom</option>
+                    <option ng-selected="paper==='A4'">A4</option>
+                    <option ng-selected="paper==='A3'">A3</option>
                 </select>
 
-                  <div ng-include src="'properties-form-size'" style="pointer-events: none" class="deactive"></div>
+                <div ng-include src="'properties-form-size'" style="pointer-events: none" class="deactive"></div>
 
-                  <!--
-                width : <input type="number" name="width"
-                               ng-model="temp.width" ng-model-options="modelOption"
-                               min="0" max="3000" required ng-readonly="true"
-                ng-class="{error: !form_document.width.$valid}" style="width:45px;">
-                height : <input type="number" name="height"
-                                ng-model="temp.height" ng-model-options="modelOption"
-                                min="0" max="3000" required ng-readonly="true"
-                ng-class="{error: !form_document.height.$valid}" style="width:45px;">
-                -->
+                <!--
+              width : <input type="number" name="width"
+                             ng-model="temp.width" ng-model-options="modelOption"
+                             min="0" max="3000" required ng-readonly="true"
+              ng-class="{error: !form_document.width.$valid}" style="width:45px;">
+              height : <input type="number" name="height"
+                              ng-model="temp.height" ng-model-options="modelOption"
+                              min="0" max="3000" required ng-readonly="true"
+              ng-class="{error: !form_document.height.$valid}" style="width:45px;">
+              -->
 
                 <br/>
-                방향 : 
-                <input type="radio" ng-model="paper.direction" value="landscope">  가로 
-                <input type="radio" ng-model="paper.direction" value="portrait">  세로 <br/>
-              </div>
-              <!-- <div>width : <input type="text" name="width" value="{{css.width}}" required ng-pattern="onlyNumbers"></div> -->
+                방향 :
+                <input type="radio" ng-model="paper.direction" value="landscope"> 가로
+                <input type="radio" ng-model="paper.direction" value="portrait"> 세로 <br/>
+            </div>
+            <!-- <div>width : <input type="text" name="width" value="{{css.width}}" required ng-pattern="onlyNumbers"></div> -->
 
             <br><br>
             CONFIGURATION
 
             <!-- 화면 표시 -->
             <div class="form">
-              <div>
-                  <input type="checkbox" ng-model="tempOption.display.show_grid"> 그리드 표시
-              </div>
+                <div>
+                    <input type="checkbox" ng-model="tempOption.display.show_grid"> 그리드 표시
+                </div>
 
-              <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_guide"></div>
-              <div>[*] 눈금자 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_ruler"></div>
-              <div>[*] 도형 윤곽선 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_outline"></div>
+                <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_guide"></div>
+                <div>[*] 눈금자 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_ruler"></div>
+                <div>[*] 도형 윤곽선 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_outline"></div>
             </div>
 
             <div class="form">
-              <div>
-                  snap 크기 :
-                  <input type="number"
-                         ng-model="tempOption.display.snap_pixel" ng-model-options="modelOption"
-                         min="0" max="100" required>
-              </div>
+                <div>
+                    snap 크기 :
+                    <input type="number"
+                           ng-model="tempOption.display.snap_pixel" ng-model-options="modelOption"
+                           min="0" max="100" required>
+                </div>
                 <br> snap 적용 : (그리드, 객체, 가이드라인)
             </div>
 
-                
 
         </form>
 
-    </div><!-- END document -->
-
-
-
-
-
-
-
-
-
-
+    </div>
+    <!-- END document -->
 
 
     <!-- /////////////////////////////////////////////
@@ -93,21 +89,21 @@
 
     <!-- 위치 -->
     <script type="text/ng-template" id="properties-form-position">
-          <form novalidate name="properties_form">
-              [위치]<br>
+        <form novalidate name="properties_form">
+            [위치]<br>
 
-              <div>x : <input type="number"
-                              ng-model="temp.left"  ng-model-options="modelOption"
+            <div>x : <input type="number"
+                            ng-model="temp.left" ng-model-options="modelOption"
+                            key-bind="{ enter: 'submit'}"
+                            min="0" max="3000" required></div>
+            <div>y : <input type="number"
+                            ng-model="temp.top" ng-model-options="modelOption"
+                            key-bind="{ enter: 'submit'}"
+                            min="0" max="3000" required></div>
 
-                              min="0" max="3000" required></div>
-              <div>y : <input type="number"
-                              ng-model="temp.top"  ng-model-options="modelOption"
-                              
-                              min="0" max="3000" required></div>
-
-          </form>
+        </form>
     </script>
-    
+
     <!-- 크기 -->
     <script type="text/ng-template" id="properties-form-size">
           <form novalidate name="properties_form">
@@ -115,9 +111,11 @@
 
               <div>width : <input type="number"
                                   ng-model="temp.width" ng-model-options="modelOption"
+                                  key-bind="{ enter: 'submit'}"
                                   min="0" max="3000" required></div>
               <div>height : <input type="number"
                                    ng-model="temp.height" ng-model-options="modelOption"
+                                   key-bind="{ enter: 'submit'}"
                                    min="0" max="3000" required></div>
               
           </form>
@@ -131,6 +129,7 @@
               <div>테두리 두께 :
                   <input type="number"
                          ng-model="temp.borderGroup.borderWidth"  ng-model-options="modelOption"
+                         key-bind="{ enter: 'submit'}"
                          min="0" max="50">
               </div>
 
@@ -138,11 +137,13 @@
                   <br>테두리 색상 :
                   <input type="text"
                          colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
-                         ng-model="temp.borderGroup.borderColor"  ng-model-options="modelOption"/>
+                         ng-model="temp.borderGroup.borderColor"  ng-model-options="modelOption"
+                         key-bind="{ enter: 'submit'}"/>
 
                   <br>테두리 스타일 :
                   <select ng-model="temp.borderGroup.borderStyle" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']">
+                          ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']"
+                          key-bind="liveChangeSelect">
                       <option value="" style="display:none;"></option>
                   </select>
               </div>
@@ -155,36 +156,44 @@
                       <td style="padding: 5px;">
                           <input type="number"
                                  ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
-                                 min="0" max="1000"> px
+                                 min="0" max="1000"
+                                 key-bind="liveChangeFocus"> px
                           <div ui-slider
                                ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
-                               min="0" max="1000"></div>
+                               min="0" max="1000"
+                               key-bind="liveChangeDrag"></div>
                       </td>
                       <td style="padding: 5px;">
                           <input type="number"
                                  ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
-                                 min="0" max="1000"> px
+                                 min="0" max="1000"
+                                 key-bind="liveChangeFocus"> px
                           <div ui-slider
                                ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
-                               min="0" max="1000"></div>
+                               min="0" max="1000"
+                               key-bind="liveChangeDrag"></div>
                       </td>
                   </tr>
                   <tr>
                       <td style="padding: 5px;">
                           <input type="number"
                                  ng-model="temp.borderBottomLeftRadius" ng-model-options="modelOption"
-                                 min="0" max="1000"> px
+                                 min="0" max="1000"
+                                 key-bind="liveChangeFocus"> px
                           <div ui-slider
                                ng-model="temp.borderBottomLeftRadius" ng-model-options="modelOption"
-                               min="0" max="1000"></div>
+                               min="0" max="1000"
+                               key-bind="liveChangeDrag"></div>
                       </td>
                       <td style="padding: 5px;">
                           <input type="number"
                                  ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
-                                 min="0" max="1000"> px
+                                 min="0" max="1000"
+                                 key-bind="liveChangeFocus"> px
                           <div ui-slider
                                ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
-                               min="0" max="1000"></div>
+                               min="0" max="1000"
+                               key-bind="liveChangeDrag"></div>
                       </td>
                   </tr>
               </table>
@@ -209,6 +218,7 @@
                       <td style="white-space: nowrap;"><input type="number"
                                  ng-model="temp.paddingTop" ng-model-options="modelOption"
                                  min="0" max="1000"
+                                 key-bind="{ enter: 'submit'}"
                                  style="width: 40px"> px</td>
                       <td> </td>
                   </tr>
@@ -216,11 +226,13 @@
                       <td style="white-space: nowrap;"><input type="number"
                                  ng-model="temp.paddingLeft"  ng-model-options="modelOption"
                                  min="0" max="1000"
+                                 key-bind="{ enter: 'submit'}"
                                  style="width: 40px"> px</td>
                       <td> </td>
                       <td style="white-space: nowrap;"><input type="number"
                                  ng-model="temp.paddingRight" ng-model-options="modelOption"
                                  min="0" max="1000"
+                                 key-bind="{ enter: 'submit'}"
                                  style="width: 40px"> px</td>
                   </tr>
                   <tr>
@@ -228,6 +240,7 @@
                       <td style="white-space: nowrap;"><input type="number"
                                  ng-model="temp.paddingBottom" ng-model-options="modelOption"
                                  min="0" max="1000"
+                                 key-bind="{ enter: 'submit'}"
                                  style="width: 40px"> px</td>
                       <td> </td>
                   </tr>
@@ -273,14 +286,16 @@
               -->
               스크롤(overflow) : 
               <select ng-model="temp.overflow" ng-model-options="modelOption"
-                      ng-options="value as value for value in ['visible','hidden','auto','scroll']">
+                      ng-options="value as value for value in ['visible','hidden','auto','scroll']"
+                      key-bind="liveChangeSelect">
                   <option value="" style="display:none;"></option>
               </select>
               <br>
 
               <div>자동 줄바꿈(white-space) :
                   <input type="checkbox" ng-model="temp.whiteSpace" ng-model-options="modelOption"
-                         ng-true-value="'pre-line'" ng-false-value="'nowrap'">
+                         ng-true-value="'pre-line'" ng-false-value="'nowrap'"
+                         ng-change="submit()">
               </div>
 
               <div ng-class="{deactive:(temp.overflow === 'visible' || temp.whiteSpace === 'pre-line')}">
@@ -288,13 +303,15 @@
                   말줄임표시(text-overflow) :
                   <input type="checkbox"
                          ng-model="temp.textOverflow" ng-model-options="modelOption"
-                         ng-true-value="'ellipsis'" ng-false-value="'clip'">
+                         ng-true-value="'ellipsis'" ng-false-value="'clip'"
+                         ng-change="submit()">
               </div>
               <br>
 
               <div>letter-spacing(자간) :
                   <input type="number" ng-model="temp.letterSpacingGroup.num" ng-model-options="modelOption"
                          min="-500" max="500"
+                         key-bind="{ enter: 'submit'}"
                          style="width: 40px;">
                   <input type="text" ng-model="temp.letterSpacingGroup.unit" ng-model-options="modelOption"
                          style="width: 25px" disabled>
@@ -304,9 +321,11 @@
               <div>line-height(행간) :
                   <input type="number" ng-model="temp.lineHeightGroup.num" ng-model-options="modelOption"
                          min="0" max="500"
+                         key-bind="{ enter: 'submit'}"
                          style="width: 40px;">
                   <select ng-model="temp.lineHeightGroup.unit" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['px','em','%']">
+                          ng-options="value as value for value in ['px','em','%']"
+                          key-bind="liveChangeSelect">
                       <option value="" style="display:none;"></option>
                   </select>
               </div>
@@ -314,7 +333,8 @@
               <br>
               <div>text-align(정렬) :
                   <select ng-model="temp.textAlign" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['left','center','right', 'justify']">
+                          ng-options="value as value for value in ['left','center','right', 'justify']"
+                          key-bind="liveChangeSelect">
                       <option value="" style="display:none;"></option>
                   </select>
                  <br> * justify는 IE제외
@@ -328,9 +348,11 @@
               <div>text-indent :
                   <input type="number" ng-model="temp.textIndentGroup.num" ng-model-options="modelOption"
                          min="0" max="500"
+                         key-bind="{ enter: 'submit'}"
                          style="width: 40px;">
                   <select ng-model="temp.textIndentGroup.unit" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['px', 'pt', 'cm', 'em', '%']">
+                          ng-options="value as value for value in ['px', 'pt', 'cm', 'em', '%']"
+                          key-bind="liveChangeSelect">
                       <option value="" style="display:none;"></option>
                   </select>
               </div>
@@ -345,31 +367,36 @@
             <div>column-count :
                 <!--auto(column 의 수가 column-width등의 값에 따라 결정됨) | number-->
                 <select ng-model="temp.columnCount" ng-model-options="modelOption"
-                        ng-options="value as value for value in ['auto','1','2','3','4','5']">
+                        ng-options="value as value for value in ['auto','1','2','3','4','5']"
+                        key-bind="liveChangeSelect">
                     <option value="" style="display:none;"></option>
                 </select>
             </div>
             <div>column-gap :
                 <!--column-gap: px|normal-->
                 <input type="number" ng-model="temp.columnGap" ng-model-options="modelOption"
-                       min="1" max="500"> px
+                       min="1" max="500"
+                       key-bind="{ enter: 'submit'}"> px
             </div>
             <div>column-rule-width :
                 <!--column-rule-width: medium|thin|thick|length-->
                 <input type="number" ng-model="temp.columnRuleGroup.columnRuleWidth" ng-model-options="modelOption"
-                       min="1" max="500"> px
+                       min="1" max="500"
+                       key-bind="{ enter: 'submit'}"> px
             </div>
             <div>column-rule-style :
                 <!--column-rule-style: none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset-->
                 <select ng-model="temp.columnRuleGroup.columnRuleStyle" ng-model-options="modelOption"
-                        ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']">
+                        ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']"
+                        key-bind="liveChangeSelect">
                     <option value="" style="display:none;"></option>
                 </select>
             </div>
             <div>column-rule-color :
                 <input type="text"
                        colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
-                       ng-model="temp.columnRuleGroup.columnRuleColor" ng-model-options="modelOption"/>
+                       ng-model="temp.columnRuleGroup.columnRuleColor" ng-model-options="modelOption"
+                       key-bind="{ enter: 'submit'}">
             </div>
 
         </form>
@@ -383,6 +410,7 @@
               font-family :
               <select ng-model="temp.fontFamilyGroup"
                       ng-options="font.label group by font.group for font in fontOptions"
+                      key-bind="liveChangeSelect"
                       style="width: 120px;">
                   <option value="" style="display:none;"></option>
               </select>
@@ -392,9 +420,11 @@
                   <input type="number"
                          ng-model="temp.fontSizeGroup.num" ng-model-options="modelOption"
                          min="{{temp.fontSize.min}}" max="{{temp.fontSize.max}}"
+                         key-bind="{ enter: 'submit'}"
                          style="width: 50px;">
                   <select ng-model="temp.fontSizeGroup.unit" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['px','em','%']">
+                          ng-options="value as value for value in ['px','em','%']"
+                          key-bind="liveChangeSelect">
                       <option value="" style="display:none;"></option>
                   </select>
               </div>
@@ -403,7 +433,8 @@
               <div>color :
                   <input type="text"
                          colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
-                         ng-model="temp.color" ng-model-options="modelOption"/>
+                         ng-model="temp.color" ng-model-options="modelOption"
+                         key-bind="{ enter: 'submit'}"/>
               </div>
 
           </form>
@@ -415,13 +446,16 @@
 
               [텍스트]
               <br>font-weight(bold) : <input type="checkbox" ng-model="temp.fontWeight" ng-model-options="modelOption"
-                                       ng-true-value="'bold'" ng-false-value="'normal'">
+                                       ng-true-value="'bold'" ng-false-value="'normal'"
+                                       ng-change="submit()">
               <br>font-style(italic) : <input type="checkbox" ng-model="temp.fontStyle" ng-model-options="modelOption"
-                                      ng-true-value="'italic'" ng-false-value="'normal'">
+                                      ng-true-value="'italic'" ng-false-value="'normal'"
+                                      ng-change="submit()">
               <!--text-decoration: none|underline|overline|line-through|initial|inherit;-->
               <br>text-decoration(underline) : <input type="checkbox"
                                            ng-model="temp.textDecoration" ng-model-options="modelOption"
-                                           ng-true-value="'underline'" ng-false-value="'none'">
+                                           ng-true-value="'underline'" ng-false-value="'none'"
+                                           ng-change="submit()">
               <br>text-decoration(line-through)
           </form>
     </script>
@@ -446,7 +480,8 @@
             <div>
                 <input type="text"
                        colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
-                       ng-model="temp.backgroundColor"  ng-model-options="modelOption"/>
+                       ng-model="temp.backgroundColor"  ng-model-options="modelOption"
+                       key-bind="{ enter: 'submit'}"/>
             </div>
 
             <!--
@@ -520,7 +555,7 @@
         </form>
 
     </div><!-- END text -->
-
+=======================================================================================
             <!-- /////////////////////////////////////////////
             // type = ELEMENT.IMAGE
             ////////////////////////////////////////////// -->
