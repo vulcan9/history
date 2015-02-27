@@ -612,10 +612,10 @@ define(['U'], function (U) {
 
                                 case 'backgroundPositionX':
                                 case 'backgroundPositionY':
-                                    newObj = newValue[name];
-                                    newCSS = newObj + '%';
-                                    currentCSS = getCSSValue(name, null, true);
-                                    currentObj = currentCSS + '%';
+                                    newObj = newValue[name] + '%';
+                                    newCSS = newObj;
+                                    currentCSS = getCSSValue(name, null, true) + '%';
+                                    currentObj = currentCSS;
                                     isGroup = false;
                                     break;
 
@@ -719,6 +719,7 @@ define(['U'], function (U) {
                 // 미리 적용해봄
                 function modifyPreview(changeList, tempObj){
 
+                    if(!changeList) return;
                     $timeout.cancel(__delayTimeout);
 
                     var $currentElement = $(_currentElement);
@@ -899,20 +900,7 @@ define(['U'], function (U) {
                     temp.backgroundPositionX = getCSSValue('backgroundPositionX', paramCSS, true);
                     temp.backgroundPositionY = getCSSValue('backgroundPositionY', paramCSS, true);
 
-                    // 기타 인터렉션에 필요한 값 리셋
-                    initializeProperties(temp);
-
                     return temp;
-                }
-
-                //--------------------------------------
-                // 기타 속성창 Form 동작에 필요한 property값을 초기화한다.
-                //--------------------------------------
-
-                function initializeProperties(temp){
-                    $scope._backgroundImageGroup = {
-                        url: temp.backgroundImageGroup.url
-                    }
                 }
 
                 ////////////////////////////////////////
@@ -927,12 +915,6 @@ define(['U'], function (U) {
                     if(!$scope.livePreview) tempChanged($scope.temp);
 
                     //****************************
-                }
-
-                $scope.enter_backgroundImage = function(){
-                    if($scope.temp.backgroundImageGroup.url == $scope._backgroundImageGroup.url) return;
-                    $scope.temp.backgroundImageGroup.url = $scope._backgroundImageGroup.url;
-                    tempChanged($scope.temp);
                 }
 
                 //--------------------------------------
@@ -1005,7 +987,7 @@ define(['U'], function (U) {
                     } else {
                         value = paramCSS[name] || style[name] || $dom.css(name);
                         // px가 안붙는 버그(크롬)
-                        if (name == 'letterSpacing' && value.toString().indexOf('px' < 0)) value = value + 'px';
+                        if (name == 'letterSpacing' && value.toString().indexOf('px') < 0) value = value + 'px';
                         //out(name, ' : ', value, '(', paramCSS[name], '-', style[name], '-', $dom.css(name), ')');
                     }
                     return value;

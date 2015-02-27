@@ -2,560 +2,586 @@
 
     <div class="hi-property">
 
-        <p> PropertyView : <span class="label label-success" ng-click="pannelToggle();">toggle</span> </p>
+        <p> PropertyView : <span class="label label-success" ng-click="pannelToggle();">toggle</span></p>
+
         <div style="padding: 10px;">
 
-    <!-- /////////////////////////////////////////////
-    // type = document
-    ////////////////////////////////////////////// -->
+            <!-- /////////////////////////////////////////////
+            // type = document
+            ////////////////////////////////////////////// -->
 
-    <div><input type="checkbox" ng-model="liveUpdate"> : live update</div>
+            <div><input type="checkbox" ng-model="livePreview"> : live Preview</div>
             <br><br>
 
-    <div ng-show="type=='document'">
-        DOCUMENT PROPERTY
+            <div ng-show="type=='document'">
+                DOCUMENT PROPERTY
 
-        <form name="form_document">
+                <form name="form_document">
 
-            <div>UID : {{uid}}</div>
-            <br>
+                    <div>UID : {{uid}}</div>
+                    <br>
 
-            <div>Name : (타이틀)</div>
-            <br>
+                    <div>Name : (타이틀)</div>
+                    <br>
 
-            <div class="form">
+                    <div class="form">
 
-                Dimensions :
-                <select>
-                    <option ng-selected="paper==='Custom'">Custom</option>
-                    <option ng-selected="paper==='A4'">A4</option>
-                    <option ng-selected="paper==='A3'">A3</option>
-                </select>
+                        Dimensions :
+                        <select>
+                            <option ng-selected="paper==='Custom'">Custom</option>
+                            <option ng-selected="paper==='A4'">A4</option>
+                            <option ng-selected="paper==='A3'">A3</option>
+                        </select>
 
-                <div ng-include src="'properties-form-size'" style="pointer-events: none" class="deactive"></div>
+                        <div ng-include src="'properties-form-size'" style="pointer-events: none"
+                             class="deactive"></div>
 
-                <!--
-              width : <input type="number" name="width"
-                             ng-model="temp.width" ng-model-options="modelOption"
-                             min="0" max="3000" required ng-readonly="true"
-              ng-class="{error: !form_document.width.$valid}" style="width:45px;">
-              height : <input type="number" name="height"
-                              ng-model="temp.height" ng-model-options="modelOption"
-                              min="0" max="3000" required ng-readonly="true"
-              ng-class="{error: !form_document.height.$valid}" style="width:45px;">
-              -->
+                        <!--
+                      width : <input type="number" name="width"
+                                     ng-model="temp.width" ng-model-options="modelOption"
+                                     min="0" max="3000" required ng-readonly="true"
+                      ng-class="{error: !form_document.width.$valid}" style="width:45px;">
+                      height : <input type="number" name="height"
+                                      ng-model="temp.height" ng-model-options="modelOption"
+                                      min="0" max="3000" required ng-readonly="true"
+                      ng-class="{error: !form_document.height.$valid}" style="width:45px;">
+                      -->
 
-                <br/>
-                방향 :
-                <input type="radio" ng-model="paper.direction" value="landscope"> 가로
-                <input type="radio" ng-model="paper.direction" value="portrait"> 세로 <br/>
+                        <br/>
+                        방향 :
+                        <input type="radio" ng-model="paper.direction" value="landscope"> 가로
+                        <input type="radio" ng-model="paper.direction" value="portrait"> 세로 <br/>
+                    </div>
+                    <!-- <div>width : <input type="text" name="width" value="{{css.width}}" required ng-pattern="onlyNumbers"></div> -->
+
+                    <br><br>
+                    CONFIGURATION
+
+                    <!-- 화면 표시 -->
+                    <div class="form">
+                        <div>
+                            <input type="checkbox" ng-model="tempOption.display.show_grid"> 그리드 표시
+                        </div>
+
+                        <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_guide"></div>
+                        <div>[*] 눈금자 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_ruler"></div>
+                        <div>[*] 도형 윤곽선 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_outline">
+                        </div>
+                    </div>
+
+                    <div class="form">
+                        <div>
+                            snap 크기 :
+                            <input type="number"
+                                   ng-model="tempOption.display.snap_pixel" ng-model-options="modelOption"
+                                   min="0" max="100" required>
+                        </div>
+                        <br> snap 적용 : (그리드, 객체, 가이드라인)
+                    </div>
+
+
+                </form>
+
             </div>
-            <!-- <div>width : <input type="text" name="width" value="{{css.width}}" required ng-pattern="onlyNumbers"></div> -->
+            <!-- END document -->
 
-            <br><br>
-            CONFIGURATION
 
-            <!-- 화면 표시 -->
-            <div class="form">
-                <div>
-                    <input type="checkbox" ng-model="tempOption.display.show_grid"> 그리드 표시
-                </div>
+            <!-- /////////////////////////////////////////////
+            // 공통 템플릿
+            ////////////////////////////////////////////// -->
 
-                <div>[*] 가이드라인 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_guide"></div>
-                <div>[*] 눈금자 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_ruler"></div>
-                <div>[*] 도형 윤곽선 표시 (준비중) : <input type="checkbox" ng-model="tempOption.display.show_outline"></div>
+            <!-- 위치 -->
+            <script type="text/ng-template" id="properties-form-position">
+                <form novalidate name="properties_form">
+                    [위치]<br>
+
+                    <div>x : <input type="number"
+                                    ng-model="temp.left" ng-model-options="modelOption"
+                                    key-bind="{ enter: 'submit'}"
+                                    min="0" max="3000" required></div>
+                    <div>y : <input type="number"
+                                    ng-model="temp.top" ng-model-options="modelOption"
+                                    key-bind="{ enter: 'submit'}"
+                                    min="0" max="3000" required></div>
+
+                </form>
+            </script>
+
+            <!-- 크기 -->
+            <script type="text/ng-template" id="properties-form-size">
+                <form novalidate name="properties_form">
+                    [크기]<br>
+
+                    <div>width : <input type="number"
+                                        ng-model="temp.width" ng-model-options="modelOption"
+                                        key-bind="{ enter: 'submit'}"
+                                        min="0" max="3000" required></div>
+                    <div>height : <input type="number"
+                                         ng-model="temp.height" ng-model-options="modelOption"
+                                         key-bind="{ enter: 'submit'}"
+                                         min="0" max="3000" required></div>
+
+                </form>
+            </script>
+
+            <!-- 테두리 -->
+            <script type="text/ng-template" id="properties-form-border">
+                <form novalidate name="properties_form">
+                    [테두리]<br>
+
+                    <div>테두리 두께 :
+                        <input type="number"
+                               ng-model="temp.borderGroup.borderWidth" ng-model-options="modelOption"
+                               key-bind="{ enter: 'submit'}"
+                               min="0" max="50">
+                    </div>
+
+                    <div ng-if="temp.borderGroup.borderWidth > 0">
+                        <br>테두리 색상 :
+                        <br>
+                        <input type="text" readonly
+                               class="hi-colorpicker"
+                               colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
+                               ng-style="{'background-color':temp.borderGroup.borderColor}"
+                               ng-model="temp.borderGroup.borderColor" ng-model-options="modelOption"
+                               key-bind="liveChangeFocus"/>
+                        <span>{{temp.borderGroup.borderColor}}</span>
+
+                        <br>테두리 스타일 :
+                        <select ng-model="temp.borderGroup.borderStyle" ng-model-options="modelOption"
+                                ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']"
+                                key-bind="liveChangeSelect">
+                            <option value="" style="display:none;"></option>
+                        </select>
+                    </div>
+
+
+                    <br>테두리 라운딩 : (모서리 4군데 각각 속성 지정)
+                    <br><br>
+                    <table>
+                        <tr>
+                            <td style="padding: 5px;">
+                                <input type="number"
+                                       ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
+                                       min="0" max="1000"
+                                       key-bind="{enter:'submit'}"> px
+                                <div ui-slider
+                                     ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
+                                     min="0" max="1000"
+                                     key-bind="liveChangeDrag"></div>
+                            </td>
+                            <td style="padding: 5px;">
+                                <input type="number"
+                                       ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
+                                       min="0" max="1000"
+                                       key-bind="{enter:'submit'}"> px
+                                <div ui-slider
+                                     ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
+                                     min="0" max="1000"
+                                     key-bind="liveChangeDrag"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 5px;">
+                                <input type="number"
+                                       ng-model="temp.borderBottomLeftRadius" ng-model-options="modelOption"
+                                       min="0" max="1000"
+                                       key-bind="{enter:'submit'}"> px
+                                <div ui-slider
+                                     ng-model="temp.borderBottomLeftRadius" ng-model-options="modelOption"
+                                     min="0" max="1000"
+                                     key-bind="liveChangeDrag"></div>
+                            </td>
+                            <td style="padding: 5px;">
+                                <input type="number"
+                                       ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
+                                       min="0" max="1000"
+                                       key-bind="{enter:'submit'}"> px
+                                <div ui-slider
+                                     ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
+                                     min="0" max="1000"
+                                     key-bind="liveChangeDrag"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <br>
+
+                    <div>top-left-radius : {{temp.borderTopLeftRadius}} px</div>
+                    <div>top-right-radius : {{temp.borderTopRightRadius}} px</div>
+                    <div>bottom-left-radius : {{temp.borderBottomLeftRadius}} px</div>
+                    <div>bottom-right-radius : {{temp.borderBottomRightRadius}} px</div>
+
+                </form>
+            </script>
+
+            <!-- 여백 -->
+            <script type="text/ng-template" id="properties-form-padding">
+                <form novalidate name="properties_form">
+                    [여백]<br>
+                    <br>패딩 : (4군데 각각 속성 지정)
+                    <br><br>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td style="white-space: nowrap;"><input type="number"
+                                                                    ng-model="temp.paddingTop"
+                                                                    ng-model-options="modelOption"
+                                                                    min="0" max="1000"
+                                                                    key-bind="{ enter: 'submit'}"
+                                                                    style="width: 40px"> px
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td style="white-space: nowrap;"><input type="number"
+                                                                    ng-model="temp.paddingLeft"
+                                                                    ng-model-options="modelOption"
+                                                                    min="0" max="1000"
+                                                                    key-bind="{ enter: 'submit'}"
+                                                                    style="width: 40px"> px
+                            </td>
+                            <td></td>
+                            <td style="white-space: nowrap;"><input type="number"
+                                                                    ng-model="temp.paddingRight"
+                                                                    ng-model-options="modelOption"
+                                                                    min="0" max="1000"
+                                                                    key-bind="{ enter: 'submit'}"
+                                                                    style="width: 40px"> px
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="white-space: nowrap;"><input type="number"
+                                                                    ng-model="temp.paddingBottom"
+                                                                    ng-model-options="modelOption"
+                                                                    min="0" max="1000"
+                                                                    key-bind="{ enter: 'submit'}"
+                                                                    style="width: 40px"> px
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <br>
+
+                    <div>padding-top : {{temp.paddingTop}}</div>
+                    <div>padding-right : {{temp.paddingRight}}</div>
+                    <div>padding-bottom : {{temp.paddingBottom}}</div>
+                    <div>padding-left : {{temp.paddingLeft}}</div>
+
+                </form>
+            </script>
+
+            <!-- 스크롤
+            <script type="text/ng-template" id="properties-form-overflow">
+                  <form novalidate name="properties_form">
+
+                      <br><br>
+                      [스크롤]<br>
+
+                      <br>overflow-x:
+                      <select name="overflowX" ng-model="css.overflowX" ng-options="value as value for value in ['visible','hidden','auto','scroll']"
+                          ng-class="{error: !properties_form.overflowX.$valid}">
+                          <option value="" style="display:none;"></option>
+                      </select>
+                      <br>overflow-y:
+                      <select name="overflowY" ng-model="css.overflowY" ng-options="value as value for value in ['visible','hidden','auto','scroll']"
+                          ng-class="{error: !properties_form.overflowY.$valid}">
+                          <option value="" style="display:none;"></option>
+                      </select>
+
+                  </form>
+            </script>
+             -->
+
+            <!-- 문단 모양 -->
+            <script type="text/ng-template" id="properties-form-paragraph">
+                <form novalidate name="properties_form">
+                    [문단 Paragraphs]<br>
+                    <!--
+                    <div>word-wrap : <input type="checkbox" ng-model="css.wordWrap" ng-true-value="'break-word'" ng-false-value="'normal'"></div>
+                    <br>
+                    -->
+                    스크롤(overflow) :
+                    <select ng-model="temp.overflow" ng-model-options="modelOption"
+                            ng-options="value as value for value in ['visible','hidden','auto','scroll']"
+                            key-bind="liveChangeSelect">
+                        <option value="" style="display:none;"></option>
+                    </select>
+                    <br>
+
+                    <div>자동 줄바꿈(white-space) :
+                        <input type="checkbox" ng-model="temp.whiteSpace" ng-model-options="modelOption"
+                               ng-true-value="'pre-line'" ng-false-value="'nowrap'"
+                               ng-change="submit()">
+                    </div>
+
+                    <div ng-class="{deactive:(temp.overflow === 'visible' || temp.whiteSpace === 'pre-line')}">
+                        <!--<div ng-show="temp.overflow === 'hidden' && temp.whiteSpace === 'nowrap'">-->
+                        말줄임표시(text-overflow) :
+                        <input type="checkbox"
+                               ng-model="temp.textOverflow" ng-model-options="modelOption"
+                               ng-true-value="'ellipsis'" ng-false-value="'clip'"
+                               ng-change="submit()">
+                    </div>
+                    <br>
+
+                    <div>letter-spacing(자간) :
+                        <input type="number" ng-model="temp.letterSpacingGroup.num" ng-model-options="modelOption"
+                               min="-500" max="500"
+                               key-bind="{ enter: 'submit'}"
+                               style="width: 40px;">
+                        <input type="text" ng-model="temp.letterSpacingGroup.unit" ng-model-options="modelOption"
+                               style="width: 25px" disabled>
+                    </div>
+
+                    <br>
+
+                    <div>line-height(행간) :
+                        <input type="number" ng-model="temp.lineHeightGroup.num" ng-model-options="modelOption"
+                               min="0" max="500"
+                               key-bind="{ enter: 'submit'}"
+                               style="width: 40px;">
+                        <select ng-model="temp.lineHeightGroup.unit" ng-model-options="modelOption"
+                                ng-options="value as value for value in ['px','em','%']"
+                                key-bind="liveChangeSelect">
+                            <option value="" style="display:none;"></option>
+                        </select>
+                    </div>
+
+                    <br>
+
+                    <div>text-align(정렬) :
+                        <select ng-model="temp.textAlign" ng-model-options="modelOption"
+                                ng-options="value as value for value in ['left','center','right', 'justify']"
+                                key-bind="liveChangeSelect">
+                            <option value="" style="display:none;"></option>
+                        </select>
+                        <br> * justify는 IE제외
+                        <!--
+                          객체 align (IE11이상 지원)
+                          justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
+                        -->
+                    </div>
+
+                    <br>
+
+                    <div>text-indent :
+                        <input type="number" ng-model="temp.textIndentGroup.num" ng-model-options="modelOption"
+                               min="0" max="500"
+                               key-bind="{ enter: 'submit'}"
+                               style="width: 40px;">
+                        <select ng-model="temp.textIndentGroup.unit" ng-model-options="modelOption"
+                                ng-options="value as value for value in ['px', 'pt', 'cm', 'em', '%']"
+                                key-bind="liveChangeSelect">
+                            <option value="" style="display:none;"></option>
+                        </select>
+                    </div>
+                </form>
+            </script>
+
+            <!-- 단락 모양 -->
+            <script type="text/ng-template" id="properties-form-column">
+                <form novalidate name="properties_form">
+                    [다단]<br>
+
+                    <div>column-count :
+                        <!--auto(column 의 수가 column-width등의 값에 따라 결정됨) | number-->
+                        <select ng-model="temp.columnCount" ng-model-options="modelOption"
+                                ng-options="value as value for value in ['auto','1','2','3','4','5']"
+                                key-bind="liveChangeSelect">
+                            <option value="" style="display:none;"></option>
+                        </select>
+                    </div>
+                    <div>column-gap :
+                        <!--column-gap: px|normal-->
+                        <input type="number" ng-model="temp.columnGap" ng-model-options="modelOption"
+                               min="1" max="500"
+                               key-bind="{ enter: 'submit'}"> px
+                    </div>
+                    <div>column-rule-width :
+                        <!--column-rule-width: medium|thin|thick|length-->
+                        <input type="number" ng-model="temp.columnRuleGroup.columnRuleWidth"
+                               ng-model-options="modelOption"
+                               min="1" max="500"
+                               key-bind="{ enter: 'submit'}"> px
+                    </div>
+                    <div>column-rule-style :
+                        <!--column-rule-style: none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset-->
+                        <select ng-model="temp.columnRuleGroup.columnRuleStyle" ng-model-options="modelOption"
+                                ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']"
+                                key-bind="liveChangeSelect">
+                            <option value="" style="display:none;"></option>
+                        </select>
+                    </div>
+                    <div>column-rule-color :
+                        <br><input type="text" readonly
+                               class="hi-colorpicker"
+                               colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
+                               ng-style="{'background-color':temp.columnRuleGroup.columnRuleColor}"
+                               ng-model="temp.columnRuleGroup.columnRuleColor" ng-model-options="modelOption"
+                               key-bind="liveChangeFocus"/>
+                        <span>{{temp.columnRuleGroup.columnRuleColor}}</span>
+                    </div>
+
+                </form>
+            </script>
+
+            <!-- 폰트 -->
+            <script type="text/ng-template" id="properties-form-font">
+                <form novalidate name="properties_form">
+                    [폰트]<br>
+
+                    font-family :
+                    <select ng-model="temp.fontFamilyGroup"
+                            ng-options="font.label group by font.group for font in fontOptions"
+                            key-bind="liveChangeSelect"
+                            style="width: 120px;">
+                        <option value="" style="display:none;"></option>
+                    </select>
+
+                    <br><br>
+
+                    <div>font-size :
+                        <input type="number"
+                               ng-model="temp.fontSizeGroup.num" ng-model-options="modelOption"
+                               min="{{temp.fontSize.min}}" max="{{temp.fontSize.max}}"
+                               key-bind="{ enter: 'submit'}"
+                               style="width: 50px;">
+                        <select ng-model="temp.fontSizeGroup.unit" ng-model-options="modelOption"
+                                ng-options="value as value for value in ['px','em','%']"
+                                key-bind="liveChangeSelect">
+                            <option value="" style="display:none;"></option>
+                        </select>
+                    </div>
+
+                    <br>
+
+                    <div>color :
+                        <br><input type="text" readonly
+                                   class="hi-colorpicker"
+                                   colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
+                                   ng-style="{'background-color':temp.color}"
+                                   ng-model="temp.color" ng-model-options="modelOption"
+                                   key-bind="liveChangeFocus"/>
+                        <span>{{temp.color}}</span>
+                    </div>
+
+                </form>
+            </script>
+
+            <!-- 텍스트 -->
+            <script type="text/ng-template" id="properties-form-text">
+                <form novalidate name="properties_form">
+
+                    [텍스트]
+                    <br>font-weight(bold) : <input type="checkbox" ng-model="temp.fontWeight"
+                                                   ng-model-options="modelOption"
+                                                   ng-true-value="'bold'" ng-false-value="'normal'"
+                                                   ng-change="submit()">
+                    <br>font-style(italic) : <input type="checkbox" ng-model="temp.fontStyle"
+                                                    ng-model-options="modelOption"
+                                                    ng-true-value="'italic'" ng-false-value="'normal'"
+                                                    ng-change="submit()">
+                    <!--text-decoration: none|underline|overline|line-through|initial|inherit;-->
+                    <br>text-decoration(underline) : <input type="checkbox"
+                                                            ng-model="temp.textDecoration"
+                                                            ng-model-options="modelOption"
+                                                            ng-true-value="'underline'" ng-false-value="'none'"
+                                                            ng-change="submit()">
+                    <br>text-decoration(line-through)
+                </form>
+            </script>
+
+
+            <!-- 배경 -->
+            <script type="text/ng-template" id="properties-form-background">
+                <form novalidate name="properties_form">
+                    [배경]<br>
+                    <!--
+                    <br>transparent :
+                    <input type="checkbox"
+                           ng-model="temp.backgroundColorGroup.transparent" ng-model-options="modelOption">
+
+                     ng-class="{deactive:temp.backgroundColorGroup.transparent}"
+                    -->
+                    <br>배경 색상(background-color) :<br>
+                    <div>
+                        <input type="text" readonly
+                               class="hi-colorpicker"
+                               colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
+                               ng-style="{'background-color':temp.backgroundColor}"
+                               ng-model="temp.backgroundColor" ng-model-options="modelOption"
+                               key-bind="liveChangeFocus"/>
+                        <span>{{temp.backgroundColor}}</span>
+                    </div>
+
+                    <!--
+                    /*background-size: auto|length|cover|contain;*/
+                    background-size : auto auto;
+                    /*background-attachment: scroll|fixed|local;*/
+                    background-attachment : scroll;
+                    /*background-clip: border-box|padding-box|content-box;*/
+                    background-clip : border-box;
+                    /*background-origin: padding-box|border-box|content-box;*/
+                    background-origin : padding-box;
+                    -->
+                </form>
+            </script>
+
+            <script type="text/ng-template" id="properties-form-link">
+                <form novalidate name="properties_form">
+                    <br>
+                    [하이퍼 링크]
+                </form>
+            </script>
+
+            <script type="text/ng-template" id="properties-form-button">
+                <form novalidate name="properties_form">
+                    <br>[버튼 롤오버,다운 지정]
+                    <br>
+                </form>
+            </script>
+
+
+            <!-- /////////////////////////////////////////////
+            // type = ELEMENT.TEXT
+            ////////////////////////////////////////////// -->
+
+            <div ng-show="type == 'text'">
+                ELEMENT ({{type}}) PROPERTY
+
+                <form name="properties_form">
+
+                    <div>UID : {{uid}}</div>
+                    <br><br>
+
+                    <div>type : {{type}}</div>
+                    <div>ID : 사용자가 지정한 아이디</div>
+
+                    <div class="form" ng-include src="'properties-form-text'"></div>
+
+                    <!-- 기본 속성 -->
+                    <div class="form" ng-include src="'properties-form-position'"></div>
+                    <div class="form" ng-include src="'properties-form-size'"></div>
+                    <div class="form" ng-include src="'properties-form-background'"></div>
+
+                    <div class="form" ng-include src="'properties-form-border'"></div>
+                    <div class="form" ng-include src="'properties-form-padding'"></div>
+
+                    <div class="form" ng-include src="'properties-form-font'"></div>
+                    <div class="form" ng-include src="'properties-form-paragraph'"></div>
+                    <div class="form" ng-include src="'properties-form-column'"></div>
+
+                    <div class="form" ng-include src="'properties-form-link'"></div>
+                    <div class="form" ng-include src="'properties-form-button'"></div>
+
+                    <!--<br><div>* 텍스트 박스 크기에 맞춤 : <input type="checkbox" ng-model="option.display_size_toText"></div>-->
+
+                </form>
+
             </div>
+            <!-- END text -->
 
-            <div class="form">
-                <div>
-                    snap 크기 :
-                    <input type="number"
-                           ng-model="tempOption.display.snap_pixel" ng-model-options="modelOption"
-                           min="0" max="100" required>
-                </div>
-                <br> snap 적용 : (그리드, 객체, 가이드라인)
-            </div>
-
-
-        </form>
-
-    </div>
-    <!-- END document -->
-
-
-    <!-- /////////////////////////////////////////////
-    // 공통 템플릿
-    ////////////////////////////////////////////// -->
-
-    <!-- 위치 -->
-    <script type="text/ng-template" id="properties-form-position">
-        <form novalidate name="properties_form">
-            [위치]<br>
-
-            <div>x : <input type="number"
-                            ng-model="temp.left" ng-model-options="modelOption"
-                            key-bind="{ enter: 'submit'}"
-                            min="0" max="3000" required></div>
-            <div>y : <input type="number"
-                            ng-model="temp.top" ng-model-options="modelOption"
-                            key-bind="{ enter: 'submit'}"
-                            min="0" max="3000" required></div>
-
-        </form>
-    </script>
-
-    <!-- 크기 -->
-    <script type="text/ng-template" id="properties-form-size">
-          <form novalidate name="properties_form">
-              [크기]<br>
-
-              <div>width : <input type="number"
-                                  ng-model="temp.width" ng-model-options="modelOption"
-                                  key-bind="{ enter: 'submit'}"
-                                  min="0" max="3000" required></div>
-              <div>height : <input type="number"
-                                   ng-model="temp.height" ng-model-options="modelOption"
-                                   key-bind="{ enter: 'submit'}"
-                                   min="0" max="3000" required></div>
-              
-          </form>
-    </script>
-
-    <!-- 테두리 -->
-    <script type="text/ng-template" id="properties-form-border">
-          <form novalidate name="properties_form">
-              [테두리]<br>
-
-              <div>테두리 두께 :
-                  <input type="number"
-                         ng-model="temp.borderGroup.borderWidth"  ng-model-options="modelOption"
-                         key-bind="{ enter: 'submit'}"
-                         min="0" max="50">
-              </div>
-
-              <div ng-if="temp.borderGroup.borderWidth > 0">
-                  <br>테두리 색상 :
-                  <input type="text"
-                         colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
-                         ng-model="temp.borderGroup.borderColor"  ng-model-options="modelOption"
-                         key-bind="{ enter: 'submit'}"/>
-
-                  <br>테두리 스타일 :
-                  <select ng-model="temp.borderGroup.borderStyle" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']"
-                          key-bind="liveChangeSelect">
-                      <option value="" style="display:none;"></option>
-                  </select>
-              </div>
-
-
-              <br>테두리 라운딩 : (모서리 4군데 각각 속성 지정)
-              <br><br>
-              <table>
-                  <tr>
-                      <td style="padding: 5px;">
-                          <input type="number"
-                                 ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
-                                 min="0" max="1000"
-                                 key-bind="liveChangeFocus"> px
-                          <div ui-slider
-                               ng-model="temp.borderTopLeftRadius" ng-model-options="modelOption"
-                               min="0" max="1000"
-                               key-bind="liveChangeDrag"></div>
-                      </td>
-                      <td style="padding: 5px;">
-                          <input type="number"
-                                 ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
-                                 min="0" max="1000"
-                                 key-bind="liveChangeFocus"> px
-                          <div ui-slider
-                               ng-model="temp.borderTopRightRadius" ng-model-options="modelOption"
-                               min="0" max="1000"
-                               key-bind="liveChangeDrag"></div>
-                      </td>
-                  </tr>
-                  <tr>
-                      <td style="padding: 5px;">
-                          <input type="number"
-                                 ng-model="temp.borderBottomLeftRadius" ng-model-options="modelOption"
-                                 min="0" max="1000"
-                                 key-bind="liveChangeFocus"> px
-                          <div ui-slider
-                               ng-model="temp.borderBottomLeftRadius" ng-model-options="modelOption"
-                               min="0" max="1000"
-                               key-bind="liveChangeDrag"></div>
-                      </td>
-                      <td style="padding: 5px;">
-                          <input type="number"
-                                 ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
-                                 min="0" max="1000"
-                                 key-bind="liveChangeFocus"> px
-                          <div ui-slider
-                               ng-model="temp.borderBottomRightRadius" ng-model-options="modelOption"
-                               min="0" max="1000"
-                               key-bind="liveChangeDrag"></div>
-                      </td>
-                  </tr>
-              </table>
-              <br>
-              <div>top-left-radius : {{temp.borderTopLeftRadius}} px</div>
-              <div>top-right-radius : {{temp.borderTopRightRadius}} px</div>
-              <div>bottom-left-radius : {{temp.borderBottomLeftRadius}} px</div>
-              <div>bottom-right-radius : {{temp.borderBottomRightRadius}} px</div>
-
-          </form>
-    </script>
-
-    <!-- 여백 -->
-    <script type="text/ng-template" id="properties-form-padding">
-          <form novalidate name="properties_form">
-              [여백]<br>
-              <br>패딩 :  (4군데 각각 속성 지정)
-              <br><br>
-              <table>
-                  <tr>
-                      <td> </td>
-                      <td style="white-space: nowrap;"><input type="number"
-                                 ng-model="temp.paddingTop" ng-model-options="modelOption"
-                                 min="0" max="1000"
-                                 key-bind="{ enter: 'submit'}"
-                                 style="width: 40px"> px</td>
-                      <td> </td>
-                  </tr>
-                  <tr>
-                      <td style="white-space: nowrap;"><input type="number"
-                                 ng-model="temp.paddingLeft"  ng-model-options="modelOption"
-                                 min="0" max="1000"
-                                 key-bind="{ enter: 'submit'}"
-                                 style="width: 40px"> px</td>
-                      <td> </td>
-                      <td style="white-space: nowrap;"><input type="number"
-                                 ng-model="temp.paddingRight" ng-model-options="modelOption"
-                                 min="0" max="1000"
-                                 key-bind="{ enter: 'submit'}"
-                                 style="width: 40px"> px</td>
-                  </tr>
-                  <tr>
-                      <td> </td>
-                      <td style="white-space: nowrap;"><input type="number"
-                                 ng-model="temp.paddingBottom" ng-model-options="modelOption"
-                                 min="0" max="1000"
-                                 key-bind="{ enter: 'submit'}"
-                                 style="width: 40px"> px</td>
-                      <td> </td>
-                  </tr>
-              </table>
-              <br>
-              <div>padding-top : {{temp.paddingTop}}</div>
-              <div>padding-right : {{temp.paddingRight}}</div>
-              <div>padding-bottom : {{temp.paddingBottom}}</div>
-              <div>padding-left : {{temp.paddingLeft}}</div>
-
-          </form>
-    </script>
-
-    <!-- 스크롤
-    <script type="text/ng-template" id="properties-form-overflow">
-          <form novalidate name="properties_form">
-              
-              <br><br>
-              [스크롤]<br>
-
-              <br>overflow-x:
-              <select name="overflowX" ng-model="css.overflowX" ng-options="value as value for value in ['visible','hidden','auto','scroll']"
-                  ng-class="{error: !properties_form.overflowX.$valid}">
-                  <option value="" style="display:none;"></option>
-              </select>
-              <br>overflow-y:
-              <select name="overflowY" ng-model="css.overflowY" ng-options="value as value for value in ['visible','hidden','auto','scroll']"
-                  ng-class="{error: !properties_form.overflowY.$valid}">
-                  <option value="" style="display:none;"></option>
-              </select>
-
-          </form>
-    </script>
-     -->
-
-     <!-- 문단 모양 -->
-    <script type="text/ng-template" id="properties-form-paragraph">
-          <form novalidate name="properties_form">
-              [문단 Paragraphs]<br>
-              <!--
-              <div>word-wrap : <input type="checkbox" ng-model="css.wordWrap" ng-true-value="'break-word'" ng-false-value="'normal'"></div>
-              <br>
-              -->
-              스크롤(overflow) : 
-              <select ng-model="temp.overflow" ng-model-options="modelOption"
-                      ng-options="value as value for value in ['visible','hidden','auto','scroll']"
-                      key-bind="liveChangeSelect">
-                  <option value="" style="display:none;"></option>
-              </select>
-              <br>
-
-              <div>자동 줄바꿈(white-space) :
-                  <input type="checkbox" ng-model="temp.whiteSpace" ng-model-options="modelOption"
-                         ng-true-value="'pre-line'" ng-false-value="'nowrap'"
-                         ng-change="submit()">
-              </div>
-
-              <div ng-class="{deactive:(temp.overflow === 'visible' || temp.whiteSpace === 'pre-line')}">
-              <!--<div ng-show="temp.overflow === 'hidden' && temp.whiteSpace === 'nowrap'">-->
-                  말줄임표시(text-overflow) :
-                  <input type="checkbox"
-                         ng-model="temp.textOverflow" ng-model-options="modelOption"
-                         ng-true-value="'ellipsis'" ng-false-value="'clip'"
-                         ng-change="submit()">
-              </div>
-              <br>
-
-              <div>letter-spacing(자간) :
-                  <input type="number" ng-model="temp.letterSpacingGroup.num" ng-model-options="modelOption"
-                         min="-500" max="500"
-                         key-bind="{ enter: 'submit'}"
-                         style="width: 40px;">
-                  <input type="text" ng-model="temp.letterSpacingGroup.unit" ng-model-options="modelOption"
-                         style="width: 25px" disabled>
-              </div>
-
-              <br>
-              <div>line-height(행간) :
-                  <input type="number" ng-model="temp.lineHeightGroup.num" ng-model-options="modelOption"
-                         min="0" max="500"
-                         key-bind="{ enter: 'submit'}"
-                         style="width: 40px;">
-                  <select ng-model="temp.lineHeightGroup.unit" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['px','em','%']"
-                          key-bind="liveChangeSelect">
-                      <option value="" style="display:none;"></option>
-                  </select>
-              </div>
-
-              <br>
-              <div>text-align(정렬) :
-                  <select ng-model="temp.textAlign" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['left','center','right', 'justify']"
-                          key-bind="liveChangeSelect">
-                      <option value="" style="display:none;"></option>
-                  </select>
-                 <br> * justify는 IE제외
-                  <!--
-                    객체 align (IE11이상 지원)
-                    justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
-                  -->
-              </div>
-
-              <br>
-              <div>text-indent :
-                  <input type="number" ng-model="temp.textIndentGroup.num" ng-model-options="modelOption"
-                         min="0" max="500"
-                         key-bind="{ enter: 'submit'}"
-                         style="width: 40px;">
-                  <select ng-model="temp.textIndentGroup.unit" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['px', 'pt', 'cm', 'em', '%']"
-                          key-bind="liveChangeSelect">
-                      <option value="" style="display:none;"></option>
-                  </select>
-              </div>
-          </form>
-    </script>
-
-    <!-- 단락 모양 -->
-    <script type="text/ng-template" id="properties-form-column">
-        <form novalidate name="properties_form">
-            [다단]<br>
-
-            <div>column-count :
-                <!--auto(column 의 수가 column-width등의 값에 따라 결정됨) | number-->
-                <select ng-model="temp.columnCount" ng-model-options="modelOption"
-                        ng-options="value as value for value in ['auto','1','2','3','4','5']"
-                        key-bind="liveChangeSelect">
-                    <option value="" style="display:none;"></option>
-                </select>
-            </div>
-            <div>column-gap :
-                <!--column-gap: px|normal-->
-                <input type="number" ng-model="temp.columnGap" ng-model-options="modelOption"
-                       min="1" max="500"
-                       key-bind="{ enter: 'submit'}"> px
-            </div>
-            <div>column-rule-width :
-                <!--column-rule-width: medium|thin|thick|length-->
-                <input type="number" ng-model="temp.columnRuleGroup.columnRuleWidth" ng-model-options="modelOption"
-                       min="1" max="500"
-                       key-bind="{ enter: 'submit'}"> px
-            </div>
-            <div>column-rule-style :
-                <!--column-rule-style: none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset-->
-                <select ng-model="temp.columnRuleGroup.columnRuleStyle" ng-model-options="modelOption"
-                        ng-options="value as value for value in ['dotted','dashed','solid','double','groove','ridge','inset','outset']"
-                        key-bind="liveChangeSelect">
-                    <option value="" style="display:none;"></option>
-                </select>
-            </div>
-            <div>column-rule-color :
-                <input type="text"
-                       colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
-                       ng-model="temp.columnRuleGroup.columnRuleColor" ng-model-options="modelOption"
-                       key-bind="{ enter: 'submit'}">
-            </div>
-
-        </form>
-    </script>
-
-    <!-- 폰트 -->
-    <script type="text/ng-template" id="properties-form-font">
-          <form novalidate name="properties_form">
-              [폰트]<br>
-
-              font-family :
-              <select ng-model="temp.fontFamilyGroup"
-                      ng-options="font.label group by font.group for font in fontOptions"
-                      key-bind="liveChangeSelect"
-                      style="width: 120px;">
-                  <option value="" style="display:none;"></option>
-              </select>
-
-              <br><br>
-              <div>font-size :
-                  <input type="number"
-                         ng-model="temp.fontSizeGroup.num" ng-model-options="modelOption"
-                         min="{{temp.fontSize.min}}" max="{{temp.fontSize.max}}"
-                         key-bind="{ enter: 'submit'}"
-                         style="width: 50px;">
-                  <select ng-model="temp.fontSizeGroup.unit" ng-model-options="modelOption"
-                          ng-options="value as value for value in ['px','em','%']"
-                          key-bind="liveChangeSelect">
-                      <option value="" style="display:none;"></option>
-                  </select>
-              </div>
-
-              <br>
-              <div>color :
-                  <input type="text"
-                         colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
-                         ng-model="temp.color" ng-model-options="modelOption"
-                         key-bind="{ enter: 'submit'}"/>
-              </div>
-
-          </form>
-    </script>
-
-    <!-- 텍스트 -->
-    <script type="text/ng-template" id="properties-form-text">
-          <form novalidate name="properties_form">
-
-              [텍스트]
-              <br>font-weight(bold) : <input type="checkbox" ng-model="temp.fontWeight" ng-model-options="modelOption"
-                                       ng-true-value="'bold'" ng-false-value="'normal'"
-                                       ng-change="submit()">
-              <br>font-style(italic) : <input type="checkbox" ng-model="temp.fontStyle" ng-model-options="modelOption"
-                                      ng-true-value="'italic'" ng-false-value="'normal'"
-                                      ng-change="submit()">
-              <!--text-decoration: none|underline|overline|line-through|initial|inherit;-->
-              <br>text-decoration(underline) : <input type="checkbox"
-                                           ng-model="temp.textDecoration" ng-model-options="modelOption"
-                                           ng-true-value="'underline'" ng-false-value="'none'"
-                                           ng-change="submit()">
-              <br>text-decoration(line-through)
-          </form>
-    </script>
-
-
-
-
-
-
-    <!-- 배경 -->
-    <script type="text/ng-template" id="properties-form-background">
-        <form novalidate name="properties_form">
-            [배경]<br>
-            <!--
-            <br>transparent :
-            <input type="checkbox"
-                   ng-model="temp.backgroundColorGroup.transparent" ng-model-options="modelOption">
-
-             ng-class="{deactive:temp.backgroundColorGroup.transparent}"
-            -->
-            <br>배경 색상(background-color) :
-            <div>
-                <input type="text"
-                       colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
-                       ng-model="temp.backgroundColor"  ng-model-options="modelOption"
-                       key-bind="{ enter: 'submit'}"/>
-            </div>
-
-            <!--
-            /*background-size: auto|length|cover|contain;*/
-            background-size : auto auto;
-            /*background-attachment: scroll|fixed|local;*/
-            background-attachment : scroll;
-            /*background-clip: border-box|padding-box|content-box;*/
-            background-clip : border-box;
-            /*background-origin: padding-box|border-box|content-box;*/
-            background-origin : padding-box;
-            -->
-        </form>
-    </script>
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- /////////////////////////////////////////////
-    // type = ELEMENT.TEXT
-    ////////////////////////////////////////////// -->
-
-    <div ng-show="type == 'text'">
-        ELEMENT ({{type}}) PROPERTY
-
-        <form name="properties_form">
-
-            <div>UID : {{uid}}</div>
-            <br><br>
-
-            <div>type : {{type}}</div>
-            <div>ID : 사용자가 지정한 아이디</div>
-
-            <!-- 기본 속성 -->
-            <div class="form" ng-include src="'properties-form-position'"></div>
-            <div class="form" ng-include src="'properties-form-size'"></div>
-
-            <div class="form" ng-include src="'properties-form-border'"></div>
-            <div class="form" ng-include src="'properties-form-padding'"></div>
-            <div class="form" ng-include src="'properties-form-background'"></div>
-
-            <div class="form" ng-include src="'properties-form-font'"></div>
-            <div class="form" ng-include src="'properties-form-paragraph'"></div>
-            <div class="form" ng-include src="'properties-form-column'"></div>
-            <div class="form" ng-include src="'properties-form-text'"></div>
-
-            <br><br>
-
-            <!--<br><div>* 텍스트 박스 크기에 맞춤 : <input type="checkbox" ng-model="option.display_size_toText"></div>-->
-
-            <div class="form">
-                * 기타 편집
-                contenteditable="true|false"
-                <br>
-                [하이퍼 링크]
-                <br>
-                * 객체 align (IE11이상 지원)
-                justify-content: flex-start|flex-end|center|space-between|space-around|initial|inherit;
-            </div>
-
-
-
-        </form>
-
-    </div><!-- END text -->
-=======================================================================================
             <!-- /////////////////////////////////////////////
             // type = ELEMENT.IMAGE
             ////////////////////////////////////////////// -->
@@ -567,9 +593,9 @@
 
                     <div>
                         URL(background-image) :
-                        <input type="text"
-                               ng-model="_backgroundImageGroup.url"
-                               key-bind="{ enter: 'enter_backgroundImage', esc: 'esc_backgroundImage' }"/>
+                        <input type="url"
+                               ng-model="temp.backgroundImageGroup.url"
+                               key-bind="{ enter: 'submit'}"/>
                     </div>
 
                     <!--
@@ -587,6 +613,7 @@
                     background-image: url("https://ssl.pstatic.net/static/pwe/common/sp_deskhome_gnb_140403_opt.png");
                     -->
                     <br>
+
                     <div>
                         크기(background-size) :
                         <!--
@@ -600,64 +627,102 @@
 
                         크기 고정 : min-width, min-height, max-width, max-height 이용
                         -->
-                        <br>원본 크기 : <input type="radio" ng-model="temp.backgroundSize" value="auto"> (auto)
-                        <br>배율 적용 : <input type="radio" ng-model="temp.backgroundSize" value="contain"> (contain)
-                        <br>강제 맞춤 : <input type="radio" ng-model="temp.backgroundSize" value="100% 100%"> (100%)
+                        <br>원본 크기 : <input type="radio"
+                                           ng-model="temp.backgroundSize"
+                                           value="auto"
+                                           ng-change="submit()"> (auto)
+                        <br>배율 적용 : <input type="radio"
+                                           ng-model="temp.backgroundSize"
+                                           value="contain"
+                                           ng-change="submit()"> (contain)
+                        <br>강제 맞춤 : <input type="radio"
+                                           ng-model="temp.backgroundSize"
+                                           value="100% 100%"
+                                           ng-change="submit()"> (100%)
 
                         <br><br>
+
                         <div ng-class="{deactive:(temp.backgroundSize == '100% 100%')}">
                             패턴 반복 :
                             <!--repeat
                             <br><input type="radio" ng-model="temp.backgroundSizeGroup.repeat" value="repeat">-->
                             <br>
-                            repeat-x : <input type="checkbox" ng-model="temp.backgroundRepeatGroup.repeatX">
-                            repeat-y : <input type="checkbox" ng-model="temp.backgroundRepeatGroup.repeatY">
+                            repeat-x : <input type="checkbox"
+                                              ng-model="temp.backgroundRepeatGroup.repeatX"
+                                              ng-change="submit()">
+                            repeat-y : <input type="checkbox"
+                                              ng-model="temp.backgroundRepeatGroup.repeatY"
+                                              ng-change="submit()">
                         </div>
 
                         <br>
+
                         <div ng-class="{deactive:(temp.backgroundSize == '100% 100%')}">
                             정렬 :
 
                             <br><br>
+
                             <div>
                                 가로 :
                                 <div ui-slider
                                      ng-model="temp.backgroundPositionX" ng-model-options="modelOption"
-                                     min="0" max="100"
+                                     min="-160" max="260"
+                                     key-bind="liveChangeDrag"
                                      style="width: 100px; display: inline-block;"></div>
                                 <input type="number"
                                        ng-model="temp.backgroundPositionX" ng-model-options="modelOption"
-                                       min="0" max="100"
+                                       min="-160" max="260"
+                                       key-bind="{ enter: 'submit'}"
                                        style="width: 40px">%
                             </div>
                             <div>
                                 세로 :
                                 <div ui-slider
                                      ng-model="temp.backgroundPositionY" ng-model-options="modelOption"
-                                     min="0" max="100"
+                                     min="-160" max="260"
+                                     key-bind="liveChangeDrag"
                                      style="width: 100px; display: inline-block;"></div>
                                 <input type="number"
                                        ng-model="temp.backgroundPositionY" ng-model-options="modelOption"
-                                       min="0" max="100"
+                                       min="-160" max="260"
+                                       key-bind="{ enter: 'submit'}"
                                        style="width: 40px">%
                             </div>
 
-                            <br><br>
-                            <table>
+                            <br>
+                            <table style="margin: auto;">
                                 <tr>
-                                    <td><input type="button" value="0,0" style="width: 50px; margin: 2px;"></td>
-                                    <td><input type="button" value="50,0" style="width: 50px; margin: 2px;"></td>
-                                    <td><input type="button" value="100,0" style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="0,0"
+                                               ng-click="temp.backgroundPositionX=0;temp.backgroundPositionY=0;submit();"
+                                               style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="50,0"
+                                               ng-click="temp.backgroundPositionX=50;temp.backgroundPositionY=0;submit();"
+                                               style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="100,0"
+                                               ng-click="temp.backgroundPositionX=100;temp.backgroundPositionY=0;submit();"
+                                               style="width: 50px; margin: 2px;"></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="button" value="0,50" style="width: 50px; margin: 2px;"></td>
-                                    <td><input type="button" value="50,50" style="width: 50px; margin: 2px;"></td>
-                                    <td><input type="button" value="100,50" style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="0,50"
+                                               ng-click="temp.backgroundPositionX=0;temp.backgroundPositionY=50;submit();"
+                                               style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="50,50"
+                                               ng-click="temp.backgroundPositionX=50;temp.backgroundPositionY=50;submit();"
+                                               style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="100,50"
+                                               ng-click="temp.backgroundPositionX=100;temp.backgroundPositionY=50;submit();"
+                                               style="width: 50px; margin: 2px;"></td>
                                 </tr>
                                 <tr>
-                                    <td><input type="button" value="0,100" style="width: 50px; margin: 2px;"></td>
-                                    <td><input type="button" value="50,100" style="width: 50px; margin: 2px;"></td>
-                                    <td><input type="button" value="100,100" style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="0,100"
+                                               ng-click="temp.backgroundPositionX=0;temp.backgroundPositionY=100;submit();"
+                                               style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="50,100"
+                                               ng-click="temp.backgroundPositionX=50;temp.backgroundPositionY=100;submit();"
+                                               style="width: 50px; margin: 2px;"></td>
+                                    <td><input type="button" value="100,100"
+                                               ng-click="temp.backgroundPositionX=100;temp.backgroundPositionY=100;submit();"
+                                               style="width: 50px; margin: 2px;"></td>
                                 </tr>
                             </table>
                         </div>
@@ -689,63 +754,56 @@
                     <div>type : {{type}}</div>
                     <div>ID : 사용자가 지정한 아이디</div>
 
-                    <div class="form" ng-include src="'properties-form-background'"></div>
                     <div class="form" ng-include src="'properties-form-image'"></div>
 
                     <!-- 기본 속성 -->
                     <div class="form" ng-include src="'properties-form-position'"></div>
                     <div class="form" ng-include src="'properties-form-size'"></div>
+                    <div class="form" ng-include src="'properties-form-background'"></div>
 
                     <div class="form" ng-include src="'properties-form-border'"></div>
                     <div class="form" ng-include src="'properties-form-padding'"></div>
 
+                    <div class="form" ng-include src="'properties-form-link'"></div>
+                    <div class="form" ng-include src="'properties-form-button'"></div>
 
+                </form>
 
+            </div>
+            <!-- END text -->
 
+            <!-- /////////////////////////////////////////////
+            // type = unknown
+            ////////////////////////////////////////////// -->
+
+            <div ng-show="type == 'unknown'">
+                ELEMENT ({{type}}) PROPERTY
+
+                <form name="properties_form">
+
+                    <div>UID : {{uid}}</div>
                     <br><br>
 
-                    <div class="form">
-                        * 기타 편집
-                        [하이퍼 링크]
-                    </div>
+                    <div>type : {{type}}</div>
+                    <div>ID : 사용자가 지정한 아이디</div>
 
+                    <!-- 기본 속성 -->
+                    <div ng-include src="'properties-form-position'"></div>
+                    <div ng-include src="'properties-form-size'"></div>
+
+                    <div ng-include src="'properties-form-border'"></div>
+                    <div ng-include src="'properties-form-padding'"></div>
+                    <div ng-include src="'properties-form-background'"></div>
 
 
                 </form>
 
-            </div><!-- END text -->
-
-    <!-- /////////////////////////////////////////////
-    // type = unknown
-    ////////////////////////////////////////////// -->
-
-    <div ng-show="type == 'unknown'">
-        ELEMENT ({{type}}) PROPERTY
-
-        <form name="properties_form">
-              
-              <div>UID : {{uid}}</div>
-              <br><br>
-              <div>type : {{type}}</div>
-              <div>ID : 사용자가 지정한 아이디</div>
-
-              <!-- 기본 속성 -->
-              <div ng-include src="'properties-form-position'"></div>
-              <div ng-include src="'properties-form-size'"></div>
-              
-              <div ng-include src="'properties-form-border'"></div>
-              <div ng-include src="'properties-form-padding'"></div>
-              <div ng-include src="'properties-form-background'"></div>
-
-              
-
-        </form>
-        
-    </div><!-- END unknown -->
+            </div>
+            <!-- END unknown -->
 
 
-    
-        </div><!-- END type Content -->
+        </div>
+        <!-- END type Content -->
     </div>
 </div>
 

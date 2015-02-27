@@ -47,8 +47,8 @@ define(['U'], function (U) {
             // MS ppt : 1193x671
             // Google docs는 화면 비율로 맞춤 - 4:3, 16:9, 16:10 (960x540)
             Project.paper = {
-                width: 595,
-                height: 842
+                width: 600,
+                height: 850
             };
 
             // Prototype 상속
