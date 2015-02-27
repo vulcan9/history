@@ -996,3 +996,8 @@ z-index :
     font-size: 0px;
     background-color: rgba(0,0,0,1);
 }
+.hi-colorpicker-bg{
+    display: inline-block;
+    background-image: url(transBGGrid.png);
+}
+

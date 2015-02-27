@@ -47,13 +47,18 @@
 .hi-screenContainer .hi-content div[contenteditable=true],
 .hi-screenContainer .hi-content div[contenteditable=true]:hover {
     /*border: none;*/
-    outline: rgba(255, 194, 0, 0.2) solid 10000px;
     cursor: text;
+}
+
+div[uid^="element-"].hiElement.edit,
+div[uid^="element-"].hiElement.edit:hover {
+    outline: rgba(255, 194, 0, 0.2) solid 10000px;
 }
 
 /*------------------------------------
 // Element
 ------------------------------------*/
+
 /*div[uid^="element-"].hiElement > **/
 div[uid^="element-"].hiElement {
 

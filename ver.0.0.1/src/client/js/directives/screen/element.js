@@ -219,6 +219,9 @@ define(['U'], function (U) {
                     var dom = Project.current.getElement(documentUID, elementUID);
                     var type = Project.current.getType(documentUID, elementUID);
 
+                    var $dom = angular.element(dom);
+                    $dom.addClass('edit');
+
                     if (type == ELEMENT.TEXT) {
                         activateEdit_text(dom);
 
@@ -230,6 +233,9 @@ define(['U'], function (U) {
                 $scope.deactivateEdit = function (documentUID, elementUID) {
                     var dom = Project.current.getElement(documentUID, elementUID);
                     var type = Project.current.getType(documentUID, elementUID);
+
+                    var $dom = angular.element(dom);
+                    $dom.removeClass('edit');
 
                     if (type == ELEMENT.TEXT) {
                         deactivateEdit_text(dom);
@@ -248,8 +254,6 @@ define(['U'], function (U) {
                     // $dom.css('z-index', 2000);
                     $dom.attr('contenteditable', true);
 
-                    $dom.addClass('edit');
-
                     $scope.$evalAsync(function () {
                         angular.element(dom).focus();
 
@@ -267,8 +271,6 @@ define(['U'], function (U) {
                     var $dom = angular.element(dom);
                     // $dom.css('z-index', 0);
                     $dom.attr('contenteditable', false);
-
-                    $dom.removeClass('edit');
 
                     // 보정 해지
                     __removeCheckForSpan($dom);

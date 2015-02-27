@@ -139,12 +139,15 @@
                     <div ng-if="temp.borderGroup.borderWidth > 0">
                         <br>테두리 색상 :
                         <br>
-                        <input type="text" readonly
+
+                        <div class="hi-colorpicker-bg">
+                            <input type="text" readonly
                                class="hi-colorpicker"
                                colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
                                ng-style="{'background-color':temp.borderGroup.borderColor}"
                                ng-model="temp.borderGroup.borderColor" ng-model-options="modelOption"
-                               key-bind="liveChangeFocus"/>
+                               key-bind="liveChangeFocus">
+                        </div>
                         <span>{{temp.borderGroup.borderColor}}</span>
 
                         <br>테두리 스타일 :
@@ -414,12 +417,15 @@
                         </select>
                     </div>
                     <div>column-rule-color :
-                        <br><input type="text" readonly
+                        <br>
+                        <div class="hi-colorpicker-bg">
+                            <input type="text" readonly
                                class="hi-colorpicker"
                                colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
                                ng-style="{'background-color':temp.columnRuleGroup.columnRuleColor}"
                                ng-model="temp.columnRuleGroup.columnRuleColor" ng-model-options="modelOption"
-                               key-bind="liveChangeFocus"/>
+                               key-bind="liveChangeFocus">
+                        </div>
                         <span>{{temp.columnRuleGroup.columnRuleColor}}</span>
                     </div>
 
@@ -457,12 +463,15 @@
                     <br>
 
                     <div>color :
-                        <br><input type="text" readonly
+                        <br>
+                        <div class="hi-colorpicker-bg">
+                            <input type="text" readonly
                                    class="hi-colorpicker"
                                    colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
                                    ng-style="{'background-color':temp.color}"
                                    ng-model="temp.color" ng-model-options="modelOption"
-                                   key-bind="liveChangeFocus"/>
+                                   key-bind="liveChangeFocus">
+                        </div>
                         <span>{{temp.color}}</span>
                     </div>
 
@@ -505,15 +514,16 @@
                      ng-class="{deactive:temp.backgroundColorGroup.transparent}"
                     -->
                     <br>배경 색상(background-color) :<br>
-                    <div>
+                    <div class="hi-colorpicker-bg">
                         <input type="text" readonly
                                class="hi-colorpicker"
                                colorpicker="rgba" colorpicker-with-input="true" colorpicker-parent="true"
                                ng-style="{'background-color':temp.backgroundColor}"
                                ng-model="temp.backgroundColor" ng-model-options="modelOption"
                                key-bind="liveChangeFocus"/>
-                        <span>{{temp.backgroundColor}}</span>
+
                     </div>
+                    <span>{{temp.backgroundColor}}</span>
 
                     <!--
                     /*background-size: auto|length|cover|contain;*/
@@ -558,6 +568,9 @@
                     <div>type : {{type}}</div>
                     <div>ID : 사용자가 지정한 아이디</div>
 
+                    <div class="form" ng-include src="'properties-form-link'"></div>
+                    <div class="form" ng-include src="'properties-form-button'"></div>
+
                     <div class="form" ng-include src="'properties-form-text'"></div>
 
                     <!-- 기본 속성 -->
@@ -571,9 +584,6 @@
                     <div class="form" ng-include src="'properties-form-font'"></div>
                     <div class="form" ng-include src="'properties-form-paragraph'"></div>
                     <div class="form" ng-include src="'properties-form-column'"></div>
-
-                    <div class="form" ng-include src="'properties-form-link'"></div>
-                    <div class="form" ng-include src="'properties-form-button'"></div>
 
                     <!--<br><div>* 텍스트 박스 크기에 맞춤 : <input type="checkbox" ng-model="option.display_size_toText"></div>-->
 
@@ -595,7 +605,8 @@
                         URL(background-image) :
                         <input type="url"
                                ng-model="temp.backgroundImageGroup.url"
-                               key-bind="{ enter: 'submit'}"/>
+                               key-bind="{ enter: 'submit'}"
+                                style="width: 100%;"/>
                     </div>
 
                     <!--
@@ -754,6 +765,9 @@
                     <div>type : {{type}}</div>
                     <div>ID : 사용자가 지정한 아이디</div>
 
+                    <div class="form" ng-include src="'properties-form-link'"></div>
+                    <div class="form" ng-include src="'properties-form-button'"></div>
+
                     <div class="form" ng-include src="'properties-form-image'"></div>
 
                     <!-- 기본 속성 -->
@@ -763,9 +777,6 @@
 
                     <div class="form" ng-include src="'properties-form-border'"></div>
                     <div class="form" ng-include src="'properties-form-padding'"></div>
-
-                    <div class="form" ng-include src="'properties-form-link'"></div>
-                    <div class="form" ng-include src="'properties-form-button'"></div>
 
                 </form>
 
