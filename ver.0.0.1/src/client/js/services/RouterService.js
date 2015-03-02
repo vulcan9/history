@@ -441,6 +441,7 @@ define( [], function() {
 							_PATH.FACTORY + 'ScaleMode.js',
 							_PATH.FACTORY + 'Drager.js',
 							_PATH.FACTORY + 'Resizer.js',
+                            _PATH.FACTORY + 'Rotator.js',
 							_PATH.FACTORY + 'Snap.js',
 							
 							//SERVICE
