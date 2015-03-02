@@ -15,7 +15,7 @@ define(['U'], function (U) {
 
 
         // 선언
-        function _directive(Drager, Resizer, Snap, CommandService, Project, Tool, $timeout, ELEMENT, $getScope) {
+        function _directive(Drager, Resizer, Rotator, Snap, CommandService, Project, Tool, $timeout, ELEMENT, $getScope) {
 
             //out( 'version' );
 
@@ -358,12 +358,157 @@ define(['U'], function (U) {
                 //-----------------------------------
 
                 function __updateRotatable(usable) {
-                    out('TODO : 구현 안됨 (uiControl rotate)');
+                    var eventOwner = $element.find('.ui-rotate-handle');
+                    var rotateTarget = $element;
+
+                    clearRotate(eventOwner, rotateTarget);
+                    if (!usable) return;
+
+                    setRotate(eventOwner, rotateTarget);
                 }
 
                 function toInt(num) {
                     return Math.round(num);
                     // return num;
+                }
+
+                ////////////////////////////////////////
+                // 회전 동작
+                ////////////////////////////////////////
+
+                var _rotateUtil = new Rotator();
+
+                function clearRotate(eventOwner, rotateTarget) {
+                    if (!_rotateUtil) return;
+
+                    _rotateUtil.removeEvent("Rotator.dragStart", _onRotateStart);
+                    _rotateUtil.removeEvent("Rotator.dragEnd", _onRotateEnd);
+                    _rotateUtil.removeEvent("Rotator.drag", _onRotate);
+                    _rotateUtil.removeEvent("Rotator.clicked", _onClickRotate);
+                    // _rotateUtil = null;
+                }
+
+                function setRotate(eventOwner, rotateTarget) {
+                    clearRotate();
+
+                    var initObj = {
+                        //direction : "x", // x, y, both
+                        // move 감도 지정
+                        delay: 0,
+                        // 회전 적용 대상
+                        dragTarget: rotateTarget
+                    };
+
+                    // _rotateUtil = new Rotator();
+                    _rotateUtil.initialize(eventOwner, initObj);
+
+                    _rotateUtil.addEvent("Rotator.dragStart", _onRotateStart);
+                    _rotateUtil.addEvent("Rotator.dragEnd", _onRotateEnd);
+                    _rotateUtil.addEvent("Rotator.drag", _onRotate);
+                    _rotateUtil.addEvent("Rotator.clicked", _onClickRotate);
+                }
+
+                //-----------------------------------
+                // Rotate 리스너
+                //-----------------------------------
+
+                function _onRotateStart(e) {
+                    //out("_onRotateStart : ", e.distX, e.distY);
+                    // transition이 적용되어 있으면 drag가 정상적으로 업데이트 되지 않는다.
+                    $scope.$apply(function () {
+                        $scope.transition = false;
+                    });
+
+                    rotateHandler(e);
+                }
+
+                function _onRotate(e) {
+                    //out("_onRotate : ", e.x, e.y);
+                    rotateHandler(e);
+                }
+
+                function rotateHandler(_dragEvent) {
+                    if (!_dragEvent) return;
+
+                    //-----------------
+                    // Element 속성값 수정
+                    //-----------------
+
+                    var selectUID = $scope.selectInfo.uid;
+                    var documentUID = Project.current.getSelectDocument();
+                    var el = Project.current.getElement(documentUID, selectUID);
+                    var $el = angular.element(el);
+
+                    var x = toInt(_dragEvent.x);
+                    var y = toInt(_dragEvent.y);
+
+                    out("_onRotate : ", _dragEvent.deg);
+
+
+
+
+
+
+
+                    //var w = $el.width();
+                    //var h = $el.height();
+                    //translate('+ w + 'px, ' + h + 'px)
+                    $el.css('transform', 'rotate(' + _dragEvent.deg + 'deg)');
+
+                    //_dragEvent.preventDefault();
+
+                    //$el.css({
+                    //    'left': x,
+                    //    'top': y
+                    //});
+                    // __updateBoundary();
+                }
+
+                // 앵커 드래그(위치변경)로 인한 데이터 갱신
+                function _onRotateEnd(e) {
+                    //out("_onRotateEnd : ", e.x, e.y);
+                    $scope.$apply(function () {
+                        $scope.transition = true;
+                    });
+
+                    //-----------------
+                    // Command 호출
+                    //-----------------
+
+                    var elementUID = $scope.selectInfo.uid;
+                    var documentUID = Project.current.getSelectDocument();
+
+                    var x = toInt(e.x);
+                    var y = toInt(e.y);
+                    var deg = toInt(e.deg);
+                    out("_onRotate End : ", deg);
+
+                    var param = {
+                        // 삽입될 문서
+                        documentUID: documentUID,
+                        elementUID: elementUID,
+
+                        // element 설정값
+                        option: {},
+                        css: {
+                            //'left': x + 'px',
+                            //'top': y + 'px'
+                            'transform': deg
+                        }
+                    };
+                    CommandService.exe(CommandService.MODIFY_ELEMENT, param, function () {
+                        // initial 인 경우 사이즈 원래대로
+                        $scope.$evalAsync(function () {
+                            __updateBoundary();
+                        });
+                    });
+                }
+
+                function _onClickRotate(e) {
+                    $scope.$apply(function () {
+                        $scope.transition = true;
+                    });
+                    // out("_onClickDrag : ", e);
                 }
 
                 ////////////////////////////////////////
@@ -422,7 +567,7 @@ define(['U'], function (U) {
                 //-----------------------------------
 
                 function _onDragStart(e) {
-                    // out("_onDragStart : ", e.distX, e.distY);
+                    out("_onDragStart : ", e.distX, e.distY);
                     // transition이 적용되어 있으면 drag가 정상적으로 업데이트 되지 않는다.
                     $scope.$apply(function () {
                         $scope.transition = false;
@@ -442,7 +587,7 @@ define(['U'], function (U) {
                 }
 
                 function _onDrag(e) {
-                    // out("_onDrag : ", e.x, e.y);
+                    out("_onDrag : ", e.x, e.y);
                     // e.preventDefault();
                     // _dragEvent = e;
 
@@ -475,7 +620,7 @@ define(['U'], function (U) {
 
                 // 앵커 드래그(위치변경)로 인한 데이터 갱신
                 function _onDragEnd(e) {
-                    // out("_onDragEnd : ", e.x, e.y);
+                    out("_onDragEnd : ", e.x, e.y);
                     // _loop = false;
                     // _dragEvent = null;
 
