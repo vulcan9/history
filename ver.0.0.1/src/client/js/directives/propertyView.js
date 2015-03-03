@@ -619,6 +619,13 @@ define(['U'], function (U) {
                                     isGroup = false;
                                     break;
 
+                                case 'transform':
+                                    newObj = newValue['transformGroup'];
+                                    newCSS = getTransformCSS(newObj);
+                                    currentCSS = getCSSValue(name, null);
+                                    currentObj = getTransformGroup(currentCSS);
+                                    break;
+
                                 default:
                                     newObj = newValue[name];
                                     newCSS = newObj;
@@ -900,6 +907,14 @@ define(['U'], function (U) {
                     temp.backgroundPositionX = getCSSValue('backgroundPositionX', paramCSS, true);
                     temp.backgroundPositionY = getCSSValue('backgroundPositionY', paramCSS, true);
 
+                    //--------------
+                    // 회전
+                    //--------------
+
+                    var transform = getCSSValue('transform', paramCSS);
+                    temp.transformGroup = getTransformGroup(transform);
+                    temp.transform = getTransformCSS(temp.transformGroup);
+
                     return temp;
                 }
 
@@ -1024,6 +1039,22 @@ define(['U'], function (U) {
                 //--------------------------------------
                 // CSS 개별 설정 함수들
                 //--------------------------------------
+
+                function getTransformGroup(css){
+                    //Rotator.getDegreeFromCSS(el);
+                    var rotate = css.replace(/none|(?:rotate\s*?\()(.*)\)/g, '$1');
+                    rotate = U.toNumber(rotate, 0);
+                    return {
+                        rotate: rotate
+                    };
+                }
+
+                function getTransformCSS(group) {
+                    if(group.rotate == 0){
+                        return 'none';
+                    }
+                    return 'rotate(' + group.rotate + 'deg)';
+                }
 
                 function getBackgroundRepeatGroup(css) {
                     var repeatX = false;

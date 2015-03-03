@@ -54,6 +54,43 @@ define( ['U'], function( U ) {
             // Prototype
             ////////////////////////////////////
 
+            Rotator.getDegreeFromCSS = function (dragTarget){
+                var st = window.getComputedStyle(dragTarget, null);
+                var tr = st.getPropertyValue("-webkit-transform") ||
+                    st.getPropertyValue("-moz-transform") ||
+                    st.getPropertyValue("-ms-transform") ||
+                    st.getPropertyValue("-o-transform") ||
+                    st.getPropertyValue("transform") ||
+                    "FAIL";
+
+                // With rotate(30deg)...
+                // matrix(0.866025, 0.5, -0.5, 0.866025, 0px, 0px)
+                //console.log('Matrix: ' + tr);
+
+                var angle = 0;
+                if(tr && tr != 'none'){
+                    // rotation matrix - http://en.wikipedia.org/wiki/Rotation_matrix
+                    var values = tr.split('(')[1].split(')')[0].split(',');
+                    var a = values[0];
+                    var b = values[1];
+                    var c = values[2];
+                    var d = values[3];
+
+                    //var scale = Math.sqrt(a*a + b*b);
+                    //console.log('Scale: ' + scale);
+
+                    // arc sin, convert from radians to degrees, round
+                    // next line works for 30deg but not 130deg (returns 50);
+                    // var sin = b/scale;
+                    // var angle = Math.round(Math.asin(sin) * (180/Math.PI));
+                    angle = Math.atan2(b, a) * (180/Math.PI);
+                    angle = Math.round(angle);
+                }
+                //angle = angle % 360;
+                //if (angle < 0) angle = angle + 360;
+                return angle;
+            };
+
             Rotator.prototype = {
                 addEvent : function (type, handler){
                     if(this.$dragger == null) return;
@@ -120,42 +157,7 @@ define( ['U'], function( U ) {
 
                     return deg;
                 },
-                getDegreeFromCSS : function (dragTarget){
-                    var st = window.getComputedStyle(dragTarget, null);
-                    var tr = st.getPropertyValue("-webkit-transform") ||
-                        st.getPropertyValue("-moz-transform") ||
-                        st.getPropertyValue("-ms-transform") ||
-                        st.getPropertyValue("-o-transform") ||
-                        st.getPropertyValue("transform") ||
-                        "FAIL";
 
-                    // With rotate(30deg)...
-                    // matrix(0.866025, 0.5, -0.5, 0.866025, 0px, 0px)
-                    //console.log('Matrix: ' + tr);
-
-                    var angle = 0;
-                    if(tr && tr != 'none'){
-                        // rotation matrix - http://en.wikipedia.org/wiki/Rotation_matrix
-                        var values = tr.split('(')[1].split(')')[0].split(',');
-                        var a = values[0];
-                        var b = values[1];
-                        var c = values[2];
-                        var d = values[3];
-
-                        //var scale = Math.sqrt(a*a + b*b);
-                        //console.log('Scale: ' + scale);
-
-                        // arc sin, convert from radians to degrees, round
-                        // next line works for 30deg but not 130deg (returns 50);
-                        // var sin = b/scale;
-                        // var angle = Math.round(Math.asin(sin) * (180/Math.PI));
-                        angle = Math.atan2(b, a) * (180/Math.PI);
-                        angle = Math.round(angle);
-                    }
-                    //angle = angle % 360;
-                    //if (angle < 0) angle = angle + 360;
-                    return angle;
-                },
                 _onMouseDown_rotate : function (event){
 
                     this.$currentEventTarget = $(event.target);
@@ -172,7 +174,7 @@ define( ['U'], function( U ) {
                     x = this.getPureNumber(x);
                     y = this.getPureNumber(y);
 
-                    var angle = this.startAngle || this.getDegreeFromCSS($dragTarget[0]);
+                    var angle = this.startAngle || Rotator.getDegreeFromCSS($dragTarget[0]);
                     //out('Rotate: ' + angle + 'deg');
 
                     this._origin = { x: x, y: y, angle:angle };
@@ -262,11 +264,11 @@ define( ['U'], function( U ) {
                         var distY = event.pageY - this.dragUtil._startY;
                         var x = this._last.x;
                         var y = this._last.y;
-                        var angle = this._last.deg;
+                        var angle = this._last.angle;
 
                         // 이벤트 발송
                         //this.dispatchChangeEvent();
-                        var newEvent = $.Event("Rotator.dragEnd", {distX:distX, distY:distY, x:x, y:y, deg:angle});
+                        var newEvent = $.Event("Rotator.dragEnd", {distX:distX, distY:distY, x:x, y:y, angle:angle});
                         this.$currentEventTarget.trigger(newEvent);
 
                         if(event.isDefaultPrevented() || newEvent.isDefaultPrevented()){

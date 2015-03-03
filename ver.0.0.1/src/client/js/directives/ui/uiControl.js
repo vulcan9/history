@@ -271,7 +271,7 @@ define(['U'], function (U) {
 
                         width: $select.outerWidth(),
                         height: $select.outerHeight(),
-                        angle: _rotateUtil.getDegreeFromCSS($select[0])
+                        angle: Rotator.getDegreeFromCSS($select[0])
                     };
                     // rect = $scope.getBoundary({uid:selectUID});
 
@@ -425,7 +425,7 @@ define(['U'], function (U) {
                     var $el = angular.element(el);
                     $el.addClass('rotating');
 
-                    _rotateUtil.startAngle = _rotateUtil.getDegreeFromCSS(el);
+                    _rotateUtil.startAngle = Rotator.getDegreeFromCSS(el);
                 }
 
                 function _onRotateStart(e) {

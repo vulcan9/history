@@ -104,6 +104,14 @@
                                     key-bind="{ enter: 'submit'}"
                                     min="0" max="3000" required></div>
 
+                    <div>rotate : <input type="number"
+                                    ng-model="temp.transformGroup.rotate" ng-model-options="modelOption"
+                                    key-bind="{ enter: 'submit'}"
+                                    min="-360" max="360"></div>
+                    <div ui-slider
+                         ng-model="temp.transformGroup.rotate" ng-model-options="modelOption"
+                         min="-360" max="360"
+                         key-bind="liveChangeDrag"></div>
                 </form>
             </script>
 
