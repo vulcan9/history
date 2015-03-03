@@ -283,7 +283,8 @@ define(['U'], function (U) {
                         width: (rect.width * scale),
                         height: (rect.height * scale),
                         x: (rect.x * scale),
-                        y: (rect.y * scale)
+                        y: (rect.y * scale),
+                        deg: 45
                     }
 
                     $scope.boundary = boundary;

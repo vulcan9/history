@@ -3,6 +3,7 @@
 
     ng-attr-style="top: {{boundary.y}}px; left: {{boundary.x}}px;
         width: {{boundary.width}}px; height: {{boundary.height}}px;
+        transform: rotate({{boundary.deg}}deg);
 
         pointer-events: {{editableUID ? 'none' : 'auto'}};
         opacity: {{editableUID ? 0.5 : 1}}">
