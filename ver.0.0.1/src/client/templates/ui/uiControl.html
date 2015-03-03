@@ -3,10 +3,12 @@
 
     ng-attr-style="top: {{boundary.y}}px; left: {{boundary.x}}px;
         width: {{boundary.width}}px; height: {{boundary.height}}px;
-        transform: rotate({{boundary.angle}}deg);
+
 
         pointer-events: {{editableUID ? 'none' : 'auto'}};
         opacity: {{editableUID ? 0.5 : 1}}">
+
+    <!--transform: rotate({{boundary.angle}}deg);-->
 
     <!-- class="wire ui-draggable ui-resizable ui-rotatable ui-selected" 
     style="top: 0px; left: 0px; width: 240px; height: 160px; 

@@ -383,6 +383,7 @@ define(['U'], function (U) {
                 function clearRotate(eventOwner, rotateTarget) {
                     if (!_rotateUtil) return;
 
+                    _rotateUtil.removeEvent("Rotator.dragStartInit", _onRotateStartInit);
                     _rotateUtil.removeEvent("Rotator.dragStart", _onRotateStart);
                     _rotateUtil.removeEvent("Rotator.dragEnd", _onRotateEnd);
                     _rotateUtil.removeEvent("Rotator.drag", _onRotate);
@@ -404,6 +405,7 @@ define(['U'], function (U) {
                     // _rotateUtil = new Rotator();
                     _rotateUtil.initialize(eventOwner, initObj);
 
+                    _rotateUtil.addEvent("Rotator.dragStartInit", _onRotateStartInit);
                     _rotateUtil.addEvent("Rotator.dragStart", _onRotateStart);
                     _rotateUtil.addEvent("Rotator.dragEnd", _onRotateEnd);
                     _rotateUtil.addEvent("Rotator.drag", _onRotate);
@@ -413,6 +415,18 @@ define(['U'], function (U) {
                 //-----------------------------------
                 // Rotate 리스너
                 //-----------------------------------
+
+                function _onRotateStartInit(e) {
+
+                    // TODO : 회전 중임 임시 표시 교체할것
+                    var selectUID = $scope.selectInfo.uid;
+                    var documentUID = Project.current.getSelectDocument();
+                    var el = Project.current.getElement(documentUID, selectUID);
+                    var $el = angular.element(el);
+                    $el.addClass('rotating');
+
+                    _rotateUtil.startAngle = _rotateUtil.getDegreeFromCSS(el);
+                }
 
                 function _onRotateStart(e) {
                     //out("_onRotateStart : ", e.distX, e.distY);
@@ -443,6 +457,8 @@ define(['U'], function (U) {
 
                     out("_onRotate : ", _dragEvent.angle);
                     $el.css('transform', 'rotate(' + _dragEvent.angle + 'deg)');
+
+                    _dragEvent.preventDefault();
                 }
 
                 // 앵커 드래그(위치변경)로 인한 데이터 갱신
@@ -478,6 +494,13 @@ define(['U'], function (U) {
                             __updateBoundary();
                         });
                     });
+
+                    // TODO : 회전 중임 임시 표시 교체할것
+                    var selectUID = $scope.selectInfo.uid;
+                    var documentUID = Project.current.getSelectDocument();
+                    var el = Project.current.getElement(documentUID, selectUID);
+                    var $el = angular.element(el);
+                    $el.removeClass('rotating');
                 }
 
                 function _onClickRotate(e) {

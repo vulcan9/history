@@ -249,25 +249,6 @@ define( ['U'], function( U ) {
 				// Snap / Position 체크
 				//--------------------
 
-                /*
-                var wDif = 0;
-                var hDif = 0;
-                if(angle != 0){
-                    var len = Math.sqrt(Math.pow(distX,2) + Math.pow(distY,2));
-                    wDif = Math.round(Math.cos(angle)*len);
-                    hDif = Math.round(Math.sin(angle)*len);
-                }
-
-                //out('angle : ', wDif, hDif, distX, distY);
-                //distX = wDif;
-                //distY = hDif;
-                //out('dist : ', distX, distY);
-
-                // angle이 적용된 상태에서의 4개의 점에 대하여
-                // 이동량에 따른 각 점의 좌표를 얻은 후
-                // angle=0일때의 최종 도형의 크기와 좌표를 얻는다.
-                */
-
 				// BUG : scale 적용에 의한 소수점 좌표, 너비, 높이에 의해 (scale 전환시) 1px 차이가 날 수 있음
 
 				var snapX = x;

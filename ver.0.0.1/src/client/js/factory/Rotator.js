@@ -46,6 +46,8 @@ define( ['U'], function( U ) {
 
                 // 현재 마우스 이벤트를 받고있는 이벤트 리스너 owner
                 this.$currentEventTarget = null;
+
+                this.startAngle = 0;
             }
 
             ////////////////////////////////////
@@ -109,11 +111,11 @@ define( ['U'], function( U ) {
                 getDegreeFromMouse : function (target, mouseX, mouseY){
                     var offset = target.offset();
                     var centerX = (offset.left) + (target.width()/2);
-                    var centerY = (offset.top) + (target.height()/2) + 30;
+                    var centerY = (offset.top) + (target.height()/2);
                     var radians = Math.atan2(mouseY - centerY, mouseX - centerX);
                     //radians += (2 * Math.PI);
                     var deg = (radians * (180 / Math.PI));
-                    //deg = Math.round(deg);
+                    deg = Math.round(deg);
                     //deg = deg % 360;
 
                     return deg;
@@ -148,7 +150,7 @@ define( ['U'], function( U ) {
                         // var sin = b/scale;
                         // var angle = Math.round(Math.asin(sin) * (180/Math.PI));
                         angle = Math.atan2(b, a) * (180/Math.PI);
-                        //angle = Math.round(angle);
+                        angle = Math.round(angle);
                     }
                     //angle = angle % 360;
                     //if (angle < 0) angle = angle + 360;
@@ -157,6 +159,9 @@ define( ['U'], function( U ) {
                 _onMouseDown_rotate : function (event){
 
                     this.$currentEventTarget = $(event.target);
+
+                    var initEvent = $.Event("Rotator.dragStartInit");
+                    this.$currentEventTarget.trigger(initEvent);
 
                     this.dragUtil._startX = event.pageX;
                     this.dragUtil._startY = event.pageY;
@@ -167,8 +172,8 @@ define( ['U'], function( U ) {
                     x = this.getPureNumber(x);
                     y = this.getPureNumber(y);
 
-                    var angle = this.getDegreeFromCSS($dragTarget[0]);
-                    console.log('Rotate: ' + angle + 'deg');
+                    var angle = this.startAngle || this.getDegreeFromCSS($dragTarget[0]);
+                    //out('Rotate: ' + angle + 'deg');
 
                     this._origin = { x: x, y: y, angle:angle };
                     this._last = { x: x, y: y, angle:angle };
