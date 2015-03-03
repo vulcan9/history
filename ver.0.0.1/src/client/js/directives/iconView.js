@@ -130,14 +130,81 @@ define(['U'], function (U) {
                     CommandService.exe(CommandService.REDO, {});
                 }
 
+                ////////////////////////////////////////
+                // Copy & Paste
+                ////////////////////////////////////////
+
                 function copy() {
-                    alert('// TODO : copy');
-                    // CommandService.exe(CommandService.UNDO, {});
+                    if (Project.current == null) return;
+
+                    // 현재 선택상태에 있는 Element를 복사
+                    var documentUID = Project.current.getSelectDocument();
+                    var elementUID = Project.current.getSelectElement();
+                    var element = Project.current.getElement (documentUID, elementUID);
+                    if(!element){
+                        Tool.current.current_document('copy', '');
+                        return;
+                    }
+
+                    //var cloneElement = angular.element(element).clone();
+                    Tool.current.current_document('copy', element.outerHTML);
+                    //CommandService.exe(CommandService.COPY, {});
                 }
 
                 function paste() {
-                    alert('// TODO : paste');
-                    // CommandService.exe(CommandService.REDO, {});
+                    if (Project.current == null) return;
+
+                    var copyedData = Tool.current.current_document('copy');
+                    if(!copyedData) return;
+
+                    var $cloneElement = angular.element(copyedData);
+                    var elementUID = Project.current.createElementUID();
+                    $cloneElement.attr('uid', elementUID);
+
+                    var type = $cloneElement.attr('element');
+                    var elementHTML = $cloneElement[0].outerHTML;
+                    out('paste : ', elementHTML);
+
+                    var param = {
+                        documentUID: Project.current.getSelectDocument(),
+                        elementUID: elementUID,
+                        type: type,
+                        html: elementHTML
+                    };
+
+                    CommandService.exe(CommandService.ADD_ELEMENT, param);
+                }
+
+                function pasteExecute(callback){
+                    // 복사되어 있는 Element 객체가 있다면 붙이기(현재 Document에 삽입)
+
+                    var $cloneElement = angular.element(copyedData);
+
+                    var documentUID = Project.current.getSelectDocument();
+                    var elementUID = Project.current.createElementUID();
+                    $cloneElement.attr('uid', elementUID);
+
+                    var type;
+                    var option;
+
+                    function add(element) {
+
+                        var css = {
+                            'left': element.offsetLeft + e.offsetX, //e.offsetX,
+                            'top': element.offsetTop + e.offsetY  //e.offsetY,
+                        };
+                        var param = {
+                            // 삽입될 문서
+                            documentUID: documentUID,
+                            elementUID: elementUID,
+                            type: type,
+
+                            // element 설정값
+                            option: option,
+                            css: css
+                        };
+                        CommandService.exe(CommandService.ADD_ELEMENT, param);
+                    }
                 }
 
                 ////////////////////////////////////////

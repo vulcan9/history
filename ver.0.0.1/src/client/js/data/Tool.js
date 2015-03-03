@@ -503,6 +503,9 @@ define(['U'], function (U) {
                             // 현재 선택 문서 (uid)
                             "selectUID": "",
 
+                            // 현재 복사기능에 의해 저장되어진 데이터
+                            "copy": "",
+
                             // document 개별 설정 정보
                             // document 설정 정보를 가진 Map (documentUID:config option 설정 내용)
                             // 모든 document가 기록된 것이 아니라 수정된 사항만 있는 document만 기록 된다.
@@ -530,6 +533,26 @@ define(['U'], function (U) {
                 //---------------------
                 // Tool CURRENT 값 수정
                 //---------------------
+
+                current_document: function (name, value) {
+                    if (value === undefined) {
+                        //GET
+                        return this.tool('CURRENT').document[name];
+                    }
+
+                    // SET
+                    var oldValue = this.tool('CURRENT').document[name];
+                    this.tool('CURRENT').document[name] = value;
+
+                    if (oldValue == value) return;
+
+                    // EVENT
+                    var eventName = '#Tool.changed-CURRENT.document.' + name;
+                    out('# 이벤트 발생 : ', eventName);
+
+                    var args = {newValue: value, oldValue: oldValue};
+                    $rootScope.$broadcast(eventName, args);
+                },
 
                 _getSelectDocument: function () {
                     return this.tool('CURRENT').document.selectUID;

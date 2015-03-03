@@ -455,7 +455,7 @@ define(['U'], function (U) {
                     var el = Project.current.getElement(documentUID, selectUID);
                     var $el = angular.element(el);
 
-                    out("_onRotate : ", _dragEvent.angle);
+                    //out("_onRotate : ", _dragEvent.angle);
                     $el.css('transform', 'rotate(' + _dragEvent.angle + 'deg)');
 
                     _dragEvent.preventDefault();

@@ -111,26 +111,32 @@ define(['U'], function (U) {
                     var $screenContainer = angular.element(documentItem);
                     var $elements = $screenContainer.find("[uid='" + elementUID + "']");
                     var type = param.type;
+                    var html = param.html;
 
-                    //-------------------------
-                    // element directive 활성화
-                    //-------------------------
+                    if(!html)
+                    {
 
-                    // element는 Directive로 정의해야 함
-                    $elements.attr('element', true);
-                    $elements.addClass('hiElement').addClass(param.type);
-                    // 초기 최소 사이즈 지정(나중에 remove 됨)
-                    $elements.addClass('hiMinSize');
-                    //$elements.attr('ng-class', '{hiElement:true,' + param.type + ':true}');
+                        //-------------------------
+                        // element directive 활성화
+                        //-------------------------
 
-                    //-------------------------
-                    // Type별 설정
-                    //-------------------------
+                        // element는 Directive로 정의해야 함
+                        $elements.attr('element', type);
+                        $elements.addClass('hiElement').addClass(type);
+                        // 초기 최소 사이즈 지정(나중에 remove 됨)
+                        $elements.addClass('hiMinSize');
+                        //$elements.attr('ng-class', '{hiElement:true,' + param.type + ':true}');
 
-                    if(type == ELEMENT.TEXT){
-                        $elements.text('TEXT');
-                    }else if(type == ELEMENT.IMAGE){
-                        $elements.addClass('noImage');
+                        //-------------------------
+                        // Type별 설정
+                        //-------------------------
+
+                        // COPY 가 아닌 새로 새로 생성인 경우에만 설정함
+                        if(type == ELEMENT.TEXT){
+                            $elements.text('TEXT');
+                        }else if(type == ELEMENT.IMAGE){
+                            $elements.addClass('noImage');
+                        }
                     }
 
                     //-------------------------
@@ -250,7 +256,7 @@ define(['U'], function (U) {
 
                     // 이미 제작되어 있는 컨텐츠에 대해 directive를 생성
                     var $elements = $dom.find("[uid^='element-']");
-                    $elements.attr('element', true);
+                    if($elements.attr('element') === undefined) $elements.attr('element', 'unknown');
                     $compile(dom)($scope);
 
                     //****************************************

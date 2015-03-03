@@ -51,6 +51,9 @@ define( [ 'U' ], function( U ) {
                 UNDO: 'undo',
                 REDO: 'redo',
 
+                //COPY: 'copy',
+                //PASTE: 'paste',
+
                 // Configuration Application
                 CONFIGURATION: 'configuration',
 
@@ -468,16 +471,6 @@ define( [ 'U' ], function( U ) {
                 //
                 ////////////////////////////////////////////////////////////////////////////////
 
-                command_undo: function( param ) {
-                    alert('command_undo');
-                    //if(Project.current == null) return;
-                },
-
-                command_redo: function( param ) {
-                    alert('command_redo');
-                    //if(Project.current == null) return;
-                },
-
                 ////////////////////////////////////////
                 // Document
                 ////////////////////////////////////////
@@ -693,6 +686,10 @@ define( [ 'U' ], function( U ) {
 
                     // element 설정값
                     option: {}
+
+                    //----------------------
+                    // copy의 경우와 같이 element HTML을 통째로 전달하는 경우 전달 값
+                    html: element.outerHTML
                 };
                 */
                 command_addElement: function( param ) {
@@ -896,6 +893,21 @@ define( [ 'U' ], function( U ) {
                     return deferred.promise;
                 },
 
+                ////////////////////////////////////////////////////////////////////////////////
+                //
+                // History Edit 메뉴
+                //
+                ////////////////////////////////////////////////////////////////////////////////
+
+                command_undo: function( param ) {
+                    alert('command_undo');
+                    //if(Project.current == null) return;
+                },
+
+                command_redo: function( param ) {
+                    alert('command_redo');
+                    //if(Project.current == null) return;
+                },
 
                 ////////////////////////////////////////////////////////////////////////////////
                 //

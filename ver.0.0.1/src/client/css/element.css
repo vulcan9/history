@@ -39,8 +39,8 @@
 
 /*회전중인 경우 임시 표시*/
 .hi-screenContainer .hi-content div[uid^="element-"].rotating {
-    /*border: none;*/
-    outline: rgba(255, 0, 0, 0.1) solid 10px;
+    /*outline: rgba(255, 0, 0, 0.1) solid 10px;*/
+    outline: rgba(0, 216, 255, 0.1) solid 10px;
 }
 
 /*

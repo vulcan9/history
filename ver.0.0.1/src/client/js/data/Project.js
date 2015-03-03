@@ -1274,6 +1274,7 @@ define(['U'], function (U) {
                         var type = param.type;
                         var option = param.option;
                         var css = param.css;
+                        var html = param.html;
 
                         // DOM
                         // param으로 넘어온 값(open)을 document에 적용
@@ -1297,15 +1298,21 @@ define(['U'], function (U) {
                         //---------------------
                         // DOM 추가
 
-                        var $comp = this.createElementContent(type, elementUID, option, css);
-                        $content.append($comp);
+                        var $comp;
+                        if(html){
+                            $comp = $(html);
+                            $content.append($comp);
+                        }else{
+                            $comp = this.createElementContent(type, elementUID, option, css);
+                            $content.append($comp);
 
-                        // 크기를 CSS에 명시
-                        var size = {
-                            width: $comp.outerWidth(),
-                            height: $comp.outerHeight()
+                            // 크기를 CSS에 명시
+                            var size = {
+                                width: $comp.outerWidth(),
+                                height: $comp.outerHeight()
+                            }
+                            $comp.css(size);
                         }
-                        $comp.css(size);
 
                         // 데이터 갱신 (이미 dom 차원에서 갱신되어 있지만 그냥 명시적으로 기술함)
                         documentItem.document.content = $content[0];
