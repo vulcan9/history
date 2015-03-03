@@ -44,10 +44,14 @@ define( [], function() {
                 _param: null,
                 _callback: null,
 
-                execute: function( param, callback ) {
+                // undo 과정에 의해 호출된 Command인지 여부
+                _isUndoProcess: false,
+
+                execute: function( param, callback, isUndoProcess ) {
 
                     this._param = param;
                     this._callback = callback;
+                    this._isUndoProcess = isUndoProcess;
 
                     // out( '# Command Execute : ', this );
 

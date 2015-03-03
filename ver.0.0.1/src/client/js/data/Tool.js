@@ -87,7 +87,7 @@ define(['U'], function (U) {
                                     // version : VersionService,
 
                                     // 문서별 undo/redo 데이터
-                                    // __HISTORY: {},
+                                    __HISTORY: null,
 
                                     // 현재 Tool 실행시 중요한 state값 저장
                                     __CURRENT: null,
@@ -102,7 +102,7 @@ define(['U'], function (U) {
                             // Tool 설정치
                             this._config_default_CONFIG();
                             this._config_default_CURRENT();
-
+                            this._config_default_HISTORY();
                         })
                     );
 
@@ -624,6 +624,26 @@ define(['U'], function (U) {
                         }
                     };
                 },
+
+                //////////////////////////////////////////////////////////////////////////
+                //
+                // HISTORY 옵션 설정
+                //
+                //////////////////////////////////////////////////////////////////////////
+
+                _config_default_HISTORY: function(){
+                    this.tool('HISTORY', {
+                        caret: 0
+                    });
+                },
+
+                //---------------------
+                // Tool HISTORY 값 수정
+                //---------------------
+
+                history: function (name, value) {
+
+                }
 
                 ////////////////////////////////////////
                 // _factory end

@@ -198,7 +198,9 @@ define( [ 'U' ], function( U ) {
                     var callback = angular.bind( this, function( isSuccess, result, isStopPropergation ) {
 
                         if ( isSuccess ) {
-                            out( 'TODO : // undo, redo를 위해 command 객체 저장 : ', command );
+                            // undo, redo를 위해 command 객체 저장
+                            this.registHistory (command, result);
+
                         } else {
                             out( '# command 실행 취소', command );
                             if(isStopPropergation) macroCanceled = true;
@@ -227,6 +229,84 @@ define( [ 'U' ], function( U ) {
                     out( '# Command 호출 : ', command );
                     command.execute.apply( command, [ param, callback ] );
                 },
+
+                //******************************************************************************
+                //
+                //
+                // Undo/Redo 를 위한 History
+                //
+                //
+                //******************************************************************************
+
+                registHistory: function (command, result){
+                    // undo 과정에 의해 호출된 Command인지 여부
+                    if(command.isUndoProcess === undefined) throw new Error('isUndoProcess 속성 설정되지 않음');
+                    var isUndoProcess = command._isUndoProcess;
+
+                    var caret = Tool.current.history('caret')
+                    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+                    out( '\n\n');
+                    out( 'TODO : // undo, redo를 위해 command 객체 저장 : ', command );
+                    out( '\n\n');
+
+                },
+
+                ////////////////////////////////////////////////////////////////////////////////
+                //
+                // History Edit 메뉴
+                //
+                ////////////////////////////////////////////////////////////////////////////////
+
+                command_undo: function( param ) {
+                    //Tool.current.TOOL.HISTORY
+                    alert('command_undo');
+                    //if(Project.current == null) return;
+                },
+
+                command_redo: function( param ) {
+                    alert('command_redo');
+                    //if(Project.current == null) return;
+                },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 //******************************************************************************
                 //
@@ -891,22 +971,6 @@ define( [ 'U' ], function( U ) {
 
                     deferred.resolve( macro );
                     return deferred.promise;
-                },
-
-                ////////////////////////////////////////////////////////////////////////////////
-                //
-                // History Edit 메뉴
-                //
-                ////////////////////////////////////////////////////////////////////////////////
-
-                command_undo: function( param ) {
-                    alert('command_undo');
-                    //if(Project.current == null) return;
-                },
-
-                command_redo: function( param ) {
-                    alert('command_redo');
-                    //if(Project.current == null) return;
                 },
 
                 ////////////////////////////////////////////////////////////////////////////////
