@@ -101,27 +101,18 @@ define( ['U'], function( U ) {
                 // Drag
                 ////////////////////////////////////
 
-
-
                 // https://github.com/gthmb/jquery-free-transform
+                // https://github.com/gthmb/jquery-free-transform/blob/master/js/jquery.freetrans.js
                 // http://stackoverflow.com/questions/16193536/make-div-rotatable-in-every-browser
                 // http://stackoverflow.com/questions/20366892/resizing-handles-on-a-rotated-element
 
-
-
                 getDegreeFromMouse : function (target, mouseX, mouseY){
-
-
-                    var box = target;
-                    var boxCenter=[box.offset().left + box.width()/2, box.offset().top + box.height()/2];
-                    var deg = Math.atan2((mouseY - boxCenter[1]), (mouseX - boxCenter[0]) )*(180/Math.PI);
-
-                    //var offset = target.offset();
-                    //var center_x = (offset.left) + (target.width()/2);
-                    //var center_y = (offset.top) + (target.height()/2) + 30;
-                    //var radians = Math.atan2(mouseX - center_x, mouseY - center_y);
-                    ////radians += (2 * Math.PI);
-                    //var deg = (radians * (180 / Math.PI));
+                    var offset = target.offset();
+                    var centerX = (offset.left) + (target.width()/2);
+                    var centerY = (offset.top) + (target.height()/2) + 30;
+                    var radians = Math.atan2(mouseY - centerY, mouseX - centerX);
+                    //radians += (2 * Math.PI);
+                    var deg = (radians * (180 / Math.PI));
                     //deg = Math.round(deg);
                     //deg = deg % 360;
 
@@ -179,8 +170,8 @@ define( ['U'], function( U ) {
                     var angle = this.getDegreeFromCSS($dragTarget[0]);
                     console.log('Rotate: ' + angle + 'deg');
 
-                    this._origin = { x: x, y: y, deg:angle };
-                    this._last = { x: x, y: y, deg:angle };
+                    this._origin = { x: x, y: y, angle:angle };
+                    this._last = { x: x, y: y, angle:angle };
 
                     var target = $(document);
                     target.on("mousemove", $.proxy(this._onMouseMove_rotate, this));
@@ -198,7 +189,10 @@ define( ['U'], function( U ) {
                     var distY = event.pageY - this.dragUtil._startY;
                     var x = this._origin.x;
                     var y = this._origin.y;
-                    var deg = this._origin.deg;
+
+                    var angle = this._origin.angle;
+                    var curAngle = this.getDegreeFromMouse($dragTarget, event.pageX, event.pageY);
+                    var startAngle = this.getDegreeFromMouse($dragTarget, this.dragUtil._startX, this.dragUtil._startY);
 
                     if(!this._isMoved)
                     {
@@ -210,13 +204,10 @@ define( ['U'], function( U ) {
                         }
 
                         //var deg = this.getDegreeFromMouse($dragTarget, event.pageX, event.pageY);
-                        var startEvent = $.Event("Rotator.dragStart", {distX:distX, distY:distY, x:x, y:y, deg:deg});
+                        var startEvent = $.Event("Rotator.dragStart", {distX:distX, distY:distY, x:x, y:y, angle:angle});
                         this.$currentEventTarget.trigger(startEvent);
 
                         this._isMoved = true;
-
-                        //var transform = $dragTarget.css('transform');
-                        //out("transform : ", transform, $dragTarget[0].style['transform']);
 
                         // 드래그 중지
                         if(event.isDefaultPrevented() || startEvent.isDefaultPrevented()){
@@ -234,14 +225,14 @@ define( ['U'], function( U ) {
                     if(this.direction == 'both' || this.direction == 'y'){
                         y = y + distY;
                     }
+                    angle = angle + curAngle - startAngle;
 
                     // 최종값 저장
-                    deg = this.getDegreeFromMouse($dragTarget, event.pageX, event.pageY);
                     //out("_onRotate : ", angle);
-                    this._last = { x: x, y: y, deg:deg };
+                    this._last = { x: x, y: y, angle:angle };
 
                     // 이벤트 발송
-                    var newEvent = $.Event("Rotator.drag", {distX:distX, distY:distY, x:x, y:y, deg:deg});
+                    var newEvent = $.Event("Rotator.drag", {distX:distX, distY:distY, x:x, y:y, angle:angle});
                     this.$currentEventTarget.trigger(newEvent);
 
                     if(event.isDefaultPrevented() || newEvent.isDefaultPrevented()){
@@ -249,7 +240,7 @@ define( ['U'], function( U ) {
                     }
 
                     // 위치 갱신
-                    $dragTarget.css('transform', 'rotate(' + deg + 'deg)');
+                    $dragTarget.css('transform', 'rotate(' + angle + 'deg)');
                 },
 
                 _onMouseUp_rotate : function (event){

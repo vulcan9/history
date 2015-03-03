@@ -270,7 +270,8 @@ define(['U'], function (U) {
                         y: U.toNumber($select.css('top')),
 
                         width: $select.outerWidth(),
-                        height: $select.outerHeight()
+                        height: $select.outerHeight(),
+                        angle: _rotateUtil.getDegreeFromCSS($select[0])
                     };
                     // rect = $scope.getBoundary({uid:selectUID});
 
@@ -284,7 +285,7 @@ define(['U'], function (U) {
                         height: (rect.height * scale),
                         x: (rect.x * scale),
                         y: (rect.y * scale),
-                        deg: 45
+                        angle: rect.angle
                     }
 
                     $scope.boundary = boundary;
@@ -440,29 +441,8 @@ define(['U'], function (U) {
                     var el = Project.current.getElement(documentUID, selectUID);
                     var $el = angular.element(el);
 
-                    var x = toInt(_dragEvent.x);
-                    var y = toInt(_dragEvent.y);
-
-                    out("_onRotate : ", _dragEvent.deg);
-
-
-
-
-
-
-
-                    //var w = $el.width();
-                    //var h = $el.height();
-                    //translate('+ w + 'px, ' + h + 'px)
-                    $el.css('transform', 'rotate(' + _dragEvent.deg + 'deg)');
-
-                    //_dragEvent.preventDefault();
-
-                    //$el.css({
-                    //    'left': x,
-                    //    'top': y
-                    //});
-                    // __updateBoundary();
+                    out("_onRotate : ", _dragEvent.angle);
+                    $el.css('transform', 'rotate(' + _dragEvent.angle + 'deg)');
                 }
 
                 // 앵커 드래그(위치변경)로 인한 데이터 갱신
@@ -479,10 +459,7 @@ define(['U'], function (U) {
                     var elementUID = $scope.selectInfo.uid;
                     var documentUID = Project.current.getSelectDocument();
 
-                    var x = toInt(e.x);
-                    var y = toInt(e.y);
-                    var deg = toInt(e.deg);
-                    out("_onRotate End : ", deg);
+                    var angle = toInt(e.angle);
 
                     var param = {
                         // 삽입될 문서
@@ -492,9 +469,7 @@ define(['U'], function (U) {
                         // element 설정값
                         option: {},
                         css: {
-                            //'left': x + 'px',
-                            //'top': y + 'px'
-                            'transform': deg
+                            'transform': 'rotate(' + angle + 'deg)'
                         }
                     };
                     CommandService.exe(CommandService.MODIFY_ELEMENT, param, function () {
