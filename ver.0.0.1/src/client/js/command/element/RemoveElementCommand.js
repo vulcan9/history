@@ -34,14 +34,16 @@ define( [], function() {
             }
 
             // undo/redo 지원
+            /*
+             var newParam = {
+                 documentUID: newParam.documentUID,
+                 elementUID: newParam.elementUID
+             };
+             */
             RemoveElementCommand.getUndoParam = function(newParam){
+
                 // AddElementCommand 호출에 사용할 param을 구성한다.
-                /*
-                var newParam = {
-                    documentUID: newParam.documentUID,
-                    elementUID: newParam.elementUID
-                };
-                */
+
                 var documentUID = newParam.documentUID;
                 var elementUID = newParam.elementUID;
 
@@ -52,7 +54,7 @@ define( [], function() {
                 //var styleString = $dom.attr('style-string') || '{}';
                 //var css = angular.fromJson(styleString);
                 var option = Project.current.elementAPI(documentUID, elementUID).option();
-                var elementHTML = el.outerHTML;
+                var oldHTML = Tool.current.history(documentUID).getSnapshot(el);
 
                 var undoParam = {
                     documentUID: newParam.documentUID,
@@ -60,7 +62,7 @@ define( [], function() {
                     type: type,
 
                     //css:css,
-                    html: elementHTML,
+                    html: oldHTML,
                     option: option
                 }
                 return undoParam;

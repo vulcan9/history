@@ -152,14 +152,6 @@ define( [ 'U' ], function( U ) {
                             return;
                         }
 
-                        // UNDO 기능을 위해 param을 캡쳐해 놓는다.
-                        var commandClass = eval(commandName);
-                        if(commandClass && commandClass.getUndoParam){
-                            if(param._commandState == 'call'){
-                                var undoParam = commandClass.getUndoParam(angular.copy(param));
-                            }
-                        }
-
                         // macro = [{command:command, param:param},.....]
                         macroPromise.then( function( macro ) {
                             
@@ -172,9 +164,7 @@ define( [ 'U' ], function( U ) {
 
                                 if(isSuccess){
                                     // undo, redo를 위해 command 객체 저장
-                                    if(param._commandState == 'call'){
-                                        this.registHistory (commandName, param, undoParam, resultCallback, result);
-                                    }
+                                    this.registHistory (commandName, param, resultCallback, result);
                                 }
                             });
 
@@ -256,28 +246,36 @@ define( [ 'U' ], function( U ) {
                  undo_SelectElementCommand
                  */
 
-                registHistory: function (commandName, param, undoParam, callback, result){
+                registHistory: function (commandName, param, callback, result){
 
                     var commandClass = eval(commandName);
                     if(!commandClass || !commandClass.getUndoParam) return;
 
-                    // command 실행 전에 미리 copy해 놓는다.
-                    //var undoParam = commandClass.getUndoParam(angular.copy(param));
-                    undoParam._commandState = 'undo';
+                    if(param._commandState == 'call'){
+                        // UNDO 기능을 위해 param을 캡쳐해 놓는다.
+                        var undoParam = commandClass.getUndoParam(angular.copy(param));
+                        undoParam._commandState = 'undo';
 
-                    var redoParam = angular.copy(param);
-                    redoParam._commandState = 'redo';
+                        var redoParam = angular.copy(param);
+                        redoParam._commandState = 'redo';
 
-                    var copyedResult = angular.copy(result);
+                        var copyedResult = angular.copy(result);
 
-                    var historyItem = {
-                        command: commandName,
-                        undoParam: undoParam,
-                        redoParam: redoParam,
-                        callback: callback,
-                        result: copyedResult
-                    };
-                    Tool.current.history().add(historyItem);
+                        var historyItem = {
+                            command: commandName,
+                            undoParam: undoParam,
+                            redoParam: redoParam,
+                            callback: callback,
+                            result: copyedResult
+                        };
+                        Tool.current.history().add(historyItem);
+                    }
+
+                    // undo, redo일때 dom data에 기록되어 있는 oldHTML은 아직 업데이트가 되지 않은 상태이다.
+
+                    // 변경된 마지막 상태로 oldHTML 업데이트
+                    var el = Project.current.getElement(param.documentUID, param.elementUID);
+                    Tool.current.history(param.documentUID).setSnapshot(el);
                 },
 
                 ////////////////////////////////////////////////////////////////////////////////
@@ -1015,6 +1013,8 @@ define( [ 'U' ], function( U ) {
 
                     var elementUID = Project.current.getSelectElement();
                     if(param.elementUID === elementUID) return null;
+
+                    param.oldSelectUID = elementUID;
 
                     //**********************************************************
 

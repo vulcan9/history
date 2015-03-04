@@ -15,7 +15,7 @@ define( [], function() {
 
 
         // 선언
-        function _service(Command, Project) {
+        function _service(Command, Project, Tool) {
 
             out( 'Command 등록 : ModifyElementCommand' );
 
@@ -46,18 +46,16 @@ define( [], function() {
                 var styleString = $dom.attr('style-string') || '{}';
                 //var css = angular.fromJson(styleString);
                 var option = Project.current.elementAPI(documentUID, elementUID).option();
-                var elementHTML = newParam.oldHTML || el.outerHTML;
+                var oldHTML = Tool.current.history(documentUID).getSnapshot(el);
 
                 var undoParam = {
                     documentUID: newParam.documentUID,
                     elementUID : newParam.elementUID,
                     type: type,
 
-                    // 기존 설정된 CSS 모두 지움
-                    //cleanCSS: true,
                     //css:css,
 
-                    html: elementHTML,
+                    html: oldHTML,
                     option: option
                 }
                 return undoParam;

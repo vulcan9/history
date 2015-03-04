@@ -755,6 +755,7 @@ define(['U'], function (U) {
                         //.appendTo($('body'))
                         //.hide();
                         $img.attr( "src", backgroundImage );
+                        $currentElement.removeClass('noImage');
                         delayModify(changeList);
                     }else{
                         $currentElement.addClass('noImage');

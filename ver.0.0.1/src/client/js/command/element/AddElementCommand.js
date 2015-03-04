@@ -15,7 +15,7 @@ define( [], function() {
 
 
         // 선언
-        function _service(Command, VersionService, Project) {
+        function _service(Command, VersionService, Project, Tool) {
 
             out( 'Command 등록 : AddElementCommand' );
 
@@ -34,20 +34,28 @@ define( [], function() {
             }
 
             // undo/redo 지원
+            /*
+             var newParam = {
+                 documentUID: "document-7dc1d5a0-f477-4ef3-a5b0-8842c8ec88ca",
+                 elementUID : "element-d88f2fde-3878-4c1c-b5c9-3897b6f81f6a",
+                 type: "text",
+                 option: {},
+                 css:{}
+             }
+             */
             AddElementCommand.getUndoParam = function(newParam){
+
                 // RemoveElementCommand 호출에 사용할 param을 구성한다.
-                /*
-                var newParam = {
-                    documentUID: "document-7dc1d5a0-f477-4ef3-a5b0-8842c8ec88ca",
-                    elementUID : "element-d88f2fde-3878-4c1c-b5c9-3897b6f81f6a",
-                    type: "text",
-                    option: {},
-                    css:{}
-                }
-                */
+
+                var documentUID = newParam.documentUID;
+                var elementUID = newParam.elementUID;
+                //var el = Project.current.getElement(documentUID, elementUID);
+                //var oldHTML = Tool.current.history(documentUID).getSnapshot(el);
+
                 var undoParam = {
-                    documentUID: newParam.documentUID,
-                    elementUID: newParam.elementUID
+                    documentUID: documentUID,
+                    elementUID: elementUID,
+                    oldHTML: null
                 };
                 return undoParam;
             };

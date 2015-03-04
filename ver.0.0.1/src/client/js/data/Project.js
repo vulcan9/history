@@ -1520,7 +1520,17 @@ define(['U'], function (U) {
                         // 데이터 갱신 (css, option)
 
                         if(html){
-                            dom.outerHTML = html;
+
+                            // 아래 방식은 element에 등록된 이벤트까지 사라져 버린다.
+                            //dom.outerHTML = html;
+
+                            var $html = $(html);
+                            $dom.attr('style-string', $html.attr('style-string'));
+                            $dom.attr('class', $html.attr('class'));
+                            $dom.attr('style', $html.attr('style'));
+                            $dom.attr('element', $html.attr('element'));
+                            $dom.html($html.html());
+
                         }else{
                             // 데이터 갱신 (Element Type에 따른 개별 설정)
                             this.setModifyElementParameter(documentUID, elementUID, param);

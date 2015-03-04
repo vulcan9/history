@@ -151,8 +151,8 @@ define(['U'], function (U) {
 
                     var styleString = $elements.attr('style-string') || '{}';
                     var obj = angular.fromJson(styleString);
-                    if(!obj.width) obj.width = $elements.outerWidth();
-                    if(!obj.height) obj.height = $elements.outerHeight();
+                    if(!obj.width) obj.width = $elements.outerWidth() + 'px';
+                    if(!obj.height) obj.height = $elements.outerHeight() + 'px';
                     $elements.attr('style-string', angular.toJson(obj));
 
                     //-------------------------
@@ -168,16 +168,25 @@ define(['U'], function (U) {
                     $scope.updateThumbnail();
                 }
 
-                function __onRemoveElement(item, param) {
+                function __onRemoveElement(documentItem, param) {
                     //
                     $scope.updateThumbnail();
                 }
 
-                function __onModifyElement(item, param) {
+                function __onModifyElement(documentItem, param) {
                     // 현재 선택상태이면 UI를 업데이트 한다.
 
                     // UI 크기 업데이트 (selectInfo 값이 변경됨)
                     // $scope.updateSelectUI();
+                    var html = param.html;
+
+                    if(html)
+                    {
+                        var elementUID = param.elementUID;
+                        var $screenContainer = angular.element(documentItem);
+                        var $elements = $screenContainer.find("[uid='" + elementUID + "']");
+                        $compile($elements)($scope);
+                    }
 
                     $scope.updateThumbnail();
                 }

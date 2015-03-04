@@ -693,22 +693,22 @@ define(['U'], function (U) {
 
                             if(!data.list) this.clear();
 
-                            var total = data.caret = data.list.length - 1;
+                            var total = data.list.length - 1;
                             if(data.caret < 0){
                                 data.list = [];
                             }else if(data.caret == total){
-                                if(data.caret == MAX){
+                                if(data.caret == MAX-1){
                                     // 리스트 수 1개 줄인다.
                                     data.list.shift();
                                 }
                             }else{
                                 // 현재 caret 이후 삭제
                                 var currentLength = data.caret + 1;
-                                while(data.list.length >= currentLength){
+                                while(data.list.length > currentLength){
                                     data.list.pop();
                                 }
 
-                                +++++++++++++++++++++++++++++++++++++++++++++++
+
                             }
 
                             // 맨뒤에 추가
@@ -717,7 +717,7 @@ define(['U'], function (U) {
 
                             out('\n\n\n\n\n');
                             out( '// undo, redo를 위해 command 객체 저장 : ', historyItem );
-                            out( 'HISTORY : ', data);
+                            out( 'HISTORY : ', data.list.length, data.caret, data.list);
                             out('\n\n\n\n\n');
                         },
                         // 현재 caret 위치 실행 후 caret--
@@ -761,6 +761,19 @@ define(['U'], function (U) {
                                 $rootScope.$broadcast(eventName);
                             }
                             return item;
+                        },
+
+                        // 이전 상황을 캡쳐해 둔다
+                        // Tool.current.history().capture(element);
+                        setSnapshot: function(element){
+                            if(!element) return;
+                            var $element = angular.element(element);
+                            $element.data('oldHTML', element.outerHTML);
+                        },
+                        getSnapshot: function(element){
+                            if(!element) return null;
+                            var $element = angular.element(element);
+                            return $element.data('oldHTML');
                         }
                     };
                 }

@@ -34,8 +34,25 @@ define( [], function() {
             }
 
             // undo/redo 지원
+            /*
+             var param = {
+                 documentUID: Project.current.getSelectDocument(),
+                 elementUID: Project.current.getSelectElement()
+             };
+             */
             SelectElementCommand.getUndoParam = function(newParam){
+
                 // SelectElementCommand 호출에 사용할 param을 구성한다.
+                var documentUID = newParam.documentUID;
+                //var elementUID = newParam.elementUID;
+                var oldSelectUID = newParam.oldSelectUID;
+
+                var undoParam = {
+                    documentUID: documentUID,
+                    elementUID: oldSelectUID
+                };
+
+                return undoParam;
             };
 
             /////////////////////////////////////
