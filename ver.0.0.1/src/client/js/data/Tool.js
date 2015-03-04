@@ -504,7 +504,13 @@ define(['U'], function (U) {
                             "selectUID": "",
 
                             // 현재 복사기능에 의해 저장되어진 데이터
-                            "copy": "",
+                            "copy": null,
+                            /*
+                            "copy": {
+                                html:element.outerHTML,
+                                option: option
+                            }
+                            */
 
                             // document 개별 설정 정보
                             // document 설정 정보를 가진 Map (documentUID:config option 설정 내용)
@@ -633,7 +639,18 @@ define(['U'], function (U) {
 
                 _config_default_HISTORY: function(){
                     this.tool('HISTORY', {
-                        caret: 0
+                        "map": {
+                            /*
+                             // Tool에서 설정된 개별 document 설정들
+                             "key (documentUID)": {
+                                 "uid": documentUID,
+                                 caret: -1,
+                                 list:[]
+                             */
+                        },
+
+                        // 총 50개 목록을 넘지 않도록
+                        MAX: 50
                     });
                 },
 
@@ -641,8 +658,111 @@ define(['U'], function (U) {
                 // Tool HISTORY 값 수정
                 //---------------------
 
-                history: function (name, value) {
+                // GET/SET
+                // Tool.current.history().add(command);
+                history: function (documentUID) {
+                    documentUID = documentUID || this._getSelectDocument();
+                    var map = this.tool('HISTORY').map || {};
+                    var MAX = this.tool('HISTORY').MAX;
 
+                    var self = this;
+                    return {
+                        clear: function(){
+                            if(!map[documentUID]) return;
+                            map[documentUID] = null;
+                            delete map[documentUID];
+                        },
+                        /*
+                         historyItem:{
+                         command: commandName,
+                         param: copyedParam,
+                         result: copyedResult
+                         }
+                         */
+                        add: function(historyItem){
+                            // 초기화 확인
+                            if(!map[documentUID]){
+                                map[documentUID] = {
+                                    "uid": documentUID,
+                                    caret: -1,
+                                    list:[]
+                                };
+                            }
+                            var data = map[documentUID];
+                            //self.tool('HISTORY').map = map;
+
+                            if(!data.list) this.clear();
+
+                            var total = data.caret = data.list.length - 1;
+                            if(data.caret < 0){
+                                data.list = [];
+                            }else if(data.caret == total){
+                                if(data.caret == MAX){
+                                    // 리스트 수 1개 줄인다.
+                                    data.list.shift();
+                                }
+                            }else{
+                                // 현재 caret 이후 삭제
+                                var currentLength = data.caret + 1;
+                                while(data.list.length >= currentLength){
+                                    data.list.pop();
+                                }
+
+                                +++++++++++++++++++++++++++++++++++++++++++++++
+                            }
+
+                            // 맨뒤에 추가
+                            data.list.push(historyItem);
+                            data.caret = data.list.length - 1;
+
+                            out('\n\n\n\n\n');
+                            out( '// undo, redo를 위해 command 객체 저장 : ', historyItem );
+                            out( 'HISTORY : ', data);
+                            out('\n\n\n\n\n');
+                        },
+                        // 현재 caret 위치 실행 후 caret--
+                        undo: function(){
+                            var data = map[documentUID];
+                            if(!data || data.caret < 0) return;
+                            var item = data.list[data.caret];
+                            data.caret--;
+
+                            // EVENT
+                            var eventName = '#Tool.history.change';
+                            out('# 이벤트 발생 : ', eventName);
+                            var args = {caret: data.caret};
+                            $rootScope.$broadcast(eventName, args);
+
+                            if(data.caret < 0){
+                                var eventName = '#Tool.history.start';
+                                out('# 이벤트 발생 : ', eventName);
+                                $rootScope.$broadcast(eventName);
+                            }
+                            return item;
+                        },
+                        // caret++ 실행 후 현재 caret 위치 실행
+                        redo: function(){
+                            var data = map[documentUID];
+                            if(!data) return;
+                            var total = data.list.length - 1;
+                            if(data.caret == total) return;
+                            data.caret++;
+                            var item = data.list[data.caret];
+
+                            // EVENT
+                            var eventName = '#Tool.history.change';
+                            out('# 이벤트 발생 : ', eventName);
+                            var args = {caret: data.caret};
+                            $rootScope.$broadcast(eventName, args);
+
+                            if(data.caret == total){
+                                var eventName = '#Tool.history.end';
+                                out('# 이벤트 발생 : ', eventName);
+                                $rootScope.$broadcast(eventName);
+                            }
+                            return item;
+                        }
+                    };
                 }
 
                 ////////////////////////////////////////

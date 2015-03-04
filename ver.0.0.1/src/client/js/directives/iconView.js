@@ -142,12 +142,17 @@ define(['U'], function (U) {
                     var elementUID = Project.current.getSelectElement();
                     var element = Project.current.getElement (documentUID, elementUID);
                     if(!element){
-                        Tool.current.current_document('copy', '');
+                        Tool.current.current_document('copy', null);
                         return;
                     }
 
+                    var option = Project.current.elementAPI(documentUID, elementUID).option();
                     //var cloneElement = angular.element(element).clone();
-                    Tool.current.current_document('copy', element.outerHTML);
+
+                    Tool.current.current_document('copy', {
+                        html:element.outerHTML,
+                        option: option
+                    });
                     //CommandService.exe(CommandService.COPY, {});
                 }
 
@@ -155,9 +160,9 @@ define(['U'], function (U) {
                     if (Project.current == null) return;
 
                     var copyedData = Tool.current.current_document('copy');
-                    if(!copyedData) return;
+                    if(!copyedData || !copyedData.html) return;
 
-                    var $cloneElement = angular.element(copyedData);
+                    var $cloneElement = angular.element(copyedData.html);
                     var elementUID = Project.current.createElementUID();
                     $cloneElement.attr('uid', elementUID);
 
@@ -165,11 +170,14 @@ define(['U'], function (U) {
                     var elementHTML = $cloneElement[0].outerHTML;
                     out('paste : ', elementHTML);
 
+                    var option = copyedData.option || {};
+
                     var param = {
                         documentUID: Project.current.getSelectDocument(),
                         elementUID: elementUID,
                         type: type,
-                        html: elementHTML
+                        html: elementHTML,
+                        option: option
                     };
 
                     CommandService.exe(CommandService.ADD_ELEMENT, param);

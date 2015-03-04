@@ -33,12 +33,42 @@ define( [], function() {
 
             }
 
+            // undo/redo 지원
+            ModifyElementCommand.getUndoParam = function(newParam){
+                // ModifyElementCommand 호출에 사용할 param을 구성한다.
+                var documentUID = newParam.documentUID;
+                var elementUID = newParam.elementUID;
+
+                var el = Project.current.getElement(documentUID, elementUID);
+                var $dom = angular.element(el);
+                var type = $dom.attr('element');
+
+                var styleString = $dom.attr('style-string') || '{}';
+                //var css = angular.fromJson(styleString);
+                var option = Project.current.elementAPI(documentUID, elementUID).option();
+                var elementHTML = newParam.oldHTML || el.outerHTML;
+
+                var undoParam = {
+                    documentUID: newParam.documentUID,
+                    elementUID : newParam.elementUID,
+                    type: type,
+
+                    // 기존 설정된 CSS 모두 지움
+                    //cleanCSS: true,
+                    //css:css,
+
+                    html: elementHTML,
+                    option: option
+                }
+                return undoParam;
+            };
+
             /////////////////////////////////////
             // Prototype 상속
             /////////////////////////////////////
 
             angular.extend( ModifyElementCommand.prototype,  _super, {
-                
+
                 _run : function ( param ) {
 
                     // Override

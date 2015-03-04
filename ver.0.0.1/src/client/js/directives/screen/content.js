@@ -149,6 +149,12 @@ define(['U'], function (U) {
                     // prefix 포함된 style 적용
                     //$elements.attr('ng-style', "styles");
 
+                    var styleString = $elements.attr('style-string') || '{}';
+                    var obj = angular.fromJson(styleString);
+                    if(!obj.width) obj.width = $elements.outerWidth();
+                    if(!obj.height) obj.height = $elements.outerHeight();
+                    $elements.attr('style-string', angular.toJson(obj));
+
                     //-------------------------
                     // 적용
                     //-------------------------

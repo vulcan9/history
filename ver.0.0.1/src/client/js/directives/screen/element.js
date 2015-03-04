@@ -228,6 +228,8 @@ define(['U'], function (U) {
                     } else if (type == ELEMENT.IMAGE) {
                         activateEdit_image(dom);
                     }
+
+                    $scope.oldHTML = $dom[0].outerHTML;
                 }
 
                 $scope.deactivateEdit = function (documentUID, elementUID) {
@@ -485,7 +487,8 @@ define(['U'], function (U) {
                             top: $dom.css('top'),
                             width: $dom.outerWidth() + 'px',
                             height: $dom.outerHeight() + 'px'
-                        }
+                        },
+                        oldHTML: $scope.oldHTML
                     };
 
                     if (type == ELEMENT.TEXT) {

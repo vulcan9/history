@@ -40,34 +40,31 @@ define( [ 'U' ], function( U ) {
                 // 싱클톤으로 사용되므로 상수도 여기에서 정의해준다
                 
                 // FILE
-                NEW: 'new',
-                OPEN: 'open',
-                SAVE: 'save',
-                SAVEAS: 'saveAs',
-                CLOSE: 'close',
-                EXIT: 'exit',
+                NEW: 'NewCommand',
+                OPEN: 'OpenCommand',
+                SAVE: 'SaveCommand',
+                SAVEAS: 'SaveAsCommand',
+                CLOSE: 'CloseCommand',
+                EXIT: 'ExitCommand',
 
                 // EDIT
-                UNDO: 'undo',
-                REDO: 'redo',
-
-                //COPY: 'copy',
-                //PASTE: 'paste',
+                UNDO: 'UndoCommand',
+                REDO: 'RedoCommand',
 
                 // Configuration Application
-                CONFIGURATION: 'configuration',
+                CONFIGURATION: 'ConfigurationCommand',
 
                 // DOCUMENT
-                ADD_DOCUMENT: 'addDocument',
-                REMOVE_DOCUMENT: 'removeDocument',
-                SELECT_DOCUMENT: 'selectDocument',
-                MODIFY_DOCUMENT: 'modifyDocument',
+                ADD_DOCUMENT: 'AddDocumentCommand',
+                REMOVE_DOCUMENT: 'RemoveDocumentCommand',
+                SELECT_DOCUMENT: 'SelectDocumentCommand',
+                MODIFY_DOCUMENT: 'ModifyDocumentCommand',
 
                 // ELEMENT
-                ADD_ELEMENT: 'addElement',
-                REMOVE_ELEMENT: 'removeElement',
-                SELECT_ELEMENT: 'selectElement',
-                MODIFY_ELEMENT: 'modifyElement',
+                ADD_ELEMENT: 'AddElementCommand',
+                REMOVE_ELEMENT: 'RemoveElementCommand',
+                SELECT_ELEMENT: 'SelectElementCommand',
+                MODIFY_ELEMENT: 'ModifyElementCommand',
                 
                 /*
                 CommandService._exe(CommandService.OPEN, param, function callback(isSuccess, result){
@@ -77,7 +74,11 @@ define( [ 'U' ], function( U ) {
 
                 exe: function (command, param, callback){
                     out('\n# [ ', command, ' ] 명령 실행');
-                    
+
+                    if(param === undefined || param === null) param = {};
+                    if(typeof param !== 'object') throw new Error('param은 Object 객체여야 합니다.');
+                    param._commandState = 'call';
+
                     this._execute(command, param, function (isSuccess, result){
                         out('# [ ', command, ' ] 명령 실행 종료 : ', isSuccess, ' - ', result);
 
@@ -95,29 +96,24 @@ define( [ 'U' ], function( U ) {
                 // 
                 //******************************************************************************
 
-                _execute: function() {
+                _execute: function(commandName, param, resultCallback) {
 
                     ProgressService.init(true);
-
-                    var args = U.toArray( arguments );
-
-                    // command 연결 함수 이름
-                    var commandName = args.shift();
-                    var funcName = 'command_' + commandName;
-
-                    // 결과 콜백 함수
-                    var param = args.shift();
-                    var resultCallback = args.shift();
+                    //var args = U.toArray( arguments );
 
                     try {
+
+                        var self = this;
+                        // command 연결 함수 이름
+                        var funcName = param._commandState + '_' + commandName;
 
                         out( '\n=================================================' );
                         out( ' Macro 생성 : ', commandName, ' --> ', funcName, '\n' );
                         // out( ' resultCallback : ', resultCallback);
 
+                        /*
                         args = [ param ];
 
-                        /*
                         1차 개발 완료 : [동기 코드]
                         // args.push(angular.bind(this, commandCallback));
                         var macro = this[ funcName ].apply( this, [ param ] );
@@ -147,14 +143,21 @@ define( [ 'U' ], function( U ) {
                             out( '=================================================\n' );
                         } );
                         */
-                        
-                        var self = this;
+
                         var macroPromise = this[ funcName ].apply( this, [ param ] );
                         if(!macroPromise){
                             out('\n# Command 실행하지 않음');
                             out( '\n=================================================' );
                             ProgressService.complete();
                             return;
+                        }
+
+                        // UNDO 기능을 위해 param을 캡쳐해 놓는다.
+                        var commandClass = eval(commandName);
+                        if(commandClass && commandClass.getUndoParam){
+                            if(param._commandState == 'call'){
+                                var undoParam = commandClass.getUndoParam(angular.copy(param));
+                            }
                         }
 
                         // macro = [{command:command, param:param},.....]
@@ -164,7 +167,16 @@ define( [ 'U' ], function( U ) {
                             out( '\n=================================================' );
                             out('# Macro 실행 : ', arguments);
 
-                            self._runMacro( macro, resultCallback );
+                            self._runMacro( macro, function(isSuccess, result){
+                                resultCallback.apply( this, [ isSuccess, result ] );
+
+                                if(isSuccess){
+                                    // undo, redo를 위해 command 객체 저장
+                                    if(param._commandState == 'call'){
+                                        this.registHistory (commandName, param, undoParam, resultCallback, result);
+                                    }
+                                }
+                            });
 
                         }, function(){
 
@@ -197,11 +209,7 @@ define( [ 'U' ], function( U ) {
                     // args => [param]
                     var callback = angular.bind( this, function( isSuccess, result, isStopPropergation ) {
 
-                        if ( isSuccess ) {
-                            // undo, redo를 위해 command 객체 저장
-                            this.registHistory (command, result);
-
-                        } else {
+                        if ( isSuccess == false ) {
                             out( '# command 실행 취소', command );
                             if(isStopPropergation) macroCanceled = true;
                         }
@@ -210,8 +218,6 @@ define( [ 'U' ], function( U ) {
 
                         if ( macro.length < 1 || macroCanceled) {
                             if ( resultCallback ) {
-                                
-                                out('TODO : 화면 랜더링 타임을 늦춘다. (데이터가 바뀌는 이벤트 시점을 명령 종료 시점으로 늦춘다.)');
 
                                 out('# Macro 실행 종료');
                                 out( '=================================================\n' );
@@ -238,18 +244,40 @@ define( [ 'U' ], function( U ) {
                 //
                 //******************************************************************************
 
-                registHistory: function (command, result){
-                    // undo 과정에 의해 호출된 Command인지 여부
-                    if(command.isUndoProcess === undefined) throw new Error('isUndoProcess 속성 설정되지 않음');
-                    var isUndoProcess = command._isUndoProcess;
+                // undo, redo 가능한 Command 임
+                /*
+                 undo_AddDocumentCommand
+                 undo_RemoveDocumentCommand
+                 undo_SelectDocumentCommand
 
-                    var caret = Tool.current.history('caret')
-                    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                 undo_AddElementCommand
+                 undo_RemoveElementCommand
+                 undo_ModifyElementCommand
+                 undo_SelectElementCommand
+                 */
 
-                    out( '\n\n');
-                    out( 'TODO : // undo, redo를 위해 command 객체 저장 : ', command );
-                    out( '\n\n');
+                registHistory: function (commandName, param, undoParam, callback, result){
 
+                    var commandClass = eval(commandName);
+                    if(!commandClass || !commandClass.getUndoParam) return;
+
+                    // command 실행 전에 미리 copy해 놓는다.
+                    //var undoParam = commandClass.getUndoParam(angular.copy(param));
+                    undoParam._commandState = 'undo';
+
+                    var redoParam = angular.copy(param);
+                    redoParam._commandState = 'redo';
+
+                    var copyedResult = angular.copy(result);
+
+                    var historyItem = {
+                        command: commandName,
+                        undoParam: undoParam,
+                        redoParam: redoParam,
+                        callback: callback,
+                        result: copyedResult
+                    };
+                    Tool.current.history().add(historyItem);
                 },
 
                 ////////////////////////////////////////////////////////////////////////////////
@@ -258,15 +286,36 @@ define( [ 'U' ], function( U ) {
                 //
                 ////////////////////////////////////////////////////////////////////////////////
 
-                command_undo: function( param ) {
-                    //Tool.current.TOOL.HISTORY
-                    alert('command_undo');
-                    //if(Project.current == null) return;
+                call_UndoCommand: function() {
+                    if(Tool.current == null) return;
+                    var item = Tool.current.history().undo();
+                    if(!item) return;
+
+                    var commandName = item.command;
+                    var param = item.undoParam;
+                    var callback = item.callback;
+                    out('# UNDO : ', item);
+
+                    this._execute(commandName, param, function (isSuccess, result){
+                        if(callback) callback(isSuccess, result);
+                        out('# [ ', eval(commandName), ' ] UNDO 명령 실행 종료 : ', isSuccess, ' - ', result);
+                    });
                 },
 
-                command_redo: function( param ) {
-                    alert('command_redo');
-                    //if(Project.current == null) return;
+                call_RedoCommand: function() {
+                    if(Tool.current == null) return;
+                    var item = Tool.current.history().redo();
+                    if(!item) return;
+
+                    var commandName = item.command;
+                    var param = item.redoParam;
+                    var callback = item.callback;
+                    out('# REDO : ', item);
+
+                    this._execute(commandName, param, function (isSuccess, result){
+                        if(callback) callback(isSuccess, result);
+                        out('# [ ', eval(commandName), ' ] REDO 명령 실행 종료 : ', isSuccess, ' - ', result);
+                    });
                 },
 
 
@@ -325,7 +374,7 @@ define( [ 'U' ], function( U ) {
                 //
                 ////////////////////////////////////////////////////////////////////////////////
 
-                command_close: function( param ) {
+                call_CloseCommand: function( param ) {
                     var self = this;
                     var macro = [];
                     var deferred = $q.defer();
@@ -345,7 +394,7 @@ define( [ 'U' ], function( U ) {
                                 // result : -1:cancel, 1:yes, 0:no
                                 if ( result > 0 ) {
                                     // 저장 과정 추가
-                                    var promise_save = self.command_save( param );
+                                    var promise_save = self.call_SaveCommand( param );
                                     promise_save.then( function( macro_save ) {
                                         // macro 추가
                                         macro = macro.concat( macro_save );
@@ -382,13 +431,13 @@ define( [ 'U' ], function( U ) {
                 // New
                 //-----------------------------------
 
-                command_new: function( param ) {
+                call_NewCommand: function( param ) {
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
                     // 닫기 과정 추가
-                    var promise_close = this.command_close( param );
+                    var promise_close = this.call_CloseCommand( param );
                     promise_close.then( function( macro_close ) {
                         // macro 추가
                         macro = macro.concat( macro_close );
@@ -415,7 +464,7 @@ define( [ 'U' ], function( U ) {
                 // Open
                 //-----------------------------------
 
-                command_open: function( param ) {
+                call_OpenCommand: function( param ) {
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
@@ -429,7 +478,7 @@ define( [ 'U' ], function( U ) {
                     }
 
                     // 닫기 과정 추가
-                    var promise_close = this.command_close( param );
+                    var promise_close = this.call_CloseCommand( param );
                     promise_close.then( function( macro_close ) {
                         // macro 추가
                         macro = macro.concat( macro_close );
@@ -457,7 +506,7 @@ define( [ 'U' ], function( U ) {
                 // Save
                 //-----------------------------------
 
-                command_save: function( param ) {
+                call_SaveCommand: function( param ) {
 
                     if(Project.current == null) return;
 
@@ -482,7 +531,7 @@ define( [ 'U' ], function( U ) {
                 // Save As
                 //-----------------------------------
 
-                command_saveAs: function( param ) {
+                call_SaveAsCommand: function( param ) {
 
                     if(Project.current == null) return;
 
@@ -515,13 +564,13 @@ define( [ 'U' ], function( U ) {
 
                 // 새로고침 또는 창닫기 이벤트에 의한 닫기는 ToolController에 구현되어 있음
 
-                command_exit: function( param ) {
+                call_ExitCommand: function( param ) {
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
 
                     // 닫기 과정 추가
-                    var promise_close = this.command_close( param );
+                    var promise_close = this.call_CloseCommand( param );
                     promise_close.then( function( macro_close ) {
                         // macro 추가
                         macro = macro.concat( macro_close );
@@ -555,7 +604,7 @@ define( [ 'U' ], function( U ) {
                 // Document
                 ////////////////////////////////////////
 
-                command_addDocument: function( param ) {
+                call_AddDocumentCommand: function( param ) {
                     
                     if(Project.current == null) return;
 
@@ -583,7 +632,7 @@ define( [ 'U' ], function( U ) {
                     option : 'all' | 'only'
                 };
                 */
-                command_removeDocument: function( param ) {
+                call_RemoveDocumentCommand: function( param ) {
 
                     if(Project.current == null) return;
 
@@ -604,7 +653,7 @@ define( [ 'U' ], function( U ) {
                     return deferred.promise;
                 },
 
-                command_selectDocument: function( param ) {
+                call_SelectDocumentCommand: function( param ) {
                     
                     if(Project.current == null) return;
 
@@ -639,7 +688,7 @@ define( [ 'U' ], function( U ) {
 
                         var param_modify = Project.current.getModifyElementParameter (documentUID, elementUID);
                         // var promise_modify = sub_selectCommand();
-                        var promise_modify = this.command_modifyElement(param_modify);
+                        var promise_modify = this.call_ModifyElementCommand(param_modify);
                         promise_modify.then( function( macro_modify ) {
                             // macro 추가
                             macro = macro.concat( macro_modify );
@@ -704,7 +753,7 @@ define( [ 'U' ], function( U ) {
                     return deferred.promise;
                 },
 
-                command_modifyDocument: function( param ) {
+                call_ModifyDocumentCommand: function( param ) {
 
                     if(Project.current == null) return;
 
@@ -730,7 +779,7 @@ define( [ 'U' ], function( U ) {
                     option: Tool.current.CONFIG
                 };
                 */
-                command_configuration: function( param ) {
+                call_ConfigurationCommand: function( param ) {
 
                     if(Project.current == null) return;
 
@@ -772,7 +821,7 @@ define( [ 'U' ], function( U ) {
                     html: element.outerHTML
                 };
                 */
-                command_addElement: function( param ) {
+                call_AddElementCommand: function( param ) {
                     
                     if(Project.current == null) return;
 
@@ -842,6 +891,12 @@ define( [ 'U' ], function( U ) {
 
                     return deferred.promise;
                 },
+                redo_AddElementCommand: function(param){
+                    return this.call_AddElementCommand(param);
+                },
+                undo_AddElementCommand: function(param){
+                    return this.call_RemoveElementCommand(param);
+                },
 
                 /*
                 var param = {
@@ -849,7 +904,7 @@ define( [ 'U' ], function( U ) {
                     elementUID: Project.current.getSelectElement()
                 };
                 */
-                command_removeElement: function( param ) {
+                call_RemoveElementCommand: function( param ) {
 
                     if(Project.current == null) return;
 
@@ -907,8 +962,14 @@ define( [ 'U' ], function( U ) {
 
                     return deferred.promise;
                 },
+                redo_RemoveElementCommand: function(param){
+                    return this.call_RemoveElementCommand(param);
+                },
+                undo_RemoveElementCommand: function(param){
+                    return this.call_AddElementCommand(param);
+                },
 
-                command_modifyElement: function( param ) {
+                call_ModifyElementCommand: function( param ) {
 
                     if(Project.current == null) return;
 
@@ -928,6 +989,12 @@ define( [ 'U' ], function( U ) {
                     deferred.resolve( macro );
                     return deferred.promise;
                 },
+                redo_ModifyElementCommand: function(param){
+                    return this.call_ModifyElementCommand(param);
+                },
+                undo_ModifyElementCommand: function(param){
+                    return this.call_ModifyElementCommand(param);
+                },
                 
                 /*
                 var param = {
@@ -935,7 +1002,7 @@ define( [ 'U' ], function( U ) {
                     elementUID: Project.current.getSelectElement()
                 };
                 */
-                command_selectElement: function( param ) {
+                call_SelectElementCommand: function( param ) {
                     
                     if(Project.current == null) return;
 
@@ -972,6 +1039,12 @@ define( [ 'U' ], function( U ) {
                     deferred.resolve( macro );
                     return deferred.promise;
                 },
+                redo_SelectElementCommand: function(param){
+                    return this.call_SelectElementCommand(param);
+                },
+                undo_SelectElementCommand: function(param){
+                    return this.call_SelectElementCommand(param);
+                },
 
                 ////////////////////////////////////////////////////////////////////////////////
                 //
@@ -979,7 +1052,7 @@ define( [ 'U' ], function( U ) {
                 //
                 ////////////////////////////////////////////////////////////////////////////////
 
-                command_play: function( param ) {
+                call_PlayCommand: function( param ) {
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();
@@ -989,7 +1062,7 @@ define( [ 'U' ], function( U ) {
                     return deferred.promise;
                 },
 
-                command_edit: function( param ) {
+                call_EditCommand: function( param ) {
                     // var self = this;
                     var macro = [];
                     var deferred = $q.defer();

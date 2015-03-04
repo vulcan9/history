@@ -33,12 +33,45 @@ define( [], function() {
 
             }
 
+            // undo/redo 지원
+            RemoveElementCommand.getUndoParam = function(newParam){
+                // AddElementCommand 호출에 사용할 param을 구성한다.
+                /*
+                var newParam = {
+                    documentUID: newParam.documentUID,
+                    elementUID: newParam.elementUID
+                };
+                */
+                var documentUID = newParam.documentUID;
+                var elementUID = newParam.elementUID;
+
+                var el = Project.current.getElement(documentUID, elementUID);
+                var $dom = angular.element(el);
+                var type = $dom.attr('element');
+
+                //var styleString = $dom.attr('style-string') || '{}';
+                //var css = angular.fromJson(styleString);
+                var option = Project.current.elementAPI(documentUID, elementUID).option();
+                var elementHTML = el.outerHTML;
+
+                var undoParam = {
+                    documentUID: newParam.documentUID,
+                    elementUID : newParam.elementUID,
+                    type: type,
+
+                    //css:css,
+                    html: elementHTML,
+                    option: option
+                }
+                return undoParam;
+            };
+
             /////////////////////////////////////
             // Prototype 상속
             /////////////////////////////////////
 
             angular.extend( RemoveElementCommand.prototype,  _super, {
-                
+
                 _run : function ( param ) {
 
                     // Override

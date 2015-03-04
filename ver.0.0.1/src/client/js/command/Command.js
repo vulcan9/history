@@ -44,14 +44,24 @@ define( [], function() {
                 _param: null,
                 _callback: null,
 
+                /*
                 // undo 과정에 의해 호출된 Command인지 여부
                 _isUndoProcess: false,
+                 //this._isUndoProcess = (isUndoProcess === undefined)? false:isUndoProcess;
 
-                execute: function( param, callback, isUndoProcess ) {
+                // History과정에 포함시킬려면 다음과 같이 undo 메서드를 정의한다.
+                undo: function(){
+                    this.execute(this._param, this._callback, true);
+                },
+                redo: function(){
+                    this.execute(this._param, this._callback);
+                },
+                */
+
+                execute: function( param, callback) {
 
                     this._param = param;
                     this._callback = callback;
-                    this._isUndoProcess = isUndoProcess;
 
                     // out( '# Command Execute : ', this );
 

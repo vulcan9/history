@@ -33,12 +33,23 @@ define( [], function() {
 
             }
 
+            /*
+            // undo/redo 지원
+            AddDocumentCommand.getUndoParam = function(newParam){
+                // RemoveDocumentCommand 에 사용할 Param을 구성한다.
+                var param = {
+                    uid : selectUID,
+                    option : 'only'
+                };
+            };
+            */
+
             /////////////////////////////////////
             // Prototype 상속
             /////////////////////////////////////
 
             angular.extend( AddDocumentCommand.prototype,  _super, {
-                
+
                 _run : function ( param ) {
 
                     // Override

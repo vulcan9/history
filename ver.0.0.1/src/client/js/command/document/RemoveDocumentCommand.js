@@ -33,12 +33,19 @@ define( [], function() {
 
             }
 
+            /*
+            // undo/redo 지원
+            RemoveDocumentCommand.getUndoParam = function(newParam){
+
+            };
+            */
+
             /////////////////////////////////////
             // Prototype 상속
             /////////////////////////////////////
 
             angular.extend( RemoveDocumentCommand.prototype,  _super, {
-                
+
                 _run : function ( param ) {
 
                     // Override

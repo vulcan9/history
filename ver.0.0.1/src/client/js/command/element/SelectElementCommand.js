@@ -33,12 +33,17 @@ define( [], function() {
 
             }
 
+            // undo/redo 지원
+            SelectElementCommand.getUndoParam = function(newParam){
+                // SelectElementCommand 호출에 사용할 param을 구성한다.
+            };
+
             /////////////////////////////////////
             // Prototype 상속
             /////////////////////////////////////
 
             angular.extend( SelectElementCommand.prototype,  _super, {
-                
+
                 _run : function ( param ) {
 
                     // Override

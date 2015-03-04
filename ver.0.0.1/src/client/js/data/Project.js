@@ -517,6 +517,7 @@ define(['U'], function (U) {
                     // (주의) 값은 객체를 사용하지 않는다. (참조값이 되버리므로)
                     _default_element_option: {
                         // 텍스트 outline 맞춤 옵션 (true: text에 맞춤, false: 박스에 맞춤)
+                        // 사용안함
                         "display_size_toText": false
                     },
 
@@ -525,6 +526,7 @@ define(['U'], function (U) {
                     // elementAPI(documentUID, elementUID).option(name, value);
                     // elementAPI()._type(value);
                     // elementAPI().option(name, value);
+                    // elementAPI().option()
 
                     elementAPI: function (documentUID, elementUID) {
                         documentUID = documentUID || this.getSelectDocument();
@@ -569,6 +571,10 @@ define(['U'], function (U) {
                                 var map = documentItem.element.map || {};
                                 var key = map[elementUID] || {"uid": elementUID};
                                 var option = key['option'] || {};
+
+                                if(name === undefined && value === undefined){
+                                    return option;
+                                }
 
                                 var oldValue = (option[name] === undefined) ? self._default_element_option[name] : option[name];
 
@@ -1306,12 +1312,18 @@ define(['U'], function (U) {
                             $comp = this.createElementContent(type, elementUID, option, css);
                             $content.append($comp);
 
-                            // 크기를 CSS에 명시
+                            /*
+                            // 크기를 CSS에 명시 - 이 시점에서는 크기 측정되지 않음
                             var size = {
                                 width: $comp.outerWidth(),
                                 height: $comp.outerHeight()
                             }
                             $comp.css(size);
+                            css.width = size.width;
+                            css.height = size.height;
+                            */
+
+                            this._writeData($comp, documentUID, elementUID, css);
                         }
 
                         // 데이터 갱신 (이미 dom 차원에서 갱신되어 있지만 그냥 명시적으로 기술함)
@@ -1490,6 +1502,7 @@ define(['U'], function (U) {
                         var documentUID = param.documentUID;
                         var option = param.option;
                         var css = param.css;
+                        var html = param.html;
 
                         var documentItem = this.getDocument(documentUID);
                         var dom = this.getElement(documentUID, elementUID);
@@ -1504,14 +1517,40 @@ define(['U'], function (U) {
                         $rootScope.$broadcast(eventName, args);
 
                         //---------------------
-                        // 데이터 갱신 (Element Type에 따른 개별 설정)
-                        this.setModifyElementParameter(documentUID, elementUID, param);
+                        // 데이터 갱신 (css, option)
+
+                        if(html){
+                            dom.outerHTML = html;
+                        }else{
+                            // 데이터 갱신 (Element Type에 따른 개별 설정)
+                            this.setModifyElementParameter(documentUID, elementUID, param);
+
+                            if (css) {
+                                $dom.css(css);
+                            }
+                            this._writeData($dom, documentUID, elementUID, css);
+                        }
+
+                        // 데이터 갱신 (option)
+                        var api = Project.current.elementAPI(documentUID, elementUID);
+                        for (var prop in option) {
+                            api.option(prop, option[prop]);
+                        }
+
+                        Tool.current.document(documentUID).dataChanged(true);
 
                         //---------------------
-                        // 데이터 갱신 (css)                        
-                        if (css) {
-                            $dom.css(css);
+                        // 이벤트 발송 : #Project.modified-ELEMENT
+                        var propertyName = 'ELEMENT';
+                        var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
+                        out('# 이벤트 발생 : ', eventName);
+                        var args = {data: documentItem, item: dom, name: propertyName, param: param};
+                        $rootScope.$broadcast(eventName, args);
+                    },
 
+                    _writeData: function ($dom, documentUID, elementUID, css){
+                        // 데이터 갱신 (css)
+                        if (css) {
                             //************************************
                             // prefix 가 필요한 css의 경우 별도로 attr에 정보를 남겨놓는다
                             // 현재 브라우져에서 prefix가 적용 되더라도 편집시 저장된 데이터로
@@ -1536,8 +1575,8 @@ define(['U'], function (U) {
                             //if(prefixStyle){
                             //    scope.setPrefix('columnCount', prefixStyle);
 
-                                //$scope.prefixes['column-count'] = value;
-                                //$element.attr('prefix', angular.toJson($scope.prefixes))
+                            //$scope.prefixes['column-count'] = value;
+                            //$element.attr('prefix', angular.toJson($scope.prefixes))
                             //}
 
                             // content.js 에서 초기 사이즈를 정하기 위해 추가한 class를 제거
@@ -1546,22 +1585,6 @@ define(['U'], function (U) {
                             //}
                             //************************************
                         }
-
-                        // 데이터 갱신 (option)
-                        var api = Project.current.elementAPI(documentUID, elementUID);
-                        for (var prop in option) {
-                            api.option(prop, option[prop]);
-                        }
-
-                        Tool.current.document(documentUID).dataChanged(true);
-
-                        //---------------------
-                        // 이벤트 발송 : #Project.modified-ELEMENT
-                        var propertyName = 'ELEMENT';
-                        var eventName = '#' + this.eventPrefix + '.modified-' + propertyName;
-                        out('# 이벤트 발생 : ', eventName);
-                        var args = {data: documentItem, item: dom, name: propertyName, param: param};
-                        $rootScope.$broadcast(eventName, args);
                     },
 
                     getModifyElementParameter: function (documentUID, elementUID) {
