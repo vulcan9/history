@@ -296,7 +296,7 @@ define( [ 'U' ], function( U ) {
 
                     this._execute(commandName, param, function (isSuccess, result){
                         if(callback) callback(isSuccess, result);
-                        out('# [ ', eval(commandName), ' ] UNDO 명령 실행 종료 : ', isSuccess, ' - ', result);
+                        out('# [ ', commandName, ' ] UNDO 명령 실행 종료 : ', isSuccess, ' - ', result);
                     });
                 },
 
@@ -312,48 +312,9 @@ define( [ 'U' ], function( U ) {
 
                     this._execute(commandName, param, function (isSuccess, result){
                         if(callback) callback(isSuccess, result);
-                        out('# [ ', eval(commandName), ' ] REDO 명령 실행 종료 : ', isSuccess, ' - ', result);
+                        out('# [ ', commandName, ' ] REDO 명령 실행 종료 : ', isSuccess, ' - ', result);
                     });
                 },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 //******************************************************************************
                 //
