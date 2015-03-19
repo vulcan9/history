@@ -134,7 +134,7 @@ define(['U'], function (U) {
                 // Copy & Paste
                 ////////////////////////////////////////
 
-                function copy() {
+                $rootScope.copy = function () {
                     if (Project.current == null) return;
 
                     // 현재 선택상태에 있는 Element를 복사
@@ -156,7 +156,21 @@ define(['U'], function (U) {
                     //CommandService.exe(CommandService.COPY, {});
                 }
 
-                function paste() {
+                $rootScope.cut = function () {
+                    if (Project.current == null) return;
+
+                    // 복사 후
+                    copy();
+
+                    // 원본은 제거
+                    var param = {
+                        documentUID: Project.current.getSelectDocument(),
+                        elementUID: Project.current.getSelectElement()
+                    }
+                    CommandService.exe(CommandService.REMOVE_ELEMENT, param);
+                }
+
+                $rootScope.paste = function () {
                     if (Project.current == null) return;
 
                     var copyedData = Tool.current.current_document('copy');
@@ -213,6 +227,18 @@ define(['U'], function (U) {
                         };
                         CommandService.exe(CommandService.ADD_ELEMENT, param);
                     }
+                }
+
+                function copy() {
+                    $rootScope.copy();
+                }
+
+                function cut() {
+                    $rootScope.cut();
+                }
+
+                function paste() {
+                    $rootScope.paste();
                 }
 
                 ////////////////////////////////////////

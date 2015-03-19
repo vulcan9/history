@@ -8,31 +8,23 @@
             "label": "File", 
             "link":"", "command":"file",
             "menus":[
-                {"label": "New", "link":"", "command":"new"},
-                {"label": "Open", "link":"", "command":"open"},
-                {"label": "Save", "link":"", "command":"save"},
-                {"label": "Save As", "link":"", "command":"saveAs"},
-                {"label": "Close", "link":"", "command":"close"},
-                {"label": "Exit", "link":"", "command":"exit"}
+                {"label": "New", "link":"", "command":"NewCommand"},
+                {"label": "Open", "link":"", "command":"OpenCommand"},
+                {"label": "Save", "link":"", "command":"SaveCommand"},
+                {"label": "Save As", "link":"", "command":"SaveAsCommand"},
+                {"label": "Close", "link":"", "command":"CloseCommand"},
+                {"label": "Exit", "link":"", "command":"ExitCommand"}
             ]
         },
         {
             "label": "Edit", 
             "link":"", "command":"edit",
             "menus":[
-                {"label": "undo", "link":"", "command":"undo"},
-                {"label": "redo", "link":"", "command":"redo"},
-                {"label": "copy", "link":"", "command":"copy"},
-                {"label": "cut", "link":"", "command":"cut"},
-                {"label": "paste", "link":"", "command":"paste"},
-
-                {"class":"divider"},
-
-                {"class":"dropdown-header", "label": "Document"},
-                {"label": "(임시) addDocument", "link":"", "command":"addDocument"},
-                {"label": "(임시) removeDocument", "link":"", "command":"removeDocument"},
-                {"label": "(임시) modifyDocument", "link":"", "command":"modifyDocument"}
-
+                {"label": "undo", "link":"", "command":"UndoCommand"},
+                {"label": "redo", "link":"", "command":"RedoCommand"},
+                {"label": "copy", "link":"", "funcName":"copy"},
+                {"label": "cut", "link":"", "funcName":"cut"},
+                {"label": "paste", "link":"", "funcName":"paste"}
             ]
         },
         {

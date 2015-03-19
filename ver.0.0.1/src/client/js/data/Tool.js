@@ -765,15 +765,19 @@ define(['U'], function (U) {
 
                         // 이전 상황을 캡쳐해 둔다
                         // Tool.current.history().capture(element);
-                        setSnapshot: function(element){
+                        setSnapshot: function(element, snapshot){
                             if(!element) return;
+                            snapshot = snapshot || this.newSnapshot(element);
                             var $element = angular.element(element);
-                            $element.data('oldHTML', element.outerHTML);
+                            $element.data('oldHTML', snapshot);
                         },
                         getSnapshot: function(element){
                             if(!element) return null;
                             var $element = angular.element(element);
                             return $element.data('oldHTML');
+                        },
+                        newSnapshot: function(element){
+                            return element.outerHTML;
                         }
                     };
                 }

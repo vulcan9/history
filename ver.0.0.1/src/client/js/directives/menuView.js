@@ -159,8 +159,16 @@ define([], function () {
                      */
 
                     // 메뉴 클릭 이벤트 처리
-                    var command = item.command;
+                    var funcName = item.funcName;
+                    if(funcName == 'copy'){
+                        $rootScope.copy();
+                    }else if(funcName == 'cut'){
+                        $rootScope.cut();
+                    }else if(funcName == 'paste'){
+                        $rootScope.paste();
+                    }
 
+                    var command = item.command;
                     if (command == CommandService.NEW) {
                         $rootScope.go_tool();
                         return;
@@ -169,9 +177,10 @@ define([], function () {
                         return;
                     }
 
-                    var param = {};
-                    CommandService.exe(command, param);
-
+                    if(command){
+                        var param = {};
+                        CommandService.exe(command, param);
+                    }
                 };
 
                 $scope.projectConfiguration = function () {

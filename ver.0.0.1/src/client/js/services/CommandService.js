@@ -159,12 +159,22 @@ define( [ 'U' ], function( U ) {
                             out( '\n=================================================' );
                             out('# Macro 실행 : ', arguments);
 
+                            // 삭제 명령인 경우 미리 undoParam을 만들어 놓는다.
+                            var undoParam;
+                            if(commandName == self.REMOVE_ELEMENT && param._commandState == 'call'){
+                                // UNDO 기능을 위해 param을 캡쳐해 놓는다.
+                                var commandClass = eval(commandName);
+                                if(commandClass && commandClass.getUndoParam){
+                                    undoParam = commandClass.getUndoParam(angular.copy(param));
+                                }
+                            }
+
                             self._runMacro( macro, function(isSuccess, result){
                                 resultCallback.apply( this, [ isSuccess, result ] );
 
                                 if(isSuccess){
                                     // undo, redo를 위해 command 객체 저장
-                                    this.registHistory (commandName, param, resultCallback, result);
+                                    this.registHistory (commandName, param, resultCallback, result, undoParam);
                                 }
                             });
 
@@ -246,14 +256,14 @@ define( [ 'U' ], function( U ) {
                  undo_SelectElementCommand
                  */
 
-                registHistory: function (commandName, param, callback, result){
+                registHistory: function (commandName, param, callback, result, undoParam){
 
                     var commandClass = eval(commandName);
                     if(!commandClass || !commandClass.getUndoParam) return;
 
                     if(param._commandState == 'call'){
                         // UNDO 기능을 위해 param을 캡쳐해 놓는다.
-                        var undoParam = commandClass.getUndoParam(angular.copy(param));
+                        undoParam = undoParam || commandClass.getUndoParam(angular.copy(param));
                         undoParam._commandState = 'undo';
 
                         var redoParam = angular.copy(param);
