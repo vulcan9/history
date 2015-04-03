@@ -39,10 +39,19 @@ http://mobicon.tistory.com/324
     npm install nodemon -g
     nodemon "실행 js파일"
 
+개발
     * supervisor 모듈 설치
     npm install supervisor -g
+    export NODE_ENV=development
     supervisor "실행 js파일"
     
+
+운영
+    npm install forever -g
+    export NODE_ENV=production
+    forever start app.js 
+
+
 * 프로젝트 생성을 위한 express 프레임웍
 
     * express  설치
